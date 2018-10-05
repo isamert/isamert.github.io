@@ -25,6 +25,7 @@ Here are some curl friendly web services that you can use in your terminal:
 -   `curl http://cheat.sh/tar` Shows a simple cheatsheet for specified command (in this case `tar`)
 -   `curl https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/tar.md` Same thing with above but this uses [tldr](https://github.com/tldr-pages/tldr). But there are some problems:
     -   raw.githubusercontent.com/tldr-pages/tldr/master/pages/ **common** / **tar** .md
+
     The first bold part may be one of these: `common`, `linux`. The second bold part is the command itself. If the command is linux-spesific, its under the `linux` folder obviously and most of the other things goes to `common`. You can create a small script that takes `command` as input and checks the folders one by one and returns if it finds an existing page. *This is left as an exercise for the reader.* (or you may just simply install a client, visit [tldr](https://github.com/tldr-pages/tldr)).
 
 # Translate

@@ -1,0 +1,144 @@
+---
+layout: post
+title:  "Median cut algorithm in Qt/C++"
+---
+
+I needed a simple color quantization algorithm for my project. I didn’t want to use any other program/library for this simple job. So I implemented *median cut* with *Qt*. I just used the explanation of the algorithm in [Wikipedia](https://en.wikipedia.org/wiki/Median_cut), I didn’t make any other research, so the code is not well optimized but it just works. I’ll try to explain step by step:
+
+We have an image with an arbitrary number of pixels and want to generate a palette of **X** colors. The very first thing we need to is putting all the pixels in a list. By *pixels*, I mean their RGB data. Then we need to find the color channel(red, green, blue) that has the most wide range. Let’s implement this:
+
+```cpp
+QString filePath = "some_image.png";
+int color_count = 256; // The color count that we want to reduce our image.
+
+QList<QRgb> pixels;
+QImage img(filePath);
+
+// For finding color channel that has the most wide range,
+// we need to keep their lower and upper bound.
+int lower_red   = qRed(img.pixel(0, 0)),
+    lower_green = qGreen(img.pixel(0, 0)),
+    lower_blue  = qBlue(img.pixel(0, 0));
+int upper_red   = 0,
+    upper_green = 0,
+    upper_blue  = 0;
+
+// Just loop trough all the pixels
+for (int x = 0; x < img.width(); ++x) {
+    for (int y = 0; y < img.height(); ++y) {
+    QRgb rgb = img.pixel(x, y);         // Get rgb data of a particular pixel
+    if (!pixels.contains(rgb)) {        // If we have the same pixel, we don't need it twice or more
+        lower_red = std::min(lower_red, qRed(rgb));
+        lower_green = std::min(lower_green, qGreen(rgb));
+        lower_blue = std::min(lower_blue, qBlue(rgb));
+
+        upper_red = std::max(upper_red, qRed(rgb));
+        upper_green = std::max(upper_green, qGreen(rgb));
+        upper_blue = std::max(upper_blue, qBlue(rgb));
+        pixels.append(rgb);
+    }
+    }
+}
+```
+
+We have upper bounds and lower bounds of the color channels, so just find out the one that has widest range:
+
+```cpp
+int red = upper_red - lower_red;
+int green = upper_green - lower_green;
+int blue = upper_blue - lower_blue;
+int max = std::max(std::max(red, green), blue);
+```
+
+Then we need to short our *pixels* list according to the channel we just found out. *For example, if the blue channel has the greatest range, then a pixel with an RGB value of (32, 8, 16) is less than a pixel with an RGB value of (1, 2, 24), because 16 < 24.*
+
+```cpp
+qSort(pixels.begin(), pixels.end(), [max,red,green,blue](const QRgb& rgb1, const QRgb& rgb2){
+    if (max == red)  // if red is our color that has the widest range
+    return qRed(rgb1) < qRed(rgb2); // just compare their red channel
+    else if (max == green) //...
+    return qGreen(rgb1) < qRed(rgb2);
+    else /*if (max == blue)*/
+    return qBlue(rgb1) < qBlue(rgb2);
+});
+// We just used qSort here.
+// As comparison function, we sent a lambda function
+// that compares two rgb color according to our selected color channel.
+```
+
+After sorting our list, we need to move the upper half of the list to another list, then we have two list. For these two list, we will do the same thing until we get **X** lists (So if we want to reduce our color palette to 16 colors, we need to repeat this step until we get 16 lists.).
+
+```cpp
+QList<QList<QRgb>> lists;
+int list_size = pixels.size() / color_count;
+
+for (int i = 0; i < color_count; ++i) {
+    QList<QRgb> list;
+    for (int j = list_size * i; j < (list_size * i) + list_size; ++j) {
+    list.append(pixels.at(j));
+    }
+    lists.append(list);
+}
+```
+
+We got our lists. After that, we can get the average of each list and we can build our **X** colored palette or we can just get the median of each list. I didn’t observe so much difference, so I’m going with the easy one.
+
+```cpp
+QVector<QRgb> palette;
+for (QList<QRgb> list: lists) {
+    palette.append(list.at(list.size() / 2));
+}
+```
+
+We build up our X color palette. The next thing I am going to do is convert our original image color palette to our new palette. Actually there is a Qt function for that but it has a *bug*.(I’ll explain it later) So we need to implement this.
+
+```cpp
+QVector<QRgb> palette;
+for (QList<QRgb> list: lists) {
+    palette.append(list.at(list.size() / 2));
+}
+
+QImage out(img.width(), img.height(), QImage::Format_ARGB32);
+for (int x = 0; x < img.width(); ++x) {
+    for (int y = 0; y < img.height(); ++y) {
+    out.setPixel(x,y, palette[closestMatch(img.pixel(x, y), palette)]);
+    }
+}
+```
+
+In this piece of code, we just create a `QImage` that has same size of our original image and format. Then we loop through all the pixels in our original image and find the closest color from our new palette then set that color to corresponding pixel of our new `QImage` object. And that’s it.
+
+There is one function that needs explanation in this code, closestMatch. I just took it from the Qt source code. Actually, `QImage` has a function named convertToFormat. You can use this function to change the format of your image and also it lets you to change color palette of your image. The function definition goes like this: `QImage QImage::convertToFormat(Format format, const QVector<QRgb> &colorTable, Qt::ImageConversionFlags flags = Qt::AutoColor) const` and it’s definition says:
+
+> Returns a copy of the image converted to the given format, using the specified colorTable. Conversion from 32 bit to 8 bit indexed is a slow operation and will use a straightforward nearest color approach, with no dithering.
+
+So we can simply use this function to convert any image using our palette. But there is a one problem, if you don’t want to change your image format(so your source and output image has the same format), it just simply returns the image itself without converting to our palette. So I extracted the part that it finds the closest color to given color from a vector:
+
+```cpp
+static inline int pixel_distance(QRgb p1, QRgb p2) {
+    int r1 = qRed(p1);
+    int g1 = qGreen(p1);
+    int b1 = qBlue(p1);
+    int a1 = qAlpha(p1);
+
+    int r2 = qRed(p2);
+    int g2 = qGreen(p2);
+    int b2 = qBlue(p2);
+    int a2 = qAlpha(p2);
+
+    return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2) + abs(a1 - a2);
+}
+
+static inline int closestMatch(QRgb pixel, const QVector<QRgb> &clut) {
+    int idx = 0;
+    int current_distance = INT_MAX;
+    for (int i=0; i<clut.size(); ++i) {
+    int dist = pixel_distance(pixel, clut.at(i));
+    if (dist < current_distance) {
+        current_distance = dist;
+        idx = i;
+    }
+    }
+    return idx;
+}
+```

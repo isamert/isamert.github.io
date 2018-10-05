@@ -23,8 +23,11 @@
         <p>{{ site.description | default: site.github.project_tagline }}</p>
 
         <!-- Links: -->
-        <p class="view">&gt; <a href="{{ site.github.owner_url }}">Projects</a></p>
-        <p class="view">&gt; <a href="{{ site.github.owner_url }}">Github</a></p>
+
+        <p class="view">
+          <a href="/projects/">Projects</a> |
+          <a href="{{ site.github.owner_url }}">Github</a>
+        </p>
 
       </header>
       <section>

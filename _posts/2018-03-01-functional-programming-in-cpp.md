@@ -69,23 +69,23 @@ int main() {
 Lets make this shouting a function so we can reuse it.
 
 ```cpp
-    #include <iostream>
-    #include <string>
+#include <iostream>
+#include <string>
 
-    std::string shout(std::string str) {
-        for (auto & c: str)
-    	c = toupper(c);
+std::string shout(std::string str) {
+    for (auto & c: str)
+    c = toupper(c);
 
-        str = str + "!!!";
-        return str;
-    }
+    str = str + "!!!";
+    return str;
+}
 
-    int main() {
-        std::string str = "oh, hi mark";
-        std::cout << shout(str) << std::endl;
-        // Now we can shout as much as we want.
-        std::cout << shout("you are tearing me apart Lisa") << std::endl;
-    }
+int main() {
+    std::string str = "oh, hi mark";
+    std::cout << shout(str) << std::endl;
+    // Now we can shout as much as we want.
+    std::cout << shout("you are tearing me apart Lisa") << std::endl;
+}
 ```
 
 Now think that we are going to use that `shout` function only in our `main` function. So it’s cumbersome to add it to header and stuff. Here lambdas are coming into play:

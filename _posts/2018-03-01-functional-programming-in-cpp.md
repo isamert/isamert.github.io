@@ -3,6 +3,9 @@ layout: post
 title:  "Functional programming in C++"
 ---
 
+* TOC
+{:toc}
+
 C++ enables you to do nearly everything with every possible paradigm. I actually consider it as a huge mess or maybe I’m the one that can not comprehend that much stuff. Considering C++ is made by people smarter than me, probably the latter is true.
 
 So trying to use C++ as a purely functional programming language is probably possible but pointless in all cases except having some fun. More acceptable strategy may be using it as functional but not so pure language like Scala(or something like that). But then the question arises, why not use a language that is designed for that from scratch? Many answers can be given to this question but the most obvious ones goes like this:

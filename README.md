@@ -7,5 +7,6 @@ My name is İsa Mert Gürbüz and I generally do programming stuff. I'm a huge a
 
 # Misc
 Here are some cool stuff that you can check out:
+- My [dotfiles](https://github.com/isamert/dotfiles)
 - My movie [ratings](https://www.imdb.com/user/ur51538143/ratings) and my [watchlist](https://www.imdb.com/user/ur51538143/watchlist).
 - Some [albums](https://www.youtube.com/playlist?list=PLXawKvexOu0pMf6ttp5Ta-EqimUFrrDlq) that I listen a lot.

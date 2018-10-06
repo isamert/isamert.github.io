@@ -3,6 +3,9 @@ layout: post
 title:  "Nice little curl commands"
 ---
 
+* TOC
+{:toc}
+
 Here are some curl friendly web services that you can use in your terminal:
 
 # Weather

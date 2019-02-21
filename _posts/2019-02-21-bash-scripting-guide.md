@@ -119,6 +119,7 @@ let l=33+9
 `declare` is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type `help declare` and see a very informative and short text about it.
 
 - Using declare inside a function makes the variable local, meaning they do not interfere with global variables. A better alternative is just using `local` built-in which is more clear. If your intention is exact opposite, meaning you want to declare a global variable, use `-g` option with declare. (Actually just assigning something to a variable without `declare`/`local` keywords make them global. So you don't need something like this: `declare -g a=3` inside a function to make it global, `a=3` is enough. `-g` comes handy if you are using other options of `declare` and wanting to make the variable global)
+
 ```bash
 greeting="hey"
 
@@ -232,6 +233,7 @@ else
 
 ## Looping trough arguments
 It's a pretty common task with pretty easy syntax:
+
 ```bash
 for arg in "$@"; do
     echo "$arg"
@@ -239,6 +241,7 @@ done
 ```
 
 Or better yet:
+
 ```bash
 for arg; do
     echo "$arg"
@@ -247,11 +250,12 @@ done
 
 # Subshells
 The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
+
 ```bash
 echo "stuff" | read some_var
 ```
 
-In this example, usage of `|` introduces a subshell and the `some_var` is defined in this subshell and then that subshell vanished when the execution of the line is over. So that you can not use `some_var` in rest of the script. There are a few ways to get around this issue. Most simple one being:
+In this example, usage of `|` introduces a subshell and the `some_var` is defined in this subshell. Then that subshell is vanished when the execution of the line is over. So that you can not use `some_var` in rest of the script. There are a few ways to get around this issue. Most simple one being:
 
 ```bash
 echo "stuff" | {
@@ -264,15 +268,18 @@ Here `|` still introduces a subshell but we contiune to do our stuff in that sub
 
 ## Here strings
 Contining the example above, we can do something like this:
+
 ```bash
 read some_var <<< "stuff"
 # or
 read some_var <<< $(echo "stuff")
 ```
+
 `<<<` redirects the string to stdin of the command. So that we didn't create a subshell and we can use `some_var` from now on in our script.
 
 ## Process substitution
 A process substitution creates a temproary file with the given output and passes that temproary file to a command. For example:
+
 ```bash
 read some_var < <(echo "stuff")
 ```
@@ -282,6 +289,7 @@ Here, the effect is same as with _here strings_ but what happens is a lot differ
 # Functions
 ### Functions that accepts both arguments and stdin
 Let's say that you want your function to accept data either as argument or from stdin. You can simply combine `${VAR:-DEFAULT}` syntax with redirecting operator and you will have this:
+
 ```bash
 str=${*:-$(</dev/stdin)}
 ```

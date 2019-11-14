@@ -61,15 +61,16 @@ This is optional but for R syntax highlighting and stuff you may want to install
 # Running SQL on org tables
 Now you can simply do this:
 
-```org-mode
-#+tblname: test
-
-#+tblname: test-table
-| A | B |
-|---+---|
-| 1 | 2 |
-| 3 | 4 |
-| 5 | 6 |
+```org
+#+tblname: tbltest
+| col_a | col_b |
+|-------+-------|
+|     1 |     2 |
+|     1 |     4 |
+|     1 |     6 |
+|     2 |     7 |
+|     2 |     8 |
+|     2 |     9 |
 
 #+begin_src R :colnames yes :var tbltest=tbltest
 library(sqldf)
@@ -79,17 +80,17 @@ sqldf("SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a")
 
 And as the result, you get this:
 
-```org-mode
+```org
 #+RESULTS:
-| col_a | col_b |
-|-------+-------|
-|     1 |     4 |
-|     2 |     8 |
+| col_a | AVG(col_b) |
+|-------+------------|
+|     1 |          4 |
+|     2 |          8 |
 ```
 
 Nice! But we don't have SQL syntax highlighting. We can get over it by doing something like this:
 
-```org-mode
+```org
 #+name: tbltest-sql
 #+begin_src sql
 SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a
@@ -107,7 +108,7 @@ Now we have a nice syntax highlighting for our SQL. But for this you need to hav
 I found some obscure ways of doing this but here I present the most sane one:
 
 Firstly you need to have a named src block that calls `sqldf` with given SQL code, somewhere in your org file. Putting it under some section with `:noexport:` tag might be good idea if you are willing to export the document:
-```org-mode
+```org
 #+name: table-sql
 #+begin_src R :var sql="" :colnames yes
 library(sqldf)
@@ -115,7 +116,7 @@ sqldf(sql)
 #+end_src
 ```
 
-```org-mode
+```org
 #+tblname: sometbl
 #+RESULTS: sometbl
 | col_a | col_b | col_sum |

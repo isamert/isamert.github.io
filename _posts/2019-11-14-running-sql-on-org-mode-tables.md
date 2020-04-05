@@ -134,3 +134,5 @@ sqldf(sql)
 When you `C-c C-c` on the `#+CALL` line, the table will be replaced with the result of given SQL.
 
 I believe things can be simplified with _a little bit of_ elisp but it may not worth the effort, this seems already an OK solution for me.
+
+**UPDATE**: Here is an interesting package, called [orgaggregate](https://github.com/tbanel/orgaggregate), which covers most of the use cases presented here and much more but without any external dependencies and does everything with a sane syntax. Check it out!

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Better Keyboard Experience in Linux"
+title:  "Better keyboard experience in Linux"
 ---
 
 In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
@@ -9,7 +9,7 @@ In this post, I'll try to describe a more healthy and productive way of using ke
 
 _(This part is mostly just me rambling, feel free to skip it)_
 
-First of all, I'm a big believer of a keyboard-oriented workflow, Sometimes it costs more time to use the keyboard but it helps me to stay sane. Mouse generally requires a certain level of consciousness, like you need to aim for stuff, try to be precise while selecting something, etc. The content you are dealing with the mouse is not static, so you need to do some calculation every time to get the desired action with the mouse. But with the keyboard, you can just mindlessly press your 4-key shortcut and get a magic happening. After a certain point, even your most complex shortcuts become a reflexive response.
+First of all, I'm a big believer of a keyboard-oriented workflow. Sometimes it costs more time to use the keyboard but it helps me to stay sane. Mouse generally requires a certain level of consciousness, like you need to aim for stuff, try to be precise while selecting something, etc. The content you are dealing with the mouse is not static, so you need to do some calculation every time to get the desired action with the mouse. But with the keyboard, you can just mindlessly press your 4-key shortcut and get a magic happening. After a certain point, even your most complex shortcuts become a reflexive response.
 
 There are use cases for mouse too, of course! Mindlessly scrolling down a website is always better done with a mouse on your lap. Some jobs may be better suited for a drag-drop focused workflow and I get them. What I try to minimize is that when you are doing a keyboard-focused work and you need mouse time to time. That is just a distraction and a cause of wrist pain. Other than that, trying to eliminate mouse is pointless.
 

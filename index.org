@@ -1,0 +1,1654 @@
+#+TITLE: isamert.net
+#+AUTHOR: Isa Mert Gurbuz
+#+EMAIL: isamert@protonmail.com
+#+OPTIONS: html-style:nil num:nil H:4
+
+* Main                                                                 :page:
+:PROPERTIES:
+:EXPORT_AS: index.html
+:TEMPLATE: index
+:OPTIONS: toc:nil
+:END:
+** All posts
+- [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
+- [[./2019/11/14/running-sql-on-org-mode-tables.html][Running SQL on org-mode tables]]
+- [[./2019/02/21/bash-scripting-guide.html][Bash scripting guide]]
+- [[./2018/06/06/emacs-run-flycheck-on-all-buffers-after-save.html][Emacs - Run flycheck on all buffers after save]]
+- [[./2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html][Automatize your logins with gnome-keyring]]
+- [[./2018/03/24/nice-little-curl-commands.html][Nice little curl commands]]
+- [[./2018/03/01/functional-programming-in-cpp.html][Functional programming in C++]]
+- [[./2017/12/22/programming-avr-microcontrollers-in-linux.html][Programming AVR microcontrollers in Linux]]
+- [[./2017/08/15/kotlin-function-application.html][Kotlin function application]]
+- [[./2016/07/13/median-cut-algorithm-in-cpp-qt.html][Median cut algorithm in Qt/C++]]
+
+** Misc
+Here are some cool stuff that you can check out:
+
+- My [[https://github.com/isamert/dotfiles][dotfiles]].
+- My [[https://www.imdb.com/user/ur51538143/ratings][movie ratings]] and my [[https://www.imdb.com/user/ur51538143/watchlist][watchlist]].
+- My [[https://libre.fm/user/isamert][libre.fm]] page.
+
+* Publish                                                          :noexport:
+#+NAME: startup
+#+begin_src emacs-lisp
+  (defun isamert/read-file-to-string (file-path)
+    "Return FILE-PATH's file content."
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
+
+  (defun isamert/write-string-to-file (string file)
+    (make-directory (file-name-directory file) t)
+    (with-temp-file file
+      (insert string)))
+
+  (defun isamert/blog-export-all ()
+    "Export current file as a blog."
+    (interactive)
+    (let ((posts (progn (setq org-export-with-toc t)
+                        (org-map-entries 'isamert/blog-export-post "LEVEL=1")))
+          (pages (progn (setq org-export-with-toc nil)
+                        (org-map-entries 'isamert/blog-export-page "LEVEL=1"))))
+      ))
+
+  (defun isamert/blog-export-page ()
+    (interactive)
+    (save-window-excursion
+      (save-current-buffer
+        (let* ((title (org-entry-get nil "ITEM"))
+               (props (org-entry-properties))
+               (tags (cdr (assoc "TAGS" props)))
+               (should-export (string-match-p "page" (or tags "")))
+               (template (and should-export (cdr (assoc "TEMPLATE" props))))
+               (export-path (and should-export (cdr (assoc "EXPORT_AS" props)))))
+          (when should-export
+            (org-narrow-to-subtree)
+            (isamert/write-string-to-file
+             (isamert/template :body (isamert/body-html) :title title)
+             (format "docs/%s" export-path))
+            (widen)
+            `(,title ,export-path ,props))))))
+
+  (defun isamert/blog-export-post ()
+    (interactive)
+    (save-window-excursion
+      (save-current-buffer
+        (let* ((title (org-entry-get nil "ITEM"))
+               (props (org-entry-properties))
+               (publish-date (cdr (assoc "PUBLISH_DATE" props)))
+               (tags (cdr (assoc "TAGS" props)))
+               (file-path nil)
+               (should-export (not (string-match-p "\\(noexport\\|page\\)" (or tags "")))))
+          (when should-export
+            (setq file-path (isamert/blog-mk-path title publish-date))
+            (org-narrow-to-subtree)
+            (isamert/write-string-to-file
+             (isamert/template :body (isamert/body-html) :title title)
+             (format "docs/%s.html" file-path))
+            (widen)
+            `(,title ,file-path ,props))))))
+
+  (defun isamert/template (&rest args)
+    (s-format
+     (isamert/read-file-to-string "templates/post.html")
+     'aget
+     (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args))))
+
+  (defun isamert/blog-kill-main-header (backend)
+    "This function runs before export procedure and does some changes on the content."
+    (outline-show-all)
+    (goto-char (point-min))
+    (kill-whole-line))
+
+  (defun isamert/body-html ()
+    (save-current-buffer
+      (let ((org-html-htmlize-output-type nil))
+        (add-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (org-html-export-as-html nil nil nil t nil)
+        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (buffer-string))))
+
+  (defun isamert/blog-mk-path (title publish-date)
+    (--> title
+         (downcase it)
+         (s-replace "+" "p" it)
+         (s-replace "(" "-" it)
+         (s-replace ")" "-" it)
+         (s-replace " " "-" it)
+         (s-replace "---" "-" it)
+         (s-replace "--" "-" it)
+         (s-replace "/" "-" it)
+         (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) it)))
+
+  (defun isamert/parse-org-date (date)
+    (save-match-data
+      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
+        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
+#+end_src
+
+** Load org-block script
+# Local Variables:
+# org-confirm-babel-evaluate: nil
+# eval: (progn (org-babel-goto-named-src-block "startup") (org-babel-execute-src-block))
+# End:
+
+* Median cut algorithm in C++/Qt
+:PROPERTIES:
+:PUBLISH_DATE: [2016-07-13 Wed]
+:END:
+I needed a simple color quantization algorithm for my project. I didn't want to use any other program/library for this simple job. So I implemented /median cut/ with /Qt/. I just used the explanation of the algorithm in [[https://en.wikipedia.org/wiki/Median_cut][Wikipedia]], I didn't make any other research, so the code is not well optimized but it just works. I'll try to explain step by step:
+
+We have an image with an arbitrary number of pixels and want to generate a palette of *X* colors. The very first thing we need to is putting all the pixels in a list. By /pixels/, I mean their RGB data. Then we need to find the color channel(red, green, blue) that has the most wide range. Let's implement this:
+
+#+begin_src cpp
+  QString filePath = "some_image.png";
+  int color_count = 256; // The color count that we want to reduce our image.
+
+  QList<QRgb> pixels;
+  QImage img(filePath);
+
+  // For finding color channel that has the most wide range,
+  // we need to keep their lower and upper bound.
+  int lower_red   = qRed(img.pixel(0, 0)),
+      lower_green = qGreen(img.pixel(0, 0)),
+      lower_blue  = qBlue(img.pixel(0, 0));
+  int upper_red   = 0,
+      upper_green = 0,
+      upper_blue  = 0;
+
+  // Just loop trough all the pixels
+  for (int x = 0; x < img.width(); ++x) {
+      for (int y = 0; y < img.height(); ++y) {
+          QRgb rgb = img.pixel(x, y);         // Get rgb data of a particular pixel
+          if (!pixels.contains(rgb)) {        // If we have the same pixel, we don't need it twice or more
+              lower_red = std::min(lower_red, qRed(rgb));
+              lower_green = std::min(lower_green, qGreen(rgb));
+              lower_blue = std::min(lower_blue, qBlue(rgb));
+
+              upper_red = std::max(upper_red, qRed(rgb));
+              upper_green = std::max(upper_green, qGreen(rgb));
+              upper_blue = std::max(upper_blue, qBlue(rgb));
+              pixels.append(rgb);
+          }
+      }
+  }
+#+end_src
+
+We have upper bounds and lower bounds of the color channels, so just find out the one that has widest range:
+
+#+begin_src cpp
+  int red = upper_red - lower_red;
+  int green = upper_green - lower_green;
+  int blue = upper_blue - lower_blue;
+  int max = std::max(std::max(red, green), blue);
+#+end_src
+
+Then we need to short our /pixels/ list according to the channel we just found out. /For example, if the blue channel has the greatest range, then a pixel with an RGB value of (32, 8, 16) is less than a pixel with an RGB value of (1, 2, 24), because 16 < 24./
+
+#+begin_src cpp
+  qSort(pixels.begin(), pixels.end(), [max,red,green,blue](const QRgb& rgb1, const QRgb& rgb2){
+      if (max == red)  // if red is our color that has the widest range
+          return qRed(rgb1) < qRed(rgb2); // just compare their red channel
+      else if (max == green) //...
+          return qGreen(rgb1) < qRed(rgb2);
+      else /*if (max == blue)*/
+          return qBlue(rgb1) < qBlue(rgb2);
+  });
+  // We just used qSort here.
+  // As comparison function, we sent a lambda function
+  // that compares two rgb color according to our selected color channel.
+#+end_src
+
+After sorting our list, we need to move the upper half of the list to another list, then we have two list. For these two list, we will do the same thing until we get *X* lists (So if we want to reduce our color palette to 16 colors, we need to repeat this step until we get 16 lists.).
+
+#+begin_src cpp
+  QList<QList<QRgb>> lists;
+  int list_size = pixels.size() / color_count;
+
+  for (int i = 0; i < color_count; ++i) {
+      QList<QRgb> list;
+      for (int j = list_size * i; j < (list_size * i) + list_size; ++j) {
+          list.append(pixels.at(j));
+      }
+      lists.append(list);
+  }
+#+end_src
+
+We got our lists. After that, we can get the average of each list and we can build our *X* colored palette or we can just get the median of each list. I didn't observe so much difference, so I'm going with the easy one.
+
+#+begin_src cpp
+  QVector<QRgb> palette;
+  for (QList<QRgb> list: lists) {
+      palette.append(list.at(list.size() / 2));
+  }
+#+end_src
+
+We build up our X color palette. The next thing I am going to do is convert our original image color palette to our new palette. Actually there is a Qt function for that but it has a /bug/.(I'll explain it later) So we need to implement this.
+
+#+begin_src cpp
+  QVector<QRgb> palette;
+  for (QList<QRgb> list: lists) {
+      palette.append(list.at(list.size() / 2));
+  }
+
+  QImage out(img.width(), img.height(), QImage::Format_ARGB32);
+  for (int x = 0; x < img.width(); ++x) {
+      for (int y = 0; y < img.height(); ++y) {
+      out.setPixel(x,y, palette[closestMatch(img.pixel(x, y), palette)]);
+      }
+  }
+#+end_src
+
+In this piece of code, we just create a =QImage= that has same size of our original image and format. Then we loop through all the pixels in our original image and find the closest color from our new palette then set that color to corresponding pixel of our new =QImage= object. And that's it.
+
+There is one function that needs explanation in this code, closestMatch. I just took it from the Qt source code. Actually, =QImage= has a function named convertToFormat. You can use this function to change the format of your image and also it lets you to change color palette of your image. The function definition goes like this: =QImage QImage::convertToFormat(Format format, const QVector<QRgb> &colorTable, Qt::ImageConversionFlags flags = Qt::AutoColor) const= and it's definition says:
+
+#+begin_quote
+  Returns a copy of the image converted to the given format, using the specified colorTable. Conversion from 32 bit to 8 bit indexed is a slow operation and will use a straightforward nearest color approach, with no dithering.
+#+end_quote
+
+So we can simply use this function to convert any image using our palette. But there is a one problem, if you don't want to change your image format(so your source and output image has the same format), it just simply returns the image itself without converting to our palette. So I extracted the part that it finds the closest color to given color from a vector:
+
+#+begin_src cpp
+  static inline int pixel_distance(QRgb p1, QRgb p2) {
+      int r1 = qRed(p1);
+      int g1 = qGreen(p1);
+      int b1 = qBlue(p1);
+      int a1 = qAlpha(p1);
+
+      int r2 = qRed(p2);
+      int g2 = qGreen(p2);
+      int b2 = qBlue(p2);
+      int a2 = qAlpha(p2);
+
+      return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2) + abs(a1 - a2);
+  }
+
+  static inline int closestMatch(QRgb pixel, const QVector<QRgb> &clut) {
+      int idx = 0;
+      int current_distance = INT_MAX;
+      for (int i=0; i<clut.size(); ++i) {
+          int dist = pixel_distance(pixel, clut.at(i));
+          if (dist < current_distance) {
+              current_distance = dist;
+              idx = i;
+          }
+      }
+      return idx;
+  }
+#+end_src
+
+* Kotlin function application
+:PROPERTIES:
+:PUBLISH_DATE: [2017-08-15 Tue]
+:END:
+I often write some code like this:
+
+#+begin_src kotlin
+  val result = someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      ....
+
+  someFunction(result)
+#+end_src
+
+As you can see last line of the code is breaking the beautiful flow of chained functions. One can rewrite this as:
+
+#+begin_src kotlin
+  someFunction(someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      ....)
+#+end_src
+
+Which seems better to me but not as good as this:
+
+#+begin_src kotlin
+  someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      ....
+      .apply(::someFunction)
+#+end_src
+
+I don't know if there is a standard way of doing this but here is my solution:
+
+#+begin_src kotlin
+  infix fun <T, R> T.apply(func: (T) -> R): R = func(this)
+#+end_src
+
+So this extension function applies its object to the function that it took as an argument and returns the result of application. You can use it as an infix operator, if you want to:
+
+#+begin_src kotlin
+  someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      .... apply ::someFunction
+#+end_src
+
+You can even chain function applications:
+
+#+begin_src kotlin
+  someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      ....
+      .apply(::fun1)
+      .apply(::fun2)
+      .apply(::fun3)
+      .apply { fun4(it) }
+#+end_src
+
+Which is same as:
+
+#+begin_src kotlin
+  someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      .... apply ::fun1 apply ::fun2 apply ::fun3 apply { fun4(it) }
+#+end_src
+
+Also this code is equivalent of this one:
+
+#+begin_src kotlin
+  val result = someData.split(...)
+      .map { ... }
+      .filter { ... }
+      .reduce { ... }
+      ....
+
+  fun4(fun3(fun2(fun1(result))))
+#+end_src
+
+* Programming AVR microcontrollers in Linux
+:PROPERTIES:
+:PUBLISH_DATE: [2017-12-22 Fri]
+:END:
+The /Windows way/ of doing that is just using /ATMEL Studio/ but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite /IDE/, if you are using one, is your job.
+
+** Tools
+These are the tools that we need to install, just pull them from your package manager (These package names exists in Arch Linux repos, they might differ in other distros repositories): - *avr-gcc* GNU C compiler for AVR architecture - *avr-libc* AVR libraries - *avr-binutils* Some AVR tools, we need it to create hex files from compiled programs, because avrdude needs a hex file instead of a binary to flash. - *avrdude* A /dude/ that is required to perform flashing
+
+** Steps
+1. Write your program. Let's say you named it main.c.
+2. Compile it.
+  #+begin_src sh
+    avr-gcc main.c -Os -Wall -mmcu=atmega32 -o main_bin
+  #+end_src
+    - Change *-mmcu* from /atmega32/ to your devices name. You can find your devices MCU from [[http://www.nongnu.org:80/avrdude/user-manual/avrdude_4.html][here]].
+3. Convert your program to hex from binary.
+  #+begin_src sh
+    avr-objcopy -j .text -j .data -O ihex main_bin "main.hex"
+  #+end_src
+4. Flash it.
+  #+begin_src sh
+    avrdude -c usbasp -p m32 -U flash:w:"main.hex"
+  #+end_src
+    - Here you can see *-p* option. You need to specify it according to your device. The list is [[http://www.nongnu.org:80/avrdude/user-manual/avrdude_4.html][here]].
+    - Also here you can see *-c* option. It specifies programmer type. In my case it's /usbasp/. So you should change it to whatever you are using. [[http://www.nongnu.org:80/avrdude/user-manual/avrdude_12.html][Here]] is the list of programmer that avrdude accepts. (If your programmer isn't in the list, which is probably not the case, you can specify your programmer as shown in the same page and save it to a ini file. Then add -C option that points the ini file you just write.)
+
+** The correct way of using =avrdude=
+When you do the last step, you will get an error that says you don't have permissions. You can just run avrdude with sudo and it will work this time. But of course this is not the preferred way to do it. What you need to do is write an udev rule so we can access programmer without root privileges.
+
+1. Create this file: =/etc/udev/rules.d/55-avr-programmer.rules=
+2. Write this into file:
+  #+begin_src
+  # USB-ASPcable
+  ATTR{idVendor}=="16c0", ATTR{idProduct}=="05dc", GROUP="plugdev", MODE="0666"~
+  #+end_src
+
+  - Again, as you can see this configuration is for my programmer, =usbasp=. You need to change =idVendor= and =idProduct= according to your device. To find these values, just run =lsusb= (If you are using usb extender cord or something like that, it is possible that lsusb might not display your device. Just connect your programmer directly to your PC if that is the case):
+    #+begin_src
+      > lsusb
+      ...
+      Bus 003 Device 010: ID 16c0:05dc Van Ooijen Technische Informatica shared ID for use with libu
+      ...
+    #+end_src
+  - In sixth column, you can see your devices vendor id and product id in this format =VENDOR_ID:PRODUCT_ID=. So edit your file according to this information.
+
+3. You may restart your computer or just use these commands to reload udev rules:
+  #+begin_src sh
+    $ sudo udevadm control --reload-rules
+    $ sudo udevadm trigger=
+  #+end_src
+   - You may need to unplug your programmer and plug it back. From now on you can use /avrdude/ without needing root privileges.
+
+* Functional programming in C++
+:PROPERTIES:
+:PUBLISH_DATE: [2018-03-01 Thu]
+:END:
+C++ enables you to do nearly everything with every possible paradigm. I actually consider it as a huge mess or maybe I'm the one that can not comprehend that much stuff. Considering C++ is made by people smarter than me, probably the latter is true.
+
+So trying to use C++ as a purely functional programming language is probably possible but pointless in all cases except having some fun. More acceptable strategy may be using it as functional but not so pure language like Scala(or something like that). But then the question arises, why not use a language that is designed for that from scratch? Many answers can be given to this question but the most obvious ones goes like this:
+
+- You hate C++ but you need to write some C++.
+- You love C++ and looking for better paradigms to use in your programming.
+- You are neutral towards C++ and too lazy to learn another language from scratch, so you decided to go with C++. But you are not that lazy to learn a new paradigm.
+- Other combinations involving love-hate relationship with C++.
+
+There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
+
+** First things
+*** Use auto at all costs (C++11)
+=auto= is just great. It makes your code faster and shorter. Consider this example (I took this example from Effective Modern C++ by Scott Meyers):
+
+#+begin_src cpp
+  std::unordered_map<std::string, int> m;
+  // ...
+  for (const std::pair<std::string, int>& p : m) {
+     // ...
+  }
+#+end_src
+
+The problem with this code is that =std::pair<std::string, int>= is not the type of an element in a =std::unordered_map<std::string, int>=. Its actually =std::pair<const std::string, int>=. So in each iteration, this type conversion creates some overhead. Solution is easy and elegant. Just use auto:
+
+#+begin_src cpp
+  std::unordered_map<std::string, int> m;
+  // ...
+  for (const auto& p : m) {
+     // ...
+  }
+#+end_src
+
+Not only we get rid of the overhead, we also have a shorter code. And considering we will use a lot of types involving templates and stuff, auto will save us from a lot of typing.
+
+*** Try not to deal with manual memory management (C++11)
+Another core thing about functional programming is that you just tell computer what to do, not how to do it. So do not deal with the memory management manually, try to leave this job to compiler.
+
+- Just use stack allocated objects instead of heap allocated objects as much as you can(See [[https://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use-of-new][this]] Q&A for more information/explanation).
+- If you need a pointer for real, use smart pointers.
+- Use move semantics. [[http://klmr.me/slides/modern-cpp/#1][Here]] is a great slide about what you need to do in nutshell.
+
+** Concepts/Patterns
+*** Higher order functions
+This is the fundamental idea of functional programming, passing functions as arguments to other functions, returning functions from functions. Before C++11 you could achieve such things by using function pointers or maybe using call operator(function objects). But now we have =std::function= and lambdas. Consider this code that shouts a given string:
+
+#+begin_src cpp
+  #include <iostream>
+  #include <string>
+
+  int main() {
+      std::string str = "oh, hi mark";
+
+      // Turn all chars to upper
+      for (auto & c: str)
+      c = toupper(c);
+
+      // Add some exclamation marks
+      str = str + "!!!";
+
+      std::cout << str << std::endl;
+  }
+#+end_src
+
+Lets make this shouting a function so we can reuse it.
+
+#+begin_src cpp
+  #include <iostream>
+  #include <string>
+
+  std::string shout(std::string str) {
+      for (auto & c: str)
+      c = toupper(c);
+
+      str = str + "!!!";
+      return str;
+  }
+
+  int main() {
+      std::string str = "oh, hi mark";
+      std::cout << shout(str) << std::endl;
+      // Now we can shout as much as we want.
+      std::cout << shout("you are tearing me apart Lisa") << std::endl;
+  }
+#+end_src
+
+Now think that we are going to use that =shout= function only in our =main= function. So it's cumbersome to add it to header and stuff. Here lambdas are coming into play:
+
+#+begin_src cpp
+  #include <iostream>
+  #include <string>
+
+  int main() {
+      auto shout = [](std::string str){
+      for (auto & c: str)
+          c = toupper(c);
+      return str + "!!!!";
+      };
+
+      std::cout << shout("oh, hi mark") << std::endl;
+      std::cout << shout("you are tearing me apart Lisa") << std::endl;
+  }
+#+end_src
+
+Problem solved. Lambdas are much more complex than this. They have a lot features. If you don't know about lambdas, check [[https://www.cprogramming.com/c++11/c++11-lambda-closures.html][this link]] out and also check [[https://www.cprogramming.com/c++11/c++11-lambda-closures.html][this link]] out to see what C++14 and 17 brings for lambdas. Especially /generic lambdas/ which is a C++14 feature will help you a lot:
+
+#+begin_src cpp
+  auto genericAdd = [](auto x, auto y){ return x+y; };
+  std::cout << "4+12=" << genericAdd(4, 7) << std::endl;
+  std::cout << "4.0+12=" << genericAdd(4.0, 7) << std::endl;
+  std::cout << "\"Hello \"+\"world!\"=" <<
+           genericAdd(std::string("Hello "), std::string("world!")) << std::endl;
+#+end_src
+
+One other benefit of using lambdas is that you can send them as parameters to =<algorithm>= functions. STL has some great functions which I'll talk about later in this tutorial.
+
+#+begin_src cpp
+  #include <algorithm>
+
+  //...
+
+  std::vector<int> vec = {4, 8, 15, 16, 23, 42};
+
+  // Print the minimum element
+  auto min = std::min_element(vec.begin(), vec.end());
+  std::cout << min << std::endl;
+
+  // Print elements greater than 20
+  auto printIfGreaterThan20 = [](int elem){
+      if (elem > 20)
+          std::cout << elem << std::endl;
+  };
+
+  std::for_each(vec.begin(), vec.end(), printIfGreaterThan20);
+
+  // Find elements greater than 20 and copy them into vec2
+  std::vector<int> vec2;
+  std::copy_if(v.begin(), v.end(), std::back_inserter(vec2), [](int x){ return x > 20; });
+
+  // Doing the same thing again but instead of our comparator function, just use another STL function
+  std::vector<int> vec3;
+  std::copy_if(vec.begin(), vec.end(), std::back_inserter(vec3),
+            std::bind(std::greater<int>(), std::placeholders::_1, 20));
+#+end_src
+
+I'll talk about =std::bind= and placeholders in a bit. But [[http://www.cplusplus.com/reference/algorithm/][here]] is a complete list of =<algorithm>= functions.
+
+*** Partial Application and Currying
+There is a function called =std::less(x,y)= which compares two comparable and returns true if =x<y= or false otherwise. You can use this function as your comparator function for sorting algorithms for example.
+
+#+begin_src cpp
+      std::vector<int> vec = {42, 4, 15, 8, 23, 16};
+      std::sort (vec.begin(), vec.end(), std::less<int>());
+      for(auto i: vec)
+          std::cout << i << ", ";
+      // Prints 4, 8, 15, 16, 23, 42
+#+end_src
+
+What if you want to use =std::less= as comparison function for =std::remove_if=? Lets say we want to remove numbers lower than 22 from our list. Of course we can write a lambda function like this and use it as our predicate function:
+
+#+begin_src cpp
+  [](int x) {return x < 22;}
+#+end_src
+
+But instead of writing our function, we want to use =std::less=. If we look the signature of =std::remove_if=, it requires an =UnaryPredicate= but obviously =std::less= is a =BinaryPredicate=. What we need to do is partially apply 22 to =std::less=:
+
+#+begin_src cpp
+  using namespace std::placeholders;
+  //...
+  auto lowerThan22 = std::bind(std::less<int>(), _1, 22); // Partial application using std::bind
+  std::vector<int> vec = {4, 8, 15, 16, 23, 42};
+  vec.erase(std::remove_if(vec.begin(), vec.end(), lowerThan22), vec.end());
+#+end_src
+
+As you can see, using =std::bind= function we bind the second argument of =std::less= to 22. As first argument, we sent a placeholder =_1= which is actually just =std::placeholders::_1=. After partial application =std::less(x,y)= function turned into something like this: =std::less(x, 22)=. So we partially applied some argument to a binary function and it turned into an unary function. Now it only needs one argument to work.
+
+However there is no out of the box support for currying and implementing it is not that easy. So I'll just leave a great SO answer [[https://stackoverflow.com/questions/152005/how-can-currying-be-done-in-c/26768388#26768388][here]]. You can learn what currying is and learn how can you implement it in C++11/14/17.
+
+*** Folding
+Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at [[https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)][here]]. I'm going to inspect folding in 2 categories:
+
+**** 1. Folding STL containers
+=std::accumulate= is the way. There are 2 definitions of =std::accumulate= which are:
+
+- =std::accumulate(first, last, initial_value)=
+- =std::accumulate(first, last, initial_value, binary_operator)=
+
+First one uses =+= operator as default =binary_operator=. Look at these examples:
+
+#+begin_src cpp
+  std::vector<int> v = {1,2,3,4,5};
+
+  // Get sum of the vector:
+  int sum1 = std::accumulate(v.begin(), v.end(), 0); // 0 as initial value
+  // sum1 is 15
+
+  // Multiply every element by 2 while summing them
+  int sum2 = std::accumulate(v.begin(), v.end(), 10, [](int x, int y) { return x + (2*y) });
+  // sum2 is 40 (care the initial value)
+
+  // Again, you can use STL functions as BinaryOperator
+  int result = std::accumulate(v.begin(), v.end(), 50, std::minus<int>());
+  // result is 35 (care the initial value)
+
+  // Folding boolean values
+  std::vector<boolean> bs = {true, true, false, true};
+  bool allTrue = std::accumulate(bs.begin(), bs.end(), true, std::logical_and);
+  bool anyTrue = std::accumulate(bs.begin(), bs.end(), false, std::logical_or);
+  // Care that these last two doesn't do short-circutting
+
+  // These does short-circutting
+  bool allTrue = std::all_of(bs.begin(), vec.end(), [](bool x) { return x; } );
+  bool anyTrue = std::any_of(bs.begin(), vec.end(), [](bool x) { return x; } );
+#+end_src
+
+**** 2. Folding arbitrary number of arguments
+C++11 has a thing called /variadic templates/ which enables you to do write such functions that can take arbitrary number of template parameters.
+
+#+begin_src cpp
+  // The `auto` usage here is a C++14 feature.
+  // You can define a template and make this base case for only one element
+  // and get the return type from template for making this function C++11 compatible.
+  auto sum() {
+      return 0;
+  }
+
+  // Again, use `First` as return type instead of `auto` to make this C++11 compatible.
+  template<typename First, typename... Rest>
+  auto sum(First first, Rest... rest){
+      return first + sum(rest...);
+  }
+
+  // Usage:
+  sum(1,2,3,4);
+  sum(42,13,26,38,11);
+  //...
+#+end_src
+
+So you can create functions that can take arbitrary number of arguments and fold them. What you need to do is just write your function in recursive way and define a base case(or other needed recursion rules). But even better, C++17 has variadic folds, which makes this process easier with handling the base case in itself.
+
+#+begin_src cpp
+  template<typename ...Args>
+  auto sum(Args ...args) {
+      return (args + ... + 0);
+  }
+#+end_src
+
+[[https://eli.thegreenplace.net/2014/variadic-templates-in-c/][Here]] is a great tutorial about variadic templates of C++11. [[http://en.cppreference.com/w/cpp/language/parameter_pack][Here]] you can learn more about parameter packs.
+
+*** Sum types (std::variant) (C++17)
+Sum types are very cool and useful. Basically a sum type is just only one type out of a set of possible types. To be more concrete, I'll give an example: Let's say you have SoundFile, ImageFile and VideoFile. So a file object can be SoundFile *or* ImageFile *or* VideoFile. Defining your file object as a sum type of these types gives you a lot of flexibility and type safety. See this example:
+
+#+begin_src cpp
+  struct File { std::string path; };
+  struct SoundFile : File { };
+  struct ImageFile : File { };
+  struct VideoFile : File { };
+
+  int main() {
+      std::variant<SoundFile, ImageFile, VideoFile> file;
+      // file object can be one of these three
+
+      file = ImageFile(); // Now file is ImageFile
+
+      // To get the content of the variant
+      ImageFile f2 = std::get<ImageFile>(file);
+      SoundFile f2 = std::get<SoundFile>(file); // This line throws std::bad_variant_access, because file object contains ImageFile, not SoundFile
+  }
+#+end_src
+
+In practice, we don't blindly try to get content of the variant. Better way to get the content is using a visitor and pattern match against all possible types. First we need to define a visitor and do the pattern matching using =std::visit=.
+
+#+begin_src cpp
+      struct FileVisitor {
+          void operator()(const SoundFile& if) const { std::cout << "A sound file!" << std::endl; }
+          void operator()(const ImageFile& if) const { std::cout << "An image file!" << std::endl; }
+          void operator()(const VideoFile& vf) const { std::cout << "A video file!" << std::endl; }
+
+          void operator()(const auto& f) const { std::cout << "Something else?!?!" << std::endl; }
+          // We know for sure that our file object either one of three types that we defined above.
+          // But we may end up adding another type to our variant, something like TextFile, and we
+          // may forget to update our visitor. In this case, this last pattern will match and save us.
+
+          // There is also another use case for this auto capture. For example you may want to play
+          // the sound of the file if it's a SoundFile otherwise you may want just display the file's
+          // path. In this case you will only pattern match for SoundFile and the rest will be handled
+          // by the auto capture.
+      };
+
+      // Now you can use std::visit
+      std::visit(FileVisitor(), file);
+#+end_src
+
+The problem with this approach is that it cannot capture state. The better way is using lambdas:
+
+#+begin_src cpp
+  template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; }:
+  template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+  std::visit(overloaded {
+      [](const SoundFile& sf) { std::cout << "Playing the sound..." << ' '; },
+      [](const auto& other) { std::cout << other.path << ;},
+  }, file);
+#+end_src
+
+Still a bit verbose but at least its in-place and more useful thanks to lambdas.
+
+*** Functors
+Here I'm not talking about =function objects=, I'm talking about =Functors= as described [[https://en.wikipedia.org/wiki/Functor][here]]. There are several libraries that provides some kind of Functor/Monad types but again I'll just talk about the built-in functors that you can start using immediately.
+
+In case you don't know about functors; a functor is a mapping that preservers the structure between two categories. More concretely, functors gives you the ability to make some transformation on some structure without exposing its contents to the public. What I mean by "exposing its contents to the public" is iterating over the structure if it's a container or dereferencing it if it's a pointer etc.
+
+For example, everytime you need to apply some function to a vector, you need to loop through it, apply the function to every individual element then put those elements back to a vector. Another example would be a pointer. Lets say you have a pointer to an int and a function that requires an int as input. To apply this function to your pointer, firstly you need to dereference it and then apply the function. Afterwards you need to wrap the result in a pointer again.
+
+**** STL Containers as Functors
+Functors needs a some kind of a helper function to apply the transformation function to the structure. For STL containers, this helper function is =std::transform=.
+
+#+begin_src cpp
+  std::vector<int> xs = {1, 2, 3, 4};
+
+  std::vector<int> squared_xs;
+  std::transform(xs.begin(), xs.end(), std::back_inserter(squared_xs), [](int x){ return x^2; });
+  // squared_xs is now {1, 4, 9, 16}
+#+end_src
+
+We applied the lambda function to xs without exposing the inner data structure.
+
+**** std::optional as Functor (C++17)
+=std::optional= is a type for representing situations that there can be a value or not. For example =std::optional<int> x= means that /x/ can contain an integer or it may contain nothing at all. Of course one can use pointers for such situations but you don't want to deal with memory allocation and other bad stuff that comes with pointers for this trivial problem. Check these links out to learn more use cases about =std::optional=: [[http://en.cppreference.com/w/cpp/utility/optional][link1]], [[https://stackoverflow.com/questions/16860960/how-should-one-use-stdoptional][link2]].
+
+=std::optional= does not come with a helper transformation function. There is a very nice [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0798r0.html][proposal]] that I came across but I don't know its current status. So lets just write our transformation function for =std::optional=, its fairly trivial to implement. To understand it, look at this pseudocode first:
+
+#+begin_src cpp
+  // We have an optional that wraps type T.
+  // We also have a function that takes a T and returns R.
+  // So what we want to do is somehow apply this function to optional<T>.
+  // To do that, we just extract the value from optinal and supply that
+  // value to the function. Then we wrap the result to optional.
+
+  optional<R> transform(optional<T> opt, (T -> R) func) {
+      if (opt.has_value())
+      return optional(func(opt.value()))
+      else
+      return optional_empty;
+  }
+#+end_src
+
+The C++ version with some simplifications:
+
+#+begin_src cpp
+  template <typename T, typename F>
+  auto transform(const std::optional<T>& opt, F&& f) -> std::optional<decltype(f(*opt))> {
+      using ResultType = std::optional<decltype(f(*opt))>;
+      return (opt) ? ResultType(f(*opt)) : std::nullopt;
+  }
+#+end_src
+
+Now we can take any function that has a type of =T -> R= and apply this function to our optional type using our transform function. Consider this:
+
+#+begin_src cpp
+  std::optional<int> x = 3;
+  auto plus_3 = [](int x){ return x + 3; };
+
+  auto y = transform(x, plus_3); // y is an optional<int> and has value of 6
+  auto z = transform(transform(y, plus_3), plus_3); // z is an optional<int> and has value of 12
+#+end_src
+
+So this is great, we can use functions with =std::optional= even though they do not know anything about =std::optional= with help of =transform= function.
+
+**** Pointers as Functors
+Let's say given a =std::unique_pointer<int>= you want to get =std::unique_pointer<std::string>= which represents the text version of that =int=. Assume that your conversion function has this signature: =std::string convert(int number)=. So again, you need the unpack the integer from =unique_pointer= and apply this function and wrap it into =unique_pointer= back. But as you know we can use functors to solve this unpacking problem. See this code:
+
+#+begin_src cpp
+  template<class T, class F>
+  auto transform(std::unique_ptr<T> opt, F&& f) -> std::unique_pointer<decltype(f(*opt))> {
+      using ResultType = std::unique_ptr<decltype(f(*opt))>;
+      return ResultType(f(*opt));
+  }
+#+end_src
+
+This is the transformation function for pointers. Notice the similarity with the optional transformation function. Dereferencing a pointer and getting the value of a optional has the same * syntax by coincidence. Now we can do something like this:
+
+#+begin_src cpp
+  std::unique_pointer<int> number;
+  ...
+  std:unique_pointer<std::string> result = transform(number, convert);
+#+end_src
+
+**** Taking functors a bit further
+As you may have noticed, functors does this: You have a variable of type =B<A>= and a function of type =C function(A)= (a function that takes =A= as argument and returns =C=) and you want to get =B<C>=. What functors does is handling all the unwrapping and wrapping for you.
+
+But what if you have a variable of type =B<A>= and a function of type =B<C> function(A)= and you want to get =B=. A more concrete example would be this: You have a =std::optional<std::string>= and a function that converts the given string to corresponding integer. Assume the function returns an =std::optional<int>= instead of just straight int, because the conversion may fail and we want to handle everything properly. Again, what you need to do is get string value from our optional variable. So now you have a straight =std::string= and now you can apply the conversion function to that string. As what we did with functors, we can generalize this pattern into a function which handles the unpacking for us. This function is called =monadic bind= in functional programming. This could be an easy exercise.
+
+* Nice little curl commands
+:PROPERTIES:
+:PUBLISH_DATE: [2018-03-24 Sat]
+:END:
+Here are some curl friendly web services that you can use in your terminal:
+
+** Weather
+- =curl wttr.in= Displays a nice weather report.
+
+  - You can also specify city-code like this: =wttr.in/city_name=
+  - If the output is too long for your terminal, just use it with less: =curl wttr.in | less -R=
+
+** IP
+- =curl https://api.ipify.org= Simply shows your public ip.
+- =curl ipinfo.io= Prints a formatted JSON that contains information about your ip.
+
+** File/URL
+- =curl -F'file=@yourfile.png' https://0x0.st= Uploads specified file to 0x0.st and returns the url.
+- =curl -F'shorten=http://example.com/some/long/url' https://0x0.st= Shortens the given URL.
+
+  - Just visit [[https://0x0.st][0x0.st]] for more information.
+
+- =curl --upload-file ./hello.txt https://transfer.sh/hello.txt= Uploads specified file to transfer.sh and returns the url.
+
+  - This service is more sophisticated, you can set some constraints to your files and stuff. Visit [[https://transfer.sh][transfer.sh]] for more examples with curl.
+
+** Cheat sheets
+- =curl http://cheat.sh/tar= Shows a simple cheatsheet for specified command (in this case =tar=)
+- =curl https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/tar.md= Same thing with above but this uses [[https://github.com/tldr-pages/tldr][tldr]]. But there are some problems:
+
+  - raw.githubusercontent.com/tldr-pages/tldr/master/pages/ *common* / *tar* .md
+
+  The first bold part may be one of these: =common=, =linux=. The second bold part is the command itself. If the command is linux-spesific, its under the =linux= folder obviously and most of the other things goes to =common=. You can create a small script that takes =command= as input and checks the folders one by one and returns if it finds an existing page. /This is left as an exercise for the reader./ (or you may just simply install a client, visit [[https://github.com/tldr-pages/tldr][tldr]]).
+
+** Translate
+
+#+begin_src bash
+  curl -s -A "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0" "https://translate.google.com/m?sl=FROM&tl=TO&ie=UTF-8" --data-urlencode "q=WORD_OR_SENTENCE" | grep -Po '<div dir="ltr" class="t0">\K[^<]*'
+#+end_src
+
+- Change =FROM= to source language code, for example =en= for English.
+- Change =TO= to destination language code, for example =tr= for Turkish.
+- Change =WORD_OR_SENTENCE= to anything you want. You can use spaces.
+- Wrap this to a bash script and enjoy easy translations.
+
+This example demonstrates how you can get the relevant information from an ordinary website. Always use the mobile versions if available because it is easier to parse them.
+
+** Cryptocurrency rates
+- =curl rate.sx= Shows the cryptocurrency rates.
+
+  - Run =curl rate.sx/:help= for more information about usage.
+
+** ASCII QR Codes
+- =curl qrenco.de/STRING= Turns given string/url into an ASCII art QR code.
+
+** WebDAV
+If you are using a /service/ that supports WebDAV, you can use these simple curl commands to download/upload files to your service. You can also do more sophisticated things with curl but if you need more than just downloading/uploading files then it's better to use a client dedicated for that service.
+
+- Downloading:
+
+  - =curl -u LOGIN:PASSWORD  https://WEBSITE.com/DAV_PATH/REMOTE_FILE --output FILE=
+  - Downloads the =server_dav://REMOTE_FILE= to =FILE=
+
+- Uploading:
+
+  - =curl -u LOGIN:PASSWORD -T FILE https://WEBSITE.com/DAV_PATH/REMOTE_FILE=
+  - Uploads FILE to =server_dav://REMOTE_FILE=
+
+It's better not to write your password while using these commands. If you remove the password part it will just simply show you a password prompt when you execute these commands which better than exposing your password to bash history.
+
+** Convert Documents
+I'll just leave a link here: [[https://docverter.com/][docverter.com]]. You can convert nearly any format to any other one using this service. It has a nice and clear API. The website provides curl command examples.
+
+* Automatize your logins with gnome-keyring (and optionally with KeePassXC)
+:PROPERTIES:
+:PUBLISH_DATE: [2018-05-04 Fri]
+:END:
+Storing passwords in plain-text is not an encouraged act but typing your password every time you start an application is also cumbersome. To solve this dilemma, the easiest solution I came up with is using =gnome-keyring= to store my passwords. I'm not using gnome either but =gnome-keyring= does not have much dependencies and a lot of applications already requires it. So I believe =gnome-keyring= is a good choice. The thing I want to achieve is something like this:
+
+- Store my passwords in =gnome-keyring= so that they are encrypted.
+- When I login to my computer, =gnome-keyring= automatically gets unlocked so that programs can get required passwords without hassling with me.
+
+But there is a problem in this particular solution, at least for me. I'm using /KeePassXC/ to manage my passwords, so copying all those passwords-or just the required ones, still a lot- to =gnome-keyring= is not feasible. So I need to do something about that too.
+
+** Installing/configuring =gnome-keyring=
+Skip this step if you already have a running =gnome-keyring=.
+
+- Just install these packages: =gnome-keyring=, =libsecret= and =seahorse=.
+- You need to create a keyring named login so that when you login, that particular keyring gets unlocked. To create that, open =seahorse= and follow /File -> New -> Password Keyring/. Name it as /login/ and as password enter your login password. This method works with login managers generally, if you are not using one, you need to figure it out. But getting =gnome-keyring= unlocked at login is not a big deal, if its locked, the first time a program requests for a password, =gnome-keyring= will show a prompt and ask for your password to unlock that keyring. Subsequent password requests will go silently because you have unlocked that keyring.
+
+** Adding passwords to =gnome-keyring=
+We need to create a /Stored Password/ in /login/ keyring that we've just created. But the problem is it is not possible to create /Stored Passwords/ with attributes in =seahorse=, we need to attach attributes to passwords because the command-line tool =secret-tool= requires them while querying for a password. So what you need to do is, simply create your /Stored Password/ using =secret-tool=:
+
+#+begin_src sh
+  secret-tool store --label=Mail name mail_password
+#+end_src
+
+Then it will ask for the password. /name/ and /mailpassword/ are key-value pairs. You can add more attributes like them or change them as you wish. Now you can see the added password in =seahorse=. (You may wonder why we did not specify keyring name while adding password. Because this command adds your password to your default keyring, which is the /login/ keyring. If it's not the default one, right-click on it in =seahorse= and set as default.)
+
+If you are using KeePassXC like me, my advise would be instead of duplicating your passwords in =gnome-keyring=, only add your keepass password in =gnome-keyring=: =secret-tool store --label=KeePass name keepass_password= I'll get to the usage later.
+
+** Querying for a password
+So you have your passwords in =gnome-keyring= and you want to supply that passwords to some program. Of course every program has different method for storing/getting your password. I'm going to use =mutt= as an example (it's a command-line mail client). But first, lets see how do we get our password:
+
+#+begin_src sh
+  secret-tool lookup name mail_password
+#+end_src
+
+This command will print your password. To configure mutt to use =gnome-keyring=, simply add this line to your muttrc:
+
+#+begin_src sh
+  set imap_pass=`secret-tool lookup name mail_password`
+#+end_src
+
+** KeePassXC
+To get a password from KeePassXC, use this command:
+
+#+begin_src sh
+  secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry"
+#+end_src
+
+But this prints a lot of information. To just get the value of /Password/ entry, use something like this:
+
+#+begin_src sh
+  secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-
+#+end_src
+
+To see your database structure, use this command:
+
+#+begin_src sh
+  secret-tool lookup name keepass | keepassxc-cli ls /path/to/keepass/db/file
+#+end_src
+
+This will only list top level entries and directories, you can add, for example, "/email" to this command and it will print out entries under //email/ folder.
+
+For your muttrc, you need to add this:
+
+#+begin_src sh
+  set imap_pass=`secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-`
+#+end_src
+
+** Security concerns
+You may say that this kind of approach exposes all of our passwords to all user-level programs. Actually this is kind of behavior I'm trying to achieve here, so that I don't need to type my passwords for each program. If you have a malicious program in your system, it will eventually get your passwords anyway. But =gnome-keyring= gives you a lot of flexibility. You can lock your keyring after your programs logged in or you can keep your keyring locked all the time(in that case, every time a program tries to use your password, =gnome-keyring= will ask for your user password. So you will just use one password for your every login which is also better than typing different passwords to different programs every time) etc. This is a much better solution than keeping your passwords as plain-text in your configuration files or typing them manually every time.
+
+Also you can probably do the same things with kwallet if you are using KDE. Just search for equivalent commands for kwallet.
+
+* Emacs - Run flycheck on all buffers after save
+:PROPERTIES:
+:PUBLISH_DATE: [2018-06-06 Wed]
+:END:
+/To just see the working solution, scroll down to The Result./
+
+Flycheck only runs on current buffer. If you make a change in a file that effects another file, buffer of the second file will not get notified and thus flycheck is not going to run on that buffer. So what we need to do is add an after save hook which runs flycheck on other buffers, but only on file buffers. We don't want to run flycheck on temporary buffers or so. It seems simple but it took some time for me to get there, because I know too little about =elisp=.
+
+First, we need a function that runs flycheck on given buffer. There is a function called =flycheck-buffer= but it only checks current buffer. But it turns out this is how elisp functions generally work and there is a way to get around that. Using =with-current-buffer buffer= function we can run any function on given buffer. =with-current-buffer= changes current buffer to given buffer, runs the function and restores current buffer to old one. So:
+
+#+begin_src elisp
+  (defun flycheck-buffer* (buffer)
+    "Runs flycheck on given BUFFER."
+    (with-current-buffer buffer
+      (flycheck-buffer)))
+#+end_src
+
+Another thing we need is that a function that returns all buffers. It's =buffer-list=. We need to remove temporary buffers and the current buffer from that list. Here it goes:
+
+#+begin_src elisp
+  (defun other-file-buffer-list nil
+    "Returns the list of all file buffers except currently open one and temporary buffers and stuff."
+    (delq (current-buffer)
+      (remove-if-not 'buffer-file-name (buffer-list))))
+#+end_src
+
+And the last function we need is this:
+
+#+begin_src elisp
+  (defun flycheck-all-file-buffers nil
+      "Simply run flycheck on all file buffers."
+      (interactive)
+      (mapc 'flycheck-buffer* (other-file-buffer-list)))
+#+end_src
+
+Lastly, we need to add this function to =after-save-hook=. But I want to be a able to disable/enable this feature whenever I want. Because if you have a lot of buffers open, this feature may cause some laggyness on save events.
+
+#+begin_src elisp
+  (defun enable-flycheck-all-file-buffers-on-save nil
+    (interactive)
+    (add-hook 'after-save-hook 'flycheck-all-file-buffers))
+
+  (defun disable-flycheck-all-file-buffers-on-save nil
+    (interactive)
+    (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
+#+end_src
+
+** The Result
+Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, when you save a file, other files will be flychecked too. To disable it, call =disable-flycheck-all-file-buffers-on-save=.
+
+#+begin_src elisp
+  (defun flycheck-buffer* (buffer)
+    "Runs flycheck on given BUFFER."
+    (with-current-buffer buffer
+      (flycheck-buffer)))
+
+  (defun other-file-buffer-list nil
+    "Returns the list of all file buffers except currently open one and temporary buffers and stuff."
+    (delq (current-buffer)
+      (remove-if-not 'buffer-file-name (buffer-list))))
+
+  (defun flycheck-all-file-buffers nil
+      "Simply run flycheck on all file buffers."
+      (interactive)
+      (mapc 'flycheck-buffer* (other-file-buffer-list)))
+
+  (defun enable-flycheck-all-file-buffers-on-save nil
+    (interactive)
+    (add-hook 'after-save-hook 'flycheck-all-file-buffers))
+
+  (defun disable-flycheck-all-file-buffers-on-save nil
+    (interactive)
+    (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
+#+end_src
+* Bash scripting guide
+:PROPERTIES:
+:PUBLISH_DATE: [2019-02-21 Thu]
+:END:
+I've been writing some bash scripts lately and I've learned a lot. I must say that it's really fun to write bash scripts, every line of code feels hacky and no matter what I wrote, it felt bad which is kind of liberating. I found my real self in bash scripts. Here are some of the things that I find useful or/and important.
+
+I'll be talking about =bash= specifically, but I lot of the features in here are implemented in very similar ways in other shells.
+
+** shebangs
+The most portable shebang for bash scripting is: =#!/usr/local/env bash=. It basically asks =env= to find =bash= and wherever it may be, run this script with it. Do not use =sh=, it may be linked to =bash= but most of the time this is not the case.
+
+shebangs also let's you do some cool tricks:
+
+*** Running scripts with sudo
+If you need to run some commands with root privileges in your script, it is generally advised to run your script using =sudo= instead of having a =sodo command ...= kind of line in the script. So to write such script, you need to check if you have root privileges or not. Instead of that, you can have this kind of shebang:
+
+#+begin_src bash
+  #!/bin/sudo /bin/bash
+#+end_src
+
+Now your script is guaranteed to be running with sudo, /kind of/. As I said using =#!/usr/local/env= to find the binary you want is the most reliable way of doing it. With this shebang, we got this problems: =sudo= or/and =bash= might not be in =/bin= directory. You might have tempted to do this then:
+
+#+begin_src bash
+  #!/usr/bin/env sudo bash
+#+end_src
+
+Which seems reasonable. We ask =env= to find =sudo= and we are calling it with bash argument and due to nature of shebangs, the script's path added to the end. So the final call that is produced by the shebang will be this:
+
+#+begin_src bash
+  /path/to/sudo bash /path/to/your/script
+#+end_src
+
+But unfortunately, this is not the case. Because =env= parses all arguments as a whole, it looks for an executable named =sudo bash= in your =$PATH=. But that is also easy to fix, just use =-S= option of =env= to be able to pass arguments in shebang lines:
+
+#+begin_src bash
+  #!/usr/bin/env -S sudo bash
+#+end_src
+
+I'm not entirely sure about this style of sudo calls. There may be implications that I'm missing but it worked out well for me.
+
+*** Running other programs with shebangs
+This is not entirely related to bash scripting but it's worth mentioning. Check this out:
+
+#+begin_src bash
+  #!/usr/bin/env -S cat ${HOME}/.bashrc
+#+end_src
+
+This script directly calls =cat= with =${HOME}/.bashrc= argument. Instead of using =bash= to call =cat= program, we got rid of one level of indirection. (using =${HOME}= instead of =$HOME= is just an =env= restriction). This may seem silly, but I'm sure it has it's own use-cases.
+
+** Primitives
+Here are some basic tips that makes your code faster and easy to reason.
+
+*** =true= and =false=
+- =true= and =false= are actual binaries that does nothing and returns =0= and =1= respectively as their exit code. If you pass a command to if clause, it checks the exit code of it and depending on that selects the right branch. So =0= exit code which means successful exit is considered as =true= and everything else is considered as false.
+
+#+begin_src bash
+  if true; then echo "hey, it's true!"; fi
+
+  # They are also helpful in context of functions:
+  function starts_with {
+      case "$1" in
+          "$2"*) true ;;
+          *) false ;;
+      esac
+  }
+
+  # prints yes
+  if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
+#+end_src
+
+- But I should mention that =true= and =false= does not stop the function from flowing. In bash, last command call's exit code is returned as function's exit code. To stop the function and return true, just use =return=. =return= halts the function and returns =0= as the exit code. We can revise the function from above in that style:
+
+#+begin_src bash
+  function starts_with {
+      case "$1" in
+          "$2"*) return ;;
+      esac
+
+      false
+  }
+#+end_src
+
+- To exit early with a false value, just use =return something-not-zero=, like =return 255=.
+
+*** =[[ ]]= and =(( ))= instead of =[ ]=
+- =[= is an actual binary. So it costs more to use it. =[[= is a bash built-in and has a lot of improvements over =[=.
+- =((= is like =[[= but for arithmetic expressions only. You can compare variables and make some calculations within them directly.
+
+#+begin_src bash
+  echo "Enter a year:"
+  read year
+
+  if [[ -z $year ]]; then
+      echo "Year cannot be empty."
+  elif (( ($year % 400) == 0 )) || (( ($year % 4 == 0) && ($year % 100 != 0) ))
+      echo "A leap year!"
+  else
+      echo "Not a leap year :("
+  fi
+#+end_src
+
+- See [[http://mywiki.wooledge.org/BashFAQ/031][this link]] for more information.
+
+*** =let= instead of =(( ))=
+Another somewhat nicer alternative to =(( ))= is =let=. It's not an alternative for using inside if clauses but for assignments it requires less typing:
+
+#+begin_src bash
+  let l=33+9
+#+end_src
+
+** Variables
+*** =declare= and it's friends
+=declare= is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type =help declare= and see a very informative and short text about it.
+
+- Using declare inside a function makes the variable local, meaning they do not interfere with global variables. A better alternative is just using =local= built-in which is more clear. If your intention is exact opposite, meaning you want to declare a global variable, use =-g= option with declare. (Actually just assigning something to a variable without =declare=/=local= keywords make them global. So you don't need something like this: =declare -g a=3= inside a function to make it global, =a=3= is enough. =-g= comes handy if you are using other options of =declare= and wanting to make the variable global)
+
+#+begin_src bash
+  greeting="hey"
+
+  function greet {
+      local greeting="hi"
+
+      echo "Your name:"
+      read name
+
+      echo "Local greeting:"
+      echo "$greeting $name"
+  }
+
+  greet
+  echo "Global greeting:"
+  echo "$greeting $name"
+#+end_src
+
+- As you may have noticed, =name= becomes a global variable. If you want to keep it in the scope of the function, add this line before =read name=: =local name=.
+
+- Also you can use the options that =declare= takes with =local=. (Yeah it's possible to do some stupid thing like: =local -g=)
+
+- To declare a read-only variable, you can use =declare -r= or better, =readonly=.
+
+- To export variables into environment you can use =declare -x= or better, =export=
+
+*** String manipulation
+Here is a quick summary of string manipulation capabilities of bash: (Assume =string= is a pre-defined variable)
+
+- =${#string}= → returns the length of =$string=.
+- =${string:4}= → returns the substring starting at fourth character of =$string=.
+- =${string:4:3}= → returns the substring of length of three starting at fourth character of $string.
+- =${string#asd}= → Removes =asd= from beginning of =$string= (if it starts with =asd=).
+- =${string##asd}= → Same as above. The difference becomes apparent between =#= and =##= when you start using some globing operators. While =#= removes shortest match, =##= removes the longest match. Check this:
+
+#+begin_src bash
+  string="abcabcdefg"
+  x=${string#a*c}  # x is abcdefg
+  y=${string##a*c} # y is defg
+#+end_src
+
+- =${string%asd}= → Removes =asd= from back of $string.
+- =${string%%asd}= → Same as above, but like in the case of =#= and =##=, =%= removes shortest match, =%%= removes longest match.
+- =${string/asd/123}= → Replaces first match of =asd= with =123=.
+- =${string//asd/123}= → Replaces all matches of =asd= with =123=. Again you can use globing characters here.
+- =${string/#asd/123}= → Replace =asd= if it's in front of the string with =123=.
+- =${string/%asd/123}= → Replace =asd= if it's at the end of $string with =123=.
+
+Also there is stuff for case manipulation. Given variable ~EXAMPLE="An ExaMplE"~, observe these:
+
+- =${EXAMPLE^}= → =An ExaMplE=
+- =${EXAMPLE^^}= → =AN EXAMPLE=
+- =${EXAMPLE,}= → =an ExaMplE=
+- =${EXAMPLE,,}= → =an example=
+- =${EXAMPLE~}= → =An ExaMplE=
+- =${EXAMPLE~~}= → =AN eXAmPLe=
+
+[[http://www.tldp.org/LDP/abs/html/string-manipulation.html][Here]] is a more complete reference with more examples.
+
+*** Regular expression matching
+You can use ==~= operator to perform a regular expression match instead of simple globing:
+
+#+begin_src bash
+  # Check if input is hexadecimal:
+  if [[ $input =~ ^[[:xdigit:]]*$ ]]; then
+      # do stuff with it
+  fi
+#+end_src
+
+*** Default vaules
+You can use =${VAR:-DEFAULT}= or =${VAR-DEFAULT}= syntax to define default variables. The first one outputs =DEFAULT= if the =$VAR= is empty or unset. Latter only outputs =DEFAULT= when =$VAR= is unset. A practical example of this would be:
+
+#+begin_src bash
+  echo "Your config directory is: ${XDG_CONFIG_HOME:-$HOME/.config}"
+#+end_src
+
+There is also a version of this which uses === instead of =-=. The difference is that it also sets the variable to default value so that you can use the variable afterwards without defining a default value everytime.
+
+** Parameters
+*** shift
+You can access to parameters using positional parameters: =$1, $2 ... $9, ${10}, ${11} ...=. =shift=, as the name suggests, shifts those parameters. So when you call =shift=, =$2= becomes =$1=, =$3= becomes =$2=... It becomes handy in loops or sometimes you just want to process first /N/ parameters and leave rest as is while passing them to another program.
+
+#+begin_src bash
+  # Removes given files if they are empty
+
+  while (( "$#" )); do
+      if [[ -s $1 ]]; then
+          echo "Can't remove."
+      else
+          rm $1
+      fi
+
+      shift
+  done
+#+end_src
+
+=shift= also can be called with a number argument, like =shift 3= which shifts parameters 3 times.
+
+*** Preserving
+Say that we have a wrapper script/function that checks if =ripgrep= (rg) is installed and executes it with given parameters otherwise it calls =grep= with given parameters:
+
+#+begin_src bash
+  rg_path=$(which rg)
+   if [ -x "$rg_path" ]; then
+      rg "$@"
+  else
+      grep "$@"
+   fi
+#+end_src
+
+- ="$@"= is equivalent of doing ="$1" "$2" "$3" ...=. And it's the only thing that does that.
+- ="$*"= concatenates parameters using =IFS= as separator. (If IFS is empty, which is the case in this script, it simply uses space as separator.)
+- To learn more about special parameters, check [[https://www.gnu.org/software/bash/manual/bash.html#Special-Parameters][this]].
+
+*** Looping through arguments
+It's a pretty common task with pretty easy syntax:
+
+#+begin_src bash
+  for arg in "$@"; do
+      echo "$arg"
+  done
+#+end_src
+
+Or better yet:
+
+#+begin_src bash
+  for arg; do
+      echo "$arg"
+  done
+#+end_src
+
+** Subshells
+The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
+
+#+begin_src shell
+  echo "stuff" | read some_var
+#+end_src
+
+In this example, usage of =|= introduces a subshell and the =some_var= is defined in this subshell. Then that subshell is vanished when the execution of the line is over. So that you can not use =some_var= in rest of the script. There are a few ways to get around this issue. Most simple one being:
+
+#+begin_src bash
+  echo "stuff" | {
+      read some_var
+      echo "I can use $some_var"
+  }
+#+end_src
+
+Here =|= still introduces a subshell but we continue to do our stuff in that subshell. But still you can't communicate with the parent shell, after the ={ ... }= is over =some_var= is not available for use. At this point you have two solutions: /here strings/ and /process substitutions/.
+
+*** Here strings
+Continuing the example above, we can do something like this:
+
+#+begin_src bash
+  read some_var <<< "stuff"
+  # or
+  read some_var <<< $(echo "stuff")
+#+end_src
+
+=<<<= redirects the string to stdin of the command. So that we didn't create a subshell and we can use =some_var= from now on in our script.
+
+*** Process substitution
+A process substitution creates a temporary file with the given output and passes that temporary file to a command. For example:
+
+#+begin_src bash
+  read some_var < <(echo "stuff")
+#+end_src
+
+Here, the effect is same as with /here strings/ but what happens is a lot different. As you may already know =<= redirects given file to stdin of the command before it. =<(...)= simply creates a temporary file containing =...= and replaces itself with the path to that temporary file. To simplify, you can think that the command becomes: =read some_var < /dev/fd/some_number= after evaluating =<(echo "stuff")= part (=/dev/fd/...= is the path where temp file is created, and it contains =stuff=). Now =<= simply redirects the contents of the file to =read some_var= command.
+
+** Functions
+*** Functions that accepts both arguments and stdin
+Let's say that you want your function to accept data either as argument or from stdin. You can simply combine =${VAR:-DEFAULT}= syntax with redirecting operator and you will have this:
+
+#+begin_src bash
+  str=${*:-$(</dev/stdin)}
+#+end_src
+
+Now your function will concatenate your arguments and set it to =str= or if there are no arguments it'll read stdin and set it to str.
+
+** Linting bash scripts
+It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called =shellcheck= addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using [[https://github.com/w0rp/ale][ALE]] extension, it works out of the box with shellcheck.) For /emacs/ users, /Flycheck/ works out of the box with shellcheck.
+* Running SQL on org-mode tables
+:PROPERTIES:
+:PUBLISH_DATE: [2019-11-14 Thu]
+:END:
+I was tracking some sleep related information about myself using org tables and I wanted to visualize them. I thought to myself, /I know R! Let's do all that stuff in R!/. Oh boy, I was wrong. I used R in the past for an undergraduate course and I wasn't heavily invested in taking notes at those times. (Now thanks to org-mode +and zotero+, I don't forget /anything/ anymore) I quickly gave up using R for manipulating the data but I was going to use it for plotting anyway. At that point I was about to give up, firstly because I didn't want to have an overly-complex solution for such a worthless thing and secondly I was extremely lazy.
+
+Then I remembered about =sqldf=. It's an R package that manipulates R dataframes (basically tables, at least for our purposes in this post) using SQL. Behind the scenes it uses an SQL DB implementation for this. It handles all the dirty stuff for us; like creating tables, running the SQL and conversion between the formats. So I simply used =sqldf= and R's plot function to accomplish my goal (Yeah, =ob-R= package supports passing org tables to R code as variables). Then I thought it may be really nice to have an SQL backend for manipulating org tables. Because why not? Nearly every /table-like technology/ have some kind of SQL-like query language.
+
+** Preparation
+*** R
+You need to install R and =sqldf= package.
+
+#+begin_src bash
+  pacman -S r # use your package manager for installing R, this is just an example for Arch
+#+end_src
+
+Now you need to install =sqldf=. But before that I recommend adding something like this to your environment variables (probably using =~/.profile= file, you know what's best), otherwise you will need root privileges to install R packages.
+
+#+begin_src bash
+  export R_LIBS_USER="$HOME/.rlibs"
+#+end_src
+
+You also need to create that directory:
+
+#+begin_src bash
+  mkdir ~/.rlibs
+  # BTW, run this too while you are here:
+  echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' > ~/.Rprofile
+#+end_src
+
+Now open the R console.
+
+#+begin_src bash
+  R
+#+end_src
+
+And run this:
+
+#+begin_src R
+  install.packages("sqldf")
+#+end_src
+
+That's all for the R part.
+
+*** Emacs
+Enable running R code.
+
+#+begin_src elisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)))
+#+end_src
+
+This is optional but for R syntax highlighting and stuff you may want to install =ess= package. I recommend installing it with =use-package=:
+
+#+begin_src elisp
+  (use-package ess :ensure t)
+#+end_src
+
+** Running SQL on org tables
+Now you can simply do this:
+
+#+begin_src org
+  ,#+tblname: tbltest
+  | col_a | col_b |
+  |-------+-------|
+  |     1 |     2 |
+  |     1 |     4 |
+  |     1 |     6 |
+  |     2 |     7 |
+  |     2 |     8 |
+  |     2 |     9 |
+
+  ,#+begin_src R :colnames yes :var tbltest=tbltest
+  library(sqldf)
+  sqldf("SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a")
+  ,#+end_src
+#+end_src
+
+And as the result, you get this:
+
+#+begin_src org
+  ,#+RESULTS:
+  | col_a | AVG(col_b) |
+  |-------+------------|
+  |     1 |          4 |
+  |     2 |          8 |
+#+end_src
+
+Nice! But we don't have SQL syntax highlighting. We can get over it by doing something like this:
+
+#+begin_src org
+  ,#+name: tbltest-sql
+  ,#+begin_src sql
+  SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a
+  ,#+end_src
+
+  ,#+begin_src R :noweb yes :var tbltest=tbltest
+  library(sqldf)
+  sqldf("<<tbltest-sql>>")
+  ,#+end_src
+#+end_src
+
+Now we have a nice syntax highlighting for our SQL. But for this you need to have at least 2 different code blocks every time.
+
+*** Using SQL instead of table formulas
+I found some obscure ways of doing this but here I present the most sane one:
+
+Firstly you need to have a named src block that calls =sqldf= with given SQL code, somewhere in your org file. Putting it under some section with =:noexport:= tag might be good idea if you are willing to export the document:
+
+#+begin_src org
+  ,#+name: table-sql
+  ,#+begin_src R :var sql="" :colnames yes
+  library(sqldf)
+  sqldf(sql)
+  ,#+end_src
+#+end_src
+
+#+begin_src org
+  ,#+tblname: sometbl
+  ,#+RESULTS: sometbl
+  | col_a | col_b | col_sum |
+  |-------+-------+---------|
+  |     1 |     2 |       3 |
+  |     1 |     4 |       5 |
+  |     1 |     6 |       7 |
+  |     2 |     7 |       9 |
+  |     2 |     8 |      10 |
+  |     2 |     9 |      11 |
+  ,#+NAME: sometbl
+  ,#+CALL: table-sql[:var sometbl=sometbl](sql="SELECT col_a, col_b, (col_a + col_b) as col_sum FROM sometbl")
+#+end_src
+
+When you =C-c C-c= on the =#+CALL= line, the table will be replaced with the result of given SQL.
+
+I believe things can be simplified with /a little bit of/ elisp but it may not worth the effort, this seems already an OK solution for me.
+
+*UPDATE*: Here is an interesting package, called [[https://github.com/tbanel/orgaggregate][orgaggregate]], which covers most of the use cases presented here and much more but without any external dependencies and does everything with a sane syntax. Check it out!
+
+* Better keyboard experience in Linux
+:PROPERTIES:
+:PUBLISH_DATE: [2020-05-30 Sat]
+:END:
+In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
+
+** The case against the mouse
+/(This part is mostly just me rambling, feel free to skip it)/
+
+First of all, I'm a big believer of a keyboard-oriented workflow. Sometimes it costs more time to use the keyboard but it helps me to stay sane. Mouse generally requires a certain level of consciousness, like you need to aim for stuff, try to be precise while selecting something, etc. The content you are dealing with the mouse is not static, so you need to do some calculation every time to get the desired action with the mouse. But with the keyboard, you can just mindlessly press your 4-key shortcut and get a magic happening. After a certain point, even your most complex shortcuts become a reflexive response.
+
+There are use cases for mouse too, of course! Mindlessly scrolling down a website is always better done with a mouse on your lap. Some jobs may be better suited for a drag-drop focused workflow and I get them. What I try to minimize is that when you are doing a keyboard-focused work and you need mouse time to time. That is just a distraction and a cause of wrist pain. Other than that, trying to eliminate mouse is pointless.
+
+** Modifying the keymap
+To get the most out of your keyboard, we need to create a specialized keymap for ourselves. For doing that I'll be using =xmodmap=. =xmodmap= is a simple utility tool for modifying your keymaps. The configuration is generally done through =~/.Xmodmap= file.
+
+*** Selecting the proper base keymap
+I simply recommend using =us(intl)= keymap as our base keymap. Because this keymap enables us to use =AltGr= key which will become super beneficial later in this post. To set your keymap to =us(intl)=, do this:
+
+#+begin_example
+  localectl set-x11-keymap 'us(intl)'
+#+end_example
+
+You need to restart your X session to get it working or you can simply do this:
+
+#+begin_example
+  setxkbmap 'us(intl)'
+#+end_example
+
+*** Fixing some problems with the =us(intl)=
+While it enables =AltGr= key, it also turns backtick and apostrope keys into modifier keys that creates accented versions of pressed key. I do not want this behavior, to get the normal behavior add these into your =~/.Xmodemap=.
+
+#+begin_example
+  keysym dead_grave = grave asciitilde
+  keysym dead_acute = apostrophe quotedbl
+#+end_example
+
+*** Empowering the =[=, =]= keys
+When you press =Shift + [= you get ={=. As a natural extension to that, I bind =AltGr+[= to =(=. This is simply easier than doing =Shift+9=, considering parentheses used frequently while coding, this change is a nice touch. Put these into your =~/.Xmodmap=:
+
+#+begin_example
+  !! AltGr+[ → (, AltGr+] → )
+  keysym bracketleft = bracketleft braceleft bracketleft braceleft parenleft
+  keysym bracketright = bracketright braceright bracketright braceright parenright
+#+end_example
+
+*** More UTF-8 chars
+Most of the modern programming languages supports using UTF-8 glyphs. For example you can use =→= instead of =->= or =≥= instead of =>==. They are more expressive, better-looking and feels right. Also while preparing a document or while having a causal conversation, it's just nicer to utilize these characters. Here is the related part of mine =~/.Xmodmap=:
+
+#+begin_example
+  !! Quick access for some unicode chars
+  !! altgr + b → λ  | altgr + a → →
+  !! altgr + n → ¬  | altgr + d → ⇒
+  !! altgr + , → ≤  | altgr + . → ≥
+  !! altgr + = → ≠  | altgr + shift + = → ≔
+  !! altgr + / → ÷  | altgr + ; → ∷
+  !! altgr + 8 → ×  | altgr + t -> ✓
+  !! altgr + x → ❌ | altgr + f → ∀
+
+  keysym b = b B b B U03BB
+  keysym a = a A a A U2192
+  keysym x = x X x X U274C
+  keysym f = f F f F U2200
+  keysym n = n N n N U00AC
+  keysym d = d D d D U21D2
+  keysym t = t T t T U2713
+  keysym 8 = 8 asterisk 8 asterisk multiply
+  keysym comma = comma less comma less U2264
+  keysym period = period greater period greater U2265
+  keysym equal = equal plus equal plus U2260 U2254
+  keysym question = slash question slash question division
+  keysym semicolon = semicolon colon semicolon colon U2237
+#+end_example
+
+*** A new modifier key, Hyper
+=CapsLock=, at least for me, one of the most useless key on the keyboard. Actually it's kinda more useful, when you compare it with the =RightCtrl=, at least you can press it. But the functionality is not really required, do you really find yourself typing in all caps for long periods of time? Even if so, you can simply write them all in lowercase and convert them to upper case with the help of your favorite text editor. What I like to do is, remap the =CapsLock= key to a new modifier key, namely =Hyper=, which enables you to create new shortcuts. You can think =Hyper= like the =Control= key but no program uses it and you are free to map anything you want to. Here is the relevant =~/.Xmodmap= configuration:
+
+#+begin_example
+  !! Unmap capslock
+  clear Lock
+  keycode 66 = Hyper_L
+  !! Leave mod4 as windows key _only_
+  remove mod4 = Hyper_L
+  !! Set mod3 to capslock
+  add mod3 = Hyper_L
+#+end_example
+
+Now we will be able to create shortcuts using this =Hyper= key. I'll come to this later in this post.
+
+Another thing is that some people like to do is that using =CapsLock= as =ESC= and I'm also into that, but I don't want to sacrifice my =Hyper= key too. For this there is a solution, which involves using another simple tool where you use =CapsLock= key as the =Hyper= key when combined with the other keys but when it's pressed alone it acts as the =ESC= key. I'll come to this later in this post too.
+
+*** =RightCtrl=?
+I don't know if anybody uses this key unironically but the only use case I found for it was using it as the =ESC= key. On my older keyboard I was able to press =RightCtrl= with my palm and as the =ESC= key it served me quite well. But it's harder to press =RightCtrl= with my palm on my new keyboard so I just do not use it anymore. I'm simply using the =CapsLock= as the =ESC= as I described above. But here is the configuration for using =RightCtrl= as the =ESC= if you want to give it a shot:
+
+#+begin_example
+  keycode 105 = Escape
+#+end_example
+
+*** Global directional keys
+I do not like to leave the home row of my keyboard, it's just hard to reach for the arrow keys for example. Also when you get used to =h,j,k,l= keys in vim for directional movement, you just want them everywhere. So I simply remapped =AltGr + {h,j,k,l}= to ={Left, Down, Up, Right}= keys respectively. When you press =AltGr + j= it acts like =Down= key, anywhere in your system. You do not need configuration per program, you just need to have this in your =~/.Xmodmap=:
+
+#+begin_example
+  keysym h = h H h H Left Home
+  keysym j = j J j J Down Prior
+  keysym k = k K k K Up Next
+  keysym l = l L l L Right End
+#+end_example
+
+This configuration also binds =AltGr + Shift + {h,j,k,l}= to =Home, Prior, Next, End= keys. I have a little issue with this combination though, when you do a =AltGr + Shift + h= it gets registered as =Shift + Home=. This makes some programs select the text till the beginning of the line from where your cursor is, but for some programs it does not do that. The programs I use mostly behave in way that I want.
+
+Side note for Emacs users: I generally do not use these bindings in Emacs to make a movement but sometimes I do use them and Emacs does a selection when I press them. You can disable shift selection to get the desired result:
+
+#+begin_src elisp
+  (setq shift-select-mode nil)
+#+end_src
+
+*** More with =AltGr=
+As you may have inferred, to create a combination involving =AltGr= you need to change fifth field of the =keysym= assignment.
+
+#+begin_example
+  !! AltGr + j → Down
+  !! I'm not quite sure what the second j J part does but I accepted that as it is
+  keysym j = j J j J Down
+#+end_example
+
+You can use =AltGr= to create accented characters, this might be a nice alternative for constantly switching between your native keyboard layout and =us(intl)=. If you find any other use cases for this key, let me know! The nice part of utilizing this key is that, like the =Alt= key, you use your thumb for pressing it and your thumb is the most powerful finger on your hand. So it makes sense to embrace keys like =Alt=, =AltGr=.
+
+** Shortcuts, key-bindings
+There are tons of programs that can handle this but my personal favorite is =sxhkd=. It's DE/WM agnostic, the configuration is pretty simple and intuitive. It also supports key chording, which is just fantastic.
+
+I use my =super= (windows) key for the WM related shortcuts; like =super + {h,j,k,l}= for switching the focused window, =super + {comma, period}= for focusing next/prev monitor, =super + w= for closing the current window etc. Observe the following configuration to get a taste of =sxhkd=:
+
+#+begin_example
+  # Focus the next/previous desktop
+  super + {n,p}
+      bspc desktop --focus {next,prev}.local
+
+  # audio/mic toggle
+  XF86Audio{_,Mic}Mute
+      amixer set {Master,Capture} toggle
+#+end_example
+
+I use =hyper= key to manage all the programs I have, or to run stuff. =hyper + p= does a play/pause, =hyper + c= opens a calendar in a popup-like window, =hyper + t= opens a popup for translation etc. These things take a lot of keys, but I also want some shortcuts for opening programs. I can always do =hyper + a= and search for the specific program that I want to open by typing it's name but that's time consuming. A simple binding would be better but we already exhausted all the keys on the keyboard. This is where chord chains comes right in:
+
+#+begin_example
+  # Run stuff
+  hyper + r; {f, e, r, t, v, k, q}
+      {firefox, emacsclient -c, jaro ~, lxtask, vivaldi-stable, keepassxc, qbittorrent}
+#+end_example
+
+When I do =hyper + r= followed by =f=, Firefox opens. Simple as that. This gives you whole new set of bindings. Multiple keys are also supported, for example, I have this in my configuration:
+
+#+begin_example
+  hyper + r; p; {s, p, w}
+      sxiv {~/Pictures/screenshots/, ~/Pictures/phone/Camera/, ~/Pictures/wallpapers/}
+#+end_example
+
+Automating stuff through shortcuts is nice, especially if the program offers a nice set of command-line options. Sometimes programs does not offer a command-line interface but they offer a DBUS API that you can utilize, it's nice to keep this in mind while creating your bindings.
+
+** Various tools/configurations
+*** =hyper= as =ESC=
+As I mentioned above, I use =hyper= as a modifier key when used in combination with some other key. But when I press it by itself, it acts as =ESC= key. This is achieved through using a simple program called =xcape=. I start =xcape= with the arguments below and it gives me this functionality:
+
+#+begin_example
+  xcape -e 'Hyper_L=Escape'
+#+end_example
+
+The purpose of =xcape= is to make a modifier key to be used as another key when it is pressed and released on its own. So in this case, we simply say to =xcape= that make =hyper= act as =ESC= when it's pressed and released by its own. The thing is that, you may experience a slight delay, because =ESC= is registered right after you release your =hyper= key.
+
+You can also use =shift= or =ctrl= (or any modifier) keys as =ESC= or any other key when they pressed and released on their own.
+
+*** =xev=
+=xev= is a small utility program that may help you during the configuration phase. It simply shows X events, you can press keys or key combinations to get their key codes, key symbols etc.
+
+** Things to consider
+I try to create one-key bindings whenever I can. While this is not really possible on system level, it's quite possible in programs like Vim or Emacs. If I'm going to create a new binding that requires at least two keys (one being modifier key), I try to use =alt= key as the modifier first. I only use =ctrl= if I absolutely need to do that. Thumbs are very strong while pinkies get stressed pretty easily. One can argue based on this assumption that assigning =CapsLock= as =ESC= might be bad for my left pinky. I think this is a non issue because real stress happens when doing a key combination, simply hitting a key with my pinky does not generate much stress.
+
+** Conclusion
+I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!

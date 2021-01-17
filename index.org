@@ -7,9 +7,12 @@
 :PROPERTIES:
 :EXPORT_AS: index.html
 :TEMPLATE: index
-:OPTIONS: toc:nil
+:CUSTOM_ID: main
 :END:
 ** All posts
+:PROPERTIES:
+:CUSTOM_ID: all-posts
+:END:
 - [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
 - [[./2019/11/14/running-sql-on-org-mode-tables.html][Running SQL on org-mode tables]]
 - [[./2019/02/21/bash-scripting-guide.html][Bash scripting guide]]
@@ -22,6 +25,9 @@
 - [[./2016/07/13/median-cut-algorithm-in-cpp-qt.html][Median cut algorithm in Qt/C++]]
 
 ** Misc
+:PROPERTIES:
+:CUSTOM_ID: misc
+:END:
 Here are some cool stuff that you can check out:
 
 - My [[https://github.com/isamert/dotfiles][dotfiles]].
@@ -31,26 +37,15 @@ Here are some cool stuff that you can check out:
 * Publish                                                          :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
-  (defun isamert/read-file-to-string (file-path)
-    "Return FILE-PATH's file content."
-    (with-temp-buffer
-      (insert-file-contents file-path)
-      (buffer-string)))
-
-  (defun isamert/write-string-to-file (string file)
-    (make-directory (file-name-directory file) t)
-    (with-temp-file file
-      (insert string)))
-
   (defun isamert/blog-export-all ()
     "Export current file as a blog."
     (interactive)
-    (let ((posts (progn (setq org-export-with-toc t)
-                        (org-map-entries 'isamert/blog-export-post "LEVEL=1")))
-          (pages (progn (setq org-export-with-toc nil)
-                        (org-map-entries 'isamert/blog-export-page "LEVEL=1"))))
+    (let ((posts (org-map-entries 'isamert/blog-export-post "LEVEL=1"))
+          (pages (org-map-entries 'isamert/blog-export-page "LEVEL=1")))
+      ;; TODO
       ))
 
+  ;; FIXME: merge next two functions into one
   (defun isamert/blog-export-page ()
     (interactive)
     (save-window-excursion
@@ -62,7 +57,9 @@ Here are some cool stuff that you can check out:
                (template (and should-export (cdr (assoc "TEMPLATE" props))))
                (export-path (and should-export (cdr (assoc "EXPORT_AS" props)))))
           (when should-export
+            (setq org-export-with-toc nil)
             (org-narrow-to-subtree)
+            (isamert/blog-pre-process)
             (isamert/write-string-to-file
              (isamert/template :body (isamert/body-html) :title title)
              (format "docs/%s" export-path))
@@ -80,13 +77,28 @@ Here are some cool stuff that you can check out:
                (file-path nil)
                (should-export (not (string-match-p "\\(noexport\\|page\\)" (or tags "")))))
           (when should-export
+            (setq org-export-with-toc t)
             (setq file-path (isamert/blog-mk-path title publish-date))
             (org-narrow-to-subtree)
+            (isamert/blog-pre-process)
             (isamert/write-string-to-file
              (isamert/template :body (isamert/body-html) :title title)
              (format "docs/%s.html" file-path))
             (widen)
             `(,title ,file-path ,props))))))
+
+  ;;
+  ;; Processing
+  ;;
+
+  (defun isamert/blog-pre-process ()
+    (interactive)
+    (org-map-entries 'isamert/blog-generate-custom-id))
+
+  (defun isamert/blog-generate-custom-id ()
+    (interactive)
+    (when (not (org-entry-get nil "CUSTOM_ID"))
+      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
 
   (defun isamert/template (&rest args)
     (s-format
@@ -98,6 +110,7 @@ Here are some cool stuff that you can check out:
     "This function runs before export procedure and does some changes on the content."
     (outline-show-all)
     (goto-char (point-min))
+    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
     (kill-whole-line))
 
   (defun isamert/body-html ()
@@ -108,22 +121,43 @@ Here are some cool stuff that you can check out:
         (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
         (buffer-string))))
 
+  ;;
+  ;; Page/post utils
+  ;;
+
+  (defun isamert/blog-url-case (str)
+    (->> (downcase str)
+         (s-replace "+" "p")
+         (s-replace "(" "-")
+         (s-replace ")" "-")
+         (s-replace " " "-")
+         (s-replace "---" "-")
+         (s-replace "--" "-")
+         (s-replace "=" "-")
+         (s-replace "/" "-")))
+
   (defun isamert/blog-mk-path (title publish-date)
-    (--> title
-         (downcase it)
-         (s-replace "+" "p" it)
-         (s-replace "(" "-" it)
-         (s-replace ")" "-" it)
-         (s-replace " " "-" it)
-         (s-replace "---" "-" it)
-         (s-replace "--" "-" it)
-         (s-replace "/" "-" it)
-         (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) it)))
+    (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) (isamert/blog-url-case title)))
 
   (defun isamert/parse-org-date (date)
     (save-match-data
       (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
         `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
+
+  ;;
+  ;; General utils
+  ;;
+
+  (defun isamert/read-file-to-string (file-path)
+    "Return FILE-PATH's file content."
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
+
+  (defun isamert/write-string-to-file (string file)
+    (make-directory (file-name-directory file) t)
+    (with-temp-file file
+      (insert string)))
 #+end_src
 
 ** Load org-block script
@@ -135,6 +169,7 @@ Here are some cool stuff that you can check out:
 * Median cut algorithm in C++/Qt
 :PROPERTIES:
 :PUBLISH_DATE: [2016-07-13 Wed]
+:CUSTOM_ID: median-cut-algorithm-in-cpp-qt
 :END:
 I needed a simple color quantization algorithm for my project. I didn't want to use any other program/library for this simple job. So I implemented /median cut/ with /Qt/. I just used the explanation of the algorithm in [[https://en.wikipedia.org/wiki/Median_cut][Wikipedia]], I didn't make any other research, so the code is not well optimized but it just works. I'll try to explain step by step:
 
@@ -281,6 +316,7 @@ So we can simply use this function to convert any image using our palette. But t
 * Kotlin function application
 :PROPERTIES:
 :PUBLISH_DATE: [2017-08-15 Tue]
+:CUSTOM_ID: kotlin-function-application
 :END:
 I often write some code like this:
 
@@ -370,13 +406,20 @@ Also this code is equivalent of this one:
 * Programming AVR microcontrollers in Linux
 :PROPERTIES:
 :PUBLISH_DATE: [2017-12-22 Fri]
+:CUSTOM_ID: programming-avr-microcontrollers-in-linux
 :END:
 The /Windows way/ of doing that is just using /ATMEL Studio/ but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite /IDE/, if you are using one, is your job.
 
 ** Tools
+:PROPERTIES:
+:CUSTOM_ID: tools
+:END:
 These are the tools that we need to install, just pull them from your package manager (These package names exists in Arch Linux repos, they might differ in other distros repositories): - *avr-gcc* GNU C compiler for AVR architecture - *avr-libc* AVR libraries - *avr-binutils* Some AVR tools, we need it to create hex files from compiled programs, because avrdude needs a hex file instead of a binary to flash. - *avrdude* A /dude/ that is required to perform flashing
 
 ** Steps
+:PROPERTIES:
+:CUSTOM_ID: steps
+:END:
 1. Write your program. Let's say you named it main.c.
 2. Compile it.
   #+begin_src sh
@@ -395,6 +438,9 @@ These are the tools that we need to install, just pull them from your package ma
     - Also here you can see *-c* option. It specifies programmer type. In my case it's /usbasp/. So you should change it to whatever you are using. [[http://www.nongnu.org:80/avrdude/user-manual/avrdude_12.html][Here]] is the list of programmer that avrdude accepts. (If your programmer isn't in the list, which is probably not the case, you can specify your programmer as shown in the same page and save it to a ini file. Then add -C option that points the ini file you just write.)
 
 ** The correct way of using =avrdude=
+:PROPERTIES:
+:CUSTOM_ID: the-correct-way-of-using--avrdude-
+:END:
 When you do the last step, you will get an error that says you don't have permissions. You can just run avrdude with sudo and it will work this time. But of course this is not the preferred way to do it. What you need to do is write an udev rule so we can access programmer without root privileges.
 
 1. Create this file: =/etc/udev/rules.d/55-avr-programmer.rules=
@@ -423,6 +469,7 @@ When you do the last step, you will get an error that says you don't have permis
 * Functional programming in C++
 :PROPERTIES:
 :PUBLISH_DATE: [2018-03-01 Thu]
+:CUSTOM_ID: functional-programming-in-cpp
 :END:
 C++ enables you to do nearly everything with every possible paradigm. I actually consider it as a huge mess or maybe I'm the one that can not comprehend that much stuff. Considering C++ is made by people smarter than me, probably the latter is true.
 
@@ -436,7 +483,13 @@ So trying to use C++ as a purely functional programming language is probably pos
 There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
 
 ** First things
+:PROPERTIES:
+:CUSTOM_ID: first-things
+:END:
 *** Use auto at all costs (C++11)
+:PROPERTIES:
+:CUSTOM_ID: use-auto-at-all-costs-cpp11-
+:END:
 =auto= is just great. It makes your code faster and shorter. Consider this example (I took this example from Effective Modern C++ by Scott Meyers):
 
 #+begin_src cpp
@@ -460,6 +513,9 @@ The problem with this code is that =std::pair<std::string, int>= is not the type
 Not only we get rid of the overhead, we also have a shorter code. And considering we will use a lot of types involving templates and stuff, auto will save us from a lot of typing.
 
 *** Try not to deal with manual memory management (C++11)
+:PROPERTIES:
+:CUSTOM_ID: try-not-to-deal-with-manual-memory-management-cpp11-
+:END:
 Another core thing about functional programming is that you just tell computer what to do, not how to do it. So do not deal with the memory management manually, try to leave this job to compiler.
 
 - Just use stack allocated objects instead of heap allocated objects as much as you can(See [[https://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use-of-new][this]] Q&A for more information/explanation).
@@ -467,7 +523,13 @@ Another core thing about functional programming is that you just tell computer w
 - Use move semantics. [[http://klmr.me/slides/modern-cpp/#1][Here]] is a great slide about what you need to do in nutshell.
 
 ** Concepts/Patterns
+:PROPERTIES:
+:CUSTOM_ID: concepts-patterns
+:END:
 *** Higher order functions
+:PROPERTIES:
+:CUSTOM_ID: higher-order-functions
+:END:
 This is the fundamental idea of functional programming, passing functions as arguments to other functions, returning functions from functions. Before C++11 you could achieve such things by using function pointers or maybe using call operator(function objects). But now we have =std::function= and lambdas. Consider this code that shouts a given string:
 
 #+begin_src cpp
@@ -572,6 +634,9 @@ One other benefit of using lambdas is that you can send them as parameters to =<
 I'll talk about =std::bind= and placeholders in a bit. But [[http://www.cplusplus.com/reference/algorithm/][here]] is a complete list of =<algorithm>= functions.
 
 *** Partial Application and Currying
+:PROPERTIES:
+:CUSTOM_ID: partial-application-and-currying
+:END:
 There is a function called =std::less(x,y)= which compares two comparable and returns true if =x<y= or false otherwise. You can use this function as your comparator function for sorting algorithms for example.
 
 #+begin_src cpp
@@ -603,9 +668,15 @@ As you can see, using =std::bind= function we bind the second argument of =std::
 However there is no out of the box support for currying and implementing it is not that easy. So I'll just leave a great SO answer [[https://stackoverflow.com/questions/152005/how-can-currying-be-done-in-c/26768388#26768388][here]]. You can learn what currying is and learn how can you implement it in C++11/14/17.
 
 *** Folding
+:PROPERTIES:
+:CUSTOM_ID: folding
+:END:
 Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at [[https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)][here]]. I'm going to inspect folding in 2 categories:
 
 **** 1. Folding STL containers
+:PROPERTIES:
+:CUSTOM_ID: 1.-folding-stl-containers
+:END:
 =std::accumulate= is the way. There are 2 definitions of =std::accumulate= which are:
 
 - =std::accumulate(first, last, initial_value)=
@@ -640,6 +711,9 @@ First one uses =+= operator as default =binary_operator=. Look at these examples
 #+end_src
 
 **** 2. Folding arbitrary number of arguments
+:PROPERTIES:
+:CUSTOM_ID: 2.-folding-arbitrary-number-of-arguments
+:END:
 C++11 has a thing called /variadic templates/ which enables you to do write such functions that can take arbitrary number of template parameters.
 
 #+begin_src cpp
@@ -674,6 +748,9 @@ So you can create functions that can take arbitrary number of arguments and fold
 [[https://eli.thegreenplace.net/2014/variadic-templates-in-c/][Here]] is a great tutorial about variadic templates of C++11. [[http://en.cppreference.com/w/cpp/language/parameter_pack][Here]] you can learn more about parameter packs.
 
 *** Sum types (std::variant) (C++17)
+:PROPERTIES:
+:CUSTOM_ID: sum-types-std::variant-cpp17-
+:END:
 Sum types are very cool and useful. Basically a sum type is just only one type out of a set of possible types. To be more concrete, I'll give an example: Let's say you have SoundFile, ImageFile and VideoFile. So a file object can be SoundFile *or* ImageFile *or* VideoFile. Defining your file object as a sum type of these types gives you a lot of flexibility and type safety. See this example:
 
 #+begin_src cpp
@@ -732,6 +809,9 @@ The problem with this approach is that it cannot capture state. The better way i
 Still a bit verbose but at least its in-place and more useful thanks to lambdas.
 
 *** Functors
+:PROPERTIES:
+:CUSTOM_ID: functors
+:END:
 Here I'm not talking about =function objects=, I'm talking about =Functors= as described [[https://en.wikipedia.org/wiki/Functor][here]]. There are several libraries that provides some kind of Functor/Monad types but again I'll just talk about the built-in functors that you can start using immediately.
 
 In case you don't know about functors; a functor is a mapping that preservers the structure between two categories. More concretely, functors gives you the ability to make some transformation on some structure without exposing its contents to the public. What I mean by "exposing its contents to the public" is iterating over the structure if it's a container or dereferencing it if it's a pointer etc.
@@ -739,6 +819,9 @@ In case you don't know about functors; a functor is a mapping that preservers th
 For example, everytime you need to apply some function to a vector, you need to loop through it, apply the function to every individual element then put those elements back to a vector. Another example would be a pointer. Lets say you have a pointer to an int and a function that requires an int as input. To apply this function to your pointer, firstly you need to dereference it and then apply the function. Afterwards you need to wrap the result in a pointer again.
 
 **** STL Containers as Functors
+:PROPERTIES:
+:CUSTOM_ID: stl-containers-as-functors
+:END:
 Functors needs a some kind of a helper function to apply the transformation function to the structure. For STL containers, this helper function is =std::transform=.
 
 #+begin_src cpp
@@ -752,6 +835,9 @@ Functors needs a some kind of a helper function to apply the transformation func
 We applied the lambda function to xs without exposing the inner data structure.
 
 **** std::optional as Functor (C++17)
+:PROPERTIES:
+:CUSTOM_ID: std::optional-as-functor-cpp17-
+:END:
 =std::optional= is a type for representing situations that there can be a value or not. For example =std::optional<int> x= means that /x/ can contain an integer or it may contain nothing at all. Of course one can use pointers for such situations but you don't want to deal with memory allocation and other bad stuff that comes with pointers for this trivial problem. Check these links out to learn more use cases about =std::optional=: [[http://en.cppreference.com/w/cpp/utility/optional][link1]], [[https://stackoverflow.com/questions/16860960/how-should-one-use-stdoptional][link2]].
 
 =std::optional= does not come with a helper transformation function. There is a very nice [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0798r0.html][proposal]] that I came across but I don't know its current status. So lets just write our transformation function for =std::optional=, its fairly trivial to implement. To understand it, look at this pseudocode first:
@@ -794,6 +880,9 @@ Now we can take any function that has a type of =T -> R= and apply this function
 So this is great, we can use functions with =std::optional= even though they do not know anything about =std::optional= with help of =transform= function.
 
 **** Pointers as Functors
+:PROPERTIES:
+:CUSTOM_ID: pointers-as-functors
+:END:
 Let's say given a =std::unique_pointer<int>= you want to get =std::unique_pointer<std::string>= which represents the text version of that =int=. Assume that your conversion function has this signature: =std::string convert(int number)=. So again, you need the unpack the integer from =unique_pointer= and apply this function and wrap it into =unique_pointer= back. But as you know we can use functors to solve this unpacking problem. See this code:
 
 #+begin_src cpp
@@ -813,6 +902,9 @@ This is the transformation function for pointers. Notice the similarity with the
 #+end_src
 
 **** Taking functors a bit further
+:PROPERTIES:
+:CUSTOM_ID: taking-functors-a-bit-further
+:END:
 As you may have noticed, functors does this: You have a variable of type =B<A>= and a function of type =C function(A)= (a function that takes =A= as argument and returns =C=) and you want to get =B<C>=. What functors does is handling all the unwrapping and wrapping for you.
 
 But what if you have a variable of type =B<A>= and a function of type =B<C> function(A)= and you want to get =B=. A more concrete example would be this: You have a =std::optional<std::string>= and a function that converts the given string to corresponding integer. Assume the function returns an =std::optional<int>= instead of just straight int, because the conversion may fail and we want to handle everything properly. Again, what you need to do is get string value from our optional variable. So now you have a straight =std::string= and now you can apply the conversion function to that string. As what we did with functors, we can generalize this pattern into a function which handles the unpacking for us. This function is called =monadic bind= in functional programming. This could be an easy exercise.
@@ -820,20 +912,30 @@ But what if you have a variable of type =B<A>= and a function of type =B<C> func
 * Nice little curl commands
 :PROPERTIES:
 :PUBLISH_DATE: [2018-03-24 Sat]
+:CUSTOM_ID: nice-little-curl-commands
 :END:
 Here are some curl friendly web services that you can use in your terminal:
 
 ** Weather
+:PROPERTIES:
+:CUSTOM_ID: weather
+:END:
 - =curl wttr.in= Displays a nice weather report.
 
   - You can also specify city-code like this: =wttr.in/city_name=
   - If the output is too long for your terminal, just use it with less: =curl wttr.in | less -R=
 
 ** IP
+:PROPERTIES:
+:CUSTOM_ID: ip
+:END:
 - =curl https://api.ipify.org= Simply shows your public ip.
 - =curl ipinfo.io= Prints a formatted JSON that contains information about your ip.
 
 ** File/URL
+:PROPERTIES:
+:CUSTOM_ID: file-url
+:END:
 - =curl -F'file=@yourfile.png' https://0x0.st= Uploads specified file to 0x0.st and returns the url.
 - =curl -F'shorten=http://example.com/some/long/url' https://0x0.st= Shortens the given URL.
 
@@ -844,6 +946,9 @@ Here are some curl friendly web services that you can use in your terminal:
   - This service is more sophisticated, you can set some constraints to your files and stuff. Visit [[https://transfer.sh][transfer.sh]] for more examples with curl.
 
 ** Cheat sheets
+:PROPERTIES:
+:CUSTOM_ID: cheat-sheets
+:END:
 - =curl http://cheat.sh/tar= Shows a simple cheatsheet for specified command (in this case =tar=)
 - =curl https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/tar.md= Same thing with above but this uses [[https://github.com/tldr-pages/tldr][tldr]]. But there are some problems:
 
@@ -852,6 +957,9 @@ Here are some curl friendly web services that you can use in your terminal:
   The first bold part may be one of these: =common=, =linux=. The second bold part is the command itself. If the command is linux-spesific, its under the =linux= folder obviously and most of the other things goes to =common=. You can create a small script that takes =command= as input and checks the folders one by one and returns if it finds an existing page. /This is left as an exercise for the reader./ (or you may just simply install a client, visit [[https://github.com/tldr-pages/tldr][tldr]]).
 
 ** Translate
+:PROPERTIES:
+:CUSTOM_ID: translate
+:END:
 
 #+begin_src bash
   curl -s -A "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0" "https://translate.google.com/m?sl=FROM&tl=TO&ie=UTF-8" --data-urlencode "q=WORD_OR_SENTENCE" | grep -Po '<div dir="ltr" class="t0">\K[^<]*'
@@ -865,14 +973,23 @@ Here are some curl friendly web services that you can use in your terminal:
 This example demonstrates how you can get the relevant information from an ordinary website. Always use the mobile versions if available because it is easier to parse them.
 
 ** Cryptocurrency rates
+:PROPERTIES:
+:CUSTOM_ID: cryptocurrency-rates
+:END:
 - =curl rate.sx= Shows the cryptocurrency rates.
 
   - Run =curl rate.sx/:help= for more information about usage.
 
 ** ASCII QR Codes
+:PROPERTIES:
+:CUSTOM_ID: ascii-qr-codes
+:END:
 - =curl qrenco.de/STRING= Turns given string/url into an ASCII art QR code.
 
 ** WebDAV
+:PROPERTIES:
+:CUSTOM_ID: webdav
+:END:
 If you are using a /service/ that supports WebDAV, you can use these simple curl commands to download/upload files to your service. You can also do more sophisticated things with curl but if you need more than just downloading/uploading files then it's better to use a client dedicated for that service.
 
 - Downloading:
@@ -888,11 +1005,15 @@ If you are using a /service/ that supports WebDAV, you can use these simple curl
 It's better not to write your password while using these commands. If you remove the password part it will just simply show you a password prompt when you execute these commands which better than exposing your password to bash history.
 
 ** Convert Documents
+:PROPERTIES:
+:CUSTOM_ID: convert-documents
+:END:
 I'll just leave a link here: [[https://docverter.com/][docverter.com]]. You can convert nearly any format to any other one using this service. It has a nice and clear API. The website provides curl command examples.
 
 * Automatize your logins with gnome-keyring (and optionally with KeePassXC)
 :PROPERTIES:
 :PUBLISH_DATE: [2018-05-04 Fri]
+:CUSTOM_ID: automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-
 :END:
 Storing passwords in plain-text is not an encouraged act but typing your password every time you start an application is also cumbersome. To solve this dilemma, the easiest solution I came up with is using =gnome-keyring= to store my passwords. I'm not using gnome either but =gnome-keyring= does not have much dependencies and a lot of applications already requires it. So I believe =gnome-keyring= is a good choice. The thing I want to achieve is something like this:
 
@@ -902,12 +1023,18 @@ Storing passwords in plain-text is not an encouraged act but typing your passwor
 But there is a problem in this particular solution, at least for me. I'm using /KeePassXC/ to manage my passwords, so copying all those passwords-or just the required ones, still a lot- to =gnome-keyring= is not feasible. So I need to do something about that too.
 
 ** Installing/configuring =gnome-keyring=
+:PROPERTIES:
+:CUSTOM_ID: installing-configuring--gnome-keyring-
+:END:
 Skip this step if you already have a running =gnome-keyring=.
 
 - Just install these packages: =gnome-keyring=, =libsecret= and =seahorse=.
 - You need to create a keyring named login so that when you login, that particular keyring gets unlocked. To create that, open =seahorse= and follow /File -> New -> Password Keyring/. Name it as /login/ and as password enter your login password. This method works with login managers generally, if you are not using one, you need to figure it out. But getting =gnome-keyring= unlocked at login is not a big deal, if its locked, the first time a program requests for a password, =gnome-keyring= will show a prompt and ask for your password to unlock that keyring. Subsequent password requests will go silently because you have unlocked that keyring.
 
 ** Adding passwords to =gnome-keyring=
+:PROPERTIES:
+:CUSTOM_ID: adding-passwords-to--gnome-keyring-
+:END:
 We need to create a /Stored Password/ in /login/ keyring that we've just created. But the problem is it is not possible to create /Stored Passwords/ with attributes in =seahorse=, we need to attach attributes to passwords because the command-line tool =secret-tool= requires them while querying for a password. So what you need to do is, simply create your /Stored Password/ using =secret-tool=:
 
 #+begin_src sh
@@ -919,6 +1046,9 @@ Then it will ask for the password. /name/ and /mailpassword/ are key-value pairs
 If you are using KeePassXC like me, my advise would be instead of duplicating your passwords in =gnome-keyring=, only add your keepass password in =gnome-keyring=: =secret-tool store --label=KeePass name keepass_password= I'll get to the usage later.
 
 ** Querying for a password
+:PROPERTIES:
+:CUSTOM_ID: querying-for-a-password
+:END:
 So you have your passwords in =gnome-keyring= and you want to supply that passwords to some program. Of course every program has different method for storing/getting your password. I'm going to use =mutt= as an example (it's a command-line mail client). But first, lets see how do we get our password:
 
 #+begin_src sh
@@ -932,6 +1062,9 @@ This command will print your password. To configure mutt to use =gnome-keyring=,
 #+end_src
 
 ** KeePassXC
+:PROPERTIES:
+:CUSTOM_ID: keepassxc
+:END:
 To get a password from KeePassXC, use this command:
 
 #+begin_src sh
@@ -959,6 +1092,9 @@ For your muttrc, you need to add this:
 #+end_src
 
 ** Security concerns
+:PROPERTIES:
+:CUSTOM_ID: security-concerns
+:END:
 You may say that this kind of approach exposes all of our passwords to all user-level programs. Actually this is kind of behavior I'm trying to achieve here, so that I don't need to type my passwords for each program. If you have a malicious program in your system, it will eventually get your passwords anyway. But =gnome-keyring= gives you a lot of flexibility. You can lock your keyring after your programs logged in or you can keep your keyring locked all the time(in that case, every time a program tries to use your password, =gnome-keyring= will ask for your user password. So you will just use one password for your every login which is also better than typing different passwords to different programs every time) etc. This is a much better solution than keeping your passwords as plain-text in your configuration files or typing them manually every time.
 
 Also you can probably do the same things with kwallet if you are using KDE. Just search for equivalent commands for kwallet.
@@ -966,6 +1102,7 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 * Emacs - Run flycheck on all buffers after save
 :PROPERTIES:
 :PUBLISH_DATE: [2018-06-06 Wed]
+:CUSTOM_ID: emacs-run-flycheck-on-all-buffers-after-save
 :END:
 /To just see the working solution, scroll down to The Result./
 
@@ -1011,6 +1148,9 @@ Lastly, we need to add this function to =after-save-hook=. But I want to be a ab
 #+end_src
 
 ** The Result
+:PROPERTIES:
+:CUSTOM_ID: the-result
+:END:
 Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, when you save a file, other files will be flychecked too. To disable it, call =disable-flycheck-all-file-buffers-on-save=.
 
 #+begin_src elisp
@@ -1040,17 +1180,24 @@ Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, whe
 * Bash scripting guide
 :PROPERTIES:
 :PUBLISH_DATE: [2019-02-21 Thu]
+:CUSTOM_ID: bash-scripting-guide
 :END:
 I've been writing some bash scripts lately and I've learned a lot. I must say that it's really fun to write bash scripts, every line of code feels hacky and no matter what I wrote, it felt bad which is kind of liberating. I found my real self in bash scripts. Here are some of the things that I find useful or/and important.
 
 I'll be talking about =bash= specifically, but I lot of the features in here are implemented in very similar ways in other shells.
 
 ** shebangs
+:PROPERTIES:
+:CUSTOM_ID: shebangs
+:END:
 The most portable shebang for bash scripting is: =#!/usr/local/env bash=. It basically asks =env= to find =bash= and wherever it may be, run this script with it. Do not use =sh=, it may be linked to =bash= but most of the time this is not the case.
 
 shebangs also let's you do some cool tricks:
 
 *** Running scripts with sudo
+:PROPERTIES:
+:CUSTOM_ID: running-scripts-with-sudo
+:END:
 If you need to run some commands with root privileges in your script, it is generally advised to run your script using =sudo= instead of having a =sodo command ...= kind of line in the script. So to write such script, you need to check if you have root privileges or not. Instead of that, you can have this kind of shebang:
 
 #+begin_src bash
@@ -1078,6 +1225,9 @@ But unfortunately, this is not the case. Because =env= parses all arguments as a
 I'm not entirely sure about this style of sudo calls. There may be implications that I'm missing but it worked out well for me.
 
 *** Running other programs with shebangs
+:PROPERTIES:
+:CUSTOM_ID: running-other-programs-with-shebangs
+:END:
 This is not entirely related to bash scripting but it's worth mentioning. Check this out:
 
 #+begin_src bash
@@ -1087,9 +1237,15 @@ This is not entirely related to bash scripting but it's worth mentioning. Check 
 This script directly calls =cat= with =${HOME}/.bashrc= argument. Instead of using =bash= to call =cat= program, we got rid of one level of indirection. (using =${HOME}= instead of =$HOME= is just an =env= restriction). This may seem silly, but I'm sure it has it's own use-cases.
 
 ** Primitives
+:PROPERTIES:
+:CUSTOM_ID: primitives
+:END:
 Here are some basic tips that makes your code faster and easy to reason.
 
 *** =true= and =false=
+:PROPERTIES:
+:CUSTOM_ID: -true--and--false-
+:END:
 - =true= and =false= are actual binaries that does nothing and returns =0= and =1= respectively as their exit code. If you pass a command to if clause, it checks the exit code of it and depending on that selects the right branch. So =0= exit code which means successful exit is considered as =true= and everything else is considered as false.
 
 #+begin_src bash
@@ -1122,6 +1278,9 @@ Here are some basic tips that makes your code faster and easy to reason.
 - To exit early with a false value, just use =return something-not-zero=, like =return 255=.
 
 *** =[[ ]]= and =(( ))= instead of =[ ]=
+:PROPERTIES:
+:CUSTOM_ID: -[[-]]--and------instead-of--[-]-
+:END:
 - =[= is an actual binary. So it costs more to use it. =[[= is a bash built-in and has a lot of improvements over =[=.
 - =((= is like =[[= but for arithmetic expressions only. You can compare variables and make some calculations within them directly.
 
@@ -1141,6 +1300,9 @@ Here are some basic tips that makes your code faster and easy to reason.
 - See [[http://mywiki.wooledge.org/BashFAQ/031][this link]] for more information.
 
 *** =let= instead of =(( ))=
+:PROPERTIES:
+:CUSTOM_ID: -let--instead-of-----
+:END:
 Another somewhat nicer alternative to =(( ))= is =let=. It's not an alternative for using inside if clauses but for assignments it requires less typing:
 
 #+begin_src bash
@@ -1148,7 +1310,13 @@ Another somewhat nicer alternative to =(( ))= is =let=. It's not an alternative 
 #+end_src
 
 ** Variables
+:PROPERTIES:
+:CUSTOM_ID: variables
+:END:
 *** =declare= and it's friends
+:PROPERTIES:
+:CUSTOM_ID: -declare--and-it's-friends
+:END:
 =declare= is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type =help declare= and see a very informative and short text about it.
 
 - Using declare inside a function makes the variable local, meaning they do not interfere with global variables. A better alternative is just using =local= built-in which is more clear. If your intention is exact opposite, meaning you want to declare a global variable, use =-g= option with declare. (Actually just assigning something to a variable without =declare=/=local= keywords make them global. So you don't need something like this: =declare -g a=3= inside a function to make it global, =a=3= is enough. =-g= comes handy if you are using other options of =declare= and wanting to make the variable global)
@@ -1180,6 +1348,9 @@ Another somewhat nicer alternative to =(( ))= is =let=. It's not an alternative 
 - To export variables into environment you can use =declare -x= or better, =export=
 
 *** String manipulation
+:PROPERTIES:
+:CUSTOM_ID: string-manipulation
+:END:
 Here is a quick summary of string manipulation capabilities of bash: (Assume =string= is a pre-defined variable)
 
 - =${#string}= → returns the length of =$string=.
@@ -1213,6 +1384,9 @@ Also there is stuff for case manipulation. Given variable ~EXAMPLE="An ExaMplE"~
 [[http://www.tldp.org/LDP/abs/html/string-manipulation.html][Here]] is a more complete reference with more examples.
 
 *** Regular expression matching
+:PROPERTIES:
+:CUSTOM_ID: regular-expression-matching
+:END:
 You can use ==~= operator to perform a regular expression match instead of simple globing:
 
 #+begin_src bash
@@ -1223,6 +1397,9 @@ You can use ==~= operator to perform a regular expression match instead of simpl
 #+end_src
 
 *** Default vaules
+:PROPERTIES:
+:CUSTOM_ID: default-vaules
+:END:
 You can use =${VAR:-DEFAULT}= or =${VAR-DEFAULT}= syntax to define default variables. The first one outputs =DEFAULT= if the =$VAR= is empty or unset. Latter only outputs =DEFAULT= when =$VAR= is unset. A practical example of this would be:
 
 #+begin_src bash
@@ -1232,7 +1409,13 @@ You can use =${VAR:-DEFAULT}= or =${VAR-DEFAULT}= syntax to define default varia
 There is also a version of this which uses === instead of =-=. The difference is that it also sets the variable to default value so that you can use the variable afterwards without defining a default value everytime.
 
 ** Parameters
+:PROPERTIES:
+:CUSTOM_ID: parameters
+:END:
 *** shift
+:PROPERTIES:
+:CUSTOM_ID: shift
+:END:
 You can access to parameters using positional parameters: =$1, $2 ... $9, ${10}, ${11} ...=. =shift=, as the name suggests, shifts those parameters. So when you call =shift=, =$2= becomes =$1=, =$3= becomes =$2=... It becomes handy in loops or sometimes you just want to process first /N/ parameters and leave rest as is while passing them to another program.
 
 #+begin_src bash
@@ -1252,6 +1435,9 @@ You can access to parameters using positional parameters: =$1, $2 ... $9, ${10},
 =shift= also can be called with a number argument, like =shift 3= which shifts parameters 3 times.
 
 *** Preserving
+:PROPERTIES:
+:CUSTOM_ID: preserving
+:END:
 Say that we have a wrapper script/function that checks if =ripgrep= (rg) is installed and executes it with given parameters otherwise it calls =grep= with given parameters:
 
 #+begin_src bash
@@ -1268,6 +1454,9 @@ Say that we have a wrapper script/function that checks if =ripgrep= (rg) is inst
 - To learn more about special parameters, check [[https://www.gnu.org/software/bash/manual/bash.html#Special-Parameters][this]].
 
 *** Looping through arguments
+:PROPERTIES:
+:CUSTOM_ID: looping-through-arguments
+:END:
 It's a pretty common task with pretty easy syntax:
 
 #+begin_src bash
@@ -1285,6 +1474,9 @@ Or better yet:
 #+end_src
 
 ** Subshells
+:PROPERTIES:
+:CUSTOM_ID: subshells
+:END:
 The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
 
 #+begin_src shell
@@ -1303,6 +1495,9 @@ In this example, usage of =|= introduces a subshell and the =some_var= is define
 Here =|= still introduces a subshell but we continue to do our stuff in that subshell. But still you can't communicate with the parent shell, after the ={ ... }= is over =some_var= is not available for use. At this point you have two solutions: /here strings/ and /process substitutions/.
 
 *** Here strings
+:PROPERTIES:
+:CUSTOM_ID: here-strings
+:END:
 Continuing the example above, we can do something like this:
 
 #+begin_src bash
@@ -1314,6 +1509,9 @@ Continuing the example above, we can do something like this:
 =<<<= redirects the string to stdin of the command. So that we didn't create a subshell and we can use =some_var= from now on in our script.
 
 *** Process substitution
+:PROPERTIES:
+:CUSTOM_ID: process-substitution
+:END:
 A process substitution creates a temporary file with the given output and passes that temporary file to a command. For example:
 
 #+begin_src bash
@@ -1323,7 +1521,13 @@ A process substitution creates a temporary file with the given output and passes
 Here, the effect is same as with /here strings/ but what happens is a lot different. As you may already know =<= redirects given file to stdin of the command before it. =<(...)= simply creates a temporary file containing =...= and replaces itself with the path to that temporary file. To simplify, you can think that the command becomes: =read some_var < /dev/fd/some_number= after evaluating =<(echo "stuff")= part (=/dev/fd/...= is the path where temp file is created, and it contains =stuff=). Now =<= simply redirects the contents of the file to =read some_var= command.
 
 ** Functions
+:PROPERTIES:
+:CUSTOM_ID: functions
+:END:
 *** Functions that accepts both arguments and stdin
+:PROPERTIES:
+:CUSTOM_ID: functions-that-accepts-both-arguments-and-stdin
+:END:
 Let's say that you want your function to accept data either as argument or from stdin. You can simply combine =${VAR:-DEFAULT}= syntax with redirecting operator and you will have this:
 
 #+begin_src bash
@@ -1333,17 +1537,27 @@ Let's say that you want your function to accept data either as argument or from 
 Now your function will concatenate your arguments and set it to =str= or if there are no arguments it'll read stdin and set it to str.
 
 ** Linting bash scripts
+:PROPERTIES:
+:CUSTOM_ID: linting-bash-scripts
+:END:
 It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called =shellcheck= addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using [[https://github.com/w0rp/ale][ALE]] extension, it works out of the box with shellcheck.) For /emacs/ users, /Flycheck/ works out of the box with shellcheck.
 * Running SQL on org-mode tables
 :PROPERTIES:
 :PUBLISH_DATE: [2019-11-14 Thu]
+:CUSTOM_ID: running-sql-on-org-mode-tables
 :END:
 I was tracking some sleep related information about myself using org tables and I wanted to visualize them. I thought to myself, /I know R! Let's do all that stuff in R!/. Oh boy, I was wrong. I used R in the past for an undergraduate course and I wasn't heavily invested in taking notes at those times. (Now thanks to org-mode +and zotero+, I don't forget /anything/ anymore) I quickly gave up using R for manipulating the data but I was going to use it for plotting anyway. At that point I was about to give up, firstly because I didn't want to have an overly-complex solution for such a worthless thing and secondly I was extremely lazy.
 
 Then I remembered about =sqldf=. It's an R package that manipulates R dataframes (basically tables, at least for our purposes in this post) using SQL. Behind the scenes it uses an SQL DB implementation for this. It handles all the dirty stuff for us; like creating tables, running the SQL and conversion between the formats. So I simply used =sqldf= and R's plot function to accomplish my goal (Yeah, =ob-R= package supports passing org tables to R code as variables). Then I thought it may be really nice to have an SQL backend for manipulating org tables. Because why not? Nearly every /table-like technology/ have some kind of SQL-like query language.
 
 ** Preparation
+:PROPERTIES:
+:CUSTOM_ID: preparation
+:END:
 *** R
+:PROPERTIES:
+:CUSTOM_ID: r
+:END:
 You need to install R and =sqldf= package.
 
 #+begin_src bash
@@ -1379,6 +1593,9 @@ And run this:
 That's all for the R part.
 
 *** Emacs
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
 Enable running R code.
 
 #+begin_src elisp
@@ -1394,6 +1611,9 @@ This is optional but for R syntax highlighting and stuff you may want to install
 #+end_src
 
 ** Running SQL on org tables
+:PROPERTIES:
+:CUSTOM_ID: running-sql-on-org-tables
+:END:
 Now you can simply do this:
 
 #+begin_src org
@@ -1440,6 +1660,9 @@ Nice! But we don't have SQL syntax highlighting. We can get over it by doing som
 Now we have a nice syntax highlighting for our SQL. But for this you need to have at least 2 different code blocks every time.
 
 *** Using SQL instead of table formulas
+:PROPERTIES:
+:CUSTOM_ID: using-sql-instead-of-table-formulas
+:END:
 I found some obscure ways of doing this but here I present the most sane one:
 
 Firstly you need to have a named src block that calls =sqldf= with given SQL code, somewhere in your org file. Putting it under some section with =:noexport:= tag might be good idea if you are willing to export the document:
@@ -1476,10 +1699,14 @@ I believe things can be simplified with /a little bit of/ elisp but it may not w
 * Better keyboard experience in Linux
 :PROPERTIES:
 :PUBLISH_DATE: [2020-05-30 Sat]
+:CUSTOM_ID: better-keyboard-experience-in-linux
 :END:
 In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
 
 ** The case against the mouse
+:PROPERTIES:
+:CUSTOM_ID: the-case-against-the-mouse
+:END:
 /(This part is mostly just me rambling, feel free to skip it)/
 
 First of all, I'm a big believer of a keyboard-oriented workflow. Sometimes it costs more time to use the keyboard but it helps me to stay sane. Mouse generally requires a certain level of consciousness, like you need to aim for stuff, try to be precise while selecting something, etc. The content you are dealing with the mouse is not static, so you need to do some calculation every time to get the desired action with the mouse. But with the keyboard, you can just mindlessly press your 4-key shortcut and get a magic happening. After a certain point, even your most complex shortcuts become a reflexive response.
@@ -1487,9 +1714,15 @@ First of all, I'm a big believer of a keyboard-oriented workflow. Sometimes it c
 There are use cases for mouse too, of course! Mindlessly scrolling down a website is always better done with a mouse on your lap. Some jobs may be better suited for a drag-drop focused workflow and I get them. What I try to minimize is that when you are doing a keyboard-focused work and you need mouse time to time. That is just a distraction and a cause of wrist pain. Other than that, trying to eliminate mouse is pointless.
 
 ** Modifying the keymap
+:PROPERTIES:
+:CUSTOM_ID: modifying-the-keymap
+:END:
 To get the most out of your keyboard, we need to create a specialized keymap for ourselves. For doing that I'll be using =xmodmap=. =xmodmap= is a simple utility tool for modifying your keymaps. The configuration is generally done through =~/.Xmodmap= file.
 
 *** Selecting the proper base keymap
+:PROPERTIES:
+:CUSTOM_ID: selecting-the-proper-base-keymap
+:END:
 I simply recommend using =us(intl)= keymap as our base keymap. Because this keymap enables us to use =AltGr= key which will become super beneficial later in this post. To set your keymap to =us(intl)=, do this:
 
 #+begin_example
@@ -1503,6 +1736,9 @@ You need to restart your X session to get it working or you can simply do this:
 #+end_example
 
 *** Fixing some problems with the =us(intl)=
+:PROPERTIES:
+:CUSTOM_ID: fixing-some-problems-with-the--us-intl--
+:END:
 While it enables =AltGr= key, it also turns backtick and apostrope keys into modifier keys that creates accented versions of pressed key. I do not want this behavior, to get the normal behavior add these into your =~/.Xmodemap=.
 
 #+begin_example
@@ -1511,6 +1747,9 @@ While it enables =AltGr= key, it also turns backtick and apostrope keys into mod
 #+end_example
 
 *** Empowering the =[=, =]= keys
+:PROPERTIES:
+:CUSTOM_ID: empowering-the--[-,--]--keys
+:END:
 When you press =Shift + [= you get ={=. As a natural extension to that, I bind =AltGr+[= to =(=. This is simply easier than doing =Shift+9=, considering parentheses used frequently while coding, this change is a nice touch. Put these into your =~/.Xmodmap=:
 
 #+begin_example
@@ -1520,6 +1759,9 @@ When you press =Shift + [= you get ={=. As a natural extension to that, I bind =
 #+end_example
 
 *** More UTF-8 chars
+:PROPERTIES:
+:CUSTOM_ID: more-utf-8-chars
+:END:
 Most of the modern programming languages supports using UTF-8 glyphs. For example you can use =→= instead of =->= or =≥= instead of =>==. They are more expressive, better-looking and feels right. Also while preparing a document or while having a causal conversation, it's just nicer to utilize these characters. Here is the related part of mine =~/.Xmodmap=:
 
 #+begin_example
@@ -1548,6 +1790,9 @@ Most of the modern programming languages supports using UTF-8 glyphs. For exampl
 #+end_example
 
 *** A new modifier key, Hyper
+:PROPERTIES:
+:CUSTOM_ID: a-new-modifier-key,-hyper
+:END:
 =CapsLock=, at least for me, one of the most useless key on the keyboard. Actually it's kinda more useful, when you compare it with the =RightCtrl=, at least you can press it. But the functionality is not really required, do you really find yourself typing in all caps for long periods of time? Even if so, you can simply write them all in lowercase and convert them to upper case with the help of your favorite text editor. What I like to do is, remap the =CapsLock= key to a new modifier key, namely =Hyper=, which enables you to create new shortcuts. You can think =Hyper= like the =Control= key but no program uses it and you are free to map anything you want to. Here is the relevant =~/.Xmodmap= configuration:
 
 #+begin_example
@@ -1565,6 +1810,9 @@ Now we will be able to create shortcuts using this =Hyper= key. I'll come to thi
 Another thing is that some people like to do is that using =CapsLock= as =ESC= and I'm also into that, but I don't want to sacrifice my =Hyper= key too. For this there is a solution, which involves using another simple tool where you use =CapsLock= key as the =Hyper= key when combined with the other keys but when it's pressed alone it acts as the =ESC= key. I'll come to this later in this post too.
 
 *** =RightCtrl=?
+:PROPERTIES:
+:CUSTOM_ID: -rightctrl-?
+:END:
 I don't know if anybody uses this key unironically but the only use case I found for it was using it as the =ESC= key. On my older keyboard I was able to press =RightCtrl= with my palm and as the =ESC= key it served me quite well. But it's harder to press =RightCtrl= with my palm on my new keyboard so I just do not use it anymore. I'm simply using the =CapsLock= as the =ESC= as I described above. But here is the configuration for using =RightCtrl= as the =ESC= if you want to give it a shot:
 
 #+begin_example
@@ -1572,6 +1820,9 @@ I don't know if anybody uses this key unironically but the only use case I found
 #+end_example
 
 *** Global directional keys
+:PROPERTIES:
+:CUSTOM_ID: global-directional-keys
+:END:
 I do not like to leave the home row of my keyboard, it's just hard to reach for the arrow keys for example. Also when you get used to =h,j,k,l= keys in vim for directional movement, you just want them everywhere. So I simply remapped =AltGr + {h,j,k,l}= to ={Left, Down, Up, Right}= keys respectively. When you press =AltGr + j= it acts like =Down= key, anywhere in your system. You do not need configuration per program, you just need to have this in your =~/.Xmodmap=:
 
 #+begin_example
@@ -1590,6 +1841,9 @@ Side note for Emacs users: I generally do not use these bindings in Emacs to mak
 #+end_src
 
 *** More with =AltGr=
+:PROPERTIES:
+:CUSTOM_ID: more-with--altgr-
+:END:
 As you may have inferred, to create a combination involving =AltGr= you need to change fifth field of the =keysym= assignment.
 
 #+begin_example
@@ -1601,6 +1855,9 @@ As you may have inferred, to create a combination involving =AltGr= you need to 
 You can use =AltGr= to create accented characters, this might be a nice alternative for constantly switching between your native keyboard layout and =us(intl)=. If you find any other use cases for this key, let me know! The nice part of utilizing this key is that, like the =Alt= key, you use your thumb for pressing it and your thumb is the most powerful finger on your hand. So it makes sense to embrace keys like =Alt=, =AltGr=.
 
 ** Shortcuts, key-bindings
+:PROPERTIES:
+:CUSTOM_ID: shortcuts,-key-bindings
+:END:
 There are tons of programs that can handle this but my personal favorite is =sxhkd=. It's DE/WM agnostic, the configuration is pretty simple and intuitive. It also supports key chording, which is just fantastic.
 
 I use my =super= (windows) key for the WM related shortcuts; like =super + {h,j,k,l}= for switching the focused window, =super + {comma, period}= for focusing next/prev monitor, =super + w= for closing the current window etc. Observe the following configuration to get a taste of =sxhkd=:
@@ -1633,7 +1890,13 @@ When I do =hyper + r= followed by =f=, Firefox opens. Simple as that. This gives
 Automating stuff through shortcuts is nice, especially if the program offers a nice set of command-line options. Sometimes programs does not offer a command-line interface but they offer a DBUS API that you can utilize, it's nice to keep this in mind while creating your bindings.
 
 ** Various tools/configurations
+:PROPERTIES:
+:CUSTOM_ID: various-tools-configurations
+:END:
 *** =hyper= as =ESC=
+:PROPERTIES:
+:CUSTOM_ID: -hyper--as--esc-
+:END:
 As I mentioned above, I use =hyper= as a modifier key when used in combination with some other key. But when I press it by itself, it acts as =ESC= key. This is achieved through using a simple program called =xcape=. I start =xcape= with the arguments below and it gives me this functionality:
 
 #+begin_example
@@ -1645,10 +1908,19 @@ The purpose of =xcape= is to make a modifier key to be used as another key when 
 You can also use =shift= or =ctrl= (or any modifier) keys as =ESC= or any other key when they pressed and released on their own.
 
 *** =xev=
+:PROPERTIES:
+:CUSTOM_ID: -xev-
+:END:
 =xev= is a small utility program that may help you during the configuration phase. It simply shows X events, you can press keys or key combinations to get their key codes, key symbols etc.
 
 ** Things to consider
+:PROPERTIES:
+:CUSTOM_ID: things-to-consider
+:END:
 I try to create one-key bindings whenever I can. While this is not really possible on system level, it's quite possible in programs like Vim or Emacs. If I'm going to create a new binding that requires at least two keys (one being modifier key), I try to use =alt= key as the modifier first. I only use =ctrl= if I absolutely need to do that. Thumbs are very strong while pinkies get stressed pretty easily. One can argue based on this assumption that assigning =CapsLock= as =ESC= might be bad for my left pinky. I think this is a non issue because real stress happens when doing a key combination, simply hitting a key with my pinky does not generate much stress.
 
 ** Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!

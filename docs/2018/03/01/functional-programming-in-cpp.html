@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,29 +222,29 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org581294e">First things</a>
+<li><a href="#first-things">First things</a>
 <ul>
-<li><a href="#orgb352ab4">Use auto at all costs (C++11)</a></li>
-<li><a href="#orgf0fa005">Try not to deal with manual memory management (C++11)</a></li>
+<li><a href="#use-auto-at-all-costs-cpp11-">Use auto at all costs (C++11)</a></li>
+<li><a href="#try-not-to-deal-with-manual-memory-management-cpp11-">Try not to deal with manual memory management (C++11)</a></li>
 </ul>
 </li>
-<li><a href="#org2e593cd">Concepts/Patterns</a>
+<li><a href="#concepts-patterns">Concepts/Patterns</a>
 <ul>
-<li><a href="#orgddc7f91">Higher order functions</a></li>
-<li><a href="#org977128b">Partial Application and Currying</a></li>
-<li><a href="#org83576a3">Folding</a>
+<li><a href="#higher-order-functions">Higher order functions</a></li>
+<li><a href="#partial-application-and-currying">Partial Application and Currying</a></li>
+<li><a href="#folding">Folding</a>
 <ul>
-<li><a href="#org962b3d1">1. Folding STL containers</a></li>
-<li><a href="#orga33f5d4">2. Folding arbitrary number of arguments</a></li>
+<li><a href="#1.-folding-stl-containers">1. Folding STL containers</a></li>
+<li><a href="#2.-folding-arbitrary-number-of-arguments">2. Folding arbitrary number of arguments</a></li>
 </ul>
 </li>
-<li><a href="#orgd307775">Sum types (std::variant) (C++17)</a></li>
-<li><a href="#orgc3b91c9">Functors</a>
+<li><a href="#sum-types-std::variant-cpp17-">Sum types (std::variant) (C++17)</a></li>
+<li><a href="#functors">Functors</a>
 <ul>
-<li><a href="#org401620e">STL Containers as Functors</a></li>
-<li><a href="#orga07767f">std::optional as Functor (C++17)</a></li>
-<li><a href="#orgf4df6e9">Pointers as Functors</a></li>
-<li><a href="#org8460bc3">Taking functors a bit further</a></li>
+<li><a href="#stl-containers-as-functors">STL Containers as Functors</a></li>
+<li><a href="#std::optional-as-functor-cpp17-">std::optional as Functor (C++17)</a></li>
+<li><a href="#pointers-as-functors">Pointers as Functors</a></li>
+<li><a href="#taking-functors-a-bit-further">Taking functors a bit further</a></li>
 </ul>
 </li>
 </ul>
@@ -293,13 +271,13 @@ So trying to use C++ as a purely functional programming language is probably pos
 There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
 </p>
 
-<div id="outline-container-org581294e" class="outline-2">
-<h2 id="org581294e">First things</h2>
-<div class="outline-text-2" id="text-org581294e">
+<div id="outline-container-first-things" class="outline-2">
+<h2 id="first-things">First things</h2>
+<div class="outline-text-2" id="text-first-things">
 </div>
-<div id="outline-container-orgb352ab4" class="outline-3">
-<h3 id="orgb352ab4">Use auto at all costs (C++11)</h3>
-<div class="outline-text-3" id="text-orgb352ab4">
+<div id="outline-container-use-auto-at-all-costs-cpp11-" class="outline-3">
+<h3 id="use-auto-at-all-costs-cpp11-">Use auto at all costs (C++11)</h3>
+<div class="outline-text-3" id="text-use-auto-at-all-costs-cpp11-">
 <p>
 <code>auto</code> is just great. It makes your code faster and shorter. Consider this example (I took this example from Effective Modern C++ by Scott Meyers):
 </p>
@@ -332,9 +310,9 @@ Not only we get rid of the overhead, we also have a shorter code. And considerin
 </div>
 </div>
 
-<div id="outline-container-orgf0fa005" class="outline-3">
-<h3 id="orgf0fa005">Try not to deal with manual memory management (C++11)</h3>
-<div class="outline-text-3" id="text-orgf0fa005">
+<div id="outline-container-try-not-to-deal-with-manual-memory-management-cpp11-" class="outline-3">
+<h3 id="try-not-to-deal-with-manual-memory-management-cpp11-">Try not to deal with manual memory management (C++11)</h3>
+<div class="outline-text-3" id="text-try-not-to-deal-with-manual-memory-management-cpp11-">
 <p>
 Another core thing about functional programming is that you just tell computer what to do, not how to do it. So do not deal with the memory management manually, try to leave this job to compiler.
 </p>
@@ -348,13 +326,13 @@ Another core thing about functional programming is that you just tell computer w
 </div>
 </div>
 
-<div id="outline-container-org2e593cd" class="outline-2">
-<h2 id="org2e593cd">Concepts/Patterns</h2>
-<div class="outline-text-2" id="text-org2e593cd">
+<div id="outline-container-concepts-patterns" class="outline-2">
+<h2 id="concepts-patterns">Concepts/Patterns</h2>
+<div class="outline-text-2" id="text-concepts-patterns">
 </div>
-<div id="outline-container-orgddc7f91" class="outline-3">
-<h3 id="orgddc7f91">Higher order functions</h3>
-<div class="outline-text-3" id="text-orgddc7f91">
+<div id="outline-container-higher-order-functions" class="outline-3">
+<h3 id="higher-order-functions">Higher order functions</h3>
+<div class="outline-text-3" id="text-higher-order-functions">
 <p>
 This is the fundamental idea of functional programming, passing functions as arguments to other functions, returning functions from functions. Before C++11 you could achieve such things by using function pointers or maybe using call operator(function objects). But now we have <code>std::function</code> and lambdas. Consider this code that shouts a given string:
 </p>
@@ -477,9 +455,9 @@ I'll talk about <code>std::bind</code> and placeholders in a bit. But <a href="h
 </div>
 </div>
 
-<div id="outline-container-org977128b" class="outline-3">
-<h3 id="org977128b">Partial Application and Currying</h3>
-<div class="outline-text-3" id="text-org977128b">
+<div id="outline-container-partial-application-and-currying" class="outline-3">
+<h3 id="partial-application-and-currying">Partial Application and Currying</h3>
+<div class="outline-text-3" id="text-partial-application-and-currying">
 <p>
 There is a function called <code>std::less(x,y)</code> which compares two comparable and returns true if <code>x&lt;y</code> or false otherwise. You can use this function as your comparator function for sorting algorithms for example.
 </p>
@@ -525,17 +503,17 @@ However there is no out of the box support for currying and implementing it is n
 </div>
 </div>
 
-<div id="outline-container-org83576a3" class="outline-3">
-<h3 id="org83576a3">Folding</h3>
-<div class="outline-text-3" id="text-org83576a3">
+<div id="outline-container-folding" class="outline-3">
+<h3 id="folding">Folding</h3>
+<div class="outline-text-3" id="text-folding">
 <p>
 Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at <a href="https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)">here</a>. I'm going to inspect folding in 2 categories:
 </p>
 </div>
 
-<div id="outline-container-org962b3d1" class="outline-4">
-<h4 id="org962b3d1">1. Folding STL containers</h4>
-<div class="outline-text-4" id="text-org962b3d1">
+<div id="outline-container-1.-folding-stl-containers" class="outline-4">
+<h4 id="1.-folding-stl-containers">1. Folding STL containers</h4>
+<div class="outline-text-4" id="text-1.-folding-stl-containers">
 <p>
 <code>std::accumulate</code> is the way. There are 2 definitions of <code>std::accumulate</code> which are:
 </p>
@@ -578,9 +556,9 @@ bool anyTrue = std::any_of(bs.begin(), vec.end(), [](bool x) { return x; } );
 </div>
 </div>
 
-<div id="outline-container-orga33f5d4" class="outline-4">
-<h4 id="orga33f5d4">2. Folding arbitrary number of arguments</h4>
-<div class="outline-text-4" id="text-orga33f5d4">
+<div id="outline-container-2.-folding-arbitrary-number-of-arguments" class="outline-4">
+<h4 id="2.-folding-arbitrary-number-of-arguments">2. Folding arbitrary number of arguments</h4>
+<div class="outline-text-4" id="text-2.-folding-arbitrary-number-of-arguments">
 <p>
 C++11 has a thing called <i>variadic templates</i> which enables you to do write such functions that can take arbitrary number of template parameters.
 </p>
@@ -625,9 +603,9 @@ auto sum(Args ...args) {
 </div>
 </div>
 
-<div id="outline-container-orgd307775" class="outline-3">
-<h3 id="orgd307775">Sum types (std::variant) (C++17)</h3>
-<div class="outline-text-3" id="text-orgd307775">
+<div id="outline-container-sum-types-std::variant-cpp17-" class="outline-3">
+<h3 id="sum-types-std::variant-cpp17-">Sum types (std::variant) (C++17)</h3>
+<div class="outline-text-3" id="text-sum-types-std::variant-cpp17-">
 <p>
 Sum types are very cool and useful. Basically a sum type is just only one type out of a set of possible types. To be more concrete, I'll give an example: Let's say you have SoundFile, ImageFile and VideoFile. So a file object can be SoundFile <b>or</b> ImageFile <b>or</b> VideoFile. Defining your file object as a sum type of these types gives you a lot of flexibility and type safety. See this example:
 </p>
@@ -698,9 +676,9 @@ Still a bit verbose but at least its in-place and more useful thanks to lambdas.
 </div>
 </div>
 
-<div id="outline-container-orgc3b91c9" class="outline-3">
-<h3 id="orgc3b91c9">Functors</h3>
-<div class="outline-text-3" id="text-orgc3b91c9">
+<div id="outline-container-functors" class="outline-3">
+<h3 id="functors">Functors</h3>
+<div class="outline-text-3" id="text-functors">
 <p>
 Here I'm not talking about <code>function objects</code>, I'm talking about <code>Functors</code> as described <a href="https://en.wikipedia.org/wiki/Functor">here</a>. There are several libraries that provides some kind of Functor/Monad types but again I'll just talk about the built-in functors that you can start using immediately.
 </p>
@@ -714,9 +692,9 @@ For example, everytime you need to apply some function to a vector, you need to 
 </p>
 </div>
 
-<div id="outline-container-org401620e" class="outline-4">
-<h4 id="org401620e">STL Containers as Functors</h4>
-<div class="outline-text-4" id="text-org401620e">
+<div id="outline-container-stl-containers-as-functors" class="outline-4">
+<h4 id="stl-containers-as-functors">STL Containers as Functors</h4>
+<div class="outline-text-4" id="text-stl-containers-as-functors">
 <p>
 Functors needs a some kind of a helper function to apply the transformation function to the structure. For STL containers, this helper function is <code>std::transform</code>.
 </p>
@@ -736,9 +714,9 @@ We applied the lambda function to xs without exposing the inner data structure.
 </div>
 </div>
 
-<div id="outline-container-orga07767f" class="outline-4">
-<h4 id="orga07767f">std::optional as Functor (C++17)</h4>
-<div class="outline-text-4" id="text-orga07767f">
+<div id="outline-container-std::optional-as-functor-cpp17-" class="outline-4">
+<h4 id="std::optional-as-functor-cpp17-">std::optional as Functor (C++17)</h4>
+<div class="outline-text-4" id="text-std::optional-as-functor-cpp17-">
 <p>
 <code>std::optional</code> is a type for representing situations that there can be a value or not. For example <code>std::optional&lt;int&gt; x</code> means that <i>x</i> can contain an integer or it may contain nothing at all. Of course one can use pointers for such situations but you don't want to deal with memory allocation and other bad stuff that comes with pointers for this trivial problem. Check these links out to learn more use cases about <code>std::optional</code>: <a href="http://en.cppreference.com/w/cpp/utility/optional">link1</a>, <a href="https://stackoverflow.com/questions/16860960/how-should-one-use-stdoptional">link2</a>.
 </p>
@@ -795,9 +773,9 @@ So this is great, we can use functions with <code>std::optional</code> even thou
 </div>
 </div>
 
-<div id="outline-container-orgf4df6e9" class="outline-4">
-<h4 id="orgf4df6e9">Pointers as Functors</h4>
-<div class="outline-text-4" id="text-orgf4df6e9">
+<div id="outline-container-pointers-as-functors" class="outline-4">
+<h4 id="pointers-as-functors">Pointers as Functors</h4>
+<div class="outline-text-4" id="text-pointers-as-functors">
 <p>
 Let's say given a <code>std::unique_pointer&lt;int&gt;</code> you want to get <code>std::unique_pointer&lt;std::string&gt;</code> which represents the text version of that <code>int</code>. Assume that your conversion function has this signature: <code>std::string convert(int number)</code>. So again, you need the unpack the integer from <code>unique_pointer</code> and apply this function and wrap it into <code>unique_pointer</code> back. But as you know we can use functors to solve this unpacking problem. See this code:
 </p>
@@ -824,9 +802,9 @@ std:unique_pointer&lt;std::string&gt; result = transform(number, convert);
 </div>
 </div>
 
-<div id="outline-container-org8460bc3" class="outline-4">
-<h4 id="org8460bc3">Taking functors a bit further</h4>
-<div class="outline-text-4" id="text-org8460bc3">
+<div id="outline-container-taking-functors-a-bit-further" class="outline-4">
+<h4 id="taking-functors-a-bit-further">Taking functors a bit further</h4>
+<div class="outline-text-4" id="text-taking-functors-a-bit-further">
 <p>
 As you may have noticed, functors does this: You have a variable of type <code>B&lt;A&gt;</code> and a function of type <code>C function(A)</code> (a function that takes <code>A</code> as argument and returns <code>C</code>) and you want to get <code>B&lt;C&gt;</code>. What functors does is handling all the unwrapping and wrapping for you.
 </p>

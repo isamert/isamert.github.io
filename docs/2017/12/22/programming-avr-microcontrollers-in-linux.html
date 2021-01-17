@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,9 +222,9 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org6e4a4fe">Tools</a></li>
-<li><a href="#org154444c">Steps</a></li>
-<li><a href="#org6c5eb7c">The correct way of using <code>avrdude</code></a></li>
+<li><a href="#tools">Tools</a></li>
+<li><a href="#steps">Steps</a></li>
+<li><a href="#the-correct-way-of-using--avrdude-">The correct way of using <code>avrdude</code></a></li>
 </ul>
 </div>
 </div>
@@ -254,18 +232,18 @@
 The <i>Windows way</i> of doing that is just using <i>ATMEL Studio</i> but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite <i>IDE</i>, if you are using one, is your job.
 </p>
 
-<div id="outline-container-org6e4a4fe" class="outline-2">
-<h2 id="org6e4a4fe">Tools</h2>
-<div class="outline-text-2" id="text-org6e4a4fe">
+<div id="outline-container-tools" class="outline-2">
+<h2 id="tools">Tools</h2>
+<div class="outline-text-2" id="text-tools">
 <p>
 These are the tools that we need to install, just pull them from your package manager (These package names exists in Arch Linux repos, they might differ in other distros repositories): - <b>avr-gcc</b> GNU C compiler for AVR architecture - <b>avr-libc</b> AVR libraries - <b>avr-binutils</b> Some AVR tools, we need it to create hex files from compiled programs, because avrdude needs a hex file instead of a binary to flash. - <b>avrdude</b> A <i>dude</i> that is required to perform flashing
 </p>
 </div>
 </div>
 
-<div id="outline-container-org154444c" class="outline-2">
-<h2 id="org154444c">Steps</h2>
-<div class="outline-text-2" id="text-org154444c">
+<div id="outline-container-steps" class="outline-2">
+<h2 id="steps">Steps</h2>
+<div class="outline-text-2" id="text-steps">
 <ol class="org-ol">
 <li>Write your program. Let's say you named it main.c.</li>
 <li><p>
@@ -300,9 +278,9 @@ Flash it.
 </div>
 </div>
 
-<div id="outline-container-org6c5eb7c" class="outline-2">
-<h2 id="org6c5eb7c">The correct way of using <code>avrdude</code></h2>
-<div class="outline-text-2" id="text-org6c5eb7c">
+<div id="outline-container-the-correct-way-of-using--avrdude-" class="outline-2">
+<h2 id="the-correct-way-of-using--avrdude-">The correct way of using <code>avrdude</code></h2>
+<div class="outline-text-2" id="text-the-correct-way-of-using--avrdude-">
 <p>
 When you do the last step, you will get an error that says you don't have permissions. You can just run avrdude with sudo and it will work this time. But of course this is not the preferred way to do it. What you need to do is write an udev rule so we can access programmer without root privileges.
 </p>

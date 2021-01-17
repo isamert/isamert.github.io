@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,7 +222,7 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org7d267ea">The Result</a></li>
+<li><a href="#the-result">The Result</a></li>
 </ul>
 </div>
 </div>
@@ -307,9 +285,9 @@ Lastly, we need to add this function to <code>after-save-hook</code>. But I want
 </pre>
 </div>
 
-<div id="outline-container-org7d267ea" class="outline-2">
-<h2 id="org7d267ea">The Result</h2>
-<div class="outline-text-2" id="text-org7d267ea">
+<div id="outline-container-the-result" class="outline-2">
+<h2 id="the-result">The Result</h2>
+<div class="outline-text-2" id="text-the-result">
 <p>
 Run <code>M-x</code> then call <code>enable-flycheck-all-file-buffers-on-save</code>. From now on, when you save a file, other files will be flychecked too. To disable it, call <code>disable-flycheck-all-file-buffers-on-save</code>.
 </p>

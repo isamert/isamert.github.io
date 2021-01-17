@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,15 +222,15 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgd398925">Preparation</a>
+<li><a href="#preparation">Preparation</a>
 <ul>
-<li><a href="#org8be12da">R</a></li>
-<li><a href="#orga28d495">Emacs</a></li>
+<li><a href="#r">R</a></li>
+<li><a href="#emacs">Emacs</a></li>
 </ul>
 </li>
-<li><a href="#org763d5a9">Running SQL on org tables</a>
+<li><a href="#running-sql-on-org-tables">Running SQL on org tables</a>
 <ul>
-<li><a href="#orgb21ce60">Using SQL instead of table formulas</a></li>
+<li><a href="#using-sql-instead-of-table-formulas">Using SQL instead of table formulas</a></li>
 </ul>
 </li>
 </ul>
@@ -266,13 +244,13 @@ I was tracking some sleep related information about myself using org tables and 
 Then I remembered about <code>sqldf</code>. It's an R package that manipulates R dataframes (basically tables, at least for our purposes in this post) using SQL. Behind the scenes it uses an SQL DB implementation for this. It handles all the dirty stuff for us; like creating tables, running the SQL and conversion between the formats. So I simply used <code>sqldf</code> and R's plot function to accomplish my goal (Yeah, <code>ob-R</code> package supports passing org tables to R code as variables). Then I thought it may be really nice to have an SQL backend for manipulating org tables. Because why not? Nearly every <i>table-like technology</i> have some kind of SQL-like query language.
 </p>
 
-<div id="outline-container-orgd398925" class="outline-2">
-<h2 id="orgd398925">Preparation</h2>
-<div class="outline-text-2" id="text-orgd398925">
+<div id="outline-container-preparation" class="outline-2">
+<h2 id="preparation">Preparation</h2>
+<div class="outline-text-2" id="text-preparation">
 </div>
-<div id="outline-container-org8be12da" class="outline-3">
-<h3 id="org8be12da">R</h3>
-<div class="outline-text-3" id="text-org8be12da">
+<div id="outline-container-r" class="outline-3">
+<h3 id="r">R</h3>
+<div class="outline-text-3" id="text-r">
 <p>
 You need to install R and <code>sqldf</code> package.
 </p>
@@ -326,9 +304,9 @@ That's all for the R part.
 </div>
 </div>
 
-<div id="outline-container-orga28d495" class="outline-3">
-<h3 id="orga28d495">Emacs</h3>
-<div class="outline-text-3" id="text-orga28d495">
+<div id="outline-container-emacs" class="outline-3">
+<h3 id="emacs">Emacs</h3>
+<div class="outline-text-3" id="text-emacs">
 <p>
 Enable running R code.
 </p>
@@ -352,9 +330,9 @@ This is optional but for R syntax highlighting and stuff you may want to install
 </div>
 </div>
 
-<div id="outline-container-org763d5a9" class="outline-2">
-<h2 id="org763d5a9">Running SQL on org tables</h2>
-<div class="outline-text-2" id="text-org763d5a9">
+<div id="outline-container-running-sql-on-org-tables" class="outline-2">
+<h2 id="running-sql-on-org-tables">Running SQL on org tables</h2>
+<div class="outline-text-2" id="text-running-sql-on-org-tables">
 <p>
 Now you can simply do this:
 </p>
@@ -412,9 +390,9 @@ Now we have a nice syntax highlighting for our SQL. But for this you need to hav
 </p>
 </div>
 
-<div id="outline-container-orgb21ce60" class="outline-3">
-<h3 id="orgb21ce60">Using SQL instead of table formulas</h3>
-<div class="outline-text-3" id="text-orgb21ce60">
+<div id="outline-container-using-sql-instead-of-table-formulas" class="outline-3">
+<h3 id="using-sql-instead-of-table-formulas">Using SQL instead of table formulas</h3>
+<div class="outline-text-3" id="text-using-sql-instead-of-table-formulas">
 <p>
 I found some obscure ways of doing this but here I present the most sane one:
 </p>

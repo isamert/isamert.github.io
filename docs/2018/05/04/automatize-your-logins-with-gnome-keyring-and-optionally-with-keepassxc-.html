@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,11 +222,11 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgbd3ecde">Installing/configuring <code>gnome-keyring</code></a></li>
-<li><a href="#orgadec6b6">Adding passwords to <code>gnome-keyring</code></a></li>
-<li><a href="#orgf8d9f98">Querying for a password</a></li>
-<li><a href="#org3c585ce">KeePassXC</a></li>
-<li><a href="#orgd94deb7">Security concerns</a></li>
+<li><a href="#installing-configuring--gnome-keyring-">Installing/configuring <code>gnome-keyring</code></a></li>
+<li><a href="#adding-passwords-to--gnome-keyring-">Adding passwords to <code>gnome-keyring</code></a></li>
+<li><a href="#querying-for-a-password">Querying for a password</a></li>
+<li><a href="#keepassxc">KeePassXC</a></li>
+<li><a href="#security-concerns">Security concerns</a></li>
 </ul>
 </div>
 </div>
@@ -265,9 +243,9 @@ Storing passwords in plain-text is not an encouraged act but typing your passwor
 But there is a problem in this particular solution, at least for me. I'm using <i>KeePassXC</i> to manage my passwords, so copying all those passwords-or just the required ones, still a lot- to <code>gnome-keyring</code> is not feasible. So I need to do something about that too.
 </p>
 
-<div id="outline-container-orgbd3ecde" class="outline-2">
-<h2 id="orgbd3ecde">Installing/configuring <code>gnome-keyring</code></h2>
-<div class="outline-text-2" id="text-orgbd3ecde">
+<div id="outline-container-installing-configuring--gnome-keyring-" class="outline-2">
+<h2 id="installing-configuring--gnome-keyring-">Installing/configuring <code>gnome-keyring</code></h2>
+<div class="outline-text-2" id="text-installing-configuring--gnome-keyring-">
 <p>
 Skip this step if you already have a running <code>gnome-keyring</code>.
 </p>
@@ -279,9 +257,9 @@ Skip this step if you already have a running <code>gnome-keyring</code>.
 </div>
 </div>
 
-<div id="outline-container-orgadec6b6" class="outline-2">
-<h2 id="orgadec6b6">Adding passwords to <code>gnome-keyring</code></h2>
-<div class="outline-text-2" id="text-orgadec6b6">
+<div id="outline-container-adding-passwords-to--gnome-keyring-" class="outline-2">
+<h2 id="adding-passwords-to--gnome-keyring-">Adding passwords to <code>gnome-keyring</code></h2>
+<div class="outline-text-2" id="text-adding-passwords-to--gnome-keyring-">
 <p>
 We need to create a <i>Stored Password</i> in <i>login</i> keyring that we've just created. But the problem is it is not possible to create <i>Stored Passwords</i> with attributes in <code>seahorse</code>, we need to attach attributes to passwords because the command-line tool <code>secret-tool</code> requires them while querying for a password. So what you need to do is, simply create your <i>Stored Password</i> using <code>secret-tool</code>:
 </p>
@@ -301,9 +279,9 @@ If you are using KeePassXC like me, my advise would be instead of duplicating yo
 </div>
 </div>
 
-<div id="outline-container-orgf8d9f98" class="outline-2">
-<h2 id="orgf8d9f98">Querying for a password</h2>
-<div class="outline-text-2" id="text-orgf8d9f98">
+<div id="outline-container-querying-for-a-password" class="outline-2">
+<h2 id="querying-for-a-password">Querying for a password</h2>
+<div class="outline-text-2" id="text-querying-for-a-password">
 <p>
 So you have your passwords in <code>gnome-keyring</code> and you want to supply that passwords to some program. Of course every program has different method for storing/getting your password. I'm going to use <code>mutt</code> as an example (it's a command-line mail client). But first, lets see how do we get our password:
 </p>
@@ -324,9 +302,9 @@ This command will print your password. To configure mutt to use <code>gnome-keyr
 </div>
 </div>
 
-<div id="outline-container-org3c585ce" class="outline-2">
-<h2 id="org3c585ce">KeePassXC</h2>
-<div class="outline-text-2" id="text-org3c585ce">
+<div id="outline-container-keepassxc" class="outline-2">
+<h2 id="keepassxc">KeePassXC</h2>
+<div class="outline-text-2" id="text-keepassxc">
 <p>
 To get a password from KeePassXC, use this command:
 </p>
@@ -369,9 +347,9 @@ For your muttrc, you need to add this:
 </div>
 </div>
 
-<div id="outline-container-orgd94deb7" class="outline-2">
-<h2 id="orgd94deb7">Security concerns</h2>
-<div class="outline-text-2" id="text-orgd94deb7">
+<div id="outline-container-security-concerns" class="outline-2">
+<h2 id="security-concerns">Security concerns</h2>
+<div class="outline-text-2" id="text-security-concerns">
 <p>
 You may say that this kind of approach exposes all of our passwords to all user-level programs. Actually this is kind of behavior I'm trying to achieve here, so that I don't need to type my passwords for each program. If you have a malicious program in your system, it will eventually get your passwords anyway. But <code>gnome-keyring</code> gives you a lot of flexibility. You can lock your keyring after your programs logged in or you can keep your keyring locked all the time(in that case, every time a program tries to use your password, <code>gnome-keyring</code> will ask for your user password. So you will just use one password for your every login which is also better than typing different passwords to different programs every time) etc. This is a much better solution than keeping your passwords as plain-text in your configuration files or typing them manually every time.
 </p>

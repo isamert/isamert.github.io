@@ -97,13 +97,13 @@
    section {
      margin-top: 3.5rem !important;
      margin: 3rem auto;
-     max-width: 100%;
+     max-width: 46rem;
      line-height: 1.5;
      padding: 0 10px;
    }
 
    footer {
-     max-width: 100%;
+     max-width: 46rem;
      margin-right: auto;
      margin-left: auto;
    }
@@ -207,28 +207,6 @@
      border-radius: 0.3rem !important;
      display: block !important;
    }
-
-   /* Add responsiveness */
-   @media screen and (min-width: 640px) {
-     section, footer {
-       max-width: 100%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 768px) {
-     section, footer {
-       max-width: 80%;
-       padding: 10px;
-     }
-   }
-
-   @media screen and (min-width: 1024px) {
-     section, footer {
-       max-width: 55%;
-       padding: 10px;
-     }
-   }
   </style>
 </head>
 
@@ -244,46 +222,46 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org70a4983">shebangs</a>
+<li><a href="#shebangs">shebangs</a>
 <ul>
-<li><a href="#org4979dc2">Running scripts with sudo</a></li>
-<li><a href="#orgd42bd31">Running other programs with shebangs</a></li>
+<li><a href="#running-scripts-with-sudo">Running scripts with sudo</a></li>
+<li><a href="#running-other-programs-with-shebangs">Running other programs with shebangs</a></li>
 </ul>
 </li>
-<li><a href="#orgce850c5">Primitives</a>
+<li><a href="#primitives">Primitives</a>
 <ul>
-<li><a href="#org131df19"><code>true</code> and <code>false</code></a></li>
-<li><a href="#org11f9028"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></a></li>
-<li><a href="#org13c8391"><code>let</code> instead of <code>(( ))</code></a></li>
+<li><a href="#-true--and--false-"><code>true</code> and <code>false</code></a></li>
+<li><a href="#-[[-]]--and------instead-of--[-]-"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></a></li>
+<li><a href="#-let--instead-of-----"><code>let</code> instead of <code>(( ))</code></a></li>
 </ul>
 </li>
-<li><a href="#org00642f7">Variables</a>
+<li><a href="#variables">Variables</a>
 <ul>
-<li><a href="#org4496ada"><code>declare</code> and it's friends</a></li>
-<li><a href="#orgbbfba26">String manipulation</a></li>
-<li><a href="#org68af421">Regular expression matching</a></li>
-<li><a href="#org95b4947">Default vaules</a></li>
+<li><a href="#-declare--and-it's-friends"><code>declare</code> and it's friends</a></li>
+<li><a href="#string-manipulation">String manipulation</a></li>
+<li><a href="#regular-expression-matching">Regular expression matching</a></li>
+<li><a href="#default-vaules">Default vaules</a></li>
 </ul>
 </li>
-<li><a href="#orgc2e760d">Parameters</a>
+<li><a href="#parameters">Parameters</a>
 <ul>
-<li><a href="#orgd3a0f2f">shift</a></li>
-<li><a href="#org9a50599">Preserving</a></li>
-<li><a href="#org9cd5347">Looping through arguments</a></li>
+<li><a href="#shift">shift</a></li>
+<li><a href="#preserving">Preserving</a></li>
+<li><a href="#looping-through-arguments">Looping through arguments</a></li>
 </ul>
 </li>
-<li><a href="#orge91178d">Subshells</a>
+<li><a href="#subshells">Subshells</a>
 <ul>
-<li><a href="#org7a9ac40">Here strings</a></li>
-<li><a href="#orgbc182b5">Process substitution</a></li>
+<li><a href="#here-strings">Here strings</a></li>
+<li><a href="#process-substitution">Process substitution</a></li>
 </ul>
 </li>
-<li><a href="#orgc85ce64">Functions</a>
+<li><a href="#functions">Functions</a>
 <ul>
-<li><a href="#orgfe738a7">Functions that accepts both arguments and stdin</a></li>
+<li><a href="#functions-that-accepts-both-arguments-and-stdin">Functions that accepts both arguments and stdin</a></li>
 </ul>
 </li>
-<li><a href="#orge63656c">Linting bash scripts</a></li>
+<li><a href="#linting-bash-scripts">Linting bash scripts</a></li>
 </ul>
 </div>
 </div>
@@ -295,9 +273,9 @@ I've been writing some bash scripts lately and I've learned a lot. I must say th
 I'll be talking about <code>bash</code> specifically, but I lot of the features in here are implemented in very similar ways in other shells.
 </p>
 
-<div id="outline-container-org70a4983" class="outline-2">
-<h2 id="org70a4983">shebangs</h2>
-<div class="outline-text-2" id="text-org70a4983">
+<div id="outline-container-shebangs" class="outline-2">
+<h2 id="shebangs">shebangs</h2>
+<div class="outline-text-2" id="text-shebangs">
 <p>
 The most portable shebang for bash scripting is: <code>#!/usr/local/env bash</code>. It basically asks <code>env</code> to find <code>bash</code> and wherever it may be, run this script with it. Do not use <code>sh</code>, it may be linked to <code>bash</code> but most of the time this is not the case.
 </p>
@@ -307,9 +285,9 @@ shebangs also let's you do some cool tricks:
 </p>
 </div>
 
-<div id="outline-container-org4979dc2" class="outline-3">
-<h3 id="org4979dc2">Running scripts with sudo</h3>
-<div class="outline-text-3" id="text-org4979dc2">
+<div id="outline-container-running-scripts-with-sudo" class="outline-3">
+<h3 id="running-scripts-with-sudo">Running scripts with sudo</h3>
+<div class="outline-text-3" id="text-running-scripts-with-sudo">
 <p>
 If you need to run some commands with root privileges in your script, it is generally advised to run your script using <code>sudo</code> instead of having a <code>sodo command ...</code> kind of line in the script. So to write such script, you need to check if you have root privileges or not. Instead of that, you can have this kind of shebang:
 </p>
@@ -352,9 +330,9 @@ I'm not entirely sure about this style of sudo calls. There may be implications 
 </div>
 </div>
 
-<div id="outline-container-orgd42bd31" class="outline-3">
-<h3 id="orgd42bd31">Running other programs with shebangs</h3>
-<div class="outline-text-3" id="text-orgd42bd31">
+<div id="outline-container-running-other-programs-with-shebangs" class="outline-3">
+<h3 id="running-other-programs-with-shebangs">Running other programs with shebangs</h3>
+<div class="outline-text-3" id="text-running-other-programs-with-shebangs">
 <p>
 This is not entirely related to bash scripting but it's worth mentioning. Check this out:
 </p>
@@ -371,17 +349,17 @@ This script directly calls <code>cat</code> with <code>${HOME}/.bashrc</code> ar
 </div>
 </div>
 
-<div id="outline-container-orgce850c5" class="outline-2">
-<h2 id="orgce850c5">Primitives</h2>
-<div class="outline-text-2" id="text-orgce850c5">
+<div id="outline-container-primitives" class="outline-2">
+<h2 id="primitives">Primitives</h2>
+<div class="outline-text-2" id="text-primitives">
 <p>
 Here are some basic tips that makes your code faster and easy to reason.
 </p>
 </div>
 
-<div id="outline-container-org131df19" class="outline-3">
-<h3 id="org131df19"><code>true</code> and <code>false</code></h3>
-<div class="outline-text-3" id="text-org131df19">
+<div id="outline-container--true--and--false-" class="outline-3">
+<h3 id="-true--and--false-"><code>true</code> and <code>false</code></h3>
+<div class="outline-text-3" id="text--true--and--false-">
 <ul class="org-ul">
 <li><code>true</code> and <code>false</code> are actual binaries that does nothing and returns <code>0</code> and <code>1</code> respectively as their exit code. If you pass a command to if clause, it checks the exit code of it and depending on that selects the right branch. So <code>0</code> exit code which means successful exit is considered as <code>true</code> and everything else is considered as false.</li>
 </ul>
@@ -423,9 +401,9 @@ if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
 </div>
 </div>
 
-<div id="outline-container-org11f9028" class="outline-3">
-<h3 id="org11f9028"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></h3>
-<div class="outline-text-3" id="text-org11f9028">
+<div id="outline-container--[[-]]--and------instead-of--[-]-" class="outline-3">
+<h3 id="-[[-]]--and------instead-of--[-]-"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></h3>
+<div class="outline-text-3" id="text--[[-]]--and------instead-of--[-]-">
 <ul class="org-ul">
 <li><code>[</code> is an actual binary. So it costs more to use it. <code>[[</code> is a bash built-in and has a lot of improvements over <code>[</code>.</li>
 <li><code>((</code> is like <code>[[</code> but for arithmetic expressions only. You can compare variables and make some calculations within them directly.</li>
@@ -451,9 +429,9 @@ fi
 </div>
 </div>
 
-<div id="outline-container-org13c8391" class="outline-3">
-<h3 id="org13c8391"><code>let</code> instead of <code>(( ))</code></h3>
-<div class="outline-text-3" id="text-org13c8391">
+<div id="outline-container--let--instead-of-----" class="outline-3">
+<h3 id="-let--instead-of-----"><code>let</code> instead of <code>(( ))</code></h3>
+<div class="outline-text-3" id="text--let--instead-of-----">
 <p>
 Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It's not an alternative for using inside if clauses but for assignments it requires less typing:
 </p>
@@ -466,13 +444,13 @@ Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It
 </div>
 </div>
 
-<div id="outline-container-org00642f7" class="outline-2">
-<h2 id="org00642f7">Variables</h2>
-<div class="outline-text-2" id="text-org00642f7">
+<div id="outline-container-variables" class="outline-2">
+<h2 id="variables">Variables</h2>
+<div class="outline-text-2" id="text-variables">
 </div>
-<div id="outline-container-org4496ada" class="outline-3">
-<h3 id="org4496ada"><code>declare</code> and it's friends</h3>
-<div class="outline-text-3" id="text-org4496ada">
+<div id="outline-container--declare--and-it's-friends" class="outline-3">
+<h3 id="-declare--and-it's-friends"><code>declare</code> and it's friends</h3>
+<div class="outline-text-3" id="text--declare--and-it's-friends">
 <p>
 <code>declare</code> is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type <code>help declare</code> and see a very informative and short text about it.
 </p>
@@ -512,9 +490,9 @@ echo "$greeting $name"
 </div>
 </div>
 
-<div id="outline-container-orgbbfba26" class="outline-3">
-<h3 id="orgbbfba26">String manipulation</h3>
-<div class="outline-text-3" id="text-orgbbfba26">
+<div id="outline-container-string-manipulation" class="outline-3">
+<h3 id="string-manipulation">String manipulation</h3>
+<div class="outline-text-3" id="text-string-manipulation">
 <p>
 Here is a quick summary of string manipulation capabilities of bash: (Assume <code>string</code> is a pre-defined variable)
 </p>
@@ -562,9 +540,9 @@ Also there is stuff for case manipulation. Given variable <code>EXAMPLE="An ExaM
 </div>
 </div>
 
-<div id="outline-container-org68af421" class="outline-3">
-<h3 id="org68af421">Regular expression matching</h3>
-<div class="outline-text-3" id="text-org68af421">
+<div id="outline-container-regular-expression-matching" class="outline-3">
+<h3 id="regular-expression-matching">Regular expression matching</h3>
+<div class="outline-text-3" id="text-regular-expression-matching">
 <p>
 You can use <code>=~</code> operator to perform a regular expression match instead of simple globing:
 </p>
@@ -579,9 +557,9 @@ fi
 </div>
 </div>
 
-<div id="outline-container-org95b4947" class="outline-3">
-<h3 id="org95b4947">Default vaules</h3>
-<div class="outline-text-3" id="text-org95b4947">
+<div id="outline-container-default-vaules" class="outline-3">
+<h3 id="default-vaules">Default vaules</h3>
+<div class="outline-text-3" id="text-default-vaules">
 <p>
 You can use <code>${VAR:-DEFAULT}</code> or <code>${VAR-DEFAULT}</code> syntax to define default variables. The first one outputs <code>DEFAULT</code> if the <code>$VAR</code> is empty or unset. Latter only outputs <code>DEFAULT</code> when <code>$VAR</code> is unset. A practical example of this would be:
 </p>
@@ -598,13 +576,13 @@ There is also a version of this which uses <code>=</code> instead of <code>-</co
 </div>
 </div>
 
-<div id="outline-container-orgc2e760d" class="outline-2">
-<h2 id="orgc2e760d">Parameters</h2>
-<div class="outline-text-2" id="text-orgc2e760d">
+<div id="outline-container-parameters" class="outline-2">
+<h2 id="parameters">Parameters</h2>
+<div class="outline-text-2" id="text-parameters">
 </div>
-<div id="outline-container-orgd3a0f2f" class="outline-3">
-<h3 id="orgd3a0f2f">shift</h3>
-<div class="outline-text-3" id="text-orgd3a0f2f">
+<div id="outline-container-shift" class="outline-3">
+<h3 id="shift">shift</h3>
+<div class="outline-text-3" id="text-shift">
 <p>
 You can access to parameters using positional parameters: <code>$1, $2 ... $9, ${10}, ${11} ...</code>. <code>shift</code>, as the name suggests, shifts those parameters. So when you call <code>shift</code>, <code>$2</code> becomes <code>$1</code>, <code>$3</code> becomes <code>$2</code>&#x2026; It becomes handy in loops or sometimes you just want to process first <i>N</i> parameters and leave rest as is while passing them to another program.
 </p>
@@ -630,9 +608,9 @@ done
 </div>
 </div>
 
-<div id="outline-container-org9a50599" class="outline-3">
-<h3 id="org9a50599">Preserving</h3>
-<div class="outline-text-3" id="text-org9a50599">
+<div id="outline-container-preserving" class="outline-3">
+<h3 id="preserving">Preserving</h3>
+<div class="outline-text-3" id="text-preserving">
 <p>
 Say that we have a wrapper script/function that checks if <code>ripgrep</code> (rg) is installed and executes it with given parameters otherwise it calls <code>grep</code> with given parameters:
 </p>
@@ -655,9 +633,9 @@ else
 </div>
 </div>
 
-<div id="outline-container-org9cd5347" class="outline-3">
-<h3 id="org9cd5347">Looping through arguments</h3>
-<div class="outline-text-3" id="text-org9cd5347">
+<div id="outline-container-looping-through-arguments" class="outline-3">
+<h3 id="looping-through-arguments">Looping through arguments</h3>
+<div class="outline-text-3" id="text-looping-through-arguments">
 <p>
 It's a pretty common task with pretty easy syntax:
 </p>
@@ -683,9 +661,9 @@ done
 </div>
 </div>
 
-<div id="outline-container-orge91178d" class="outline-2">
-<h2 id="orge91178d">Subshells</h2>
-<div class="outline-text-2" id="text-orge91178d">
+<div id="outline-container-subshells" class="outline-2">
+<h2 id="subshells">Subshells</h2>
+<div class="outline-text-2" id="text-subshells">
 <p>
 The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
 </p>
@@ -712,9 +690,9 @@ Here <code>|</code> still introduces a subshell but we continue to do our stuff 
 </p>
 </div>
 
-<div id="outline-container-org7a9ac40" class="outline-3">
-<h3 id="org7a9ac40">Here strings</h3>
-<div class="outline-text-3" id="text-org7a9ac40">
+<div id="outline-container-here-strings" class="outline-3">
+<h3 id="here-strings">Here strings</h3>
+<div class="outline-text-3" id="text-here-strings">
 <p>
 Continuing the example above, we can do something like this:
 </p>
@@ -732,9 +710,9 @@ read some_var &lt;&lt;&lt; $(echo "stuff")
 </div>
 </div>
 
-<div id="outline-container-orgbc182b5" class="outline-3">
-<h3 id="orgbc182b5">Process substitution</h3>
-<div class="outline-text-3" id="text-orgbc182b5">
+<div id="outline-container-process-substitution" class="outline-3">
+<h3 id="process-substitution">Process substitution</h3>
+<div class="outline-text-3" id="text-process-substitution">
 <p>
 A process substitution creates a temporary file with the given output and passes that temporary file to a command. For example:
 </p>
@@ -751,13 +729,13 @@ Here, the effect is same as with <i>here strings</i> but what happens is a lot d
 </div>
 </div>
 
-<div id="outline-container-orgc85ce64" class="outline-2">
-<h2 id="orgc85ce64">Functions</h2>
-<div class="outline-text-2" id="text-orgc85ce64">
+<div id="outline-container-functions" class="outline-2">
+<h2 id="functions">Functions</h2>
+<div class="outline-text-2" id="text-functions">
 </div>
-<div id="outline-container-orgfe738a7" class="outline-3">
-<h3 id="orgfe738a7">Functions that accepts both arguments and stdin</h3>
-<div class="outline-text-3" id="text-orgfe738a7">
+<div id="outline-container-functions-that-accepts-both-arguments-and-stdin" class="outline-3">
+<h3 id="functions-that-accepts-both-arguments-and-stdin">Functions that accepts both arguments and stdin</h3>
+<div class="outline-text-3" id="text-functions-that-accepts-both-arguments-and-stdin">
 <p>
 Let's say that you want your function to accept data either as argument or from stdin. You can simply combine <code>${VAR:-DEFAULT}</code> syntax with redirecting operator and you will have this:
 </p>
@@ -774,9 +752,9 @@ Now your function will concatenate your arguments and set it to <code>str</code>
 </div>
 </div>
 
-<div id="outline-container-orge63656c" class="outline-2">
-<h2 id="orge63656c">Linting bash scripts</h2>
-<div class="outline-text-2" id="text-orge63656c">
+<div id="outline-container-linting-bash-scripts" class="outline-2">
+<h2 id="linting-bash-scripts">Linting bash scripts</h2>
+<div class="outline-text-2" id="text-linting-bash-scripts">
 <p>
 It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called <code>shellcheck</code> addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using <a href="https://github.com/w0rp/ale">ALE</a> extension, it works out of the box with shellcheck.) For <i>emacs</i> users, <i>Flycheck</i> works out of the box with shellcheck.</p>
 </div>

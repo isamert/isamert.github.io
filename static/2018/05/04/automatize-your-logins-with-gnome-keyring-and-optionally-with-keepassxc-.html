@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<head>
+  <title>Automatize your logins with gnome-keyring (and optionally with KeePassXC) | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbd3ecde">Installing/configuring <code>gnome-keyring</code></a></li>
+<li><a href="#orgadec6b6">Adding passwords to <code>gnome-keyring</code></a></li>
+<li><a href="#orgf8d9f98">Querying for a password</a></li>
+<li><a href="#org3c585ce">KeePassXC</a></li>
+<li><a href="#orgd94deb7">Security concerns</a></li>
+</ul>
+</div>
+</div>
+<p>
+Storing passwords in plain-text is not an encouraged act but typing your password every time you start an application is also cumbersome. To solve this dilemma, the easiest solution I came up with is using <code>gnome-keyring</code> to store my passwords. I'm not using gnome either but <code>gnome-keyring</code> does not have much dependencies and a lot of applications already requires it. So I believe <code>gnome-keyring</code> is a good choice. The thing I want to achieve is something like this:
+</p>
+
+<ul class="org-ul">
+<li>Store my passwords in <code>gnome-keyring</code> so that they are encrypted.</li>
+<li>When I login to my computer, <code>gnome-keyring</code> automatically gets unlocked so that programs can get required passwords without hassling with me.</li>
+</ul>
+
+<p>
+But there is a problem in this particular solution, at least for me. I'm using <i>KeePassXC</i> to manage my passwords, so copying all those passwords-or just the required ones, still a lot- to <code>gnome-keyring</code> is not feasible. So I need to do something about that too.
+</p>
+
+<div id="outline-container-orgbd3ecde" class="outline-2">
+<h2 id="orgbd3ecde">Installing/configuring <code>gnome-keyring</code></h2>
+<div class="outline-text-2" id="text-orgbd3ecde">
+<p>
+Skip this step if you already have a running <code>gnome-keyring</code>.
+</p>
+
+<ul class="org-ul">
+<li>Just install these packages: <code>gnome-keyring</code>, <code>libsecret</code> and <code>seahorse</code>.</li>
+<li>You need to create a keyring named login so that when you login, that particular keyring gets unlocked. To create that, open <code>seahorse</code> and follow <i>File -&gt; New -&gt; Password Keyring</i>. Name it as <i>login</i> and as password enter your login password. This method works with login managers generally, if you are not using one, you need to figure it out. But getting <code>gnome-keyring</code> unlocked at login is not a big deal, if its locked, the first time a program requests for a password, <code>gnome-keyring</code> will show a prompt and ask for your password to unlock that keyring. Subsequent password requests will go silently because you have unlocked that keyring.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgadec6b6" class="outline-2">
+<h2 id="orgadec6b6">Adding passwords to <code>gnome-keyring</code></h2>
+<div class="outline-text-2" id="text-orgadec6b6">
+<p>
+We need to create a <i>Stored Password</i> in <i>login</i> keyring that we've just created. But the problem is it is not possible to create <i>Stored Passwords</i> with attributes in <code>seahorse</code>, we need to attach attributes to passwords because the command-line tool <code>secret-tool</code> requires them while querying for a password. So what you need to do is, simply create your <i>Stored Password</i> using <code>secret-tool</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">secret-tool store --label=Mail name mail_password
+</pre>
+</div>
+
+<p>
+Then it will ask for the password. <i>name</i> and <i>mailpassword</i> are key-value pairs. You can add more attributes like them or change them as you wish. Now you can see the added password in <code>seahorse</code>. (You may wonder why we did not specify keyring name while adding password. Because this command adds your password to your default keyring, which is the <i>login</i> keyring. If it's not the default one, right-click on it in <code>seahorse</code> and set as default.)
+</p>
+
+<p>
+If you are using KeePassXC like me, my advise would be instead of duplicating your passwords in <code>gnome-keyring</code>, only add your keepass password in <code>gnome-keyring</code>: <code>secret-tool store --label=KeePass name keepass_password</code> I'll get to the usage later.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf8d9f98" class="outline-2">
+<h2 id="orgf8d9f98">Querying for a password</h2>
+<div class="outline-text-2" id="text-orgf8d9f98">
+<p>
+So you have your passwords in <code>gnome-keyring</code> and you want to supply that passwords to some program. Of course every program has different method for storing/getting your password. I'm going to use <code>mutt</code> as an example (it's a command-line mail client). But first, lets see how do we get our password:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">secret-tool lookup name mail_password
+</pre>
+</div>
+
+<p>
+This command will print your password. To configure mutt to use <code>gnome-keyring</code>, simply add this line to your muttrc:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">set imap_pass=`secret-tool lookup name mail_password`
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3c585ce" class="outline-2">
+<h2 id="org3c585ce">KeePassXC</h2>
+<div class="outline-text-2" id="text-org3c585ce">
+<p>
+To get a password from KeePassXC, use this command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry"
+</pre>
+</div>
+
+<p>
+But this prints a lot of information. To just get the value of <i>Password</i> entry, use something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-
+</pre>
+</div>
+
+<p>
+To see your database structure, use this command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli ls /path/to/keepass/db/file
+</pre>
+</div>
+
+<p>
+This will only list top level entries and directories, you can add, for example, "<i>email" to this command and it will print out entries under //email</i> folder.
+</p>
+
+<p>
+For your muttrc, you need to add this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">set imap_pass=`secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-`
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd94deb7" class="outline-2">
+<h2 id="orgd94deb7">Security concerns</h2>
+<div class="outline-text-2" id="text-orgd94deb7">
+<p>
+You may say that this kind of approach exposes all of our passwords to all user-level programs. Actually this is kind of behavior I'm trying to achieve here, so that I don't need to type my passwords for each program. If you have a malicious program in your system, it will eventually get your passwords anyway. But <code>gnome-keyring</code> gives you a lot of flexibility. You can lock your keyring after your programs logged in or you can keep your keyring locked all the time(in that case, every time a program tries to use your password, <code>gnome-keyring</code> will ask for your user password. So you will just use one password for your every login which is also better than typing different passwords to different programs every time) etc. This is a much better solution than keeping your passwords as plain-text in your configuration files or typing them manually every time.
+</p>
+
+<p>
+Also you can probably do the same things with kwallet if you are using KDE. Just search for equivalent commands for kwallet.
+</p>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

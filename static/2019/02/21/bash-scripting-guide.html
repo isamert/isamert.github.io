@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<head>
+  <title>Bash scripting guide | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Bash scripting guide</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org70a4983">shebangs</a>
+<ul>
+<li><a href="#org4979dc2">Running scripts with sudo</a></li>
+<li><a href="#orgd42bd31">Running other programs with shebangs</a></li>
+</ul>
+</li>
+<li><a href="#orgce850c5">Primitives</a>
+<ul>
+<li><a href="#org131df19"><code>true</code> and <code>false</code></a></li>
+<li><a href="#org11f9028"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></a></li>
+<li><a href="#org13c8391"><code>let</code> instead of <code>(( ))</code></a></li>
+</ul>
+</li>
+<li><a href="#org00642f7">Variables</a>
+<ul>
+<li><a href="#org4496ada"><code>declare</code> and it's friends</a></li>
+<li><a href="#orgbbfba26">String manipulation</a></li>
+<li><a href="#org68af421">Regular expression matching</a></li>
+<li><a href="#org95b4947">Default vaules</a></li>
+</ul>
+</li>
+<li><a href="#orgc2e760d">Parameters</a>
+<ul>
+<li><a href="#orgd3a0f2f">shift</a></li>
+<li><a href="#org9a50599">Preserving</a></li>
+<li><a href="#org9cd5347">Looping through arguments</a></li>
+</ul>
+</li>
+<li><a href="#orge91178d">Subshells</a>
+<ul>
+<li><a href="#org7a9ac40">Here strings</a></li>
+<li><a href="#orgbc182b5">Process substitution</a></li>
+</ul>
+</li>
+<li><a href="#orgc85ce64">Functions</a>
+<ul>
+<li><a href="#orgfe738a7">Functions that accepts both arguments and stdin</a></li>
+</ul>
+</li>
+<li><a href="#orge63656c">Linting bash scripts</a></li>
+</ul>
+</div>
+</div>
+<p>
+I've been writing some bash scripts lately and I've learned a lot. I must say that it's really fun to write bash scripts, every line of code feels hacky and no matter what I wrote, it felt bad which is kind of liberating. I found my real self in bash scripts. Here are some of the things that I find useful or/and important.
+</p>
+
+<p>
+I'll be talking about <code>bash</code> specifically, but I lot of the features in here are implemented in very similar ways in other shells.
+</p>
+
+<div id="outline-container-org70a4983" class="outline-2">
+<h2 id="org70a4983">shebangs</h2>
+<div class="outline-text-2" id="text-org70a4983">
+<p>
+The most portable shebang for bash scripting is: <code>#!/usr/local/env bash</code>. It basically asks <code>env</code> to find <code>bash</code> and wherever it may be, run this script with it. Do not use <code>sh</code>, it may be linked to <code>bash</code> but most of the time this is not the case.
+</p>
+
+<p>
+shebangs also let's you do some cool tricks:
+</p>
+</div>
+
+<div id="outline-container-org4979dc2" class="outline-3">
+<h3 id="org4979dc2">Running scripts with sudo</h3>
+<div class="outline-text-3" id="text-org4979dc2">
+<p>
+If you need to run some commands with root privileges in your script, it is generally advised to run your script using <code>sudo</code> instead of having a <code>sodo command ...</code> kind of line in the script. So to write such script, you need to check if you have root privileges or not. Instead of that, you can have this kind of shebang:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">#!/bin/sudo /bin/bash
+</pre>
+</div>
+
+<p>
+Now your script is guaranteed to be running with sudo, <i>kind of</i>. As I said using <code>#!/usr/local/env</code> to find the binary you want is the most reliable way of doing it. With this shebang, we got this problems: <code>sudo</code> or/and <code>bash</code> might not be in <code>/bin</code> directory. You might have tempted to do this then:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">#!/usr/bin/env sudo bash
+</pre>
+</div>
+
+<p>
+Which seems reasonable. We ask <code>env</code> to find <code>sudo</code> and we are calling it with bash argument and due to nature of shebangs, the script's path added to the end. So the final call that is produced by the shebang will be this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">/path/to/sudo bash /path/to/your/script
+</pre>
+</div>
+
+<p>
+But unfortunately, this is not the case. Because <code>env</code> parses all arguments as a whole, it looks for an executable named <code>sudo bash</code> in your <code>$PATH</code>. But that is also easy to fix, just use <code>-S</code> option of <code>env</code> to be able to pass arguments in shebang lines:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">#!/usr/bin/env -S sudo bash
+</pre>
+</div>
+
+<p>
+I'm not entirely sure about this style of sudo calls. There may be implications that I'm missing but it worked out well for me.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd42bd31" class="outline-3">
+<h3 id="orgd42bd31">Running other programs with shebangs</h3>
+<div class="outline-text-3" id="text-orgd42bd31">
+<p>
+This is not entirely related to bash scripting but it's worth mentioning. Check this out:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">#!/usr/bin/env -S cat ${HOME}/.bashrc
+</pre>
+</div>
+
+<p>
+This script directly calls <code>cat</code> with <code>${HOME}/.bashrc</code> argument. Instead of using <code>bash</code> to call <code>cat</code> program, we got rid of one level of indirection. (using <code>${HOME}</code> instead of <code>$HOME</code> is just an <code>env</code> restriction). This may seem silly, but I'm sure it has it's own use-cases.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgce850c5" class="outline-2">
+<h2 id="orgce850c5">Primitives</h2>
+<div class="outline-text-2" id="text-orgce850c5">
+<p>
+Here are some basic tips that makes your code faster and easy to reason.
+</p>
+</div>
+
+<div id="outline-container-org131df19" class="outline-3">
+<h3 id="org131df19"><code>true</code> and <code>false</code></h3>
+<div class="outline-text-3" id="text-org131df19">
+<ul class="org-ul">
+<li><code>true</code> and <code>false</code> are actual binaries that does nothing and returns <code>0</code> and <code>1</code> respectively as their exit code. If you pass a command to if clause, it checks the exit code of it and depending on that selects the right branch. So <code>0</code> exit code which means successful exit is considered as <code>true</code> and everything else is considered as false.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash">if true; then echo "hey, it's true!"; fi
+
+# They are also helpful in context of functions:
+function starts_with {
+    case "$1" in
+        "$2"*) true ;;
+        *) false ;;
+    esac
+}
+
+# prints yes
+if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>But I should mention that <code>true</code> and <code>false</code> does not stop the function from flowing. In bash, last command call's exit code is returned as function's exit code. To stop the function and return true, just use <code>return</code>. <code>return</code> halts the function and returns <code>0</code> as the exit code. We can revise the function from above in that style:</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash">function starts_with {
+    case "$1" in
+        "$2"*) return ;;
+    esac
+
+    false
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>To exit early with a false value, just use <code>return something-not-zero</code>, like <code>return 255</code>.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org11f9028" class="outline-3">
+<h3 id="org11f9028"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></h3>
+<div class="outline-text-3" id="text-org11f9028">
+<ul class="org-ul">
+<li><code>[</code> is an actual binary. So it costs more to use it. <code>[[</code> is a bash built-in and has a lot of improvements over <code>[</code>.</li>
+<li><code>((</code> is like <code>[[</code> but for arithmetic expressions only. You can compare variables and make some calculations within them directly.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash">echo "Enter a year:"
+read year
+
+if [[ -z $year ]]; then
+    echo "Year cannot be empty."
+elif (( ($year % 400) == 0 )) || (( ($year % 4 == 0) &amp;&amp; ($year % 100 != 0) ))
+    echo "A leap year!"
+else
+    echo "Not a leap year :("
+fi
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>See <a href="http://mywiki.wooledge.org/BashFAQ/031">this link</a> for more information.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org13c8391" class="outline-3">
+<h3 id="org13c8391"><code>let</code> instead of <code>(( ))</code></h3>
+<div class="outline-text-3" id="text-org13c8391">
+<p>
+Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It's not an alternative for using inside if clauses but for assignments it requires less typing:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">let l=33+9
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org00642f7" class="outline-2">
+<h2 id="org00642f7">Variables</h2>
+<div class="outline-text-2" id="text-org00642f7">
+</div>
+<div id="outline-container-org4496ada" class="outline-3">
+<h3 id="org4496ada"><code>declare</code> and it's friends</h3>
+<div class="outline-text-3" id="text-org4496ada">
+<p>
+<code>declare</code> is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type <code>help declare</code> and see a very informative and short text about it.
+</p>
+
+<ul class="org-ul">
+<li>Using declare inside a function makes the variable local, meaning they do not interfere with global variables. A better alternative is just using <code>local</code> built-in which is more clear. If your intention is exact opposite, meaning you want to declare a global variable, use <code>-g</code> option with declare. (Actually just assigning something to a variable without <code>declare=/=local</code> keywords make them global. So you don't need something like this: <code>declare -g a=3</code> inside a function to make it global, <code>a=3</code> is enough. <code>-g</code> comes handy if you are using other options of <code>declare</code> and wanting to make the variable global)</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash">greeting="hey"
+
+function greet {
+    local greeting="hi"
+
+    echo "Your name:"
+    read name
+
+    echo "Local greeting:"
+    echo "$greeting $name"
+}
+
+greet
+echo "Global greeting:"
+echo "$greeting $name"
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>As you may have noticed, <code>name</code> becomes a global variable. If you want to keep it in the scope of the function, add this line before <code>read name</code>: <code>local name</code>.</li>
+
+<li>Also you can use the options that <code>declare</code> takes with <code>local</code>. (Yeah it's possible to do some stupid thing like: <code>local -g</code>)</li>
+
+<li>To declare a read-only variable, you can use <code>declare -r</code> or better, <code>readonly</code>.</li>
+
+<li>To export variables into environment you can use <code>declare -x</code> or better, <code>export</code></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbbfba26" class="outline-3">
+<h3 id="orgbbfba26">String manipulation</h3>
+<div class="outline-text-3" id="text-orgbbfba26">
+<p>
+Here is a quick summary of string manipulation capabilities of bash: (Assume <code>string</code> is a pre-defined variable)
+</p>
+
+<ul class="org-ul">
+<li><code>${#string}</code> → returns the length of <code>$string</code>.</li>
+<li><code>${string:4}</code> → returns the substring starting at fourth character of <code>$string</code>.</li>
+<li><code>${string:4:3}</code> → returns the substring of length of three starting at fourth character of $string.</li>
+<li><code>${string#asd}</code> → Removes <code>asd</code> from beginning of <code>$string</code> (if it starts with <code>asd</code>).</li>
+<li><code>${string##asd}</code> → Same as above. The difference becomes apparent between <code>#</code> and <code>##</code> when you start using some globing operators. While <code>#</code> removes shortest match, <code>##</code> removes the longest match. Check this:</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-bash">string="abcabcdefg"
+x=${string#a*c}  # x is abcdefg
+y=${string##a*c} # y is defg
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>${string%asd}</code> → Removes <code>asd</code> from back of $string.</li>
+<li><code>${string%%asd}</code> → Same as above, but like in the case of <code>#</code> and <code>##</code>, <code>%</code> removes shortest match, <code>%%</code> removes longest match.</li>
+<li><code>${string/asd/123}</code> → Replaces first match of <code>asd</code> with <code>123</code>.</li>
+<li><code>${string//asd/123}</code> → Replaces all matches of <code>asd</code> with <code>123</code>. Again you can use globing characters here.</li>
+<li><code>${string/#asd/123}</code> → Replace <code>asd</code> if it's in front of the string with <code>123</code>.</li>
+<li><code>${string/%asd/123}</code> → Replace <code>asd</code> if it's at the end of $string with <code>123</code>.</li>
+</ul>
+
+<p>
+Also there is stuff for case manipulation. Given variable <code>EXAMPLE="An ExaMplE"</code>, observe these:
+</p>
+
+<ul class="org-ul">
+<li><code>${EXAMPLE^}</code> → <code>An ExaMplE</code></li>
+<li><code>${EXAMPLE^^}</code> → <code>AN EXAMPLE</code></li>
+<li><code>${EXAMPLE,}</code> → <code>an ExaMplE</code></li>
+<li><code>${EXAMPLE,,}</code> → <code>an example</code></li>
+<li><code>${EXAMPLE~}</code> → <code>An ExaMplE</code></li>
+<li><code>${EXAMPLE~~}</code> → <code>AN eXAmPLe</code></li>
+</ul>
+
+<p>
+<a href="http://www.tldp.org/LDP/abs/html/string-manipulation.html">Here</a> is a more complete reference with more examples.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org68af421" class="outline-3">
+<h3 id="org68af421">Regular expression matching</h3>
+<div class="outline-text-3" id="text-org68af421">
+<p>
+You can use <code>=~</code> operator to perform a regular expression match instead of simple globing:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"># Check if input is hexadecimal:
+if [[ $input =~ ^[[:xdigit:]]*$ ]]; then
+    # do stuff with it
+fi
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org95b4947" class="outline-3">
+<h3 id="org95b4947">Default vaules</h3>
+<div class="outline-text-3" id="text-org95b4947">
+<p>
+You can use <code>${VAR:-DEFAULT}</code> or <code>${VAR-DEFAULT}</code> syntax to define default variables. The first one outputs <code>DEFAULT</code> if the <code>$VAR</code> is empty or unset. Latter only outputs <code>DEFAULT</code> when <code>$VAR</code> is unset. A practical example of this would be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">echo "Your config directory is: ${XDG_CONFIG_HOME:-$HOME/.config}"
+</pre>
+</div>
+
+<p>
+There is also a version of this which uses <code>=</code> instead of <code>-</code>. The difference is that it also sets the variable to default value so that you can use the variable afterwards without defining a default value everytime.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc2e760d" class="outline-2">
+<h2 id="orgc2e760d">Parameters</h2>
+<div class="outline-text-2" id="text-orgc2e760d">
+</div>
+<div id="outline-container-orgd3a0f2f" class="outline-3">
+<h3 id="orgd3a0f2f">shift</h3>
+<div class="outline-text-3" id="text-orgd3a0f2f">
+<p>
+You can access to parameters using positional parameters: <code>$1, $2 ... $9, ${10}, ${11} ...</code>. <code>shift</code>, as the name suggests, shifts those parameters. So when you call <code>shift</code>, <code>$2</code> becomes <code>$1</code>, <code>$3</code> becomes <code>$2</code>&#x2026; It becomes handy in loops or sometimes you just want to process first <i>N</i> parameters and leave rest as is while passing them to another program.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"># Removes given files if they are empty
+
+while (( "$#" )); do
+    if [[ -s $1 ]]; then
+        echo "Can't remove."
+    else
+        rm $1
+    fi
+
+    shift
+done
+</pre>
+</div>
+
+<p>
+<code>shift</code> also can be called with a number argument, like <code>shift 3</code> which shifts parameters 3 times.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9a50599" class="outline-3">
+<h3 id="org9a50599">Preserving</h3>
+<div class="outline-text-3" id="text-org9a50599">
+<p>
+Say that we have a wrapper script/function that checks if <code>ripgrep</code> (rg) is installed and executes it with given parameters otherwise it calls <code>grep</code> with given parameters:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">rg_path=$(which rg)
+ if [ -x "$rg_path" ]; then
+    rg "$@"
+else
+    grep "$@"
+ fi
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>"$@"</code> is equivalent of doing <code>"$1" "$2" "$3" ...</code>. And it's the only thing that does that.</li>
+<li><code>"$*"</code> concatenates parameters using <code>IFS</code> as separator. (If IFS is empty, which is the case in this script, it simply uses space as separator.)</li>
+<li>To learn more about special parameters, check <a href="https://www.gnu.org/software/bash/manual/bash.html#Special-Parameters">this</a>.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9cd5347" class="outline-3">
+<h3 id="org9cd5347">Looping through arguments</h3>
+<div class="outline-text-3" id="text-org9cd5347">
+<p>
+It's a pretty common task with pretty easy syntax:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">for arg in "$@"; do
+    echo "$arg"
+done
+</pre>
+</div>
+
+<p>
+Or better yet:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">for arg; do
+    echo "$arg"
+done
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge91178d" class="outline-2">
+<h2 id="orge91178d">Subshells</h2>
+<div class="outline-text-2" id="text-orge91178d">
+<p>
+The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">echo "stuff" | read some_var
+</pre>
+</div>
+
+<p>
+In this example, usage of <code>|</code> introduces a subshell and the <code>some_var</code> is defined in this subshell. Then that subshell is vanished when the execution of the line is over. So that you can not use <code>some_var</code> in rest of the script. There are a few ways to get around this issue. Most simple one being:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">echo "stuff" | {
+    read some_var
+    echo "I can use $some_var"
+}
+</pre>
+</div>
+
+<p>
+Here <code>|</code> still introduces a subshell but we continue to do our stuff in that subshell. But still you can't communicate with the parent shell, after the <code>{ ... }</code> is over <code>some_var</code> is not available for use. At this point you have two solutions: <i>here strings</i> and <i>process substitutions</i>.
+</p>
+</div>
+
+<div id="outline-container-org7a9ac40" class="outline-3">
+<h3 id="org7a9ac40">Here strings</h3>
+<div class="outline-text-3" id="text-org7a9ac40">
+<p>
+Continuing the example above, we can do something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">read some_var &lt;&lt;&lt; "stuff"
+# or
+read some_var &lt;&lt;&lt; $(echo "stuff")
+</pre>
+</div>
+
+<p>
+<code>&lt;&lt;&lt;</code> redirects the string to stdin of the command. So that we didn't create a subshell and we can use <code>some_var</code> from now on in our script.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbc182b5" class="outline-3">
+<h3 id="orgbc182b5">Process substitution</h3>
+<div class="outline-text-3" id="text-orgbc182b5">
+<p>
+A process substitution creates a temporary file with the given output and passes that temporary file to a command. For example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">read some_var &lt; &lt;(echo "stuff")
+</pre>
+</div>
+
+<p>
+Here, the effect is same as with <i>here strings</i> but what happens is a lot different. As you may already know <code>&lt;</code> redirects given file to stdin of the command before it. <code>&lt;(...)</code> simply creates a temporary file containing <code>...</code> and replaces itself with the path to that temporary file. To simplify, you can think that the command becomes: <code>read some_var &lt; /dev/fd/some_number</code> after evaluating <code>&lt;(echo "stuff")</code> part (<code>/dev/fd/...</code> is the path where temp file is created, and it contains <code>stuff</code>). Now <code>&lt;</code> simply redirects the contents of the file to <code>read some_var</code> command.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc85ce64" class="outline-2">
+<h2 id="orgc85ce64">Functions</h2>
+<div class="outline-text-2" id="text-orgc85ce64">
+</div>
+<div id="outline-container-orgfe738a7" class="outline-3">
+<h3 id="orgfe738a7">Functions that accepts both arguments and stdin</h3>
+<div class="outline-text-3" id="text-orgfe738a7">
+<p>
+Let's say that you want your function to accept data either as argument or from stdin. You can simply combine <code>${VAR:-DEFAULT}</code> syntax with redirecting operator and you will have this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">str=${*:-$(&lt;/dev/stdin)}
+</pre>
+</div>
+
+<p>
+Now your function will concatenate your arguments and set it to <code>str</code> or if there are no arguments it'll read stdin and set it to str.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge63656c" class="outline-2">
+<h2 id="orge63656c">Linting bash scripts</h2>
+<div class="outline-text-2" id="text-orge63656c">
+<p>
+It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called <code>shellcheck</code> addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using <a href="https://github.com/w0rp/ale">ALE</a> extension, it works out of the box with shellcheck.) For <i>emacs</i> users, <i>Flycheck</i> works out of the box with shellcheck.</p>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

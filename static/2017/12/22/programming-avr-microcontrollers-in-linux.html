@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<head>
+  <title>Programming AVR microcontrollers in Linux | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Programming AVR microcontrollers in Linux</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org6e4a4fe">Tools</a></li>
+<li><a href="#org154444c">Steps</a></li>
+<li><a href="#org6c5eb7c">The correct way of using <code>avrdude</code></a></li>
+</ul>
+</div>
+</div>
+<p>
+The <i>Windows way</i> of doing that is just using <i>ATMEL Studio</i> but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite <i>IDE</i>, if you are using one, is your job.
+</p>
+
+<div id="outline-container-org6e4a4fe" class="outline-2">
+<h2 id="org6e4a4fe">Tools</h2>
+<div class="outline-text-2" id="text-org6e4a4fe">
+<p>
+These are the tools that we need to install, just pull them from your package manager (These package names exists in Arch Linux repos, they might differ in other distros repositories): - <b>avr-gcc</b> GNU C compiler for AVR architecture - <b>avr-libc</b> AVR libraries - <b>avr-binutils</b> Some AVR tools, we need it to create hex files from compiled programs, because avrdude needs a hex file instead of a binary to flash. - <b>avrdude</b> A <i>dude</i> that is required to perform flashing
+</p>
+</div>
+</div>
+
+<div id="outline-container-org154444c" class="outline-2">
+<h2 id="org154444c">Steps</h2>
+<div class="outline-text-2" id="text-org154444c">
+<ol class="org-ol">
+<li>Write your program. Let's say you named it main.c.</li>
+<li><p>
+Compile it.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">avr-gcc main.c -Os -Wall -mmcu=atmega32 -o main_bin
+</pre>
+</div>
+<ul class="org-ul">
+<li>Change <b>-mmcu</b> from <i>atmega32</i> to your devices name. You can find your devices MCU from <a href="http://www.nongnu.org/avrdude/user-manual/avrdude_4.html">here</a>.</li>
+</ul></li>
+<li><p>
+Convert your program to hex from binary.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">avr-objcopy -j .text -j .data -O ihex main_bin "main.hex"
+</pre>
+</div></li>
+<li><p>
+Flash it.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">avrdude -c usbasp -p m32 -U flash:w:"main.hex"
+</pre>
+</div>
+<ul class="org-ul">
+<li>Here you can see <b>-p</b> option. You need to specify it according to your device. The list is <a href="http://www.nongnu.org/avrdude/user-manual/avrdude_4.html">here</a>.</li>
+<li>Also here you can see <b>-c</b> option. It specifies programmer type. In my case it's <i>usbasp</i>. So you should change it to whatever you are using. <a href="http://www.nongnu.org/avrdude/user-manual/avrdude_12.html">Here</a> is the list of programmer that avrdude accepts. (If your programmer isn't in the list, which is probably not the case, you can specify your programmer as shown in the same page and save it to a ini file. Then add -C option that points the ini file you just write.)</li>
+</ul></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org6c5eb7c" class="outline-2">
+<h2 id="org6c5eb7c">The correct way of using <code>avrdude</code></h2>
+<div class="outline-text-2" id="text-org6c5eb7c">
+<p>
+When you do the last step, you will get an error that says you don't have permissions. You can just run avrdude with sudo and it will work this time. But of course this is not the preferred way to do it. What you need to do is write an udev rule so we can access programmer without root privileges.
+</p>
+
+<ol class="org-ol">
+<li>Create this file: <code>/etc/udev/rules.d/55-avr-programmer.rules</code></li>
+<li><p>
+Write this into file:
+</p>
+<pre class="example">
+# USB-ASPcable
+ATTR{idVendor}=="16c0", ATTR{idProduct}=="05dc", GROUP="plugdev", MODE="0666"~
+</pre>
+
+<ul class="org-ul">
+<li><p>
+Again, as you can see this configuration is for my programmer, <code>usbasp</code>. You need to change <code>idVendor</code> and <code>idProduct</code> according to your device. To find these values, just run <code>lsusb</code> (If you are using usb extender cord or something like that, it is possible that lsusb might not display your device. Just connect your programmer directly to your PC if that is the case):
+</p>
+<pre class="example">
+&gt; lsusb
+...
+Bus 003 Device 010: ID 16c0:05dc Van Ooijen Technische Informatica shared ID for use with libu
+...
+</pre></li>
+<li>In sixth column, you can see your devices vendor id and product id in this format <code>VENDOR_ID:PRODUCT_ID</code>. So edit your file according to this information.</li>
+</ul></li>
+
+<li><p>
+You may restart your computer or just use these commands to reload udev rules:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$ sudo udevadm control --reload-rules
+$ sudo udevadm trigger=
+</pre>
+</div>
+<ul class="org-ul">
+<li>You may need to unplug your programmer and plug it back. From now on you can use <i>avrdude</i> without needing root privileges.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

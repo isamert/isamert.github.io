@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<head>
+  <title>Emacs - Run flycheck on all buffers after save | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Emacs - Run flycheck on all buffers after save</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7d267ea">The Result</a></li>
+</ul>
+</div>
+</div>
+<p>
+<i>To just see the working solution, scroll down to The Result.</i>
+</p>
+
+<p>
+Flycheck only runs on current buffer. If you make a change in a file that effects another file, buffer of the second file will not get notified and thus flycheck is not going to run on that buffer. So what we need to do is add an after save hook which runs flycheck on other buffers, but only on file buffers. We don't want to run flycheck on temporary buffers or so. It seems simple but it took some time for me to get there, because I know too little about <code>elisp</code>.
+</p>
+
+<p>
+First, we need a function that runs flycheck on given buffer. There is a function called <code>flycheck-buffer</code> but it only checks current buffer. But it turns out this is how elisp functions generally work and there is a way to get around that. Using <code>with-current-buffer buffer</code> function we can run any function on given buffer. <code>with-current-buffer</code> changes current buffer to given buffer, runs the function and restores current buffer to old one. So:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun flycheck-buffer* (buffer)
+  "Runs flycheck on given BUFFER."
+  (with-current-buffer buffer
+    (flycheck-buffer)))
+</pre>
+</div>
+
+<p>
+Another thing we need is that a function that returns all buffers. It's <code>buffer-list</code>. We need to remove temporary buffers and the current buffer from that list. Here it goes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun other-file-buffer-list nil
+  "Returns the list of all file buffers except currently open one and temporary buffers and stuff."
+  (delq (current-buffer)
+    (remove-if-not 'buffer-file-name (buffer-list))))
+</pre>
+</div>
+
+<p>
+And the last function we need is this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun flycheck-all-file-buffers nil
+    "Simply run flycheck on all file buffers."
+    (interactive)
+    (mapc 'flycheck-buffer* (other-file-buffer-list)))
+</pre>
+</div>
+
+<p>
+Lastly, we need to add this function to <code>after-save-hook</code>. But I want to be a able to disable/enable this feature whenever I want. Because if you have a lot of buffers open, this feature may cause some laggyness on save events.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun enable-flycheck-all-file-buffers-on-save nil
+  (interactive)
+  (add-hook 'after-save-hook 'flycheck-all-file-buffers))
+
+(defun disable-flycheck-all-file-buffers-on-save nil
+  (interactive)
+  (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
+</pre>
+</div>
+
+<div id="outline-container-org7d267ea" class="outline-2">
+<h2 id="org7d267ea">The Result</h2>
+<div class="outline-text-2" id="text-org7d267ea">
+<p>
+Run <code>M-x</code> then call <code>enable-flycheck-all-file-buffers-on-save</code>. From now on, when you save a file, other files will be flychecked too. To disable it, call <code>disable-flycheck-all-file-buffers-on-save</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun flycheck-buffer* (buffer)
+  "Runs flycheck on given BUFFER."
+  (with-current-buffer buffer
+    (flycheck-buffer)))
+
+(defun other-file-buffer-list nil
+  "Returns the list of all file buffers except currently open one and temporary buffers and stuff."
+  (delq (current-buffer)
+    (remove-if-not 'buffer-file-name (buffer-list))))
+
+(defun flycheck-all-file-buffers nil
+    "Simply run flycheck on all file buffers."
+    (interactive)
+    (mapc 'flycheck-buffer* (other-file-buffer-list)))
+
+(defun enable-flycheck-all-file-buffers-on-save nil
+  (interactive)
+  (add-hook 'after-save-hook 'flycheck-all-file-buffers))
+
+(defun disable-flycheck-all-file-buffers-on-save nil
+  (interactive)
+  (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
+</pre>
+</div>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

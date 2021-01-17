@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<head>
+  <title>Running SQL on org-mode tables | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Running SQL on org-mode tables</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgd398925">Preparation</a>
+<ul>
+<li><a href="#org8be12da">R</a></li>
+<li><a href="#orga28d495">Emacs</a></li>
+</ul>
+</li>
+<li><a href="#org763d5a9">Running SQL on org tables</a>
+<ul>
+<li><a href="#orgb21ce60">Using SQL instead of table formulas</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+I was tracking some sleep related information about myself using org tables and I wanted to visualize them. I thought to myself, <i>I know R! Let's do all that stuff in R!</i>. Oh boy, I was wrong. I used R in the past for an undergraduate course and I wasn't heavily invested in taking notes at those times. (Now thanks to org-mode <del>and zotero</del>, I don't forget <i>anything</i> anymore) I quickly gave up using R for manipulating the data but I was going to use it for plotting anyway. At that point I was about to give up, firstly because I didn't want to have an overly-complex solution for such a worthless thing and secondly I was extremely lazy.
+</p>
+
+<p>
+Then I remembered about <code>sqldf</code>. It's an R package that manipulates R dataframes (basically tables, at least for our purposes in this post) using SQL. Behind the scenes it uses an SQL DB implementation for this. It handles all the dirty stuff for us; like creating tables, running the SQL and conversion between the formats. So I simply used <code>sqldf</code> and R's plot function to accomplish my goal (Yeah, <code>ob-R</code> package supports passing org tables to R code as variables). Then I thought it may be really nice to have an SQL backend for manipulating org tables. Because why not? Nearly every <i>table-like technology</i> have some kind of SQL-like query language.
+</p>
+
+<div id="outline-container-orgd398925" class="outline-2">
+<h2 id="orgd398925">Preparation</h2>
+<div class="outline-text-2" id="text-orgd398925">
+</div>
+<div id="outline-container-org8be12da" class="outline-3">
+<h3 id="org8be12da">R</h3>
+<div class="outline-text-3" id="text-org8be12da">
+<p>
+You need to install R and <code>sqldf</code> package.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">pacman -S r # use your package manager for installing R, this is just an example for Arch
+</pre>
+</div>
+
+<p>
+Now you need to install <code>sqldf</code>. But before that I recommend adding something like this to your environment variables (probably using <code>~/.profile</code> file, you know what's best), otherwise you will need root privileges to install R packages.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">export R_LIBS_USER="$HOME/.rlibs"
+</pre>
+</div>
+
+<p>
+You also need to create that directory:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkdir ~/.rlibs
+# BTW, run this too while you are here:
+echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' &gt; ~/.Rprofile
+</pre>
+</div>
+
+<p>
+Now open the R console.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">R
+</pre>
+</div>
+
+<p>
+And run this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-R">install.packages("sqldf")
+</pre>
+</div>
+
+<p>
+That's all for the R part.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga28d495" class="outline-3">
+<h3 id="orga28d495">Emacs</h3>
+<div class="outline-text-3" id="text-orga28d495">
+<p>
+Enable running R code.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)))
+</pre>
+</div>
+
+<p>
+This is optional but for R syntax highlighting and stuff you may want to install <code>ess</code> package. I recommend installing it with <code>use-package</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(use-package ess :ensure t)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org763d5a9" class="outline-2">
+<h2 id="org763d5a9">Running SQL on org tables</h2>
+<div class="outline-text-2" id="text-org763d5a9">
+<p>
+Now you can simply do this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+tblname: tbltest
+| col_a | col_b |
+|-------+-------|
+|     1 |     2 |
+|     1 |     4 |
+|     1 |     6 |
+|     2 |     7 |
+|     2 |     8 |
+|     2 |     9 |
+
+#+begin_src R :colnames yes :var tbltest=tbltest
+library(sqldf)
+sqldf("SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a")
+#+end_src
+</pre>
+</div>
+
+<p>
+And as the result, you get this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+RESULTS:
+| col_a | AVG(col_b) |
+|-------+------------|
+|     1 |          4 |
+|     2 |          8 |
+</pre>
+</div>
+
+<p>
+Nice! But we don't have SQL syntax highlighting. We can get over it by doing something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+name: tbltest-sql
+#+begin_src sql
+SELECT col_a, AVG(col_b) FROM tbltest GROUP BY col_a
+#+end_src
+
+#+begin_src R :noweb yes :var tbltest=tbltest
+library(sqldf)
+sqldf("&lt;&lt;tbltest-sql&gt;&gt;")
+#+end_src
+</pre>
+</div>
+
+<p>
+Now we have a nice syntax highlighting for our SQL. But for this you need to have at least 2 different code blocks every time.
+</p>
+</div>
+
+<div id="outline-container-orgb21ce60" class="outline-3">
+<h3 id="orgb21ce60">Using SQL instead of table formulas</h3>
+<div class="outline-text-3" id="text-orgb21ce60">
+<p>
+I found some obscure ways of doing this but here I present the most sane one:
+</p>
+
+<p>
+Firstly you need to have a named src block that calls <code>sqldf</code> with given SQL code, somewhere in your org file. Putting it under some section with <code>:noexport:</code> tag might be good idea if you are willing to export the document:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+name: table-sql
+#+begin_src R :var sql="" :colnames yes
+library(sqldf)
+sqldf(sql)
+#+end_src
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-org">#+tblname: sometbl
+#+RESULTS: sometbl
+| col_a | col_b | col_sum |
+|-------+-------+---------|
+|     1 |     2 |       3 |
+|     1 |     4 |       5 |
+|     1 |     6 |       7 |
+|     2 |     7 |       9 |
+|     2 |     8 |      10 |
+|     2 |     9 |      11 |
+#+NAME: sometbl
+#+CALL: table-sql[:var sometbl=sometbl](sql="SELECT col_a, col_b, (col_a + col_b) as col_sum FROM sometbl")
+</pre>
+</div>
+
+<p>
+When you <code>C-c C-c</code> on the <code>#+CALL</code> line, the table will be replaced with the result of given SQL.
+</p>
+
+<p>
+I believe things can be simplified with <i>a little bit of</i> elisp but it may not worth the effort, this seems already an OK solution for me.
+</p>
+
+<p>
+<b>UPDATE</b>: Here is an interesting package, called <a href="https://github.com/tbanel/orgaggregate">orgaggregate</a>, which covers most of the use cases presented here and much more but without any external dependencies and does everything with a sane syntax. Check it out!
+</p>
+</div>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

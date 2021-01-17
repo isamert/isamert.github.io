@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<head>
+  <title>Nice little curl commands | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Nice little curl commands</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgd48f279">Weather</a></li>
+<li><a href="#org0d3b804">IP</a></li>
+<li><a href="#orgb32bf6d">File/URL</a></li>
+<li><a href="#org3f51fc3">Cheat sheets</a></li>
+<li><a href="#org6ac82d9">Translate</a></li>
+<li><a href="#org6449c78">Cryptocurrency rates</a></li>
+<li><a href="#org061d9eb">ASCII QR Codes</a></li>
+<li><a href="#org1269dd2">WebDAV</a></li>
+<li><a href="#org044f0e3">Convert Documents</a></li>
+</ul>
+</div>
+</div>
+<p>
+Here are some curl friendly web services that you can use in your terminal:
+</p>
+
+<div id="outline-container-orgd48f279" class="outline-2">
+<h2 id="orgd48f279">Weather</h2>
+<div class="outline-text-2" id="text-orgd48f279">
+<ul class="org-ul">
+<li><code>curl wttr.in</code> Displays a nice weather report.
+
+<ul class="org-ul">
+<li>You can also specify city-code like this: <code>wttr.in/city_name</code></li>
+<li>If the output is too long for your terminal, just use it with less: <code>curl wttr.in | less -R</code></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0d3b804" class="outline-2">
+<h2 id="org0d3b804">IP</h2>
+<div class="outline-text-2" id="text-org0d3b804">
+<ul class="org-ul">
+<li><code>curl https://api.ipify.org</code> Simply shows your public ip.</li>
+<li><code>curl ipinfo.io</code> Prints a formatted JSON that contains information about your ip.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb32bf6d" class="outline-2">
+<h2 id="orgb32bf6d">File/URL</h2>
+<div class="outline-text-2" id="text-orgb32bf6d">
+<ul class="org-ul">
+<li><code>curl -F'file=@yourfile.png' https://0x0.st</code> Uploads specified file to 0x0.st and returns the url.</li>
+<li><code>curl -F'shorten=http://example.com/some/long/url' https://0x0.st</code> Shortens the given URL.
+
+<ul class="org-ul">
+<li>Just visit <a href="https://0x0.st">0x0.st</a> for more information.</li>
+</ul></li>
+
+<li><code>curl --upload-file ./hello.txt https://transfer.sh/hello.txt</code> Uploads specified file to transfer.sh and returns the url.
+
+<ul class="org-ul">
+<li>This service is more sophisticated, you can set some constraints to your files and stuff. Visit <a href="https://transfer.sh">transfer.sh</a> for more examples with curl.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3f51fc3" class="outline-2">
+<h2 id="org3f51fc3">Cheat sheets</h2>
+<div class="outline-text-2" id="text-org3f51fc3">
+<ul class="org-ul">
+<li><code>curl http://cheat.sh/tar</code> Shows a simple cheatsheet for specified command (in this case <code>tar</code>)</li>
+<li><p>
+<code>curl https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/tar.md</code> Same thing with above but this uses <a href="https://github.com/tldr-pages/tldr">tldr</a>. But there are some problems:
+</p>
+
+<ul class="org-ul">
+<li>raw.githubusercontent.com/tldr-pages/tldr/master/pages/ <b>common</b> / <b>tar</b> .md</li>
+</ul>
+
+<p>
+The first bold part may be one of these: <code>common</code>, <code>linux</code>. The second bold part is the command itself. If the command is linux-spesific, its under the <code>linux</code> folder obviously and most of the other things goes to <code>common</code>. You can create a small script that takes <code>command</code> as input and checks the folders one by one and returns if it finds an existing page. <i>This is left as an exercise for the reader.</i> (or you may just simply install a client, visit <a href="https://github.com/tldr-pages/tldr">tldr</a>).
+</p></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6ac82d9" class="outline-2">
+<h2 id="org6ac82d9">Translate</h2>
+<div class="outline-text-2" id="text-org6ac82d9">
+<div class="org-src-container">
+<pre class="src src-bash">curl -s -A "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0" "https://translate.google.com/m?sl=FROM&amp;tl=TO&amp;ie=UTF-8" --data-urlencode "q=WORD_OR_SENTENCE" | grep -Po '&lt;div dir="ltr" class="t0"&gt;\K[^&lt;]*'
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Change <code>FROM</code> to source language code, for example <code>en</code> for English.</li>
+<li>Change <code>TO</code> to destination language code, for example <code>tr</code> for Turkish.</li>
+<li>Change <code>WORD_OR_SENTENCE</code> to anything you want. You can use spaces.</li>
+<li>Wrap this to a bash script and enjoy easy translations.</li>
+</ul>
+
+<p>
+This example demonstrates how you can get the relevant information from an ordinary website. Always use the mobile versions if available because it is easier to parse them.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6449c78" class="outline-2">
+<h2 id="org6449c78">Cryptocurrency rates</h2>
+<div class="outline-text-2" id="text-org6449c78">
+<ul class="org-ul">
+<li><code>curl rate.sx</code> Shows the cryptocurrency rates.
+
+<ul class="org-ul">
+<li>Run <code>curl rate.sx/:help</code> for more information about usage.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org061d9eb" class="outline-2">
+<h2 id="org061d9eb">ASCII QR Codes</h2>
+<div class="outline-text-2" id="text-org061d9eb">
+<ul class="org-ul">
+<li><code>curl qrenco.de/STRING</code> Turns given string/url into an ASCII art QR code.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1269dd2" class="outline-2">
+<h2 id="org1269dd2">WebDAV</h2>
+<div class="outline-text-2" id="text-org1269dd2">
+<p>
+If you are using a <i>service</i> that supports WebDAV, you can use these simple curl commands to download/upload files to your service. You can also do more sophisticated things with curl but if you need more than just downloading/uploading files then it's better to use a client dedicated for that service.
+</p>
+
+<ul class="org-ul">
+<li>Downloading:
+
+<ul class="org-ul">
+<li><code>curl -u LOGIN:PASSWORD  https://WEBSITE.com/DAV_PATH/REMOTE_FILE --output FILE</code></li>
+<li>Downloads the <code>server_dav://REMOTE_FILE</code> to <code>FILE</code></li>
+</ul></li>
+
+<li>Uploading:
+
+<ul class="org-ul">
+<li><code>curl -u LOGIN:PASSWORD -T FILE https://WEBSITE.com/DAV_PATH/REMOTE_FILE</code></li>
+<li>Uploads FILE to <code>server_dav://REMOTE_FILE</code></li>
+</ul></li>
+</ul>
+
+<p>
+It's better not to write your password while using these commands. If you remove the password part it will just simply show you a password prompt when you execute these commands which better than exposing your password to bash history.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org044f0e3" class="outline-2">
+<h2 id="org044f0e3">Convert Documents</h2>
+<div class="outline-text-2" id="text-org044f0e3">
+<p>
+I'll just leave a link here: <a href="https://docverter.com/">docverter.com</a>. You can convert nearly any format to any other one using this service. It has a nice and clear API. The website provides curl command examples.
+</p>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

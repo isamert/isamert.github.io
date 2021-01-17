@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<head>
+  <title>Functional programming in C++ | isamert.net</title>
+
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     addLinksToHeaders()
+     highlightCodeBlocks()
+   })
+
+   function addLinksToHeaders() {
+     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+       if (!h.hasAttribute('id')) {
+         return
+       }
+
+       const a = document.createElement('a')
+       a.setAttribute('href', '#' + h.id)
+       a.classList.add('clear')
+       h.parentNode.replaceChild(a, h)
+       a.appendChild(h)
+     })
+   }
+
+   function highlightCodeBlocks(_event) {
+     let pageLang
+
+     // Higlight all code blocks
+     document.querySelectorAll('pre.src').forEach(block => {
+       const lang = [...block.classList].find(x => x.startsWith('src-'))
+       if (lang) {
+         const currLang = lang.split('-')[1]
+         if (currLang) {
+           pageLang = currLang
+           block.classList.add(pageLang)
+         }
+       }
+       hljs.highlightBlock(block)
+     })
+
+     // Highlight all inline code blocks
+     document.querySelectorAll('code').forEach(block => {
+       if (pageLang) {
+         block.classList.add(pageLang)
+       }
+       hljs.highlightBlock(block)
+     })
+   }
+  </script>
+
+  <style>
+
+   /* Fonts */
+   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
+   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
+   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+
+   /*
+      Primary #545759
+      Light #808486
+      Dark #2b2e30
+
+      Secondary #864ac6
+      Light #b978fa
+      Dark #541c95
+    */
+
+   body {
+     /* font-family: 'Fira Sans Condensed', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-family: 'Gentium Book Basic', serif;
+     color: #545759;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     position: fixed;
+     width: 100%;
+     top: 0;
+     background-color: #f8f7f3;
+     padding: 1rem 3.5rem;
+     display: block;
+     box-shadow: 3px 3px 2px #aaaaaa;
+   }
+
+   header > a {
+     font-weight: bold;
+   }
+
+   section {
+     margin-top: 3.5rem !important;
+     margin: 3rem auto;
+     max-width: 100%;
+     line-height: 1.5;
+     padding: 0 10px;
+   }
+
+   footer {
+     max-width: 100%;
+     margin-right: auto;
+     margin-left: auto;
+   }
+
+   footer > p {
+     text-align: left;
+   }
+
+   footer > p > span {
+      float: right;
+   }
+
+   h1, h2, h3, h4, h5, h6, h7 {
+     /* font-family: 'Dosis', sans-serif; */
+     /* font-family: 'Merriweather', serif; */
+     font-size: 1.3rem;
+     line-height: 1.65;
+     color: #2b2e30;
+   }
+
+   h1 {
+     font-size: 2em;
+     border-bottom: 1.7px dashed #808486;
+   }
+
+   h2 {
+     font-size: 1.7em;
+     border-bottom: 1.5px dashed #808486;
+   }
+
+   h3 {
+     font-size: 1.5em;
+     border-bottom: 1px dashed #808486;
+   }
+
+   h4 {
+     font-size: 1.3em;
+     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+   }
+
+   h5 {
+     font-size: 1.2em;
+   }
+
+   h1:hover, h2:hover, h3:hover, h4:hover {
+     color: #808486;
+     cursor: pointer;
+   }
+
+   .clear {
+     color: inherit;
+     text-decoration: inherit;
+   }
+
+   blockquote {
+     border-left: 1.4px solid  #808486;
+     margin: 0;
+     margin-left: 1rem;
+     padding: 0 0 0 20px;
+     font-style: italic;
+   }
+
+   a {
+     color: #545759;
+     text-decoration-color: #545759;
+     text-decoration-style: dotted;
+     text-decoration-thickness: 0.130em;
+     text-underline-offset: 1.5px;
+   }
+
+   a:hover {
+     color: #808486;
+     text-decoration-color: #808486;
+     text-decoration-style: wavy;
+     text-decoration-thickness: 0.1rem;
+   }
+
+   /* Inline codes */
+   code {
+     font-family: "IBM Plex Mono", monospace;
+     font-size: 0.7em;
+     background: #f8f7f3 !important;
+     border-radius: 0.4rem !important;
+     padding: 0.24rem !important;
+   }
+
+   /*
+    * Make code blocks in paragraphs inline.
+    * hljs turns them into a fully-fledged code block. We don't want that.
+    */
+   code {
+     display: inline !important;
+   }
+
+   /* Code blocks */
+   .src, .example {
+     font-size: 0.85em;
+     font-family: "IBM Plex Mono", monospace;
+     background: #f3f2ee;
+     padding: .4rem .7rem !important;
+     border-radius: 0.3rem !important;
+     display: block !important;
+   }
+
+   /* Add responsiveness */
+   @media screen and (min-width: 640px) {
+     section, footer {
+       max-width: 100%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 768px) {
+     section, footer {
+       max-width: 80%;
+       padding: 10px;
+     }
+   }
+
+   @media screen and (min-width: 1024px) {
+     section, footer {
+       max-width: 55%;
+       padding: 10px;
+     }
+   }
+  </style>
+</head>
+
+<body>
+  <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Functional programming in C++</h1>
+    <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org581294e">First things</a>
+<ul>
+<li><a href="#orgb352ab4">Use auto at all costs (C++11)</a></li>
+<li><a href="#orgf0fa005">Try not to deal with manual memory management (C++11)</a></li>
+</ul>
+</li>
+<li><a href="#org2e593cd">Concepts/Patterns</a>
+<ul>
+<li><a href="#orgddc7f91">Higher order functions</a></li>
+<li><a href="#org977128b">Partial Application and Currying</a></li>
+<li><a href="#org83576a3">Folding</a>
+<ul>
+<li><a href="#org962b3d1">1. Folding STL containers</a></li>
+<li><a href="#orga33f5d4">2. Folding arbitrary number of arguments</a></li>
+</ul>
+</li>
+<li><a href="#orgd307775">Sum types (std::variant) (C++17)</a></li>
+<li><a href="#orgc3b91c9">Functors</a>
+<ul>
+<li><a href="#org401620e">STL Containers as Functors</a></li>
+<li><a href="#orga07767f">std::optional as Functor (C++17)</a></li>
+<li><a href="#orgf4df6e9">Pointers as Functors</a></li>
+<li><a href="#org8460bc3">Taking functors a bit further</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+C++ enables you to do nearly everything with every possible paradigm. I actually consider it as a huge mess or maybe I'm the one that can not comprehend that much stuff. Considering C++ is made by people smarter than me, probably the latter is true.
+</p>
+
+<p>
+So trying to use C++ as a purely functional programming language is probably possible but pointless in all cases except having some fun. More acceptable strategy may be using it as functional but not so pure language like Scala(or something like that). But then the question arises, why not use a language that is designed for that from scratch? Many answers can be given to this question but the most obvious ones goes like this:
+</p>
+
+<ul class="org-ul">
+<li>You hate C++ but you need to write some C++.</li>
+<li>You love C++ and looking for better paradigms to use in your programming.</li>
+<li>You are neutral towards C++ and too lazy to learn another language from scratch, so you decided to go with C++. But you are not that lazy to learn a new paradigm.</li>
+<li>Other combinations involving love-hate relationship with C++.</li>
+</ul>
+
+<p>
+There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
+</p>
+
+<div id="outline-container-org581294e" class="outline-2">
+<h2 id="org581294e">First things</h2>
+<div class="outline-text-2" id="text-org581294e">
+</div>
+<div id="outline-container-orgb352ab4" class="outline-3">
+<h3 id="orgb352ab4">Use auto at all costs (C++11)</h3>
+<div class="outline-text-3" id="text-orgb352ab4">
+<p>
+<code>auto</code> is just great. It makes your code faster and shorter. Consider this example (I took this example from Effective Modern C++ by Scott Meyers):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::unordered_map&lt;std::string, int&gt; m;
+// ...
+for (const std::pair&lt;std::string, int&gt;&amp; p : m) {
+   // ...
+}
+</pre>
+</div>
+
+<p>
+The problem with this code is that <code>std::pair&lt;std::string, int&gt;</code> is not the type of an element in a <code>std::unordered_map&lt;std::string, int&gt;</code>. Its actually <code>std::pair&lt;const std::string, int&gt;</code>. So in each iteration, this type conversion creates some overhead. Solution is easy and elegant. Just use auto:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::unordered_map&lt;std::string, int&gt; m;
+// ...
+for (const auto&amp; p : m) {
+   // ...
+}
+</pre>
+</div>
+
+<p>
+Not only we get rid of the overhead, we also have a shorter code. And considering we will use a lot of types involving templates and stuff, auto will save us from a lot of typing.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf0fa005" class="outline-3">
+<h3 id="orgf0fa005">Try not to deal with manual memory management (C++11)</h3>
+<div class="outline-text-3" id="text-orgf0fa005">
+<p>
+Another core thing about functional programming is that you just tell computer what to do, not how to do it. So do not deal with the memory management manually, try to leave this job to compiler.
+</p>
+
+<ul class="org-ul">
+<li>Just use stack allocated objects instead of heap allocated objects as much as you can(See <a href="https://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use-of-new">this</a> Q&amp;A for more information/explanation).</li>
+<li>If you need a pointer for real, use smart pointers.</li>
+<li>Use move semantics. <a href="http://klmr.me/slides/modern-cpp/#1">Here</a> is a great slide about what you need to do in nutshell.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2e593cd" class="outline-2">
+<h2 id="org2e593cd">Concepts/Patterns</h2>
+<div class="outline-text-2" id="text-org2e593cd">
+</div>
+<div id="outline-container-orgddc7f91" class="outline-3">
+<h3 id="orgddc7f91">Higher order functions</h3>
+<div class="outline-text-3" id="text-orgddc7f91">
+<p>
+This is the fundamental idea of functional programming, passing functions as arguments to other functions, returning functions from functions. Before C++11 you could achieve such things by using function pointers or maybe using call operator(function objects). But now we have <code>std::function</code> and lambdas. Consider this code that shouts a given string:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::string str = "oh, hi mark";
+
+    // Turn all chars to upper
+    for (auto &amp; c: str)
+    c = toupper(c);
+
+    // Add some exclamation marks
+    str = str + "!!!";
+
+    std::cout &lt;&lt; str &lt;&lt; std::endl;
+}
+</pre>
+</div>
+
+<p>
+Lets make this shouting a function so we can reuse it.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+std::string shout(std::string str) {
+    for (auto &amp; c: str)
+    c = toupper(c);
+
+    str = str + "!!!";
+    return str;
+}
+
+int main() {
+    std::string str = "oh, hi mark";
+    std::cout &lt;&lt; shout(str) &lt;&lt; std::endl;
+    // Now we can shout as much as we want.
+    std::cout &lt;&lt; shout("you are tearing me apart Lisa") &lt;&lt; std::endl;
+}
+</pre>
+</div>
+
+<p>
+Now think that we are going to use that <code>shout</code> function only in our <code>main</code> function. So it's cumbersome to add it to header and stuff. Here lambdas are coming into play:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    auto shout = [](std::string str){
+    for (auto &amp; c: str)
+        c = toupper(c);
+    return str + "!!!!";
+    };
+
+    std::cout &lt;&lt; shout("oh, hi mark") &lt;&lt; std::endl;
+    std::cout &lt;&lt; shout("you are tearing me apart Lisa") &lt;&lt; std::endl;
+}
+</pre>
+</div>
+
+<p>
+Problem solved. Lambdas are much more complex than this. They have a lot features. If you don't know about lambdas, check <a href="https://www.cprogramming.com/c++11/c++11-lambda-closures.html">this link</a> out and also check <a href="https://www.cprogramming.com/c++11/c++11-lambda-closures.html">this link</a> out to see what C++14 and 17 brings for lambdas. Especially <i>generic lambdas</i> which is a C++14 feature will help you a lot:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">auto genericAdd = [](auto x, auto y){ return x+y; };
+std::cout &lt;&lt; "4+12=" &lt;&lt; genericAdd(4, 7) &lt;&lt; std::endl;
+std::cout &lt;&lt; "4.0+12=" &lt;&lt; genericAdd(4.0, 7) &lt;&lt; std::endl;
+std::cout &lt;&lt; "\"Hello \"+\"world!\"=" &lt;&lt;
+         genericAdd(std::string("Hello "), std::string("world!")) &lt;&lt; std::endl;
+</pre>
+</div>
+
+<p>
+One other benefit of using lambdas is that you can send them as parameters to <code>&lt;algorithm&gt;</code> functions. STL has some great functions which I'll talk about later in this tutorial.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">#include &lt;algorithm&gt;
+
+//...
+
+std::vector&lt;int&gt; vec = {4, 8, 15, 16, 23, 42};
+
+// Print the minimum element
+auto min = std::min_element(vec.begin(), vec.end());
+std::cout &lt;&lt; min &lt;&lt; std::endl;
+
+// Print elements greater than 20
+auto printIfGreaterThan20 = [](int elem){
+    if (elem &gt; 20)
+        std::cout &lt;&lt; elem &lt;&lt; std::endl;
+};
+
+std::for_each(vec.begin(), vec.end(), printIfGreaterThan20);
+
+// Find elements greater than 20 and copy them into vec2
+std::vector&lt;int&gt; vec2;
+std::copy_if(v.begin(), v.end(), std::back_inserter(vec2), [](int x){ return x &gt; 20; });
+
+// Doing the same thing again but instead of our comparator function, just use another STL function
+std::vector&lt;int&gt; vec3;
+std::copy_if(vec.begin(), vec.end(), std::back_inserter(vec3),
+          std::bind(std::greater&lt;int&gt;(), std::placeholders::_1, 20));
+</pre>
+</div>
+
+<p>
+I'll talk about <code>std::bind</code> and placeholders in a bit. But <a href="http://www.cplusplus.com/reference/algorithm/">here</a> is a complete list of <code>&lt;algorithm&gt;</code> functions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org977128b" class="outline-3">
+<h3 id="org977128b">Partial Application and Currying</h3>
+<div class="outline-text-3" id="text-org977128b">
+<p>
+There is a function called <code>std::less(x,y)</code> which compares two comparable and returns true if <code>x&lt;y</code> or false otherwise. You can use this function as your comparator function for sorting algorithms for example.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::vector&lt;int&gt; vec = {42, 4, 15, 8, 23, 16};
+std::sort (vec.begin(), vec.end(), std::less&lt;int&gt;());
+for(auto i: vec)
+    std::cout &lt;&lt; i &lt;&lt; ", ";
+// Prints 4, 8, 15, 16, 23, 42
+</pre>
+</div>
+
+<p>
+What if you want to use <code>std::less</code> as comparison function for <code>std::remove_if</code>? Lets say we want to remove numbers lower than 22 from our list. Of course we can write a lambda function like this and use it as our predicate function:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">[](int x) {return x &lt; 22;}
+</pre>
+</div>
+
+<p>
+But instead of writing our function, we want to use <code>std::less</code>. If we look the signature of <code>std::remove_if</code>, it requires an <code>UnaryPredicate</code> but obviously <code>std::less</code> is a <code>BinaryPredicate</code>. What we need to do is partially apply 22 to <code>std::less</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">using namespace std::placeholders;
+//...
+auto lowerThan22 = std::bind(std::less&lt;int&gt;(), _1, 22); // Partial application using std::bind
+std::vector&lt;int&gt; vec = {4, 8, 15, 16, 23, 42};
+vec.erase(std::remove_if(vec.begin(), vec.end(), lowerThan22), vec.end());
+</pre>
+</div>
+
+<p>
+As you can see, using <code>std::bind</code> function we bind the second argument of <code>std::less</code> to 22. As first argument, we sent a placeholder <code>_1</code> which is actually just <code>std::placeholders::_1</code>. After partial application <code>std::less(x,y)</code> function turned into something like this: <code>std::less(x, 22)</code>. So we partially applied some argument to a binary function and it turned into an unary function. Now it only needs one argument to work.
+</p>
+
+<p>
+However there is no out of the box support for currying and implementing it is not that easy. So I'll just leave a great SO answer <a href="https://stackoverflow.com/questions/152005/how-can-currying-be-done-in-c/26768388#26768388">here</a>. You can learn what currying is and learn how can you implement it in C++11/14/17.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org83576a3" class="outline-3">
+<h3 id="org83576a3">Folding</h3>
+<div class="outline-text-3" id="text-org83576a3">
+<p>
+Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at <a href="https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)">here</a>. I'm going to inspect folding in 2 categories:
+</p>
+</div>
+
+<div id="outline-container-org962b3d1" class="outline-4">
+<h4 id="org962b3d1">1. Folding STL containers</h4>
+<div class="outline-text-4" id="text-org962b3d1">
+<p>
+<code>std::accumulate</code> is the way. There are 2 definitions of <code>std::accumulate</code> which are:
+</p>
+
+<ul class="org-ul">
+<li><code>std::accumulate(first, last, initial_value)</code></li>
+<li><code>std::accumulate(first, last, initial_value, binary_operator)</code></li>
+</ul>
+
+<p>
+First one uses <code>+</code> operator as default <code>binary_operator</code>. Look at these examples:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::vector&lt;int&gt; v = {1,2,3,4,5};
+
+// Get sum of the vector:
+int sum1 = std::accumulate(v.begin(), v.end(), 0); // 0 as initial value
+// sum1 is 15
+
+// Multiply every element by 2 while summing them
+int sum2 = std::accumulate(v.begin(), v.end(), 10, [](int x, int y) { return x + (2*y) });
+// sum2 is 40 (care the initial value)
+
+// Again, you can use STL functions as BinaryOperator
+int result = std::accumulate(v.begin(), v.end(), 50, std::minus&lt;int&gt;());
+// result is 35 (care the initial value)
+
+// Folding boolean values
+std::vector&lt;boolean&gt; bs = {true, true, false, true};
+bool allTrue = std::accumulate(bs.begin(), bs.end(), true, std::logical_and);
+bool anyTrue = std::accumulate(bs.begin(), bs.end(), false, std::logical_or);
+// Care that these last two doesn't do short-circutting
+
+// These does short-circutting
+bool allTrue = std::all_of(bs.begin(), vec.end(), [](bool x) { return x; } );
+bool anyTrue = std::any_of(bs.begin(), vec.end(), [](bool x) { return x; } );
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga33f5d4" class="outline-4">
+<h4 id="orga33f5d4">2. Folding arbitrary number of arguments</h4>
+<div class="outline-text-4" id="text-orga33f5d4">
+<p>
+C++11 has a thing called <i>variadic templates</i> which enables you to do write such functions that can take arbitrary number of template parameters.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">// The `auto` usage here is a C++14 feature.
+// You can define a template and make this base case for only one element
+// and get the return type from template for making this function C++11 compatible.
+auto sum() {
+    return 0;
+}
+
+// Again, use `First` as return type instead of `auto` to make this C++11 compatible.
+template&lt;typename First, typename... Rest&gt;
+auto sum(First first, Rest... rest){
+    return first + sum(rest...);
+}
+
+// Usage:
+sum(1,2,3,4);
+sum(42,13,26,38,11);
+//...
+</pre>
+</div>
+
+<p>
+So you can create functions that can take arbitrary number of arguments and fold them. What you need to do is just write your function in recursive way and define a base case(or other needed recursion rules). But even better, C++17 has variadic folds, which makes this process easier with handling the base case in itself.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">template&lt;typename ...Args&gt;
+auto sum(Args ...args) {
+    return (args + ... + 0);
+}
+</pre>
+</div>
+
+<p>
+<a href="https://eli.thegreenplace.net/2014/variadic-templates-in-c/">Here</a> is a great tutorial about variadic templates of C++11. <a href="http://en.cppreference.com/w/cpp/language/parameter_pack">Here</a> you can learn more about parameter packs.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd307775" class="outline-3">
+<h3 id="orgd307775">Sum types (std::variant) (C++17)</h3>
+<div class="outline-text-3" id="text-orgd307775">
+<p>
+Sum types are very cool and useful. Basically a sum type is just only one type out of a set of possible types. To be more concrete, I'll give an example: Let's say you have SoundFile, ImageFile and VideoFile. So a file object can be SoundFile <b>or</b> ImageFile <b>or</b> VideoFile. Defining your file object as a sum type of these types gives you a lot of flexibility and type safety. See this example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">struct File { std::string path; };
+struct SoundFile : File { };
+struct ImageFile : File { };
+struct VideoFile : File { };
+
+int main() {
+    std::variant&lt;SoundFile, ImageFile, VideoFile&gt; file;
+    // file object can be one of these three
+
+    file = ImageFile(); // Now file is ImageFile
+
+    // To get the content of the variant
+    ImageFile f2 = std::get&lt;ImageFile&gt;(file);
+    SoundFile f2 = std::get&lt;SoundFile&gt;(file); // This line throws std::bad_variant_access, because file object contains ImageFile, not SoundFile
+}
+</pre>
+</div>
+
+<p>
+In practice, we don't blindly try to get content of the variant. Better way to get the content is using a visitor and pattern match against all possible types. First we need to define a visitor and do the pattern matching using <code>std::visit</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">struct FileVisitor {
+    void operator()(const SoundFile&amp; if) const { std::cout &lt;&lt; "A sound file!" &lt;&lt; std::endl; }
+    void operator()(const ImageFile&amp; if) const { std::cout &lt;&lt; "An image file!" &lt;&lt; std::endl; }
+    void operator()(const VideoFile&amp; vf) const { std::cout &lt;&lt; "A video file!" &lt;&lt; std::endl; }
+
+    void operator()(const auto&amp; f) const { std::cout &lt;&lt; "Something else?!?!" &lt;&lt; std::endl; }
+    // We know for sure that our file object either one of three types that we defined above.
+    // But we may end up adding another type to our variant, something like TextFile, and we
+    // may forget to update our visitor. In this case, this last pattern will match and save us.
+
+    // There is also another use case for this auto capture. For example you may want to play
+    // the sound of the file if it's a SoundFile otherwise you may want just display the file's
+    // path. In this case you will only pattern match for SoundFile and the rest will be handled
+    // by the auto capture.
+};
+
+// Now you can use std::visit
+std::visit(FileVisitor(), file);
+</pre>
+</div>
+
+<p>
+The problem with this approach is that it cannot capture state. The better way is using lambdas:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">template&lt;class... Ts&gt; struct overloaded : Ts... { using Ts::operator()...; }:
+template&lt;class... Ts&gt; overloaded(Ts...) -&gt; overloaded&lt;Ts...&gt;;
+
+std::visit(overloaded {
+    [](const SoundFile&amp; sf) { std::cout &lt;&lt; "Playing the sound..." &lt;&lt; ' '; },
+    [](const auto&amp; other) { std::cout &lt;&lt; other.path &lt;&lt; ;},
+}, file);
+</pre>
+</div>
+
+<p>
+Still a bit verbose but at least its in-place and more useful thanks to lambdas.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc3b91c9" class="outline-3">
+<h3 id="orgc3b91c9">Functors</h3>
+<div class="outline-text-3" id="text-orgc3b91c9">
+<p>
+Here I'm not talking about <code>function objects</code>, I'm talking about <code>Functors</code> as described <a href="https://en.wikipedia.org/wiki/Functor">here</a>. There are several libraries that provides some kind of Functor/Monad types but again I'll just talk about the built-in functors that you can start using immediately.
+</p>
+
+<p>
+In case you don't know about functors; a functor is a mapping that preservers the structure between two categories. More concretely, functors gives you the ability to make some transformation on some structure without exposing its contents to the public. What I mean by "exposing its contents to the public" is iterating over the structure if it's a container or dereferencing it if it's a pointer etc.
+</p>
+
+<p>
+For example, everytime you need to apply some function to a vector, you need to loop through it, apply the function to every individual element then put those elements back to a vector. Another example would be a pointer. Lets say you have a pointer to an int and a function that requires an int as input. To apply this function to your pointer, firstly you need to dereference it and then apply the function. Afterwards you need to wrap the result in a pointer again.
+</p>
+</div>
+
+<div id="outline-container-org401620e" class="outline-4">
+<h4 id="org401620e">STL Containers as Functors</h4>
+<div class="outline-text-4" id="text-org401620e">
+<p>
+Functors needs a some kind of a helper function to apply the transformation function to the structure. For STL containers, this helper function is <code>std::transform</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::vector&lt;int&gt; xs = {1, 2, 3, 4};
+
+std::vector&lt;int&gt; squared_xs;
+std::transform(xs.begin(), xs.end(), std::back_inserter(squared_xs), [](int x){ return x^2; });
+// squared_xs is now {1, 4, 9, 16}
+</pre>
+</div>
+
+<p>
+We applied the lambda function to xs without exposing the inner data structure.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga07767f" class="outline-4">
+<h4 id="orga07767f">std::optional as Functor (C++17)</h4>
+<div class="outline-text-4" id="text-orga07767f">
+<p>
+<code>std::optional</code> is a type for representing situations that there can be a value or not. For example <code>std::optional&lt;int&gt; x</code> means that <i>x</i> can contain an integer or it may contain nothing at all. Of course one can use pointers for such situations but you don't want to deal with memory allocation and other bad stuff that comes with pointers for this trivial problem. Check these links out to learn more use cases about <code>std::optional</code>: <a href="http://en.cppreference.com/w/cpp/utility/optional">link1</a>, <a href="https://stackoverflow.com/questions/16860960/how-should-one-use-stdoptional">link2</a>.
+</p>
+
+<p>
+<code>std::optional</code> does not come with a helper transformation function. There is a very nice <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0798r0.html">proposal</a> that I came across but I don't know its current status. So lets just write our transformation function for <code>std::optional</code>, its fairly trivial to implement. To understand it, look at this pseudocode first:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">// We have an optional that wraps type T.
+// We also have a function that takes a T and returns R.
+// So what we want to do is somehow apply this function to optional&lt;T&gt;.
+// To do that, we just extract the value from optinal and supply that
+// value to the function. Then we wrap the result to optional.
+
+optional&lt;R&gt; transform(optional&lt;T&gt; opt, (T -&gt; R) func) {
+    if (opt.has_value())
+    return optional(func(opt.value()))
+    else
+    return optional_empty;
+}
+</pre>
+</div>
+
+<p>
+The C++ version with some simplifications:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">template &lt;typename T, typename F&gt;
+auto transform(const std::optional&lt;T&gt;&amp; opt, F&amp;&amp; f) -&gt; std::optional&lt;decltype(f(*opt))&gt; {
+    using ResultType = std::optional&lt;decltype(f(*opt))&gt;;
+    return (opt) ? ResultType(f(*opt)) : std::nullopt;
+}
+</pre>
+</div>
+
+<p>
+Now we can take any function that has a type of <code>T -&gt; R</code> and apply this function to our optional type using our transform function. Consider this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::optional&lt;int&gt; x = 3;
+auto plus_3 = [](int x){ return x + 3; };
+
+auto y = transform(x, plus_3); // y is an optional&lt;int&gt; and has value of 6
+auto z = transform(transform(y, plus_3), plus_3); // z is an optional&lt;int&gt; and has value of 12
+</pre>
+</div>
+
+<p>
+So this is great, we can use functions with <code>std::optional</code> even though they do not know anything about <code>std::optional</code> with help of <code>transform</code> function.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf4df6e9" class="outline-4">
+<h4 id="orgf4df6e9">Pointers as Functors</h4>
+<div class="outline-text-4" id="text-orgf4df6e9">
+<p>
+Let's say given a <code>std::unique_pointer&lt;int&gt;</code> you want to get <code>std::unique_pointer&lt;std::string&gt;</code> which represents the text version of that <code>int</code>. Assume that your conversion function has this signature: <code>std::string convert(int number)</code>. So again, you need the unpack the integer from <code>unique_pointer</code> and apply this function and wrap it into <code>unique_pointer</code> back. But as you know we can use functors to solve this unpacking problem. See this code:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">template&lt;class T, class F&gt;
+auto transform(std::unique_ptr&lt;T&gt; opt, F&amp;&amp; f) -&gt; std::unique_pointer&lt;decltype(f(*opt))&gt; {
+    using ResultType = std::unique_ptr&lt;decltype(f(*opt))&gt;;
+    return ResultType(f(*opt));
+}
+</pre>
+</div>
+
+<p>
+This is the transformation function for pointers. Notice the similarity with the optional transformation function. Dereferencing a pointer and getting the value of a optional has the same * syntax by coincidence. Now we can do something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">std::unique_pointer&lt;int&gt; number;
+...
+std:unique_pointer&lt;std::string&gt; result = transform(number, convert);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8460bc3" class="outline-4">
+<h4 id="org8460bc3">Taking functors a bit further</h4>
+<div class="outline-text-4" id="text-org8460bc3">
+<p>
+As you may have noticed, functors does this: You have a variable of type <code>B&lt;A&gt;</code> and a function of type <code>C function(A)</code> (a function that takes <code>A</code> as argument and returns <code>C</code>) and you want to get <code>B&lt;C&gt;</code>. What functors does is handling all the unwrapping and wrapping for you.
+</p>
+
+<p>
+But what if you have a variable of type <code>B&lt;A&gt;</code> and a function of type <code>B&lt;C&gt; function(A)</code> and you want to get <code>B</code>. A more concrete example would be this: You have a <code>std::optional&lt;std::string&gt;</code> and a function that converts the given string to corresponding integer. Assume the function returns an <code>std::optional&lt;int&gt;</code> instead of just straight int, because the conversion may fail and we want to handle everything properly. Again, what you need to do is get string value from our optional variable. So now you have a straight <code>std::string</code> and now you can apply the conversion function to that string. As what we did with functors, we can generalize this pattern into a function which handles the unpacking for us. This function is called <code>monadic bind</code> in functional programming. This could be an easy exercise.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

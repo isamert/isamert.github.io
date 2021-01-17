@@ -2,223 +2,20 @@
 <head>
   <title>Better keyboard experience in Linux | isamert.net</title>
 
-  <!-- highlight.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <!-- Privacy friendly simple analytics -->
   <script src="https://getinsights.io/js/insights.js"></script>
 
-  <script>
-   document.addEventListener('DOMContentLoaded', () => {
-     addLinksToHeaders()
-     highlightCodeBlocks()
-   })
+  <script src="/index.js"></script>
+  <link rel="stylesheet" href="/main.css">
 
-   function addLinksToHeaders() {
-     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-       if (!h.hasAttribute('id')) {
-         return
-       }
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
 
-       const a = document.createElement('a')
-       a.setAttribute('href', '#' + h.id)
-       a.classList.add('clear')
-       h.parentNode.replaceChild(a, h)
-       a.appendChild(h)
-     })
-   }
-
-   function highlightCodeBlocks(_event) {
-     let pageLang
-
-     // Higlight all code blocks
-     document.querySelectorAll('pre.src').forEach(block => {
-       const lang = [...block.classList].find(x => x.startsWith('src-'))
-       if (lang) {
-         const currLang = lang.split('-')[1]
-         if (currLang) {
-           pageLang = currLang
-           block.classList.add(pageLang)
-         }
-       }
-       hljs.highlightBlock(block)
-     })
-
-     // Highlight all inline code blocks
-     document.querySelectorAll('code').forEach(block => {
-       if (pageLang) {
-         block.classList.add(pageLang)
-       }
-       hljs.highlightBlock(block)
-     })
-   }
-
-   // Simple, privacy friendly analytics
-   insights.init('GCMG1yjLS_qn7cS3');
-   insights.trackPages();
-  </script>
-
-  <style>
-
-   /* Fonts */
-   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
-   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
-   /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
-   @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
-   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
-
-   /*
-      Primary #545759
-      Light #808486
-      Dark #2b2e30
-
-      Secondary #864ac6
-      Light #b978fa
-      Dark #541c95
-    */
-
-   body {
-     /* font-family: 'Fira Sans Condensed', sans-serif; */
-     /* font-family: 'Merriweather', serif; */
-     font-family: 'Gentium Book Basic', serif;
-     color: #545759;
-     margin: 0;
-     padding: 0;
-   }
-
-   header {
-     position: fixed;
-     width: 100%;
-     top: 0;
-     background-color: #f8f7f3;
-     padding: 1rem 3.5rem;
-     display: block;
-     box-shadow: 3px 3px 2px #aaaaaa;
-   }
-
-   header > a {
-     font-weight: bold;
-   }
-
-   section {
-     margin-top: 3.5rem !important;
-     margin: 3rem auto;
-     max-width: 46rem;
-     line-height: 1.5;
-     padding: 0 10px;
-   }
-
-   footer {
-     max-width: 46rem;
-     margin-right: auto;
-     margin-left: auto;
-   }
-
-   footer > p {
-     text-align: left;
-   }
-
-   footer > p > span {
-      float: right;
-   }
-
-   h1, h2, h3, h4, h5, h6, h7 {
-     /* font-family: 'Dosis', sans-serif; */
-     /* font-family: 'Merriweather', serif; */
-     font-size: 1.3rem;
-     line-height: 1.65;
-     color: #2b2e30;
-   }
-
-   h1 {
-     font-size: 2em;
-     border-bottom: 1.7px dashed #808486;
-   }
-
-   h2 {
-     font-size: 1.7em;
-     border-bottom: 1.5px dashed #808486;
-   }
-
-   h3 {
-     font-size: 1.5em;
-     border-bottom: 1px dashed #808486;
-   }
-
-   h4 {
-     font-size: 1.3em;
-     border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
-   }
-
-   h5 {
-     font-size: 1.2em;
-   }
-
-   h1:hover, h2:hover, h3:hover, h4:hover {
-     color: #808486;
-     cursor: pointer;
-   }
-
-   .clear {
-     color: inherit;
-     text-decoration: inherit;
-   }
-
-   blockquote {
-     border-left: 1.4px solid  #808486;
-     margin: 0;
-     margin-left: 1rem;
-     padding: 0 0 0 20px;
-     font-style: italic;
-   }
-
-   a {
-     color: #545759;
-     text-decoration-color: #545759;
-     text-decoration-style: dotted;
-     text-decoration-thickness: 0.130em;
-     text-underline-offset: 1.5px;
-   }
-
-   a:hover {
-     color: #808486;
-     text-decoration-color: #808486;
-     text-decoration-style: wavy;
-     text-decoration-thickness: 0.1rem;
-   }
-
-   /* Inline codes */
-   code {
-     font-family: "IBM Plex Mono", monospace;
-     font-size: 0.7em;
-     background: #f8f7f3 !important;
-     border-radius: 0.4rem !important;
-     padding: 0.24rem !important;
-   }
-
-   /*
-    * Make code blocks in paragraphs inline.
-    * hljs turns them into a fully-fledged code block. We don't want that.
-    */
-   code {
-     display: inline !important;
-   }
-
-   /* Code blocks */
-   .src, .example {
-     font-size: 0.85em;
-     font-family: "IBM Plex Mono", monospace;
-     background: #f3f2ee;
-     padding: .4rem .7rem !important;
-     border-radius: 0.3rem !important;
-     display: block !important;
-   }
-  </style>
 </head>
-
 <body>
   <header>
-      <!-- TODO: right links like RSS About etc. -->
-      <a href="/index.html">isamert.net</a>  |
+    <!-- TODO: right links like RSS About etc. -->
+    <a href="/index.html">isamert.net</a>  |
   </header>
 
   <section>
@@ -288,7 +85,7 @@ To get the most out of your keyboard, we need to create a specialized keymap for
 I simply recommend using <code>us(intl)</code> keymap as our base keymap. Because this keymap enables us to use <code>AltGr</code> key which will become super beneficial later in this post. To set your keymap to <code>us(intl)</code>, do this:
 </p>
 
-<pre class="example" id="orgf7ea914">
+<pre class="example" id="org70ce1ba">
 localectl set-x11-keymap 'us(intl)'
 </pre>
 
@@ -296,7 +93,7 @@ localectl set-x11-keymap 'us(intl)'
 You need to restart your X session to get it working or you can simply do this:
 </p>
 
-<pre class="example" id="org536d570">
+<pre class="example" id="org472aa89">
 setxkbmap 'us(intl)'
 </pre>
 </div>
@@ -309,7 +106,7 @@ setxkbmap 'us(intl)'
 While it enables <code>AltGr</code> key, it also turns backtick and apostrope keys into modifier keys that creates accented versions of pressed key. I do not want this behavior, to get the normal behavior add these into your <code>~/.Xmodemap</code>.
 </p>
 
-<pre class="example" id="org6855bca">
+<pre class="example" id="orgcb45514">
 keysym dead_grave = grave asciitilde
 keysym dead_acute = apostrophe quotedbl
 </pre>
@@ -323,7 +120,7 @@ keysym dead_acute = apostrophe quotedbl
 When you press <code>Shift + [</code> you get <code>{</code>. As a natural extension to that, I bind <code>AltGr+[</code> to <code>(</code>. This is simply easier than doing <code>Shift+9</code>, considering parentheses used frequently while coding, this change is a nice touch. Put these into your <code>~/.Xmodmap</code>:
 </p>
 
-<pre class="example" id="orgbfd3627">
+<pre class="example" id="orgbbd83d2">
 !! AltGr+[ → (, AltGr+] → )
 keysym bracketleft = bracketleft braceleft bracketleft braceleft parenleft
 keysym bracketright = bracketright braceright bracketright braceright parenright
@@ -338,7 +135,7 @@ keysym bracketright = bracketright braceright bracketright braceright parenright
 Most of the modern programming languages supports using UTF-8 glyphs. For example you can use <code>→</code> instead of <code>-&gt;</code> or <code>≥</code> instead of <code>&gt;=</code>. They are more expressive, better-looking and feels right. Also while preparing a document or while having a causal conversation, it's just nicer to utilize these characters. Here is the related part of mine <code>~/.Xmodmap</code>:
 </p>
 
-<pre class="example" id="orga27c501">
+<pre class="example" id="org34b2008">
 !! Quick access for some unicode chars
 !! altgr + b → λ  | altgr + a → →
 !! altgr + n → ¬  | altgr + d → ⇒
@@ -372,7 +169,7 @@ keysym semicolon = semicolon colon semicolon colon U2237
 <code>CapsLock</code>, at least for me, one of the most useless key on the keyboard. Actually it's kinda more useful, when you compare it with the <code>RightCtrl</code>, at least you can press it. But the functionality is not really required, do you really find yourself typing in all caps for long periods of time? Even if so, you can simply write them all in lowercase and convert them to upper case with the help of your favorite text editor. What I like to do is, remap the <code>CapsLock</code> key to a new modifier key, namely <code>Hyper</code>, which enables you to create new shortcuts. You can think <code>Hyper</code> like the <code>Control</code> key but no program uses it and you are free to map anything you want to. Here is the relevant <code>~/.Xmodmap</code> configuration:
 </p>
 
-<pre class="example" id="org9b4f9c0">
+<pre class="example" id="org25656d3">
 !! Unmap capslock
 clear Lock
 keycode 66 = Hyper_L
@@ -399,7 +196,7 @@ Another thing is that some people like to do is that using <code>CapsLock</code>
 I don't know if anybody uses this key unironically but the only use case I found for it was using it as the <code>ESC</code> key. On my older keyboard I was able to press <code>RightCtrl</code> with my palm and as the <code>ESC</code> key it served me quite well. But it's harder to press <code>RightCtrl</code> with my palm on my new keyboard so I just do not use it anymore. I'm simply using the <code>CapsLock</code> as the <code>ESC</code> as I described above. But here is the configuration for using <code>RightCtrl</code> as the <code>ESC</code> if you want to give it a shot:
 </p>
 
-<pre class="example" id="orgbbed2d4">
+<pre class="example" id="org175c5c7">
 keycode 105 = Escape
 </pre>
 </div>
@@ -412,7 +209,7 @@ keycode 105 = Escape
 I do not like to leave the home row of my keyboard, it's just hard to reach for the arrow keys for example. Also when you get used to <code>h,j,k,l</code> keys in vim for directional movement, you just want them everywhere. So I simply remapped <code>AltGr + {h,j,k,l}</code> to <code>{Left, Down, Up, Right}</code> keys respectively. When you press <code>AltGr + j</code> it acts like <code>Down</code> key, anywhere in your system. You do not need configuration per program, you just need to have this in your <code>~/.Xmodmap</code>:
 </p>
 
-<pre class="example" id="orgabfbe96">
+<pre class="example" id="orgfd884ba">
 keysym h = h H h H Left Home
 keysym j = j J j J Down Prior
 keysym k = k K k K Up Next
@@ -441,7 +238,7 @@ Side note for Emacs users: I generally do not use these bindings in Emacs to mak
 As you may have inferred, to create a combination involving <code>AltGr</code> you need to change fifth field of the <code>keysym</code> assignment.
 </p>
 
-<pre class="example" id="orgb22a334">
+<pre class="example" id="org6696867">
 !! AltGr + j → Down
 !! I'm not quite sure what the second j J part does but I accepted that as it is
 keysym j = j J j J Down
@@ -465,7 +262,7 @@ There are tons of programs that can handle this but my personal favorite is <cod
 I use my <code>super</code> (windows) key for the WM related shortcuts; like <code>super + {h,j,k,l}</code> for switching the focused window, <code>super + {comma, period}</code> for focusing next/prev monitor, <code>super + w</code> for closing the current window etc. Observe the following configuration to get a taste of <code>sxhkd</code>:
 </p>
 
-<pre class="example" id="org94a465d">
+<pre class="example" id="orgef31417">
 # Focus the next/previous desktop
 super + {n,p}
     bspc desktop --focus {next,prev}.local
@@ -479,7 +276,7 @@ XF86Audio{_,Mic}Mute
 I use <code>hyper</code> key to manage all the programs I have, or to run stuff. <code>hyper + p</code> does a play/pause, <code>hyper + c</code> opens a calendar in a popup-like window, <code>hyper + t</code> opens a popup for translation etc. These things take a lot of keys, but I also want some shortcuts for opening programs. I can always do <code>hyper + a</code> and search for the specific program that I want to open by typing it's name but that's time consuming. A simple binding would be better but we already exhausted all the keys on the keyboard. This is where chord chains comes right in:
 </p>
 
-<pre class="example" id="org5d2fa7f">
+<pre class="example" id="orgc7adf1e">
 # Run stuff
 hyper + r; {f, e, r, t, v, k, q}
     {firefox, emacsclient -c, jaro ~, lxtask, vivaldi-stable, keepassxc, qbittorrent}
@@ -489,7 +286,7 @@ hyper + r; {f, e, r, t, v, k, q}
 When I do <code>hyper + r</code> followed by <code>f</code>, Firefox opens. Simple as that. This gives you whole new set of bindings. Multiple keys are also supported, for example, I have this in my configuration:
 </p>
 
-<pre class="example" id="orge0d6be9">
+<pre class="example" id="orgb8a86f6">
 hyper + r; p; {s, p, w}
     sxiv {~/Pictures/screenshots/, ~/Pictures/phone/Camera/, ~/Pictures/wallpapers/}
 </pre>
@@ -511,7 +308,7 @@ Automating stuff through shortcuts is nice, especially if the program offers a n
 As I mentioned above, I use <code>hyper</code> as a modifier key when used in combination with some other key. But when I press it by itself, it acts as <code>ESC</code> key. This is achieved through using a simple program called <code>xcape</code>. I start <code>xcape</code> with the arguments below and it gives me this functionality:
 </p>
 
-<pre class="example" id="orga77e73a">
+<pre class="example" id="org4389d36">
 xcape -e 'Hyper_L=Escape'
 </pre>
 

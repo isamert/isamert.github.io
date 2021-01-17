@@ -6,170 +6,6 @@
 * Introduction                                                     :noexport:
 - ....
 - ....
-* Publish                                                          :noexport:
-#+NAME: startup
-#+begin_src emacs-lisp
-  ;;
-  ;; Variables
-  ;;
-
-  (defvar isamert/blog-post-template
-    "<html><head><title>${:title}</title></head><body>${:content}</body></html>"
-    "HTML post template. If you have a codeblock named \"post-template\" this variable will be overriden with content of the codeblock.")
-
-  (defvar isamert/blog-publish-path
-    "docs"
-    "A (Relative) directory name. All the generated files will be exported under this directory.")
-
-  (defvar isamert/blog-server-process
-    nil
-    "The process running server.")
-
-  ;;
-  ;; Main logic
-  ;;
-
-  (defun isamert/blog-export-all ()
-    "Export current file as a blog."
-    (interactive)
-    (org-babel-tangle)
-    (isamert/blog-load-post-template)
-    (let ((posts (org-map-entries 'isamert/blog-export-post "LEVEL=1"))
-          (pages (org-map-entries 'isamert/blog-export-page "LEVEL=1")))
-      ;; TODO
-      ))
-
-  ;; FIXME: merge next two functions into one
-  (defun isamert/blog-export-page ()
-    (interactive)
-    (save-window-excursion
-      (save-current-buffer
-        (let* ((title (org-entry-get nil "ITEM"))
-               (props (org-entry-properties))
-               (tags (cdr (assoc "TAGS" props)))
-               (should-export (string-match-p "page" (or tags "")))
-               (template (and should-export (cdr (assoc "TEMPLATE" props))))
-               (export-path (and should-export (cdr (assoc "EXPORT_AS" props)))))
-          (when should-export
-            (setq org-export-with-toc nil)
-            (org-narrow-to-subtree)
-            (isamert/blog-pre-process)
-            (isamert/write-string-to-file
-             (isamert/template :body (isamert/body-html) :title title)
-             (format "%s/%s" isamert/blog-publish-path export-path))
-            (widen)
-            `(,title ,export-path ,props))))))
-
-  (defun isamert/blog-export-post ()
-    (interactive)
-    (save-window-excursion
-      (save-current-buffer
-        (let* ((title (org-entry-get nil "ITEM"))
-               (props (org-entry-properties))
-               (publish-date (cdr (assoc "PUBLISH_DATE" props)))
-               (tags (cdr (assoc "TAGS" props)))
-               (file-path nil)
-               (should-export (not (string-match-p "\\(noexport\\|page\\)" (or tags "")))))
-          (when should-export
-            (setq org-export-with-toc t)
-            (setq file-path (isamert/blog-mk-path title publish-date))
-            (org-narrow-to-subtree)
-            (isamert/blog-pre-process)
-            (isamert/write-string-to-file
-             (isamert/template :body (isamert/body-html) :title title)
-             (format "%s/%s.html" isamert/blog-publish-path file-path))
-            (widen)
-            `(,title ,file-path ,props))))))
-
-  ;;
-  ;; Processing
-  ;;
-
-  (defun isamert/blog-pre-process ()
-    (interactive)
-    (org-map-entries 'isamert/blog-generate-custom-id))
-
-  (defun isamert/blog-generate-custom-id ()
-    (interactive)
-    (when (not (org-entry-get nil "CUSTOM_ID"))
-      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
-
-  (defun isamert/template (&rest args)
-    (s-format
-     isamert/blog-post-template
-     'aget
-     (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args))))
-
-  (defun isamert/blog-kill-main-header (backend)
-    "This function runs before export procedure and does some changes on the content."
-    (outline-show-all)
-    (goto-char (point-min))
-    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
-    (kill-whole-line))
-
-  (defun isamert/body-html ()
-    (save-current-buffer
-      (let ((org-html-htmlize-output-type nil))
-        (add-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
-        (org-html-export-as-html nil nil nil t nil)
-        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
-        (buffer-string))))
-
-  (defun isamert/blog-load-post-template ()
-    "If a codeblock named \"post-template\" exits, load the content of that codeblock value into isamert/blog-post-template.
-  This also expands noweb references etc. before loading the template."
-    (save-excursion
-      (-if-let (template-pos (org-babel-find-named-block "post-template"))
-          (progn
-            (goto-char template-pos)
-            (setq isamert/blog-post-template (org-babel-expand-noweb-references)))
-        (message "No codeblock found named \"post-template\""))))
-
-  ;;
-  ;; Page/post utils
-  ;;
-
-  (defun isamert/blog-url-case (str)
-    (->> (downcase str)
-         (s-replace "+" "p")
-         (s-replace "(" "-")
-         (s-replace ")" "-")
-         (s-replace " " "-")
-         (s-replace "---" "-")
-         (s-replace "--" "-")
-         (s-replace "=" "-")
-         (s-replace "/" "-")))
-
-  (defun isamert/blog-mk-path (title publish-date)
-    (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) (isamert/blog-url-case title)))
-
-  (defun isamert/parse-org-date (date)
-    (save-match-data
-      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
-        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
-
-  ;;
-  ;; General utils
-  ;;
-
-  (defun isamert/read-file-to-string (file-path)
-    "Return FILE-PATH's file content."
-    (with-temp-buffer
-      (insert-file-contents file-path)
-      (buffer-string)))
-
-  (defun isamert/write-string-to-file (string file)
-    (make-directory (file-name-directory file) t)
-    (with-temp-file file
-      (insert string)))
-#+end_src
-
-** Load org-block script
-# Local Variables:
-# org-confirm-babel-evaluate: nil
-# eval: (progn (org-babel-goto-named-src-block "startup") (org-babel-execute-src-block))
-# End:
-
 * Template                                                         :noexport:
 - If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
 
@@ -2210,3 +2046,169 @@ I try to create one-key bindings whenever I can. While this is not really possib
 :CUSTOM_ID: conclusion
 :END:
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!
+* Publish                                                          :noexport:
+#+NAME: startup
+#+begin_src emacs-lisp
+  ;;
+  ;; Variables
+  ;;
+
+  (defvar isamert/blog-post-template
+    "<html><head><title>${:title}</title></head><body>${:content}</body></html>"
+    "HTML post template. If you have a codeblock named \"post-template\" this variable will be overriden with content of the codeblock.")
+
+  (defvar isamert/blog-publish-path
+    "docs"
+    "A (Relative) directory name. All the generated files will be exported under this directory.")
+
+  (defvar isamert/blog-server-process
+    nil
+    "The process running server.")
+
+  ;;
+  ;; Main logic
+  ;;
+
+  (defun isamert/blog-export-all ()
+    "Export current file as a blog."
+    (interactive)
+    (org-babel-tangle)
+    (isamert/blog-load-post-template)
+    (let ((posts (org-map-entries 'isamert/blog-export-post "LEVEL=1"))
+          (pages (org-map-entries 'isamert/blog-export-page "LEVEL=1")))
+      ;; TODO
+      ))
+
+  ;; FIXME: merge next two functions into one
+  (defun isamert/blog-export-page ()
+    (interactive)
+    (save-window-excursion
+      (save-current-buffer
+        (let* ((title (org-entry-get nil "ITEM"))
+               (props (org-entry-properties))
+               (tags (cdr (assoc "TAGS" props)))
+               (should-export (string-match-p "page" (or tags "")))
+               (template (and should-export (cdr (assoc "TEMPLATE" props))))
+               (export-path (and should-export (cdr (assoc "EXPORT_AS" props)))))
+          (when should-export
+            (setq org-export-with-toc nil)
+            (org-narrow-to-subtree)
+            (isamert/blog-pre-process)
+            (isamert/write-string-to-file
+             (isamert/template :body (isamert/body-html) :title title)
+             (format "%s/%s" isamert/blog-publish-path export-path))
+            (widen)
+            `(,title ,export-path ,props))))))
+
+  (defun isamert/blog-export-post ()
+    (interactive)
+    (save-window-excursion
+      (save-current-buffer
+        (let* ((title (org-entry-get nil "ITEM"))
+               (props (org-entry-properties))
+               (publish-date (cdr (assoc "PUBLISH_DATE" props)))
+               (tags (cdr (assoc "TAGS" props)))
+               (file-path nil)
+               (should-export (not (string-match-p "\\(noexport\\|page\\)" (or tags "")))))
+          (when should-export
+            (setq org-export-with-toc t)
+            (setq file-path (isamert/blog-mk-path title publish-date))
+            (org-narrow-to-subtree)
+            (isamert/blog-pre-process)
+            (isamert/write-string-to-file
+             (isamert/template :body (isamert/body-html) :title title)
+             (format "%s/%s.html" isamert/blog-publish-path file-path))
+            (widen)
+            `(,title ,file-path ,props))))))
+
+  ;;
+  ;; Processing
+  ;;
+
+  (defun isamert/blog-pre-process ()
+    (interactive)
+    (org-map-entries 'isamert/blog-generate-custom-id))
+
+  (defun isamert/blog-generate-custom-id ()
+    (interactive)
+    (when (not (org-entry-get nil "CUSTOM_ID"))
+      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
+
+  (defun isamert/template (&rest args)
+    (s-format
+     isamert/blog-post-template
+     'aget
+     (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args))))
+
+  (defun isamert/blog-kill-main-header (backend)
+    "This function runs before export procedure and does some changes on the content."
+    (outline-show-all)
+    (goto-char (point-min))
+    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
+    (kill-whole-line))
+
+  (defun isamert/body-html ()
+    (save-current-buffer
+      (let ((org-html-htmlize-output-type nil))
+        (add-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (org-html-export-as-html nil nil nil t nil)
+        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (buffer-string))))
+
+  (defun isamert/blog-load-post-template ()
+    "If a codeblock named \"post-template\" exits, load the content of that codeblock value into isamert/blog-post-template.
+    This also expands noweb references etc. before loading the template."
+    (save-excursion
+      (-if-let (template-pos (org-babel-find-named-block "post-template"))
+          (progn
+            (goto-char template-pos)
+            (setq isamert/blog-post-template (org-babel-expand-noweb-references)))
+        (message "No codeblock found named \"post-template\""))))
+
+  ;;
+  ;; Page/post utils
+  ;;
+
+  (defun isamert/blog-url-case (str)
+    (->> (downcase str)
+         (s-replace "+" "p")
+         (s-replace "(" "-")
+         (s-replace ")" "-")
+         (s-replace " " "-")
+         (s-replace "---" "-")
+         (s-replace "--" "-")
+         (s-replace "=" "-")
+         (s-replace "/" "-")))
+
+  (defun isamert/blog-mk-path (title publish-date)
+    (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) (isamert/blog-url-case title)))
+
+  (defun isamert/parse-org-date (date)
+    (save-match-data
+      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
+        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
+
+  ;;
+  ;; General utils
+  ;;
+
+  (defun isamert/read-file-to-string (file-path)
+    "Return FILE-PATH's file content."
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
+
+  (defun isamert/write-string-to-file (string file)
+    (make-directory (file-name-directory file) t)
+    (with-temp-file file
+      (insert string)))
+
+  (defun isamert/blog-test () (message "Hey!"))
+#+end_src
+
+** TODO Load blog code
+- The following thing automatically loads the code above when this file is opened. This basically makes use of [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables][file local variables]].
+
+# Local Variables:
+# eval: (progn (org-babel-goto-named-src-block "startup") (let ((code (org-babel-expand-noweb-references))) (with-temp-buffer (insert code) (eval-buffer))))
+# End:

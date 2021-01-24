@@ -10,7 +10,7 @@
 - If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
 
 ** index.js
-#+begin_src js :tangle docs/index.js
+#+begin_src js :tangle docs/assets/index.js
   document.addEventListener('DOMContentLoaded', () => {
     addLinksToHeaders()
     highlightCodeBlocks()
@@ -31,6 +31,9 @@
   }
 
   function highlightCodeBlocks(_event) {
+    // Disable auto-lang detection
+    hljs.configure({languages: []})
+
     let pageLang
 
     // Higlight all code blocks
@@ -39,7 +42,7 @@
       if (lang) {
         const currLang = lang.split('-')[1]
         if (currLang) {
-          pageLang = currLang
+          pageLang = currLang.replace(/elisp/g, 'lisp')
           block.classList.add(pageLang)
         }
       }
@@ -61,7 +64,7 @@
 #+end_src
 
 ** main.css
-#+begin_src css :tangle docs/main.css
+#+begin_src css :tangle docs/assets/main.css
   /* Fonts */
   /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
   /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
@@ -215,53 +218,100 @@
     border-radius: 0.3rem !important;
     display: block !important;
   }
+
+  /* Center images and fit into the page */
+  .centered {
+    margin: 20px auto 20px;
+    display: block;
+    max-width: 100%;
+  }
 #+end_src
 
-** post.html
+** Post template
 #+NAME: post-template
 #+begin_src html :noweb yes
-    <!DOCTYPE html>
-    <head>
-      <title>${:title} | isamert.net</title>
+  <!DOCTYPE html>
+  <head>
+    <title>${:title} | isamert.net</title>
 
-      <!-- Privacy friendly simple analytics -->
-      <script src="https://getinsights.io/js/insights.js"></script>
+    <!-- Privacy friendly simple analytics -->
+    <script src="https://getinsights.io/js/insights.js"></script>
 
-      <script src="/index.js"></script>
-      <link rel="stylesheet" href="/main.css">
+    <script src="/assets/index.js"></script>
+    <link rel="stylesheet" href="/assets/main.css">
 
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+    <script src="/assets/hljs/highlight.pack.js"></script>
 
-    </head>
-    <body>
-      <header>
-        <!-- TODO: right links like RSS About etc. -->
-        <a href="/index.html">isamert.net</a>  |
-      </header>
+  </head>
+  <body>
+    <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+    </header>
 
-      <section>
-        <h1>${:title}</h1>
-        ${:body}
-      </section>
+    <section>
+      <h1>${:title}</h1>
+      ${:body}
+    </section>
 
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+    <footer>
+      <hr />
+      <p>
+        Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
 
-          <span>
-            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
-          </span>
-        </p>
-      </footer>
-    </body>
+        <span>
+          Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+        </span>
+      </p>
+    </footer>
+  </body>
+#+end_src
+** Page template
+#+NAME: page-template
+#+begin_src html :noweb yes
+  <!DOCTYPE html>
+  <head>
+    <title>${:title} | isamert.net</title>
+
+    <!-- Privacy friendly simple analytics -->
+    <script src="https://getinsights.io/js/insights.js"></script>
+
+    <script src="/index.js"></script>
+    <link rel="stylesheet" href="/main.css">
+
+    <link rel="stylesheet" href="/assets/hljs/styles/default.css">
+    <script src="/assets/hljs/highlight.pack.js"></script>
+
+  </head>
+  <body>
+    <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+    </header>
+
+    <section>
+      <h1>${:title}</h1>
+      ${:body}
+    </section>
+
+    <footer>
+      <hr />
+      <p>
+        Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+        <span>
+          Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+        </span>
+      </p>
+    </footer>
+  </body>
 #+end_src
 * Main                                                                 :page:
 :PROPERTIES:
-:EXPORT_AS: index.html
-:TEMPLATE: index
+:EXPORT_AS: index
 :CUSTOM_ID: main
+:PUBLISH_DATE: [2021-01-21 Thu]
 :END:
 ** All posts
 :PROPERTIES:
@@ -2155,15 +2205,40 @@ I am always looking for ways to enhance my keyboard usage. I'm not a very-fast t
         (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
         (buffer-string))))
 
-  (defun isamert/blog-load-post-template ()
-    "If a codeblock named \"post-template\" exits, load the content of that codeblock value into isamert/blog-post-template.
-    This also expands noweb references etc. before loading the template."
+  ;; TODO: fix document
+  (defun isamert/blog-load-templates ()
+    "Load the templates according to following rules.
+  - If there is a codeblock in the document named \"post-template\",
+    use it as the default template for posts, otherwise use
+    the `isamert/blog-post-template' value as the post template.
+  - If there is a codeblock in the document named \"page-template\",
+    use it as the default template for pages, otherwise use
+    the `isamert/blog-page-template' value as the post template.
+  - Load all codeblocks with their names ending with \"-template\"
+    and make them available for use, so that you can set TEMPLATE property
+    to a header and it will be exported using that template.  For example,
+    assume you have codeblock with \"about-template\" name  and you have
+    a header with TEMPLATE property set to \"about\".  This page/post will be
+    exported with the \"about-template\".:
+    ,* A post or page
+    :PROPERTIES:
+    :TEMPLATE: about
+    :END:
+
+    ,* My templates :noexport:
+    ,,#+name: about-template
+    ,,#+begin_src html
+    ...
+    ,#end_src"
     (save-excursion
-      (-if-let (template-pos (org-babel-find-named-block "post-template"))
-          (progn
-            (goto-char template-pos)
-            (setq isamert/blog-post-template (org-babel-expand-noweb-references)))
-        (message "No codeblock found named \"post-template\""))))
+      (-as-> (org-property-values "TEMPLATE") templates
+             (append '("post-template" "page-template"))
+             (--keep it templates)
+             (--map `(,it . ,(org-babel-find-named-block it)) templates)
+             (--filter (cdr it) templates)
+             (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
+             (setq isamert/blog-templates templates))))
+
 
   ;;
   ;; Page/post utils
@@ -2202,8 +2277,6 @@ I am always looking for ways to enhance my keyboard usage. I'm not a very-fast t
     (make-directory (file-name-directory file) t)
     (with-temp-file file
       (insert string)))
-
-  (defun isamert/blog-test () (message "Hey!"))
 #+end_src
 
 ** TODO Load blog code

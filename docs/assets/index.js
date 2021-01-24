@@ -18,6 +18,9 @@ function addLinksToHeaders() {
 }
 
 function highlightCodeBlocks(_event) {
+  // Disable auto-lang detection
+  hljs.configure({languages: []})
+
   let pageLang
 
   // Higlight all code blocks
@@ -26,7 +29,7 @@ function highlightCodeBlocks(_event) {
     if (lang) {
       const currLang = lang.split('-')[1]
       if (currLang) {
-        pageLang = currLang
+        pageLang = currLang.replace(/elisp/g, 'lisp')
         block.classList.add(pageLang)
       }
     }

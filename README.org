@@ -267,7 +267,7 @@
     </footer>
   </body>
 #+end_src
-** Page template
+** Post template
 #+NAME: page-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
@@ -277,10 +277,10 @@
     <!-- Privacy friendly simple analytics -->
     <script src="https://getinsights.io/js/insights.js"></script>
 
-    <script src="/index.js"></script>
-    <link rel="stylesheet" href="/main.css">
+    <script src="/assets/index.js"></script>
+    <link rel="stylesheet" href="/assets/main.css">
 
-    <link rel="stylesheet" href="/assets/hljs/styles/default.css">
+    <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
     <script src="/assets/hljs/highlight.pack.js"></script>
 
   </head>

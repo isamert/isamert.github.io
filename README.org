@@ -2096,97 +2096,336 @@ I try to create one-key bindings whenever I can. While this is not really possib
 :CUSTOM_ID: conclusion
 :END:
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!
-* Publish                                                          :noexport:
+* How I do keep my days organized with org-mode and Emacs
+:PROPERTIES:
+:PUBLISH_DATE: [2021-01-25 Mon]
+:CUSTOM_ID: how-i-do-keep-my-days-organized-with-org-mode-and-emacs
+:END:
+** Preamble
+:PROPERTIES:
+:CUSTOM_ID: preamble
+:END:
+I've been using org-mode to organize my life for quite a long time; all the deadlines, recurring events, any kind of plans, projects etc. lives in several org files. Most beneficial part of this approach is that, /things grow/. When you write something down and have an easy way to access that piece, you'll start expanding it. You also start to notice patterns which eventually leads you to do some optimization with that particular thing. Also there some other minor benefits like not forgetting important stuff and seeing your life in a more structured manner. These are all great but you need to find a balance between planning/note-taking and doing actual stuff, otherwise it'll just overwhelm you and impact everything negatively. I'm not saying that I figured it out all but at least for this particular piece, /organizing your day in an org file/, I have some nice ideas.
+
+** General structure
+:PROPERTIES:
+:CUSTOM_ID: general-structure
+:END:
+I have a file called =bullet.org= where I keep all these day management stuff. The name comes from =bullet journaling= thing and I'm not sure if this can be called as /bullet journaling/ but the name gives a little bit more personality to the file and I like that. All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do =org-narraow=to-subtree= and that's it, it's like an individual file now.
+
+** Starting the day
+:PROPERTIES:
+:CUSTOM_ID: starting-the-day
+:END:
+Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the full day under the header instead of resorting to the agenda.]. So for I got this:
+
+#+ATTR_HTML: :src /images/bullet_routines.png :class centered
+[[file:./docs/images/bullet_routines.png]]
+
+I use [[https://orgmode.org/manual/Clocking-Work-Time.html][clocking]] functionality to keep track of how much time I spent on doing stuff. So I just start clocking on the =Daily planning= TODO item. I'll show how I utilize this later in the post.
+
+The screenshot does not reflect all the things I had in my =daily= snippet but it's rough estimate. As you can see, I left little clues for myself in the =Daily Planning= header and all the other headers have some predefined directions for me. For instance, =Breakfast= header reminds me to take my daily supplements (so that when I do my breakfast and open =bullet.org= to mark it as done I just remember my pills), =Housework= has some predefined works that I need to do, like washing dishes etc, =Reading= has a link to my /reading list/ (which is just another org file) and to my current readings so that I can recap what I was working on. Little conveniences like that. I just remove what's not related to this day while I'm going through the headers, like today's a weekend and I do not need to worry about work stuff so I just remove those check boxes.
+
+One minor anecdote about these notes: Since I added the =Plan the dinner= part to =Daily planning= header I started cooking at home even more regularly. Before that, I was thinking about the dinner once I get hungry and because of multiple reasons (like being hungry at that moment, not having enough ingredient to do something) I would just go ahead and order something. Cooking is pretty disciplined activity and planning makes it easy.
+
+As my habits/routines change, this =daily= snippet also changes. Important thing is you should be able to do this relatively easily. I have some shortcuts to quickly access my snippets and edit them. Just to note, I use [[http://joaotavora.github.io/yasnippet/][yasnippet]] for the snippets.
+
+The reason for having all of these routines under a header called =Routines= instead of expanding them right under the current days header is to keep my daily view clean and uncluttered. See next screenshot.
+
+So when I finish planning, I just clock out:
+#+ATTR_HTML: :src /images/bullet_2.png :class centered
+[[file:./docs/images/bullet_2.png]]
+
+And this is what the whole day looks like after planning:
+#+ATTR_HTML: :src /images/bullet_4.png :class centered
+[[file:./docs/images/bullet_4.png]]
+
+Right now, it's weekend and there is nothing related to work here. When there is work items, I just tag them with =work= tag, so that I can do just hide/show work-related and non-work-related pretty easily. Other than this case, I don't use tags much. Here is an example working day:
+
+#+ATTR_HTML: :src /images/bullet_work.png :class centered
+[[file:./docs/images/bullet_work.png]]
+
+I tend to schedule things to specific hours, so that I can see them on my agenda view and when I sync this files to my phone [[http://www.orgzly.com][orgzly]] sends me notifications before the scheduled time. I don't really use /orgzly/ anything other than this, except using it's pretty widget on my main screen so that when I pull up my phone, the first thing I see is my =TODO= items.
+
+** Little conveniences
+:PROPERTIES:
+:CUSTOM_ID: little-conveniences
+:END:
+There some little things that I sprinkled through my Emacs configuration that makes this file a bit more accessible and pretty.
+
+*** [[https://github.com/sabof/org-bullets][org-bullets]]
+:PROPERTIES:
+:CUSTOM_ID: [[https:--github.com-sabof-org-bullets][org-bullets]]
+:END:
+Pretty famous package that brings some fanciness to org documents.
+
+#+begin_src elisp
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+#+end_src
+
+*** [[https://github.com/harrybournis/org-fancy-priorities][org-fancy-priorities]]
+:PROPERTIES:
+:CUSTOM_ID: [[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]
+:END:
+This brings some fanciness to priority indicators.
+
+#+begin_src elisp
+  (use-package org-fancy-priorities
+    :diminish
+    :ensure t
+    :hook (org-mode . org-fancy-priorities-mode)
+    :config
+    (setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴")))
+#+end_src
+
+*** [[https://gitlab.com/marcowahl/org-pretty-tags][org-pretty-tags]]
+:PROPERTIES:
+:CUSTOM_ID: [[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]
+:END:
+Well, I don't make use of tags much but here you go, it replaces your tags with nice little UTF8 icons of your choice.
+
+#+begin_src elisp
+  (use-package org-pretty-tags
+    :diminish org-pretty-tags-mode
+    :ensure t
+    :config
+    (setq org-pretty-tags-surrogate-strings
+          '(("work"  . "⚒")))
+
+    (org-pretty-tags-global-mode))
+#+end_src
+
+*** Fancy checkboxes
+:PROPERTIES:
+:CUSTOM_ID: fancy-checkboxes
+:END:
+This does not need any external dependency, it's possible to do it with =prettify-symbols-mode=:
+
+#+begin_src elisp
+  (isamert/prettify-mode 'org-mode-hook
+                         '(("[ ]" . "☐")
+                           ("[X]" . "☑" )
+                           ("[-]" . "❍" )))
+
+  ;; Also here is `isamert/prettify-mode' macro.
+  ;; You don't need this but it's a bit more convinient if you make use of
+  ;; prettify-symbols minor mode a lot
+  (defmacro isamert/prettify-mode (mode pairs)
+    "Prettify given PAIRS in given MODE. Just a simple wrapper around `prettify-symbols-mode`"
+    `(add-hook ,mode (lambda ()
+                       (mapc (lambda (pair)
+                               (push pair prettify-symbols-alist))
+                             ,pairs)
+                       (prettify-symbols-mode))))
+#+end_src
+
+*** Quickly accessing the file
+:PROPERTIES:
+:CUSTOM_ID: quickly-accessing-the-file
+:END:
+It's quite important to be able to easily open and take notes into this file. Thus, I created a shortcut that toggles this file on right side of Emacs. See the following:
+#+ATTR_HTML: :src /images/bullet_toggling.png :class centered
+[[file:./docs/images/bullet_toggling.png]]
+
+The code is a bit long but the important function is =isamert/toggle-side-bullet-org-buffer=. I assigned a keybinding to this and it simply toggles the file in a side buffer.
+
+#+begin_src elisp
+  (defun isamert/toggle-side-bullet-org-buffer ()
+    "Toggle `bullet.org` in a side buffer for quick note taking.  The buffer is opened in side window so it can't be accidentaly removed."
+    (interactive)
+    (isamert/toggle-side-buffer-with-file "~/Documents/notes/bullet.org"))
+
+  (defun isamert/buffer-visible-p (buffer)
+   "Check if given BUFFER is visible or not.  BUFFER is a string representing the buffer name."
+    (or (eq buffer (window-buffer (selected-window))) (get-buffer-window buffer)))
+
+  (defun isamert/display-buffer-in-side-window (buffer)
+    "Just like `display-buffer-in-side-window' but only takes a BUFFER and rest of the parameters are for my taste."
+    (select-window
+     (display-buffer-in-side-window
+      buffer
+      (list (cons 'side 'right)
+            (cons 'slot 0)
+            (cons 'window-width 84)
+            (cons 'window-parameters (list (cons 'no-delete-other-windows t)
+                                           (cons 'no-other-window nil)))))))
+
+  (defun isamert/remove-window-with-buffer (the-buffer-name)
+    "Remove window containing given THE-BUFFER-NAME."
+    (mapc (lambda (window)
+            (when (string-equal (buffer-name (window-buffer window)) the-buffer-name)
+              (delete-window window)))
+          (window-list (selected-frame))))
+
+  (defun isamert/toggle-side-buffer-with-file (file-path)
+    "Toggle FILE-PATH in a side buffer. The buffer is opened in side window so it can't be accidentaly removed."
+    (interactive)
+    (let ((fname (file-name-nondirectory file-path)))
+    (if (isamert/buffer-visible-p fname)
+        (isamert/remove-window-with-buffer fname)
+      (isamert/display-buffer-in-side-window
+       (save-window-excursion
+         (find-file file-path)
+         (current-buffer))))))
+#+end_src
+** Throughout the day
+:PROPERTIES:
+:CUSTOM_ID: throughout-the-day
+:END:
+Throughout the day, I just clock the work I'm doing. For work days, I take small notes about the thing I'm working on that moment. If that thing seems to be going to take more than 1-2 days I'll just create a header for /that thing/ in my =projects.org= and take my notes there, =bullet.org= is only responsible for clocking and having a link to that header in =projects.org= for these kind of specific stuff. I also take my meeting notes here in =bullet.org=.
+
+As you may have realized, there is another header called =Notes= in the screenshots above. This is for taking out of context notes during the day, like:
+- A clever/useful code snippet
+- A realization of something
+- A link to look at later
+- Anything else that I want to be interested later on
+
+Having this header there and seeing it time to time also forces you to come up with some pretty useful notes for yourself. Sometimes I just see it and think: /yeah, that was quite nice, I should take a note/. I try to utilize org-mode features as much as I can while doing this. I create links to code files, put screenshots etc. And while we are there, here is a snippet that I use for quickly capturing screenshots into org documents:
+
+#+begin_src elisp
+    (defun isamert/org-attach-image-from-clipboard (file-path)
+      "Save the image from clipboard to FILE-PATH and attach it into the document.
+  If FILE-PATH is empty or nil, then image is created under ~/.cache with a random name.
+  FILE-PATH is relative to the current documents directory."
+      (interactive "sSave file to (leave empty to create a temp file): ")
+      (let ((file (if (and file-path (not (string-empty-p file-path)))
+                      file-path
+                    (make-temp-file "~/.cache/org_temp_image_" nil ".png"))))
+        (cond
+         ((locate-file "xclip" exec-path) (shell-command (format "xclip -selection clipboard -target image/png -out > %s" file)))
+         ((locate-file "pngpaste" exec-path) (shell-command (format "pngpaste %s" file)))
+         (t (message "Either install xclip (for linux) or pngpaste (for mac) to get this functionality.")))
+        (insert (format "#+ATTR_ORG: :width 400\n[[file:%s]]" file))
+        (org-display-inline-images)))
+#+end_src
+
+** Finishing the day
+:PROPERTIES:
+:CUSTOM_ID: finishing-the-day
+:END:
+If you've seen in the above screenshots, there was another header called =Summary=. When the day ends, that is to say, before going to bed I open =bullet.org= and create a =Summary= header. First thing I do is to get an overall view of what I've been doing the whole day. I do this by creating a =clocktable= with the following settings:
+
+#+begin_src
+  ,#+BEGIN: clocktable :scope tree1 :maxlevel 3 :block untilnow
+#+end_src
+
+- =:scope tree1= :: This takes the scope as the surrounding level 1 header, which corresponds to today's header.
+- =:maxlevel 3= :: Just to make things simple.
+- =:block untilnow= :: Instead of using =:block day=, I use this. Because a day does not end when clock hits to =00:00= (technically yes, the day ends but for my perception the day ends when I go to sleep). So =:block untilnow= incorporates all the clockings under this days header (/day/ as in my perception) and we are limited with the =:scope tree1= so no other clockings from other days gets mixed up in our table. See:
+
+#+ATTR_HTML: :src /images/bullet_summary_clocktable.png :class centered
+[[file:./docs/images/bullet_summary_clocktable.png]]
+
+After this, if I'm feeling well I just add a few observations about the day or maybe note down unexpected things that I encountered during the day. I also open my =Notes= header and try to create tasks based on those and simply move easy ones to where they belong (like moving snippets to my snippet file etc.).
+
+** Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
+Well, that's it. I have other org files that I use along with =bullet.org= and I utilize [[https://github.com/alphapapa/org-ql][org-ql]] to connect things together or to find/filter them instead of relying on agenda but I guess that's an another post. I've been using this exact methodology more than one year (earlier I had similar methods but they were quite different in terms of organization etc.) and I can say that it's /somewhat/ effective against my procrastination. I'm not saying that I don't need willpower anymore but it's easier to do things when you're more organized and this file keeps me sane during the day.
+
+* Publish Code                                                     :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
   ;;
   ;; Variables
   ;;
 
-  (defvar isamert/blog-post-template
-    "<html><head><title>${:title}</title></head><body>${:content}</body></html>"
-    "HTML post template. If you have a codeblock named \"post-template\" this variable will be overriden with content of the codeblock.")
-
   (defvar isamert/blog-publish-path
     "docs"
-    "A (Relative) directory name. All the generated files will be exported under this directory.")
+    "A (relative) directory name.  All the generated files will be exported under this directory.")
 
   (defvar isamert/blog-server-process
     nil
     "The process running server.")
+
+
+  (defvar isamert/blog-templates
+    '()
+    "Template name-value pairs.")
 
   ;;
   ;; Main logic
   ;;
 
   (defun isamert/blog-export-all ()
-    "Export current file as a blog."
+    "Export/render current file as a whole blog."
     (interactive)
     (org-babel-tangle)
-    (isamert/blog-load-post-template)
-    (let ((posts (org-map-entries 'isamert/blog-export-post "LEVEL=1"))
-          (pages (org-map-entries 'isamert/blog-export-page "LEVEL=1")))
-      ;; TODO
+    (isamert/blog-load-templates)
+    (let ((posts (org-map-entries 'isamert/blog-export-current "LEVEL=1")))
+      ;; TODO: create a list of posts
       ))
 
-  ;; FIXME: merge next two functions into one
-  (defun isamert/blog-export-page ()
+  (defun isamert/blog-export-current ()
+    "Export/render the current header."
     (interactive)
     (save-window-excursion
       (save-current-buffer
         (let* ((title (org-entry-get nil "ITEM"))
-               (props (org-entry-properties))
-               (tags (cdr (assoc "TAGS" props)))
-               (should-export (string-match-p "page" (or tags "")))
-               (template (and should-export (cdr (assoc "TEMPLATE" props))))
-               (export-path (and should-export (cdr (assoc "EXPORT_AS" props)))))
+               (tags (org-entry-get nil "TAGS"))
+               (should-export (not (string-match-p "noexport" (or tags ""))))
+               (publish-date (org-entry-get nil "PUBLISH_DATE"))
+               ;; ^ The post path will be determined based on this.
+               ;; TODO: ^ maybe make post path configurable
+               (is-page (string-match-p "page" (or (org-entry-get nil "TAGS") "")))
+               ;; ^ Is this a page or post?
+               (template (org-entry-get nil "TEMPLATE"))
+               ;; ^ The template can be overridden by "TEMPLATE" property
+               (export-path (org-entry-get nil "EXPORT_AS"))
+               ;; ^ The export path can be overridden by "EXPORT_AS" property
+               (file-path nil))
           (when should-export
-            (setq org-export-with-toc nil)
+            (setq org-export-with-toc (not is-page))
+            ;; ^ Export posts with TOC and pages without it
+            ;; TODO: ^ make this configurable?
+            (setq file-path (or export-path (isamert/blog-mk-path title publish-date)))
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)
             (isamert/write-string-to-file
-             (isamert/template :body (isamert/body-html) :title title)
-             (format "%s/%s" isamert/blog-publish-path export-path))
-            (widen)
-            `(,title ,export-path ,props))))))
-
-  (defun isamert/blog-export-post ()
-    (interactive)
-    (save-window-excursion
-      (save-current-buffer
-        (let* ((title (org-entry-get nil "ITEM"))
-               (props (org-entry-properties))
-               (publish-date (cdr (assoc "PUBLISH_DATE" props)))
-               (tags (cdr (assoc "TAGS" props)))
-               (file-path nil)
-               (should-export (not (string-match-p "\\(noexport\\|page\\)" (or tags "")))))
-          (when should-export
-            (setq org-export-with-toc t)
-            (setq file-path (isamert/blog-mk-path title publish-date))
-            (org-narrow-to-subtree)
-            (isamert/blog-pre-process)
-            (isamert/write-string-to-file
-             (isamert/template :body (isamert/body-html) :title title)
+             (isamert/template
+              (or template (if is-page "page-template" "post-template"))
+              :title title
+              :body (isamert/body-html)
+              :publish-date publish-date)
              (format "%s/%s.html" isamert/blog-publish-path file-path))
             (widen)
-            `(,title ,file-path ,props))))))
+            `(,title ,export-path ,is-page ,publish-date))))))
+
+  (defun isamert/blog-open-current ()
+    "Open the current headers exported file in browser."
+    (interactive)
+    (let* ((title (org-entry-get nil "ITEM"))
+           (publish-date (org-entry-get nil "PUBLISH_DATE"))
+           (export-path (org-entry-get nil "EXPORT_AS")))
+      (shell-command (format "xdg-open %s/%s.html" isamert/blog-publish-path (or export-path (isamert/blog-mk-path title publish-date))))))
 
   ;;
   ;; Processing
   ;;
 
   (defun isamert/blog-pre-process ()
+    "Pre-process the document/header.
+  This does some changes on the original document like:
+  - Set CUSTOM_ID property for each header.  This enables to have
+    meaningful header links in the generated pages.  CUSTOM_IDs are
+    generated based on the header title, like \"My first post\"
+    becomes \"my-first-post\". If you supply the CUSTOM_ID manually
+    it'll be used instead."
     (interactive)
     (org-map-entries 'isamert/blog-generate-custom-id))
 
   (defun isamert/blog-generate-custom-id ()
-    (interactive)
+    "Create a CUSTOM_ID if the header does not have one.
+  \"My first post\" will become \"my-first-post\"."
     (when (not (org-entry-get nil "CUSTOM_ID"))
       (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
 
-  (defun isamert/template (&rest args)
+  (defun isamert/template (template-name &rest args)
     (s-format
-     isamert/blog-post-template
+     (cdr (assoc template-name isamert/blog-templates))
      'aget
      (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args))))
 

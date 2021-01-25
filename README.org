@@ -2097,7 +2097,7 @@ I try to create one-key bindings whenever I can. While this is not really possib
 :CUSTOM_ID: conclusion
 :END:
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!
-* How I do keep my days organized with org-mode and Emacs
+* How do I keep my days organized with org-mode and Emacs
 :PROPERTIES:
 :PUBLISH_DATE: [2021-01-25 Mon]
 :CUSTOM_ID: how-i-do-keep-my-days-organized-with-org-mode-and-emacs
@@ -2378,13 +2378,14 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
                (template (org-entry-get nil "TEMPLATE"))
                ;; ^ The template can be overridden by "TEMPLATE" property
                (export-path (org-entry-get nil "EXPORT_AS"))
+               (custom-id (org-entry-get nil "CUSTOM_ID"))
                ;; ^ The export path can be overridden by "EXPORT_AS" property
                (file-path nil))
           (when should-export
             (setq org-export-with-toc (not is-page))
             ;; ^ Export posts with TOC and pages without it
             ;; TODO: ^ make this configurable?
-            (setq file-path (or export-path (isamert/blog-mk-path title publish-date)))
+            (setq file-path (or export-path (isamert/blog-mk-path (or custom-id title) publish-date)))
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)
             (isamert/write-string-to-file

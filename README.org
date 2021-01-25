@@ -2112,13 +2112,13 @@ I've been using org-mode to organize my life for quite a long time; all the dead
 :PROPERTIES:
 :CUSTOM_ID: general-structure
 :END:
-I have a file called =bullet.org= where I keep all these day management stuff. The name comes from =bullet journaling= thing and I'm not sure if this can be called as /bullet journaling/ but the name gives a little bit more personality to the file and I like that. All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do =org-narraow=to-subtree= and that's it, it's like an individual file now.
+I have a file called =bullet.org= where I keep all these day management stuff[fn:: All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do =org-narraow=to-subtree= and that's it, it's like an individual file now.]. The name comes from =bullet journaling= thing and I'm not sure if this can be called as /bullet journaling/ but the name gives a little bit more personality to the file and I like that.
 
 ** Starting the day
 :PROPERTIES:
 :CUSTOM_ID: starting-the-day
 :END:
-Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the full day under the header instead of resorting to the agenda.]. So for I got this:
+Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.]. So for I got this:
 
 #+ATTR_HTML: :src /images/bullet_routines.png :class centered
 [[file:./docs/images/bullet_routines.png]]
@@ -2354,6 +2354,8 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
   (defun isamert/blog-export-all ()
     "Export/render current file as a whole blog."
     (interactive)
+    (setq org-html-html5-fancy t
+          org-html-doctype "html5")
     (org-babel-tangle)
     (isamert/blog-load-templates)
     (let ((posts (org-map-entries 'isamert/blog-export-current "LEVEL=1")))

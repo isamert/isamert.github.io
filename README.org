@@ -317,6 +317,7 @@
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html][How I do keep my days organized with org-mode and Emacs]]
 - [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
 - [[./2019/11/14/running-sql-on-org-mode-tables.html][Running SQL on org-mode tables]]
 - [[./2019/02/21/bash-scripting-guide.html][Bash scripting guide]]
@@ -1897,15 +1898,15 @@ To get the most out of your keyboard, we need to create a specialized keymap for
 :END:
 I simply recommend using =us(intl)= keymap as our base keymap. Because this keymap enables us to use =AltGr= key which will become super beneficial later in this post. To set your keymap to =us(intl)=, do this:
 
-#+begin_example
+#+begin_src
   localectl set-x11-keymap 'us(intl)'
-#+end_example
+#+end_src
 
 You need to restart your X session to get it working or you can simply do this:
 
-#+begin_example
+#+begin_src
   setxkbmap 'us(intl)'
-#+end_example
+#+end_src
 
 *** Fixing some problems with the =us(intl)=
 :PROPERTIES:
@@ -1913,10 +1914,10 @@ You need to restart your X session to get it working or you can simply do this:
 :END:
 While it enables =AltGr= key, it also turns backtick and apostrope keys into modifier keys that creates accented versions of pressed key. I do not want this behavior, to get the normal behavior add these into your =~/.Xmodemap=.
 
-#+begin_example
+#+begin_src
   keysym dead_grave = grave asciitilde
   keysym dead_acute = apostrophe quotedbl
-#+end_example
+#+end_src
 
 *** Empowering the =[=, =]= keys
 :PROPERTIES:
@@ -1924,11 +1925,11 @@ While it enables =AltGr= key, it also turns backtick and apostrope keys into mod
 :END:
 When you press =Shift + [= you get ={=. As a natural extension to that, I bind =AltGr+[= to =(=. This is simply easier than doing =Shift+9=, considering parentheses used frequently while coding, this change is a nice touch. Put these into your =~/.Xmodmap=:
 
-#+begin_example
+#+begin_src
   !! AltGr+[ → (, AltGr+] → )
   keysym bracketleft = bracketleft braceleft bracketleft braceleft parenleft
   keysym bracketright = bracketright braceright bracketright braceright parenright
-#+end_example
+#+end_src
 
 *** More UTF-8 chars
 :PROPERTIES:
@@ -1936,7 +1937,7 @@ When you press =Shift + [= you get ={=. As a natural extension to that, I bind =
 :END:
 Most of the modern programming languages supports using UTF-8 glyphs. For example you can use =→= instead of =->= or =≥= instead of =>==. They are more expressive, better-looking and feels right. Also while preparing a document or while having a causal conversation, it's just nicer to utilize these characters. Here is the related part of mine =~/.Xmodmap=:
 
-#+begin_example
+#+begin_src
   !! Quick access for some unicode chars
   !! altgr + b → λ  | altgr + a → →
   !! altgr + n → ¬  | altgr + d → ⇒
@@ -1959,7 +1960,7 @@ Most of the modern programming languages supports using UTF-8 glyphs. For exampl
   keysym equal = equal plus equal plus U2260 U2254
   keysym question = slash question slash question division
   keysym semicolon = semicolon colon semicolon colon U2237
-#+end_example
+#+end_src
 
 *** A new modifier key, Hyper
 :PROPERTIES:
@@ -1967,7 +1968,7 @@ Most of the modern programming languages supports using UTF-8 glyphs. For exampl
 :END:
 =CapsLock=, at least for me, one of the most useless key on the keyboard. Actually it's kinda more useful, when you compare it with the =RightCtrl=, at least you can press it. But the functionality is not really required, do you really find yourself typing in all caps for long periods of time? Even if so, you can simply write them all in lowercase and convert them to upper case with the help of your favorite text editor. What I like to do is, remap the =CapsLock= key to a new modifier key, namely =Hyper=, which enables you to create new shortcuts. You can think =Hyper= like the =Control= key but no program uses it and you are free to map anything you want to. Here is the relevant =~/.Xmodmap= configuration:
 
-#+begin_example
+#+begin_src
   !! Unmap capslock
   clear Lock
   keycode 66 = Hyper_L
@@ -1975,7 +1976,7 @@ Most of the modern programming languages supports using UTF-8 glyphs. For exampl
   remove mod4 = Hyper_L
   !! Set mod3 to capslock
   add mod3 = Hyper_L
-#+end_example
+#+end_src
 
 Now we will be able to create shortcuts using this =Hyper= key. I'll come to this later in this post.
 
@@ -1987,9 +1988,9 @@ Another thing is that some people like to do is that using =CapsLock= as =ESC= a
 :END:
 I don't know if anybody uses this key unironically but the only use case I found for it was using it as the =ESC= key. On my older keyboard I was able to press =RightCtrl= with my palm and as the =ESC= key it served me quite well. But it's harder to press =RightCtrl= with my palm on my new keyboard so I just do not use it anymore. I'm simply using the =CapsLock= as the =ESC= as I described above. But here is the configuration for using =RightCtrl= as the =ESC= if you want to give it a shot:
 
-#+begin_example
+#+begin_src
   keycode 105 = Escape
-#+end_example
+#+end_src
 
 *** Global directional keys
 :PROPERTIES:
@@ -1997,12 +1998,12 @@ I don't know if anybody uses this key unironically but the only use case I found
 :END:
 I do not like to leave the home row of my keyboard, it's just hard to reach for the arrow keys for example. Also when you get used to =h,j,k,l= keys in vim for directional movement, you just want them everywhere. So I simply remapped =AltGr + {h,j,k,l}= to ={Left, Down, Up, Right}= keys respectively. When you press =AltGr + j= it acts like =Down= key, anywhere in your system. You do not need configuration per program, you just need to have this in your =~/.Xmodmap=:
 
-#+begin_example
+#+begin_src
   keysym h = h H h H Left Home
   keysym j = j J j J Down Prior
   keysym k = k K k K Up Next
   keysym l = l L l L Right End
-#+end_example
+#+end_src
 
 This configuration also binds =AltGr + Shift + {h,j,k,l}= to =Home, Prior, Next, End= keys. I have a little issue with this combination though, when you do a =AltGr + Shift + h= it gets registered as =Shift + Home=. This makes some programs select the text till the beginning of the line from where your cursor is, but for some programs it does not do that. The programs I use mostly behave in way that I want.
 
@@ -2018,11 +2019,11 @@ Side note for Emacs users: I generally do not use these bindings in Emacs to mak
 :END:
 As you may have inferred, to create a combination involving =AltGr= you need to change fifth field of the =keysym= assignment.
 
-#+begin_example
+#+begin_src
   !! AltGr + j → Down
   !! I'm not quite sure what the second j J part does but I accepted that as it is
   keysym j = j J j J Down
-#+end_example
+#+end_src
 
 You can use =AltGr= to create accented characters, this might be a nice alternative for constantly switching between your native keyboard layout and =us(intl)=. If you find any other use cases for this key, let me know! The nice part of utilizing this key is that, like the =Alt= key, you use your thumb for pressing it and your thumb is the most powerful finger on your hand. So it makes sense to embrace keys like =Alt=, =AltGr=.
 
@@ -2034,7 +2035,7 @@ There are tons of programs that can handle this but my personal favorite is =sxh
 
 I use my =super= (windows) key for the WM related shortcuts; like =super + {h,j,k,l}= for switching the focused window, =super + {comma, period}= for focusing next/prev monitor, =super + w= for closing the current window etc. Observe the following configuration to get a taste of =sxhkd=:
 
-#+begin_example
+#+begin_src
   # Focus the next/previous desktop
   super + {n,p}
       bspc desktop --focus {next,prev}.local
@@ -2042,22 +2043,22 @@ I use my =super= (windows) key for the WM related shortcuts; like =super + {h,j,
   # audio/mic toggle
   XF86Audio{_,Mic}Mute
       amixer set {Master,Capture} toggle
-#+end_example
+#+end_src
 
 I use =hyper= key to manage all the programs I have, or to run stuff. =hyper + p= does a play/pause, =hyper + c= opens a calendar in a popup-like window, =hyper + t= opens a popup for translation etc. These things take a lot of keys, but I also want some shortcuts for opening programs. I can always do =hyper + a= and search for the specific program that I want to open by typing it's name but that's time consuming. A simple binding would be better but we already exhausted all the keys on the keyboard. This is where chord chains comes right in:
 
-#+begin_example
+#+begin_src
   # Run stuff
   hyper + r; {f, e, r, t, v, k, q}
       {firefox, emacsclient -c, jaro ~, lxtask, vivaldi-stable, keepassxc, qbittorrent}
-#+end_example
+#+end_src
 
 When I do =hyper + r= followed by =f=, Firefox opens. Simple as that. This gives you whole new set of bindings. Multiple keys are also supported, for example, I have this in my configuration:
 
-#+begin_example
+#+begin_src
   hyper + r; p; {s, p, w}
       sxiv {~/Pictures/screenshots/, ~/Pictures/phone/Camera/, ~/Pictures/wallpapers/}
-#+end_example
+#+end_src
 
 Automating stuff through shortcuts is nice, especially if the program offers a nice set of command-line options. Sometimes programs does not offer a command-line interface but they offer a DBUS API that you can utilize, it's nice to keep this in mind while creating your bindings.
 
@@ -2071,9 +2072,9 @@ Automating stuff through shortcuts is nice, especially if the program offers a n
 :END:
 As I mentioned above, I use =hyper= as a modifier key when used in combination with some other key. But when I press it by itself, it acts as =ESC= key. This is achieved through using a simple program called =xcape=. I start =xcape= with the arguments below and it gives me this functionality:
 
-#+begin_example
+#+begin_src
   xcape -e 'Hyper_L=Escape'
-#+end_example
+#+end_src
 
 The purpose of =xcape= is to make a modifier key to be used as another key when it is pressed and released on its own. So in this case, we simply say to =xcape= that make =hyper= act as =ESC= when it's pressed and released by its own. The thing is that, you may experience a slight delay, because =ESC= is registered right after you release your =hyper= key.
 

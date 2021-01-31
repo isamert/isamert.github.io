@@ -1314,9 +1314,10 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 * Emacs - Run flycheck on all buffers after save :emacs:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-06-06 Wed]
+:OPTIONS: toc:nil
 :CUSTOM_ID: emacs-run-flycheck-on-all-buffers-after-save
 :END:
-/To just see the working solution, scroll down to The Result./
+/To just see the working solution, scroll down to [[#the-result][The Result]]./
 
 Flycheck only runs on current buffer. If you make a change in a file that effects another file, buffer of the second file will not get notified and thus flycheck is not going to run on that buffer. So what we need to do is add an after save hook which runs flycheck on other buffers, but only on file buffers. We don't want to run flycheck on temporary buffers or so. It seems simple but it took some time for me to get there, because I know too little about =elisp=.
 

@@ -335,6 +335,7 @@
 * Main :page:
 :PROPERTIES:
 :EXPORT_AS: index
+:OPTIONS: toc:nil
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu]
 :END:
@@ -367,6 +368,12 @@ Here are some cool stuff that you can check out:
 - My [[https://github.com/isamert/dotfiles][dotfiles]].
 - My [[https://www.imdb.com/user/ur51538143/ratings][movie ratings]] and my [[https://www.imdb.com/user/ur51538143/watchlist][watchlist]].
 - My [[https://libre.fm/user/isamert][libre.fm]] page.
+
+** Türkçe yazılar (Turkish posts)
+:PROPERTIES:
+:CUSTOM_ID: turkce-yazilar-turkish-posts-
+:END:
+- [[./2021/01/31/emacs-te-turkce-imla-denetimi.html][Emacs'te Türkçe imla denetimi]]
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
@@ -2464,7 +2471,6 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
           (when (not isamert/blog-templates)
             (isamert/blog-refresh-templates))
           (when (isamert/blog-should-export-current)
-            (setq org-export-with-toc (not is-page))
             (setq file-path (isamert/blog-mk-path t))
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)

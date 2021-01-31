@@ -2356,6 +2356,42 @@ After this, if I'm feeling well I just add a few observations about the day or m
 :END:
 Well, that's it. I have other org files that I use along with =bullet.org= and I utilize [[https://github.com/alphapapa/org-ql][org-ql]] to connect things together or to find/filter them instead of relying on agenda but I guess that's an another post. I've been using this exact methodology more than one year (earlier I had similar methods but they were quite different in terms of organization etc.) and I can say that it's /somewhat/ effective against my procrastination. I'm not saying that I don't need willpower anymore but it's easier to do things when you're more organized and this file keeps me sane during the day.
 
+* Emacs'te Türkçe imla denetimi :turkish:micro:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-01-31 Sun]
+:OPTIONS: toc:nil
+:CUSTOM_ID: emacs-te-turkce-imla-denetimi
+:END:
+- Öncelikle sisteminize =hunspell= kurulumu yapın.
+- [[https://extensions.libreoffice.org/en/extensions/show/turkish-spellcheck-dictionary][Şu adresten]] en son versiyonu indirin.
+- Dosyayı herhangi bir sıkıştırılmış dosya görüntüleyicisiyle açıp içerisinden =dict= altındaki =tr-TR.dict= ve =tr-TR.aff= dosyalarını =/usr/share/myspell/dicts= altına çıkarın.
+  - Dosyala isimlerindeki =-='leri =_= ile değiştirdim, sistemdeki diğer sözlüklerle uyumlu olması açısından. Eğer değiştirmediyseniz aşağıdaki kod parçalarını buna göre düzenleyin.
+  - Çıkarılması gereken dizin sizin sisteminizde farklı olabilir, o nedenle =man hunspell='in en altındaki =FILES= kısmından dizini doğrulayın.
+
+Gerekli Emacs konfigürasyonu ise şöyle:
+
+#+begin_src elisp
+  (setq ispell-program-name "hunspell"
+        ispell-local-dictionary "en_US"
+        ispell-local-dictionary-alist
+        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
+          ("tr_TR" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "tr_TR") nil utf-8)))
+
+  ;; org-mode ve markdown-mode içerisinde flyspell'i aktive et
+  (add-hook 'org-mode-hook 'flyspell-mode)
+  (add-hook 'markdown-mode-hook 'flyspell-mode)
+#+end_src
+
+- Görüldüğü gibi öncelikli olarak İngilizce aktif durumda, isterseniz bunu =tr_TR= ile değiştirebilirsiniz.
+- Flyspell'in açık olduğu herhangi bir bufferda =M-x ispell-change-dictonary= yaparak o anki kullanılan sözlüğü değiştirebilirsiniz.
+- Yanlış bir kelimenin üzerinde =M-x ispell-word= yaparak önerileri görebilirsiniz. (/evil/ kullanıcıları ~z=~ yapabilirler.)
+
+** İzlenimler
+:PROPERTIES:
+:CUSTOM_ID: i̇zlenimler
+:END:
+Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle= kelimesinin altını çiziyor yanlış diye. Aynı zamanda yanlış kelimeler için yapılan öneriler de oldukça vasat. Fakat elbette birçok hatanın gözden kaçmaması için oldukça yardımcı oluyor.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp

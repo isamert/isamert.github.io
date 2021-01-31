@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<head>
+  <title>Emacs'te Türkçe imla denetimi | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+</head>
+<body>
+  <header>
+    <!-- TODO: right links like RSS About etc. -->
+    <a href="/index.html">isamert.net</a>  |
+  </header>
+
+  <section>
+    <h1>Emacs'te Türkçe imla denetimi</h1>
+    <ul class="org-ul">
+<li>Öncelikle sisteminize <code>hunspell</code> kurulumu yapın.</li>
+<li><a href="https://extensions.libreoffice.org/en/extensions/show/turkish-spellcheck-dictionary">Şu adresten</a> en son versiyonu indirin.</li>
+<li>Dosyayı herhangi bir sıkıştırılmış dosya görüntüleyicisiyle açıp içerisinden <code>dict</code> altındaki <code>tr-TR.dict</code> ve <code>tr-TR.aff</code> dosyalarını <code>/usr/share/myspell/dicts</code> altına çıkarın.
+<ul class="org-ul">
+<li>Dosyala isimlerindeki <code>-</code>'leri <code>_</code> ile değiştirdim, sistemdeki diğer sözlüklerle uyumlu olması açısından. Eğer değiştirmediyseniz aşağıdaki kod parçalarını buna göre düzenleyin.</li>
+<li>Çıkarılması gereken dizin sizin sisteminizde farklı olabilir, o nedenle <code>man hunspell</code>'in en altındaki <code>FILES</code> kısmından dizini doğrulayın.</li>
+</ul></li>
+</ul>
+
+<p>
+Gerekli Emacs konfigürasyonu ise şöyle:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(setq ispell-program-name "hunspell"
+      ispell-local-dictionary "en_US"
+      ispell-local-dictionary-alist
+      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
+        ("tr_TR" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "tr_TR") nil utf-8)))
+
+;; org-mode ve markdown-mode içerisinde flyspell'i aktive et
+(add-hook 'org-mode-hook 'flyspell-mode)
+(add-hook 'markdown-mode-hook 'flyspell-mode)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Görüldüğü gibi öncelikli olarak İngilizce aktif durumda, isterseniz bunu <code>tr_TR</code> ile değiştirebilirsiniz.</li>
+<li>Flyspell'in açık olduğu herhangi bir bufferda <code>M-x ispell-change-dictonary</code> yaparak o anki kullanılan sözlüğü değiştirebilirsiniz.</li>
+<li>Yanlış bir kelimenin üzerinde <code>M-x ispell-word</code> yaparak önerileri görebilirsiniz. (<i>evil</i> kullanıcıları <code>z=</code> yapabilirler.)</li>
+</ul>
+
+<div id="outline-container-i̇zlenimler" class="outline-2">
+<h2 id="i̇zlenimler">İzlenimler</h2>
+<div class="outline-text-2" id="text-i̇zlenimler">
+<p>
+Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda <code>görüntüleyiciyle</code> kelimesinin altını çiziyor yanlış diye. Aynı zamanda yanlış kelimeler için yapılan öneriler de oldukça vasat. Fakat elbette birçok hatanın gözden kaçmaması için oldukça yardımcı oluyor.
+</p>
+</div>
+</div>
+
+  </section>
+
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
+</body>

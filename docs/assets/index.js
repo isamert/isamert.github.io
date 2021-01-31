@@ -1,3 +1,9 @@
+if (location.port !== 300) {
+    // Simple, privacy friendly analytics
+    insights.init('GCMG1yjLS_qn7cS3');
+    insights.trackPages();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   addLinksToHeaders()
   highlightCodeBlocks()
@@ -9,11 +15,10 @@ function addLinksToHeaders() {
       return
     }
 
-    const a = document.createElement('a')
-    a.setAttribute('href', '#' + h.id)
-    a.classList.add('clear')
-    h.parentNode.replaceChild(a, h)
-    a.appendChild(h)
+    wrap(h, elem('a', {
+      class: 'clear',
+      href: '#' + h.id,
+    }))
   })
 }
 
@@ -45,6 +50,26 @@ function highlightCodeBlocks(_event) {
   })
 }
 
-// Simple, privacy friendly analytics
-insights.init('GCMG1yjLS_qn7cS3');
-insights.trackPages();
+//
+// Utils
+//
+
+function wrap(elem, wrapper) {
+  elem.parentNode.replaceChild(wrapper, elem)
+  wrapper.appendChild(elem)
+}
+
+function elem(type, attrs) {
+  const e = document.createElement(type)
+  Object.keys(attrs).forEach(attr => {
+    if (attr !== 'children') {
+      e.setAttribute(attr, attrs[attr])
+    }
+  })
+
+  if (attrs.children) {
+    attrs.children.forEach(child => e.appendChild(child))
+  }
+
+  return e
+}

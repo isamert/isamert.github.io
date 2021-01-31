@@ -3,14 +3,20 @@
 #+EMAIL: isamert@protonmail.com
 #+OPTIONS: html-style:nil num:nil H:4
 
-* Introduction                                                     :noexport:
+* Introduction :noexport:
 - ....
 - ....
-* Template                                                         :noexport:
+* Template :noexport:
 - If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
 
 ** index.js
 #+begin_src js :tangle docs/assets/index.js
+  if (location.port !== 300) {
+      // Simple, privacy friendly analytics
+      insights.init('GCMG1yjLS_qn7cS3');
+      insights.trackPages();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     addLinksToHeaders()
     highlightCodeBlocks()
@@ -22,11 +28,10 @@
         return
       }
 
-      const a = document.createElement('a')
-      a.setAttribute('href', '#' + h.id)
-      a.classList.add('clear')
-      h.parentNode.replaceChild(a, h)
-      a.appendChild(h)
+      wrap(h, elem('a', {
+        class: 'clear',
+        href: '#' + h.id,
+      }))
     })
   }
 
@@ -58,9 +63,29 @@
     })
   }
 
-  // Simple, privacy friendly analytics
-  insights.init('GCMG1yjLS_qn7cS3');
-  insights.trackPages();
+  //
+  // Utils
+  //
+
+  function wrap(elem, wrapper) {
+    elem.parentNode.replaceChild(wrapper, elem)
+    wrapper.appendChild(elem)
+  }
+
+  function elem(type, attrs) {
+    const e = document.createElement(type)
+    Object.keys(attrs).forEach(attr => {
+      if (attr !== 'children') {
+        e.setAttribute(attr, attrs[attr])
+      }
+    })
+
+    if (attrs.children) {
+      attrs.children.forEach(child => e.appendChild(child))
+    }
+
+    return e
+  }
 #+end_src
 
 ** main.css
@@ -307,12 +332,16 @@
     </footer>
   </body>
 #+end_src
-* Main                                                                 :page:
+* Main :page:
 :PROPERTIES:
 :EXPORT_AS: index
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu]
 :END:
+#+begin_comment
+Currently all the sections are curated by hand, hopefully I'll automatize this in the future.
+#+end_comment
+
 ** All posts
 :PROPERTIES:
 :CUSTOM_ID: all-posts
@@ -339,7 +368,7 @@ Here are some cool stuff that you can check out:
 - My [[https://www.imdb.com/user/ur51538143/ratings][movie ratings]] and my [[https://www.imdb.com/user/ur51538143/watchlist][watchlist]].
 - My [[https://libre.fm/user/isamert][libre.fm]] page.
 
-* Median cut algorithm in C++/Qt
+* Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
 :PUBLISH_DATE: [2016-07-13 Wed]
 :CUSTOM_ID: median-cut-algorithm-in-cpp-qt
@@ -486,7 +515,7 @@ So we can simply use this function to convert any image using our palette. But t
   }
 #+end_src
 
-* Kotlin function application
+* Kotlin function application :kotlin:
 :PROPERTIES:
 :PUBLISH_DATE: [2017-08-15 Tue]
 :CUSTOM_ID: kotlin-function-application
@@ -639,7 +668,7 @@ When you do the last step, you will get an error that says you don't have permis
   #+end_src
    - You may need to unplug your programmer and plug it back. From now on you can use /avrdude/ without needing root privileges.
 
-* Functional programming in C++
+* Functional programming in C++ :fp:cpp:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-03-01 Thu]
 :CUSTOM_ID: functional-programming-in-cpp
@@ -1082,7 +1111,7 @@ As you may have noticed, functors does this: You have a variable of type =B<A>= 
 
 But what if you have a variable of type =B<A>= and a function of type =B<C> function(A)= and you want to get =B=. A more concrete example would be this: You have a =std::optional<std::string>= and a function that converts the given string to corresponding integer. Assume the function returns an =std::optional<int>= instead of just straight int, because the conversion may fail and we want to handle everything properly. Again, what you need to do is get string value from our optional variable. So now you have a straight =std::string= and now you can apply the conversion function to that string. As what we did with functors, we can generalize this pattern into a function which handles the unpacking for us. This function is called =monadic bind= in functional programming. This could be an easy exercise.
 
-* Nice little curl commands
+* Nice little curl commands :cli:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-03-24 Sat]
 :CUSTOM_ID: nice-little-curl-commands
@@ -1183,7 +1212,7 @@ It's better not to write your password while using these commands. If you remove
 :END:
 I'll just leave a link here: [[https://docverter.com/][docverter.com]]. You can convert nearly any format to any other one using this service. It has a nice and clear API. The website provides curl command examples.
 
-* Automatize your logins with gnome-keyring (and optionally with KeePassXC)
+* Automatize your logins with gnome-keyring (and optionally with KeePassXC) :cli:linux:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-05-04 Fri]
 :CUSTOM_ID: automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-
@@ -1272,7 +1301,7 @@ You may say that this kind of approach exposes all of our passwords to all user-
 
 Also you can probably do the same things with kwallet if you are using KDE. Just search for equivalent commands for kwallet.
 
-* Emacs - Run flycheck on all buffers after save
+* Emacs - Run flycheck on all buffers after save :emacs:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-06-06 Wed]
 :CUSTOM_ID: emacs-run-flycheck-on-all-buffers-after-save
@@ -1350,7 +1379,7 @@ Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, whe
     (interactive)
     (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
 #+end_src
-* Bash scripting guide
+* Bash scripting guide :bash:
 :PROPERTIES:
 :PUBLISH_DATE: [2019-02-21 Thu]
 :CUSTOM_ID: bash-scripting-guide
@@ -1714,7 +1743,7 @@ Now your function will concatenate your arguments and set it to =str= or if ther
 :CUSTOM_ID: linting-bash-scripts
 :END:
 It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called =shellcheck= addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using [[https://github.com/w0rp/ale][ALE]] extension, it works out of the box with shellcheck.) For /emacs/ users, /Flycheck/ works out of the box with shellcheck.
-* Running SQL on org-mode tables
+* Running SQL on org-mode tables :emacs:org:
 :PROPERTIES:
 :PUBLISH_DATE: [2019-11-14 Thu]
 :CUSTOM_ID: running-sql-on-org-mode-tables
@@ -1869,7 +1898,7 @@ I believe things can be simplified with /a little bit of/ elisp but it may not w
 
 *UPDATE*: Here is an interesting package, called [[https://github.com/tbanel/orgaggregate][orgaggregate]], which covers most of the use cases presented here and much more but without any external dependencies and does everything with a sane syntax. Check it out!
 
-* Better keyboard experience in Linux
+* Better keyboard experience in Linux :linux:
 :PROPERTIES:
 :PUBLISH_DATE: [2020-05-30 Sat]
 :CUSTOM_ID: better-keyboard-experience-in-linux
@@ -2097,7 +2126,7 @@ I try to create one-key bindings whenever I can. While this is not really possib
 :CUSTOM_ID: conclusion
 :END:
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!
-* How do I keep my days organized with org-mode and Emacs
+* How do I keep my days organized with org-mode and Emacs :emacs:org:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-01-25 Mon]
 :CUSTOM_ID: how-i-do-keep-my-days-organized-with-org-mode-and-emacs
@@ -2327,7 +2356,7 @@ After this, if I'm feeling well I just add a few observations about the day or m
 :END:
 Well, that's it. I have other org files that I use along with =bullet.org= and I utilize [[https://github.com/alphapapa/org-ql][org-ql]] to connect things together or to find/filter them instead of relying on agenda but I guess that's an another post. I've been using this exact methodology more than one year (earlier I had similar methods but they were quite different in terms of organization etc.) and I can say that it's /somewhat/ effective against my procrastination. I'm not saying that I don't need willpower anymore but it's easier to do things when you're more organized and this file keeps me sane during the day.
 
-* Publish Code                                                     :noexport:
+* Publish Code :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
   ;;
@@ -2338,10 +2367,25 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     "docs"
     "A (relative) directory name.  All the generated files will be exported under this directory.")
 
+  (defvar isamert/blog-url
+    "https://isamert.net"
+    "URL of the blog.")
+
+  (defvar isamert/blog-title
+    "isamert.net"
+    "Title of the blog, used while generating RSS etc.")
+
+  (defvar isamert/blog-description
+    "My notes and ideas."
+    "Description of the blog, used while generating RSS etc.")
+
+  ;;
+  ;; Internal vars
+  ;;
+
   (defvar isamert/blog-server-process
     nil
     "The process running server.")
-
 
   (defvar isamert/blog-templates
     '()
@@ -2357,7 +2401,6 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     (setq org-html-html5-fancy t
           org-html-doctype "html5")
     (org-babel-tangle)
-    (isamert/blog-load-templates)
     (let ((posts (org-map-entries 'isamert/blog-export-current "LEVEL=1")))
       ;; TODO: create a list of posts
       ))
@@ -2368,24 +2411,25 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     (save-window-excursion
       (save-current-buffer
         (let* ((title (org-entry-get nil "ITEM"))
-               (tags (org-entry-get nil "TAGS"))
-               (should-export (not (string-match-p "noexport" (or tags ""))))
                (publish-date (org-entry-get nil "PUBLISH_DATE"))
                ;; ^ The post path will be determined based on this.
-               ;; TODO: ^ maybe make post path configurable
+               (update-date (org-entry-get nil "UPDATE_DATE"))
                (is-page (string-match-p "page" (or (org-entry-get nil "TAGS") "")))
                ;; ^ Is this a page or post?
                (template (org-entry-get nil "TEMPLATE"))
                ;; ^ The template can be overridden by "TEMPLATE" property
                (export-path (org-entry-get nil "EXPORT_AS"))
-               (custom-id (org-entry-get nil "CUSTOM_ID"))
                ;; ^ The export path can be overridden by "EXPORT_AS" property
+               (custom-id (org-entry-get nil "CUSTOM_ID"))
+               ;; ^ ...
+               (options (org-entry-get nil "OPTIONS"))
+               ;; ^ Like #+OPTIONS but for current header only
                (file-path nil))
-          (when should-export
+          (when (not isamert/blog-templates)
+            (isamert/blog-refresh-templates))
+          (when (isamert/blog-should-export-current)
             (setq org-export-with-toc (not is-page))
-            ;; ^ Export posts with TOC and pages without it
-            ;; TODO: ^ make this configurable?
-            (setq file-path (or export-path (isamert/blog-mk-path (or custom-id title) publish-date)))
+            (setq file-path (isamert/blog-mk-path t))
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)
             (isamert/write-string-to-file
@@ -2393,22 +2437,48 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
               (or template (if is-page "page-template" "post-template"))
               :title title
               :body (isamert/body-html)
-              :publish-date publish-date)
-             (format "%s/%s.html" isamert/blog-publish-path file-path))
+              :publish-date publish-date
+              :update-date update-date)
+             file-path)
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
 
-  (defun isamert/blog-open-current ()
-    "Open the current headers exported file in browser."
+  ;;
+  ;; RSS
+  ;;
+
+  (defun isamert/blog-generate-rss ()
     (interactive)
-    (let* ((title (org-entry-get nil "ITEM"))
-           (publish-date (org-entry-get nil "PUBLISH_DATE"))
-           (export-path (org-entry-get nil "EXPORT_AS")))
-      (shell-command (format "xdg-open %s/%s.html" isamert/blog-publish-path (or export-path (isamert/blog-mk-path title publish-date))))))
+    (isamert/write-string-to-file
+     (format
+      "<?xml version=\"1.0\" ?><rss version=\"2.0\"><channel><title>%s</title><link>%s</link><description>%s</description>%s</channel></rss>"
+      isamert/blog-title
+      isamert/blog-url
+      isamert/blog-description
+      (->> (org-map-entries 'isamert/blog-generate-rss-current "LEVEL=1")
+           (--keep it)
+           (reverse)
+           (--reduce (format "%s%s" acc it))))
+     (format "%s/feed.xml" isamert/blog-publish-path))
+    (message "RSS generated."))
+
+  (defun isamert/blog-generate-rss-current()
+    (when (isamert/blog-should-export-current)
+      (format
+       "<item><title>%s</title><link>%s/%s</link><pubDate>%s</pubDate><description><![CDATA[ %s ]]></description></item>"
+       (org-entry-get nil "ITEM")
+       isamert/blog-url
+       (isamert/blog-mk-path)
+       (s-join "-" (isamert/parse-org-date (org-entry-get nil "PUBLISH_DATE")))
+       (or (org-entry-get nil "ABSTRACT") ""))))
 
   ;;
   ;; Processing
   ;;
+
+  (defun isamert/blog-should-export-current ()
+    "Return if the current header should be exported or not."
+    (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
 
   (defun isamert/blog-pre-process ()
     "Pre-process the document/header.
@@ -2431,25 +2501,31 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     (s-format
      (cdr (assoc template-name isamert/blog-templates))
      'aget
-     (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args))))
+     (isamert/plist-to-alist args)))
 
-  (defun isamert/blog-kill-main-header (backend)
+  (defun isamert/blog-pre-process-pure (backend)
     "This function runs before export procedure and does some changes on the content."
+    ;; Show everything first
     (outline-show-all)
+    ;; Override global #+OPTIONS with current headers OPTIONS property
     (goto-char (point-min))
+    (-when-let (opts (org-entry-get nil "OPTIONS"))
+      (org-end-of-meta-data)
+      (insert (format "#+OPTIONS: %s\n" opts)))
     ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
+    (goto-char (point-min))
     (kill-whole-line))
 
   (defun isamert/body-html ()
     (save-current-buffer
       (let ((org-html-htmlize-output-type nil))
-        (add-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
         (org-html-export-as-html nil nil nil t nil)
-        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-kill-main-header)
+        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
         (buffer-string))))
 
   ;; TODO: fix document
-  (defun isamert/blog-load-templates ()
+  (defun isamert/blog-refresh-templates ()
     "Load the templates according to following rules.
   - If there is a codeblock in the document named \"post-template\",
     use it as the default template for posts, otherwise use
@@ -2473,6 +2549,7 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     ,,#+begin_src html
     ...
     ,#end_src"
+    (interactive)
     (save-excursion
       (-as-> (org-property-values "TEMPLATE") templates
              (append '("post-template" "page-template"))
@@ -2495,11 +2572,29 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
          (s-replace " " "-")
          (s-replace "---" "-")
          (s-replace "--" "-")
-         (s-replace "=" "-")
-         (s-replace "/" "-")))
+         (s-replace "'" "-")
+         (s-replace "/" "-")
+         (s-replace "ö" "o")
+         (s-replace "ı" "i")
+         (s-replace "ğ" "g")
+         (s-replace "ü" "u")
+         (s-replace "ş" "s")
+         (s-replace "ö" "o")
+         (s-replace "ç" "c")))
 
-  (defun isamert/blog-mk-path (title publish-date)
-    (format "%s/%s" (s-join "/" (isamert/parse-org-date publish-date)) (isamert/blog-url-case title)))
+  (defun isamert/blog-mk-path (&optional with-publish-dir)
+    (let* ((title (org-entry-get nil "ITEM"))
+          (publish-date (org-entry-get nil "PUBLISH_DATE"))
+          (custom-id (org-entry-get nil "CUSTOM_ID"))
+          (export-path (org-entry-get nil "EXPORT_AS"))
+          (result (if export-path
+                      (format "%s.html" export-path)
+                    (format "%s/%s.html"
+                            (s-join "/" (isamert/parse-org-date publish-date))
+                            (isamert/blog-url-case title)))))
+      (if with-publish-dir
+          (format "%s/%s" isamert/blog-publish-path result)
+        result)))
 
   (defun isamert/parse-org-date (date)
     (save-match-data
@@ -2520,6 +2615,45 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
     (make-directory (file-name-directory file) t)
     (with-temp-file file
       (insert string)))
+
+  (defun isamert/plist-to-alist (args)
+    (interactive)
+    (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
+
+  ;;
+  ;; Development utils
+  ;;
+
+  (defun isamert/blog-start-local-server ()
+    "Start the local server."
+    (interactive)
+    (let ((default-directory (expand-file-name isamert/blog-publish-path)))
+      (setq isamert/blog-server-process
+            (start-process "isamert/blog-server-process" nil "python" "-m" "http.server" "3000"))
+      (browse-url "http://localhost:3000")))
+
+  (defun isamert/blog-stop-local-server ()
+    "Stop the local server."
+    (interactive)
+    (when isamert/blog-server-process
+      (delete-process isamert/blog-server-process)
+      (setq isamert/blog-server-process nil)))
+
+  (defun isamert/blog-restart-local-server ()
+    "Restart the local server."
+    (interactive)
+    (isamert/blog-stop-local-server)
+    (isamert/blog-start-local-server))
+
+  (defun isamert/blog-open-current ()
+    "Open the current headers exported file in browser."
+    (interactive)
+    (if isamert/blog-server-process
+        (browse-url
+         (format "http://localhost:3000/%s"
+                 (isamert/blog-mk-path)))
+      (browse-url
+       (isamert/blog-mk-path t))))
 #+end_src
 
 ** TODO Load blog code

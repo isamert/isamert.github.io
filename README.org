@@ -256,6 +256,48 @@
 #+NAME: post-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
+  <<html-head>>
+    <body>
+      <<html-header>>
+
+        <section>
+          <h1>${:title}</h1>
+          ${:body}
+
+          <hr />
+
+          <script src="https://utteranc.es/client.js"
+                  repo="isamert/isamert.github.io"
+                  issue-term="pathname"
+                  label="> 💬"
+                  theme="github-light"
+                  crossorigin="anonymous"
+                  async>
+          </script>
+        </section>
+
+        <<html-footer>>
+    </body>
+#+end_src
+** Page template
+#+NAME: page-template
+#+begin_src html :noweb yes
+  <!DOCTYPE html>
+  <<html-head>>
+    <body>
+      <<html-header>>
+
+        <section>
+          <h1>${:title}</h1>
+          ${:body}
+        </section>
+
+        <<html-footer>>
+    </body>
+#+end_src
+** Head
+#+NAME: html-head
+#+begin_src html
   <head>
     <title>${:title} | isamert.net</title>
 
@@ -270,33 +312,28 @@
 
     <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
   </head>
-  <body>
-    <header>
-      <!-- TODO: right links like RSS About etc. -->
-      <a href="/index.html">isamert.net</a>  |
-    </header>
-
-    <section>
-      <h1>${:title}</h1>
-      ${:body}
-    </section>
-
-    <footer>
-      <hr />
-      <p>
-        Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
-
-        <span>
-          Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
-        </span>
-      </p>
-    </footer>
-  </body>
 #+end_src
-** Page template
-#+NAME: page-template
-#+begin_src html :noweb yes
-<<post-template>>
+** Header
+#+NAME: html-header
+#+begin_src html
+  <header>
+    <!-- TODO: right links like RSS About etc. -->
+    <a href="/index.html">isamert.net</a>  |
+  </header>
+#+end_src
+** Footer
+#+NAME: html-footer
+#+begin_src html
+  <footer>
+    <hr />
+    <p>
+      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+
+      <span>
+        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+      </span>
+    </p>
+  </footer>
 #+end_src
 * Main :page:
 :PROPERTIES:

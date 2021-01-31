@@ -13,15 +13,15 @@
 
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
-<body>
-  <header>
-    <!-- TODO: right links like RSS About etc. -->
-    <a href="/index.html">isamert.net</a>  |
-  </header>
+  <body>
+    <header>
+      <!-- TODO: right links like RSS About etc. -->
+      <a href="/index.html">isamert.net</a>  |
+    </header>
 
-  <section>
-    <h1>Emacs'te Türkçe imla denetimi</h1>
-    <ul class="org-ul">
+      <section>
+        <h1>Emacs'te Türkçe imla denetimi</h1>
+        <ul class="org-ul">
 <li>Öncelikle sisteminize <code>hunspell</code> kurulumu yapın.</li>
 <li><a href="https://extensions.libreoffice.org/en/extensions/show/turkish-spellcheck-dictionary">Şu adresten</a> en son versiyonu indirin.</li>
 <li>Dosyayı herhangi bir sıkıştırılmış dosya görüntüleyicisiyle açıp içerisinden <code>dict</code> altındaki <code>tr-TR.dict</code> ve <code>tr-TR.aff</code> dosyalarını <code>/usr/share/myspell/dicts</code> altına çıkarın.
@@ -63,16 +63,27 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda <code>görüntüleyic
 </div>
 </div>
 
-  </section>
 
-  <footer>
-    <hr />
-    <p>
-      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+        <hr />
 
-      <span>
-        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
-      </span>
-    </p>
-  </footer>
-</body>
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      
+          <span>
+            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+          </span>
+        </p>
+      </footer>
+  </body>

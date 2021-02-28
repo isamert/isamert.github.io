@@ -1,4 +1,4 @@
-if (location.port !== 300) {
+if (location.port !== 3000) {
     // Simple, privacy friendly analytics
     insights.init('GCMG1yjLS_qn7cS3');
     insights.trackPages();

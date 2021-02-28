@@ -1,0 +1,22 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>org - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Running SQL on org-mode tables</title>
+      <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
+      <pubDate>2019-11-14</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>How do I keep my days organized with org-mode and Emacs</title>
+      <link>https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html</link>
+      <pubDate>2021-01-25</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

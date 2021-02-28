@@ -1,0 +1,16 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>qt - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Median cut algorithm in C++/Qt</title>
+      <link>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</link>
+      <pubDate>2016-07-13</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

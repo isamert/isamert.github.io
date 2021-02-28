@@ -1,0 +1,22 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>cli - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Nice little curl commands</title>
+      <link>https://isamert.net/2018/03/24/nice-little-curl-commands.html</link>
+      <pubDate>2018-03-24</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</title>
+      <link>https://isamert.net/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html</link>
+      <pubDate>2018-05-04</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

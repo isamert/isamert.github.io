@@ -1,0 +1,28 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>linux - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Programming AVR microcontrollers in Linux</title>
+      <link>https://isamert.net/2017/12/22/programming-avr-microcontrollers-in-linux.html</link>
+      <pubDate>2017-12-22</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</title>
+      <link>https://isamert.net/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html</link>
+      <pubDate>2018-05-04</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>Better keyboard experience in Linux</title>
+      <link>https://isamert.net/2020/05/30/better-keyboard-experience-in-linux.html</link>
+      <pubDate>2020-05-30</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

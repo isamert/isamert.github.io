@@ -1,0 +1,16 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>bash - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Bash scripting guide</title>
+      <link>https://isamert.net/2019/02/21/bash-scripting-guide.html</link>
+      <pubDate>2019-02-21</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

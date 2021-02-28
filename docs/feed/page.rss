@@ -1,0 +1,16 @@
+
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>page - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Main</title>
+      <link>https://isamert.net/index.html</link>
+      <pubDate>2021-01-21</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

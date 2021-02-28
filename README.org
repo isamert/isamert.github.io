@@ -9,9 +9,16 @@
 * Template :noexport:
 - If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
 
+** Settings
+- Set the port and return it.
+#+name: blog-local-port
+#+begin_src elisp
+  (setq isamert/blog-local-port 3000)
+#+end_src
+
 ** index.js
-#+begin_src js :tangle docs/assets/index.js
-  if (location.port !== 300) {
+#+begin_src js :tangle docs/assets/index.js :noweb yes
+  if (location.port !== <<blog-local-port()>>) {
       // Simple, privacy friendly analytics
       insights.init('GCMG1yjLS_qn7cS3');
       insights.trackPages();
@@ -615,7 +622,7 @@ Also this code is equivalent of this one:
   fun4(fun3(fun2(fun1(result))))
 #+end_src
 
-* Programming AVR microcontrollers in Linux
+* Programming AVR microcontrollers in Linux :linux:microcontrollers:
 :PROPERTIES:
 :PUBLISH_DATE: [2017-12-22 Fri]
 :CUSTOM_ID: programming-avr-microcontrollers-in-linux
@@ -2426,6 +2433,15 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
     "My notes and ideas."
     "Description of the blog, used while generating RSS etc.")
 
+  (defvar isamert/blog-local-port
+    "3000"
+    "Port to serve local blog instance.")
+
+  (defvar isamert/blog-rss-per-tag
+    "feed"
+    "Generate RSS per tag? Non-nil value means generating `TAG.xml' files under given directory.
+  By default it'll create `feed/TAG.xml' for every TAG.")
+
   ;;
   ;; Internal vars
   ;;
@@ -2495,28 +2511,91 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 
   (defun isamert/blog-generate-rss ()
     (interactive)
-    (isamert/write-string-to-file
-     (format
-      "<?xml version=\"1.0\" ?><rss version=\"2.0\"><channel><title>%s</title><link>%s</link><description>%s</description>%s</channel></rss>"
-      isamert/blog-title
-      isamert/blog-url
-      isamert/blog-description
-      (->> (org-map-entries 'isamert/blog-generate-rss-current "LEVEL=1")
-           (--keep it)
-           (reverse)
-           (--reduce (format "%s%s" acc it))))
-     (format "%s/feed.xml" isamert/blog-publish-path))
-    (message "RSS generated."))
+    (let* ((taggeds (make-hash-table :test 'equal))
+           (items (->> (org-map-entries 'isamert/blog-generate-rss-item-current "LEVEL=1")
+                       (--keep it))))
+      (-each items
+        (-lambda ((tags . item))
+          (--each tags (push item (gethash it taggeds '())))))
 
-  (defun isamert/blog-generate-rss-current()
+      (isamert/write-string-to-file
+       (isamert/blog-make-rss-doc (-map 'cdr items))
+       (format "%s/%s/main.rss"
+               isamert/blog-rss-per-tag
+               isamert/blog-publish-path))
+
+      (--each (hash-table-keys taggeds)
+        (isamert/write-string-to-file
+         (isamert/blog-make-rss-doc (gethash it taggeds) it)
+         (format "%s/%s/%s.rss"
+                 isamert/blog-rss-per-tag
+                 isamert/blog-publish-path
+                 it)))))
+
+  (defun isamert/blog-generate-rss-item-current ()
+    "Return the list of tags and RSS item for current post."
+    (interactive)
     (when (isamert/blog-should-export-current)
-      (format
-       "<item><title>%s</title><link>%s/%s</link><pubDate>%s</pubDate><description><![CDATA[ %s ]]></description></item>"
-       (org-entry-get nil "ITEM")
-       isamert/blog-url
-       (isamert/blog-mk-path)
-       (s-join "-" (isamert/parse-org-date (org-entry-get nil "PUBLISH_DATE")))
-       (or (org-entry-get nil "ABSTRACT") ""))))
+      `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
+        .
+        ,(format
+          "
+      <item>
+        <title>%s</title>
+        <link>%s/%s</link>
+        <pubDate>%s</pubDate>
+        <description><![CDATA[ %s ]]></description>
+      </item>"
+          (org-entry-get nil "ITEM")
+          isamert/blog-url
+          (isamert/blog-mk-path)
+          (s-join "-" (isamert/parse-org-date (org-entry-get nil "PUBLISH_DATE")))
+          (or (org-entry-get nil "ABSTRACT") "")))))
+
+  (defun isamert/blog-make-rss-doc (items &optional tag)
+    (format "
+  <?xml version=\"1.0\" ?>
+  <rss version=\"2.0\">
+    <channel>
+      <title>%s</title>
+      <link>%s</link>
+      <description>%s</description>
+      %s
+    </channel>
+  </rss>"
+     (if tag
+         (format "%s - %s" tag isamert/blog-title)
+       isamert/blog-title)
+     isamert/blog-url
+     isamert/blog-description
+     (--reduce (format "%s%s" it acc) items)))
+
+  ;;
+  ;; Sitemap
+  ;;
+
+  (defun isamert/blog-generate-sitemap ()
+    (interactive)
+    (->>
+     (org-map-entries
+      (lambda ()
+        (when (isamert/blog-should-export-current)
+          (format "
+     <url>
+        <loc>%s/%s</loc>
+        <lastmod>%s</lastmod>
+        <changefreq>monthly</changefreq>
+     </url>"
+                  isamert/blog-url
+                  (isamert/blog-mk-path)
+                  (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "MODIFY_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
+        ) "LEVEL=1")
+     (--keep it)
+     (--reduce (format "%s%s" acc it))
+     (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+  <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">%s
+  </urlset>")
+     (isamert/write-string-to-file)))
 
   ;;
   ;; Processing
@@ -2630,14 +2709,14 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 
   (defun isamert/blog-mk-path (&optional with-publish-dir)
     (let* ((title (org-entry-get nil "ITEM"))
-          (publish-date (org-entry-get nil "PUBLISH_DATE"))
-          (custom-id (org-entry-get nil "CUSTOM_ID"))
-          (export-path (org-entry-get nil "EXPORT_AS"))
-          (result (if export-path
-                      (format "%s.html" export-path)
-                    (format "%s/%s.html"
-                            (s-join "/" (isamert/parse-org-date publish-date))
-                            custom-id))))
+           (publish-date (org-entry-get nil "PUBLISH_DATE"))
+           (custom-id (org-entry-get nil "CUSTOM_ID"))
+           (export-path (org-entry-get nil "EXPORT_AS"))
+           (result (if export-path
+                       (format "%s.html" export-path)
+                     (format "%s/%s.html"
+                             (s-join "/" (isamert/parse-org-date publish-date))
+                             custom-id))))
       (if with-publish-dir
           (format "%s/%s" isamert/blog-publish-path result)
         result)))
@@ -2675,8 +2754,8 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
     (interactive)
     (let ((default-directory (expand-file-name isamert/blog-publish-path)))
       (setq isamert/blog-server-process
-            (start-process "isamert/blog-server-process" nil "python" "-m" "http.server" "3000"))
-      (browse-url "http://localhost:3000")))
+            (start-process "isamert/blog-server-process" nil "python" "-m" "http.server" (format "%s" isamert/blog-local-port)))
+      (browse-url (format "http://localhost:%s" isamert/blog-local-port))))
 
   (defun isamert/blog-stop-local-server ()
     "Stop the local server."

@@ -125,6 +125,11 @@ a:hover {
   text-decoration-thickness: 0.1rem;
 }
 
+.org-dl dt {
+    font-weight: bold;
+    font-style: italic;
+}
+
 /* Inline codes */
 code {
   font-family: "IBM Plex Mono", monospace;

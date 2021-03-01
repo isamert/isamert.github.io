@@ -1,6 +1,7 @@
 #+TITLE: isamert.net
 #+AUTHOR: Isa Mert Gurbuz
 #+EMAIL: isamert@protonmail.com
+#+STARTUP: overview
 #+OPTIONS: html-style:nil num:nil H:4
 
 * Introduction :noexport:
@@ -224,6 +225,11 @@
     text-decoration-thickness: 0.1rem;
   }
 
+  .org-dl dt {
+      font-weight: bold;
+      font-style: italic;
+  }
+
   /* Inline codes */
   code {
     font-family: "IBM Plex Mono", monospace;
@@ -357,6 +363,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html][A (relatively) deep dive into (zsh) shell login process (without a display manager)]]
 - [[./2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html][How I do keep my days organized with org-mode and Emacs]]
 - [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
 - [[./2019/11/14/running-sql-on-org-mode-tables.html][Running SQL on org-mode tables]]
@@ -2409,6 +2416,110 @@ Gerekli Emacs konfigürasyonu ise şöyle:
 :CUSTOM_ID: i̇zlenimler
 :END:
 Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle= kelimesinin altını çiziyor yanlış diye. Aynı zamanda yanlış kelimeler için yapılan öneriler de oldukça vasat. Fakat elbette birçok hatanın gözden kaçmaması için oldukça yardımcı oluyor.
+
+* A (relatively) deep dive into (zsh) shell login process (without a display manager) :linux:shell:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-03-02 Tue]
+:OPTIONS: toc:nil
+:CUSTOM_ID: a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-
+:END:
+Recently, I have uninstalled my [[https://en.wikipedia.org/wiki/X_display_manager][display manager]] for various reasons. One of the reasons for that was to have a better understanding of my login process. Display managers generally do arbitrary stuff, they have their own way/order of sourcing files, sometimes they skip important files and sometimes they source unnecessary stuff etc. So I thought, using no display manager would result in a simpler login model. Oh boy, I was wrong.
+
+After quite a bit of fiddling around I believe I have a clear mental model of in which order my files gets sourced. Before that, here is a quick summary of some terminology:
+- [non-]Login shell :: It's first thing that is executed when you log in to your system. It generally spawns your DE/WM.
+- [non-]Interactive shell :: It's the shell that you use interactively, shells that you type into.
+
+When you log into a TTY, you get a /interactive login shell/. When you spawn a new terminal in your DE/WM, you get a /non-login interactive shell/. When you log in to your DE directly, that is done through a /non-interactive login shell/. A script that you run is run under a /non-login non-interactive shell/. These are important because this information will guide you why your =PATH= variable is not working as intended in some cases and why sometimes it works.
+
+I use =zsh= as my main shell and I also set it to be my login shell. =zsh= has a much simpler sourcing hierarchy, I'm not even going to bother myself explaining how bash does it. So here is how it goes:
+
+- First, =/etc/zshenv= and then =~/.zshev= is sourced. This is done no matter what type of shell you are spawning. These files gets sourced every time you are spawning a shell.
+  - =/etc/zshenv=
+    - This file might be under =/etc/zsh/zshenv= instead of =/etc/zsh= even if =man zsh= says the exact opposite. Some distributions change this path for =zsh= and they forgot to update the manual.
+    - I don't recommend editing this file unless you really know what you are doing. Just try to utilize files under your home directory, instead of global ones.
+  - =~/.zshenv=
+    - As this file gets sourced every time a new shell spawns, it makes sense to put all the frequently updated stuff here.
+    - Also you probably want to set all the environment variables that is frequently used by other programs (=$PATH=, =$PAGER= etc.).
+    - Do not put any aliases here, aliases are meant to be used within an interactive shell.
+- If you are spawning a login shell, =/etc/zprofile= gets sourced at this point, and then =~/.zprofile=. Just to make it clear, these files are only sourced at login and never again (if you somehow spawn a login shell again, of course it will be sourced again).
+  - =/etc/zprofile=
+    - Again, this file might be under =/etc/zsh/zprofile= instead of =/etc/zprofile=.
+    - Most of the distributions have the following line inside the =/etc/zprofile= file:
+      #+begin_src sh
+        emulate sh -c 'source /etc/profile'
+      #+end_src
+      - This file sources =/etc/profile= file (which automatically gets sourced if you are using =sh= or =bash= as your login shell.), which in turn sources files under =/etc/profile.d=. These files are generally gets installed when you install a program into your system. For example, if you install =nix= package manager, it also installs =/etc/profile.d/nix{,-daemon}.sh= files and this files needs to be sourced for =nix= to work properly. So if your =/etc/zprofile= or =/etc/zsh/zprofile= does not contain this line, add it to your =~/.zprofile= file.
+  - =~/.zprofile=
+    - This file is a nice place to add stuff that does not change very often, as this file is only sourced at login once.
+    - You can also do some long running initializations here, as this file gets sourced only once.
+    - Also this is the file that you want to run =startx=, if you are not using a display manager like me. Here is how I do it:
+      #+begin_src sh
+        # Following automatically calls "startx" when you login on tty1:
+        if [[ -z ${DISPLAY} && ${XDG_VTNR} -eq 1 ]]; then
+            # Logs can be found in ~/.xorg.log
+            exec startx -- -keeptty -nolisten tcp > ~/.xorg.log 2>&1
+        fi
+      #+end_src
+      - After running =startx=, it loads =~/.xinitrc= file. This is the file that you want to start your window manager and all the other programs that you want to see at startup. An example file might be:
+        #+begin_src sh
+          #!/bin/sh
+
+          # The following is essential, you need to source
+          # every file under `/etc/X11/xinit/xinitrc.d`.
+          if [[ -d /etc/X11/xinit/xinitrc.d ]] ; then
+              for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+                  echo "Sourcing $f"
+                  [[ -x "$f" ]] && . "$f"
+              done
+              unset f
+          fi
+
+          sysresources=/etc/X11/xinit/.Xresources
+          sysmodmap=/etc/X11/xinit/.Xmodmap
+          [[ -f $sysresources ]] && xrdb -merge $sysresources
+          [[ -f $sysmodmap ]] && xmodmap $sysmodmap
+
+          # Load your keymap and all that jazz
+          setxkbmap 'us(intl)'
+          xrdb -merge $HOME/.Xresources
+          xmodmap $HOME/.Xmodmap
+          # Cursor
+          xsetroot -cursor_name left_ptr
+          # Starting programs like your compositor makes sense here
+          picom -b
+          # Some other programs related to X
+          unclutter &
+          redshift &
+          # Run your WM, as an example I run bspwm
+          exec bspwm
+        #+end_src
+- Now, =/etc/zshrc= (or =/etc/zsh/zshrc=) and then =~/.zshrc= gets sourced, if you are spawning an interactive shell.
+  - This is the file that you want to dump all of your aliases, zsh functions that you want to use interactively, your shell theme/plugins etc.
+- If you are spawning a login shell, now =/etc/zlogin= (or =/etc/zsh/zlogin=) and then =~/.zlogin= gets sourced.
+  - I don't use this file.
+  - Don't use this file if you are already using =~/.zprofile= or move all of your =~/.zprofile= into this one.
+  - Only difference is this file is sourced after =~/.zshrc= (if it's sourced at all) and it doesn't make much sense (to me).
+
+** A use case
+:PROPERTIES:
+:CUSTOM_ID: a-use-case
+:END:
+A problem I was having was related to [[https://www.cis.upenn.edu/~bcpierce/unison/][unison]]. It's a simple and powerful file synchronization program that I use. One problem with that is, it's quite picky about it's version. It requires absolute same version on both client and server, and not only that, it also wants both binaries to be compiled with same version of the OCaml compiler. To solve this kind of version issue between my rigs, (among other reasons) I use [[https://nixos.org][nix package manager]]. This gets me same binary on every computer I have. But there is one problem, when I install =unison= through =nix=, it installs it under =~/.nix-profile/bin/unison=, and when I run =unison= to synchronize my files, it fails to find =unison= on the other computer. But I can =ssh= into other computer and run =unison= without a problem. Hmm, what is going on here?
+
+- I also gave this example above, when =nix= gets installed it also installs the following files: =/etc/profile.d/nix{,-daemon}.sh=
+- These files update =$PATH= variable, so =~/.nix-profile/bin= gets added into =$PATH=.
+- This files are sourced through =/etc/profile=, which is sourced by =/etc/zsh/zprofile=.
+- =/etc/zsh/zprofile= gets sourced when a login shell is spawned.
+
+So when I do =ssh my-machine=, it spawns an /interactive login shell/ and drops me into it. By this time, =/etc/zsh/zprofile= is already sourced and thanks to that I can simply run =unison= binary. When I run =unison= on client, it connects the server through =ssh= *but* it uses a /non-login non-interactive/ shell while doing that. Same goes for this command =ssh my-machine which unison=. This command runs in a /non-login non-interactive shell/. Because =/etc/zsh/zprofile= requires a login shell to get sourced, =~/.nix-profile/bin= never gets added to the =$PATH= variable.
+
+So what's the solution? You know it, only =~/.zshenv= gets sourced when /non-login non-interactive shell/ is spawned. So I just update the =$PATH= there and everything works as expected now.
+
+** Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
+That's it. This was just some kind of a braindump. From now on, I'll just try to drop my notes as blog posts like this.
 
 * Publish Code :noexport:
 #+NAME: startup

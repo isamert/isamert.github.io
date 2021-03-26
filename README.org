@@ -363,6 +363,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html][Killing (copying) currently selected candidate's content/text in Selectrum]]
 - [[./2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html][A (relatively) deep dive into (zsh) shell login process (without a display manager)]]
 - [[./2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html][How I do keep my days organized with org-mode and Emacs]]
 - [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
@@ -2520,6 +2521,43 @@ So what's the solution? You know it, only =~/.zshenv= gets sourced when /non-log
 :CUSTOM_ID: conclusion
 :END:
 That's it. This was just some kind of a braindump. From now on, I'll just try to drop my notes as blog posts like this.
+
+* Killing (copying) currently selected candidate's content/text in Selectrum :emacs:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-03-27 Sat]
+:OPTIONS: toc:nil
+:CUSTOM_ID: killing-copying-currently-selected-candidates-content-text-in-selectrum
+:END:
+I use [[https://github.com/raxod502/selectrum][Selectrum]] as my incremental narrowing framework in Emacs with [[https://github.com/minad/consult][Consult]]. Consult has some nice commands, like =consult-grep= (or better yet, =consult-ripgrep=). I always find myself doing a project wide search to find a line to copy and paste it into my current buffer. This became quite repetitious and I automated this with the following function:
+
+#+begin_src emacs-lisp
+  (defun isamert/selectrum-kill-current-candidate ()
+    "Kill current candidates text in selectrum minibuffer and close it."
+    (interactive)
+    (let ((candidate (selectrum-get-current-candidate))
+          (prompt (minibuffer-prompt)))
+      (kill-new
+       (cond
+        ((s-contains? "grep" prompt) (s-join ":" (-drop 2 (s-split ":" candidate))))
+        ;; ^ Strip `filename:line-number:` from the text
+        ((s-matches? "\\(Go to line\\|Switch to\\)" prompt) (substring candidate 1))
+        ;; ^ `consult-line' and `consult-buffer' has an unrecognizable char at the beginning of every candidate, strip them
+        (t candidate))))
+    (keyboard-escape-quit))
+#+end_src
+
+This function essentially kills the currently selected candidate's text and closes the minibuffer. Then you can yank the text anywhere you want. You may also want to change the code in a way that it directly yanks the text into the buffer (to achieve that, simply replace =kill-new= with =insert=) but I like to kill it first and yank it manually.
+
+To bind it to a key, use the following:
+
+#+begin_src emacs-lisp
+  (define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
+#+end_src
+
+It works with all kinds of Selectrum completion commands. See the following gif:
+
+#+ATTR_HTML: :src /images/emacs_consult_copy_text.gif :class centered
+[[file:./docs/images/emacs_consult_copy_text.gif]]
 
 * Publish Code :noexport:
 #+NAME: startup

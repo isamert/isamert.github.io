@@ -2640,9 +2640,13 @@ It works with all kinds of Selectrum completion commands. See the following gif:
           (when (not isamert/blog-templates)
             (isamert/blog-refresh-templates))
           (when (isamert/blog-should-export-current)
-            (setq file-path (isamert/blog-mk-path t))
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)
+
+            ;; Update the id after the pre-process
+            (setq custom-id (org-entry-get nil "CUSTOM_ID"))
+            (setq file-path (isamert/blog-mk-path t))
+
             (isamert/write-string-to-file
              (isamert/template
               (or template (if is-page "page-template" "post-template"))
@@ -2846,7 +2850,7 @@ It works with all kinds of Selectrum completion commands. See the following gif:
          (s-replace " " "-")
          (s-replace "---" "-")
          (s-replace "--" "-")
-         (s-replace "'" "-")
+         (s-replace "'" "")
          (s-replace "/" "-")
          (s-replace "ö" "o")
          (s-replace "ı" "i")

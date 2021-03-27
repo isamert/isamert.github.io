@@ -26,7 +26,7 @@ I use <a href="https://github.com/raxod502/selectrum">Selectrum</a> as my increm
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(defun isamert/selectrum-kill-current-candidate ()
+<pre class="src src-elisp">(defun isamert/selectrum-kill-current-candidate ()
   "Kill current candidates text in selectrum minibuffer and close it."
   (interactive)
   (let ((candidate (selectrum-get-current-candidate))
@@ -51,7 +51,7 @@ To bind it to a key, use the following:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
+<pre class="src src-elisp">(define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
 </pre>
 </div>
 
@@ -60,7 +60,7 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 </p>
 
 
-<div id="org538fe66" class="figure">
+<div id="org11e0738" class="figure">
 <p><img src="/images/emacs_consult_copy_text.gif" alt="emacs_consult_copy_text.gif" class="centered" />
 </p>
 </div>

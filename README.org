@@ -2530,7 +2530,7 @@ That's it. This was just some kind of a braindump. From now on, I'll just try to
 :END:
 I use [[https://github.com/raxod502/selectrum][Selectrum]] as my incremental narrowing framework in Emacs with [[https://github.com/minad/consult][Consult]]. Consult has some nice commands, like =consult-grep= (or better yet, =consult-ripgrep=). I always find myself doing a project wide search to find a line to copy and paste it into my current buffer. This became quite repetitious and I automated this with the following function:
 
-#+begin_src emacs-lisp
+#+begin_src elisp
   (defun isamert/selectrum-kill-current-candidate ()
     "Kill current candidates text in selectrum minibuffer and close it."
     (interactive)
@@ -2550,7 +2550,7 @@ This function essentially kills the currently selected candidate's text and clos
 
 To bind it to a key, use the following:
 
-#+begin_src emacs-lisp
+#+begin_src elisp
   (define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
 #+end_src
 

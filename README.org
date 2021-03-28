@@ -3054,6 +3054,13 @@ It works with all kinds of Selectrum completion commands. See the following gif:
   (defun isamert/org-date-to-iso (org-date)
     "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
     (s-replace-regexp "[^0-9-]" "" org-date))
+
+  (defun isamert/create-tag-list (tags)
+    (->> (s-split ":" tags)
+      (--filter (not (s-blank? it)))
+      ;; TODO: tag pages are not ready yet, so just put tag name
+      ;; (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
+      (s-join ", ")))
 #+end_src
 
 ** TODO Load blog code

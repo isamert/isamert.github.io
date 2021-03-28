@@ -376,7 +376,9 @@ This is the file that contains all the logic for my website. I'm trying to keep 
 
         <section>
           <h1>Posts tagged with ${tag-name}</h1>
-
+          <a href="${(format "/%s/%s.rss" isamert/blog-rss-per-tag tag-name)}">
+            RSS feed for this tag
+          </a>
           <ul>
             ${(--map (format "<li><a href=\"/%s\">%s</li>\n" (plist-get it :path) (plist-get it :title)) posts)}
           </ul>

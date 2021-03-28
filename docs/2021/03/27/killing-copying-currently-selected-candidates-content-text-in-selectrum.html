@@ -21,6 +21,21 @@
 
       <section>
         <h1>Killing (copying) currently selected candidate's content/text in Selectrum</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: emacs</li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2021-03-27</em></li>
+            <li>Last updated at <em>2021-03-27</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
         <p>
 I use <a href="https://github.com/raxod502/selectrum">Selectrum</a> as my incremental narrowing framework in Emacs with <a href="https://github.com/minad/consult">Consult</a>. Consult has some nice commands, like <code>consult-grep</code> (or better yet, <code>consult-ripgrep</code>). I always find myself doing a project wide search to find a line to copy and paste it into my current buffer. This became quite repetitious and I automated this with the following function:
 </p>
@@ -28,7 +43,6 @@ I use <a href="https://github.com/raxod502/selectrum">Selectrum</a> as my increm
 <div class="org-src-container">
 <pre class="src src-elisp">(defun isamert/selectrum-kill-current-candidate ()
   "Kill current candidates text in selectrum minibuffer and close it."
-  (interactive)
   (let ((candidate (selectrum-get-current-candidate))
         (prompt (minibuffer-prompt)))
     (kill-new
@@ -36,7 +50,8 @@ I use <a href="https://github.com/raxod502/selectrum">Selectrum</a> as my increm
       ((s-contains? "grep" prompt) (s-join ":" (-drop 2 (s-split ":" candidate))))
       ;; ^ Strip `filename:line-number:` from the text
       ((s-matches? "\\(Go to line\\|Switch to\\)" prompt) (substring candidate 1))
-      ;; ^ `consult-line' and `consult-buffer' has an unrecognizable char at the beginning of every candidate, strip them
+      ;; ^ `consult-line' and `consult-buffer' has an unrecognizable char at
+      ;; the beginning of every candidate, so I just strip them here
       (t candidate))))
   (keyboard-escape-quit))
 </pre>
@@ -51,7 +66,8 @@ To bind it to a key, use the following:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
+<pre class="src src-elisp">(define-key selectrum-minibuffer-map
+  (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
 </pre>
 </div>
 
@@ -60,10 +76,10 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 </p>
 
 
-<div id="org11e0738" class="figure">
-<p><img src="/images/emacs_consult_copy_text.gif" alt="emacs_consult_copy_text.gif" class="centered" />
-</p>
-</div>
+<figure id="org2d9fde6">
+<img src="/images/emacs_consult_copy_text.gif" alt="emacs_consult_copy_text.gif" class="centered">
+
+</figure>
 
 
         <hr />

@@ -1,25 +1,34 @@
 /* Fonts */
-/* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+/* TODO: Maybe I should serve these, instead of using a cdn */
+@import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,400;0,700;0,800;1,400&display=swap');
 
-/*
-   Primary #545759
-   Light #808486
-   Dark #2b2e30
+:root {
+  --font: 'Noto Serif', serif;
+  --font-color: #545759;
+  --light-font-color: #808486;
+  --muted-color: #c7c7c7;
 
-   Secondary #864ac6
-   Light #b978fa
-   Dark #541c95
- */
+  --monospace-font: 'TypoPRO Iosevka Term', monospace;
+  --src-block-bg-color: #f3f2ee;
+  --inline-src-block-bg-color: #f8f7f3;
+
+  --header-font: 'Neuton', serif;
+  --header-color: #2b2e30;
+  --post-title-font-size: 2em;
+  --post-first-header-font-size: 1.7em;
+  --post-second-header-font-size: 1.5em;
+  --post-third-header-font-size: 1.3em;
+  --post-fourth-header-font-size: 1.2em;
+
+  --link-color: #5f9b65;
+  --link-hover-color: #808486;
+}
 
 body {
-  /* font-family: 'Fira Sans Condensed', sans-serif; */
-  /* font-family: 'Merriweather', serif; */
-  font-family: 'Gentium Book Basic', serif;
-  color: #545759;
+  font-family: var(--font);
+  color: var(--font-color);
   margin: 0;
   padding: 0;
 }
@@ -61,49 +70,42 @@ footer > p > span {
 }
 
 h1, h2, h3, h4, h5, h6, h7 {
-  /* font-family: 'Dosis', sans-serif; */
-  /* font-family: 'Merriweather', serif; */
-  font-size: 1.3rem;
-  line-height: 1.65;
-  color: #2b2e30;
+  font-family: var(--header-font);
+  line-height: 1.35;
+  color: var(--header-color);
 }
 
 h1 {
-  font-size: 2em;
-  border-bottom: 1.7px dashed #808486;
+  font-size: var(--post-title-font-size);
+  border-bottom: 1.7px dashed var(--light-font-color);
+  margin-bottom: 1rem;
 }
 
 h2 {
-  font-size: 1.7em;
-  border-bottom: 1.5px dashed #808486;
+  font-size: var(--post-first-header-font-size);
+  border-bottom: 1.5px dashed var(--light-font-color);
 }
 
 h3 {
-  font-size: 1.5em;
-  border-bottom: 1px dashed #808486;
+  font-size: var(--post-second-header-font-size);
+  border-bottom: 1px dashed var(--light-font-color);
 }
 
 h4 {
-  font-size: 1.3em;
-  border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+  font-size: var(--post-third-header-font-size);
 }
 
 h5 {
-  font-size: 1.2em;
+  font-size: var(--post-fourth-header-font-size);
 }
 
 h1:hover, h2:hover, h3:hover, h4:hover {
-  color: #808486;
+  color: var(--light-font-color);
   cursor: pointer;
 }
 
-.clear {
-  color: inherit;
-  text-decoration: inherit;
-}
-
 blockquote {
-  border-left: 1.4px solid  #808486;
+  border-left: 1.4px solid var(--light-font-color);
   margin: 0;
   margin-left: 1rem;
   padding: 0 0 0 20px;
@@ -111,18 +113,13 @@ blockquote {
 }
 
 a {
-  color: #545759;
-  text-decoration-color: #545759;
-  text-decoration-style: dotted;
-  text-decoration-thickness: 0.130em;
-  text-underline-offset: 1.5px;
+  color: var(--link-color);
+  text-decoration: none;
 }
 
 a:hover {
-  color: #808486;
-  text-decoration-color: #808486;
-  text-decoration-style: wavy;
-  text-decoration-thickness: 0.1rem;
+  color: var(--link-hover-color);
+  text-decoration-color: var(--link-hover-color);
 }
 
 .org-dl dt {
@@ -132,9 +129,9 @@ a:hover {
 
 /* Inline codes */
 code {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.7em;
-  background: #f8f7f3 !important;
+  font-family: var(--monospace-font);
+  /* font-size: 0.7em; */
+  background: var(--inline-src-block-bg-color) !important;
   border-radius: 0.4rem !important;
   padding: 0.24rem !important;
 }
@@ -147,14 +144,39 @@ code {
   display: inline !important;
 }
 
+hr {
+  border: 0;
+  background: var(--muted-color);
+  height: 1px;
+}
+
 /* Code blocks */
 .src, .example {
-  font-size: 0.85em;
-  font-family: "IBM Plex Mono", monospace;
-  background: #f3f2ee;
+  /* font-size: 0.85em; */
+  font-family: var(--monospace-font);
+  background: var(--src-block-bg-color);
   padding: .4rem .7rem !important;
   border-radius: 0.3rem !important;
   display: block !important;
+}
+
+.post-information {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-information ul {
+  padding: 0;
+  margin: 0;
+}
+
+.post-information ul:nth-child(2) {
+  text-align: right;
+}
+
+.post-information li {
+  list-style-type: none;
+  position: relative;
 }
 
 /* Center images and fit into the page */
@@ -162,4 +184,9 @@ code {
   margin: 20px auto 20px;
   display: block;
   max-width: 100%;
+}
+
+.clear {
+  color: inherit;
+  text-decoration: inherit;
 }

@@ -21,6 +21,21 @@
 
       <section>
         <h1>A (relatively) deep dive into (zsh) shell login process (without a display manager)</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: linux, shell</li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2021-03-02</em></li>
+            <li>Last updated at <em>2021-03-02</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
         <p>
 Recently, I have uninstalled my <a href="https://en.wikipedia.org/wiki/X_display_manager">display manager</a> for various reasons. One of the reasons for that was to have a better understanding of my login process. Display managers generally do arbitrary stuff, they have their own way/order of sourcing files, sometimes they skip important files and sometimes they source unnecessary stuff etc. So I thought, using no display manager would result in a simpler login model. Oh boy, I was wrong.
 </p>

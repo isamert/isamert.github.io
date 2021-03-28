@@ -1,23 +1,35 @@
 #+TITLE: isamert.net
-#+AUTHOR: Isa Mert Gurbuz
+#+AUTHOR: isamert
 #+EMAIL: isamert@protonmail.com
 #+STARTUP: overview
 #+OPTIONS: html-style:nil num:nil H:4
 
 * Introduction :noexport:
-- ....
-- ....
-* Template :noexport:
+This is a very simple static site/blog generator (and my blog itself) for Emacs and org-mode. It only uses one org file. Every header is either a post or a page.
+
+** General usage
+- There are two kind of content: pages and posts.
+  - Difference is they are exported using different templates (See [[Template configuration]]).
+  - By default, every header is treated as a post.
+  - Tag headers with =page= tag to mark them as a page instead of a post.
+  - Tag every header that you don't want to export with =noexport=.
+- Use =isamert/blog-export-all= ...
+
+** Configuration
+*** Template
 - If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
 
-** Settings
-- Set the port and return it.
+**** Settings
+- Set the port and return it. I'll use the port value later in JavaScript.
+
 #+name: blog-local-port
 #+begin_src elisp
   (setq isamert/blog-local-port 3000)
 #+end_src
 
-** index.js
+**** index.js
+This is the file that contains all the logic for my website. I'm trying to keep it minimal as possible.
+
 #+begin_src js :tangle docs/assets/index.js :noweb yes
   if (location.port !== <<blog-local-port()>>) {
       // Simple, privacy friendly analytics
@@ -96,30 +108,40 @@
   }
 #+end_src
 
-** main.css
+**** main.css
+
 #+begin_src css :tangle docs/assets/main.css
   /* Fonts */
-  /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Fira+Sans+Condensed&display=swap'); */
-  /* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300&display=swap'); */
-  /* @import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap'); */
-  @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Basic&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
+  /* TODO: Maybe I should serve these, instead of using a cdn */
+  @import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,400;0,700;0,800;1,400&display=swap');
 
-  /*
-     Primary #545759
-     Light #808486
-     Dark #2b2e30
+  :root {
+    --font: 'Noto Serif', serif;
+    --font-color: #545759;
+    --light-font-color: #808486;
+    --muted-color: #c7c7c7;
 
-     Secondary #864ac6
-     Light #b978fa
-     Dark #541c95
-   ,*/
+    --monospace-font: 'TypoPRO Iosevka Term', monospace;
+    --src-block-bg-color: #f3f2ee;
+    --inline-src-block-bg-color: #f8f7f3;
+
+    --header-font: 'Neuton', serif;
+    --header-color: #2b2e30;
+    --post-title-font-size: 2em;
+    --post-first-header-font-size: 1.7em;
+    --post-second-header-font-size: 1.5em;
+    --post-third-header-font-size: 1.3em;
+    --post-fourth-header-font-size: 1.2em;
+
+    --link-color: #5f9b65;
+    --link-hover-color: #808486;
+  }
 
   body {
-    /* font-family: 'Fira Sans Condensed', sans-serif; */
-    /* font-family: 'Merriweather', serif; */
-    font-family: 'Gentium Book Basic', serif;
-    color: #545759;
+    font-family: var(--font);
+    color: var(--font-color);
     margin: 0;
     padding: 0;
   }
@@ -161,49 +183,42 @@
   }
 
   h1, h2, h3, h4, h5, h6, h7 {
-    /* font-family: 'Dosis', sans-serif; */
-    /* font-family: 'Merriweather', serif; */
-    font-size: 1.3rem;
-    line-height: 1.65;
-    color: #2b2e30;
+    font-family: var(--header-font);
+    line-height: 1.35;
+    color: var(--header-color);
   }
 
   h1 {
-    font-size: 2em;
-    border-bottom: 1.7px dashed #808486;
+    font-size: var(--post-title-font-size);
+    border-bottom: 1.7px dashed var(--light-font-color);
+    margin-bottom: 1rem;
   }
 
   h2 {
-    font-size: 1.7em;
-    border-bottom: 1.5px dashed #808486;
+    font-size: var(--post-first-header-font-size);
+    border-bottom: 1.5px dashed var(--light-font-color);
   }
 
   h3 {
-    font-size: 1.5em;
-    border-bottom: 1px dashed #808486;
+    font-size: var(--post-second-header-font-size);
+    border-bottom: 1px dashed var(--light-font-color);
   }
 
   h4 {
-    font-size: 1.3em;
-    border-bottom: 1px dashed #808486; /* TODO: Maybe remove this */
+    font-size: var(--post-third-header-font-size);
   }
 
   h5 {
-    font-size: 1.2em;
+    font-size: var(--post-fourth-header-font-size);
   }
 
   h1:hover, h2:hover, h3:hover, h4:hover {
-    color: #808486;
+    color: var(--light-font-color);
     cursor: pointer;
   }
 
-  .clear {
-    color: inherit;
-    text-decoration: inherit;
-  }
-
   blockquote {
-    border-left: 1.4px solid  #808486;
+    border-left: 1.4px solid var(--light-font-color);
     margin: 0;
     margin-left: 1rem;
     padding: 0 0 0 20px;
@@ -211,18 +226,13 @@
   }
 
   a {
-    color: #545759;
-    text-decoration-color: #545759;
-    text-decoration-style: dotted;
-    text-decoration-thickness: 0.130em;
-    text-underline-offset: 1.5px;
+    color: var(--link-color);
+    text-decoration: none;
   }
 
   a:hover {
-    color: #808486;
-    text-decoration-color: #808486;
-    text-decoration-style: wavy;
-    text-decoration-thickness: 0.1rem;
+    color: var(--link-hover-color);
+    text-decoration-color: var(--link-hover-color);
   }
 
   .org-dl dt {
@@ -232,9 +242,9 @@
 
   /* Inline codes */
   code {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 0.7em;
-    background: #f8f7f3 !important;
+    font-family: var(--monospace-font);
+    /* font-size: 0.7em; */
+    background: var(--inline-src-block-bg-color) !important;
     border-radius: 0.4rem !important;
     padding: 0.24rem !important;
   }
@@ -247,14 +257,39 @@
     display: inline !important;
   }
 
+  hr {
+    border: 0;
+    background: var(--muted-color);
+    height: 1px;
+  }
+
   /* Code blocks */
   .src, .example {
-    font-size: 0.85em;
-    font-family: "IBM Plex Mono", monospace;
-    background: #f3f2ee;
+    /* font-size: 0.85em; */
+    font-family: var(--monospace-font);
+    background: var(--src-block-bg-color);
     padding: .4rem .7rem !important;
     border-radius: 0.3rem !important;
     display: block !important;
+  }
+
+  .post-information {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .post-information ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-information ul:nth-child(2) {
+    text-align: right;
+  }
+
+  .post-information li {
+    list-style-type: none;
+    position: relative;
   }
 
   /* Center images and fit into the page */
@@ -263,9 +298,14 @@
     display: block;
     max-width: 100%;
   }
+
+  .clear {
+    color: inherit;
+    text-decoration: inherit;
+  }
 #+end_src
 
-** Post template
+**** Post template
 #+NAME: post-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
@@ -274,8 +314,23 @@
       <<html-header>>
 
         <section>
-          <h1>${:title}</h1>
-          ${:body}
+          <h1>${title}</h1>
+
+          <div class="post-information">
+            <ul>
+              <li>Author: ${author}</li>
+              <li>Tags: ${(isamert/create-tag-list tags)}</li>
+            </ul>
+
+            <ul>
+              <li>Published at <em>${(isamert/org-date-to-iso publish-date)}</em></li>
+              <li>Last updated at <em>${(isamert/org-date-to-iso (or update-date publish-date))}</em></li>
+            </ul>
+          </div>
+
+          <hr />
+
+          ${body}
 
           <hr />
 
@@ -292,7 +347,7 @@
         <<html-footer>>
     </body>
 #+end_src
-** Page template
+**** Page template
 #+NAME: page-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
@@ -301,18 +356,18 @@
       <<html-header>>
 
         <section>
-          <h1>${:title}</h1>
-          ${:body}
+          <h1>${title}</h1>
+          ${body}
         </section>
 
         <<html-footer>>
     </body>
 #+end_src
-** Head
+**** Head
 #+NAME: html-head
 #+begin_src html
   <head>
-    <title>${:title} | isamert.net</title>
+    <title>${title} | isamert.net</title>
 
     <!-- Privacy friendly simple analytics -->
     <script src="https://getinsights.io/js/insights.js"></script>
@@ -326,7 +381,7 @@
     <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
   </head>
 #+end_src
-** Header
+**** Header
 #+NAME: html-header
 #+begin_src html
   <header>
@@ -334,7 +389,7 @@
     <a href="/index.html">isamert.net</a>  |
   </header>
 #+end_src
-** Footer
+**** Footer
 #+NAME: html-footer
 #+begin_src html
   <footer>
@@ -348,6 +403,28 @@
     </p>
   </footer>
 #+end_src
+*** Post configuration
+- Every post is required to have a =PUBLISH_DATE= which will be available to the template using =${:publish-date}=.
+  #+begin_src org
+    ,* Test post
+    :PROPERTIES:
+    :PUBLISH_DATE: [2021-03-27 Sat]
+    :END:
+  #+end_src
+- Optionally you can add =UPDATE_DATE= property. You can use =${:update-date}= to show it in templates.
+- You can add =:OPTIONS:= property to post's properties to override/add an export option, which supports all of the [[https://orgmode.org/manual/Export-Settings.html#Export-settings][global options]] (scroll down a bit to see what you can use with OPTIONS) but only considered while exporting that post:
+  #+begin_src org
+    ,#+OPTIONS: html-style:nil num:nil H:4
+
+    Above one is a global options list and will be applied to every post.
+
+    ,* Test post
+    :PROPERTIES:
+    :OPTIONS: toc:nil
+    :END:
+
+    This post will not have a table of contents when it's exported.
+  #+end_src
 * Main :page:
 :PROPERTIES:
 :EXPORT_AS: index
@@ -2533,7 +2610,6 @@ I use [[https://github.com/raxod502/selectrum][Selectrum]] as my incremental nar
 #+begin_src elisp
   (defun isamert/selectrum-kill-current-candidate ()
     "Kill current candidates text in selectrum minibuffer and close it."
-    (interactive)
     (let ((candidate (selectrum-get-current-candidate))
           (prompt (minibuffer-prompt)))
       (kill-new
@@ -2541,7 +2617,8 @@ I use [[https://github.com/raxod502/selectrum][Selectrum]] as my incremental nar
         ((s-contains? "grep" prompt) (s-join ":" (-drop 2 (s-split ":" candidate))))
         ;; ^ Strip `filename:line-number:` from the text
         ((s-matches? "\\(Go to line\\|Switch to\\)" prompt) (substring candidate 1))
-        ;; ^ `consult-line' and `consult-buffer' has an unrecognizable char at the beginning of every candidate, strip them
+        ;; ^ `consult-line' and `consult-buffer' has an unrecognizable char at
+        ;; the beginning of every candidate, so I just strip them here
         (t candidate))))
     (keyboard-escape-quit))
 #+end_src
@@ -2551,7 +2628,8 @@ This function essentially kills the currently selected candidate's text and clos
 To bind it to a key, use the following:
 
 #+begin_src elisp
-  (define-key selectrum-minibuffer-map (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
+  (define-key selectrum-minibuffer-map
+    (kbd "M-y") #'isamert/selectrum-kill-current-candidate)
 #+end_src
 
 It works with all kinds of Selectrum completion commands. See the following gif:
@@ -2626,7 +2704,9 @@ It works with all kinds of Selectrum completion commands. See the following gif:
                (publish-date (org-entry-get nil "PUBLISH_DATE"))
                ;; ^ The post path will be determined based on this.
                (update-date (org-entry-get nil "UPDATE_DATE"))
-               (is-page (string-match-p "page" (or (org-entry-get nil "TAGS") "")))
+               ;; ^ When the post is updated last.
+               (tags (or (org-entry-get nil "TAGS") ""))
+               (is-page (string-match-p "page" tags))
                ;; ^ Is this a page or post?
                (template (org-entry-get nil "TEMPLATE"))
                ;; ^ The template can be overridden by "TEMPLATE" property
@@ -2636,6 +2716,8 @@ It works with all kinds of Selectrum completion commands. See the following gif:
                ;; ^ ...
                (options (org-entry-get nil "OPTIONS"))
                ;; ^ Like #+OPTIONS but for current header only
+               (author (isamert/org-get-keyword "AUTHOR"))
+               ;; ^ AUTHOR of the current header OR the global #+AUTHOR
                (file-path nil))
           (when (not isamert/blog-templates)
             (isamert/blog-refresh-templates))
@@ -2653,10 +2735,190 @@ It works with all kinds of Selectrum completion commands. See the following gif:
               :title title
               :body (isamert/body-html)
               :publish-date publish-date
-              :update-date update-date)
+              :update-date update-date
+              :author author
+              :tags tags)
              file-path)
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
+
+  ;;
+  ;; Processing
+  ;;
+
+  (defun isamert/blog-should-export-current ()
+    "Return if the current header should be exported or not."
+    (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
+
+  (defun isamert/blog-pre-process ()
+    "Pre-process the document/header.
+  This does some changes on the original document like:
+  - Set CUSTOM_ID property for each header.  This enables to have
+    meaningful header links in the generated pages.  CUSTOM_IDs are
+    generated based on the header title, like \"My first post\"
+    becomes \"my-first-post\". If you supply the CUSTOM_ID manually
+    it'll be used instead."
+    (interactive)
+    (org-map-entries 'isamert/blog-generate-custom-id))
+
+  (defun isamert/blog-generate-custom-id ()
+    "Create a CUSTOM_ID if the header does not have one.
+  \"My first post\" will become \"my-first-post\"."
+    (when (not (org-entry-get nil "CUSTOM_ID"))
+      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
+
+  (defun isamert/plist-keys (plist)
+    (--filter (equal (mod it-index 2) 0) plist))
+
+  (defun isamert/plist-values (plist)
+    (--filter (not (equal (mod it-index 2) 0)) plist))
+
+
+  (defun isamert/eval-code-with-env (env code)
+    (let* ((params (->> env
+                     (isamert/plist-keys)
+                     (-map #'symbol-name)
+                     (--map (s-chop-prefix ":" it))
+                     (s-join " ")))
+           (values (->> env
+                     (isamert/plist-values)
+                     (-map #'prin1-to-string)
+                     (s-join " ")))
+           (eval-code (format "((lambda (%s) %s) %s)" params code values)))
+      (eval (car (read-from-string eval-code)))))
+
+  (isamert/eval-code-with-env '(:a 1 :b 2 :d 22 :ww "wewe") "(concat ww \"ee\"\"ee\")")
+
+  (defun isamert/template (template-name &rest args)
+    (s-format
+     (cdr (assoc template-name isamert/blog-templates))
+     (lambda (var plist)
+       (if (s-prefix? "(" var)
+           (isamert/eval-code-with-env plist var)
+         (plist-get plist (intern (concat ":" var)))))
+     args))
+
+  (defun isamert/blog-pre-process-pure (backend)
+    "This function runs before export procedure and does some changes on the content."
+    ;; Show everything first
+    (outline-show-all)
+    ;; Override global #+OPTIONS with current headers OPTIONS property
+    (goto-char (point-min))
+    (-when-let (opts (org-entry-get nil "OPTIONS"))
+      (org-end-of-meta-data)
+      (insert (format "#+OPTIONS: %s\n" opts)))
+    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
+    (goto-char (point-min))
+    (kill-whole-line))
+
+  (defun isamert/body-html ()
+    (save-current-buffer
+      (let ((org-html-htmlize-output-type nil))
+        (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+        (org-html-export-as-html nil nil nil t nil)
+        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+        (buffer-string))))
+
+  ;; TODO: fix document
+  (defun isamert/blog-refresh-templates ()
+    "Load the templates according to following rules.
+  - If there is a codeblock in the document named \"post-template\",
+    use it as the default template for posts, otherwise use
+    the `isamert/blog-post-template' value as the post template.
+  - If there is a codeblock in the document named \"page-template\",
+    use it as the default template for pages, otherwise use
+    the `isamert/blog-page-template' value as the post template.
+  - Load all codeblocks with their names ending with \"-template\"
+    and make them available for use, so that you can set TEMPLATE property
+    to a header and it will be exported using that template.  For example,
+    assume you have codeblock with \"about-template\" name  and you have
+    a header with TEMPLATE property set to \"about\".  This page/post will be
+    exported with the \"about-template\".:
+    ,* A post or page
+    :PROPERTIES:
+    :TEMPLATE: about
+    :END:
+
+    ,* My templates :noexport:
+    ,,#+name: about-template
+    ,,#+begin_src html
+    ...
+    ,#end_src"
+    (interactive)
+    (save-excursion
+      (-as-> (org-property-values "TEMPLATE") templates
+             (append '("post-template" "page-template"))
+             (--keep it templates)
+             (--map `(,it . ,(org-babel-find-named-block it)) templates)
+             (--filter (cdr it) templates)
+             (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
+             (setq isamert/blog-templates templates))))
+
+  ;;
+  ;; Page/post utils
+  ;;
+
+  (defun isamert/blog-url-case (str)
+    (->> (downcase str)
+         (s-replace "+" "p")
+         (s-replace "(" "-")
+         (s-replace ")" "-")
+         (s-replace " " "-")
+         (s-replace "---" "-")
+         (s-replace "--" "-")
+         (s-replace "'" "")
+         (s-replace "/" "-")
+         (s-replace "ö" "o")
+         (s-replace "ı" "i")
+         (s-replace "ğ" "g")
+         (s-replace "ü" "u")
+         (s-replace "ş" "s")
+         (s-replace "ö" "o")
+         (s-replace "ç" "c")))
+
+  (defun isamert/blog-mk-path (&optional with-publish-dir)
+    (let* ((title (org-entry-get nil "ITEM"))
+           (publish-date (org-entry-get nil "PUBLISH_DATE"))
+           (custom-id (org-entry-get nil "CUSTOM_ID"))
+           (export-path (org-entry-get nil "EXPORT_AS"))
+           (result (if export-path
+                       (format "%s.html" export-path)
+                     (format "%s/%s.html"
+                             (s-join "/" (isamert/parse-org-date publish-date))
+                             custom-id))))
+      (if with-publish-dir
+          (format "%s/%s" isamert/blog-publish-path result)
+        result)))
+
+  (defun isamert/parse-org-date (date)
+    (save-match-data
+      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
+        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
+
+  ;;
+  ;; General utils
+  ;;
+
+  (defun isamert/read-file-to-string (file-path)
+    "Return FILE-PATH's file content."
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
+
+  (defun isamert/write-string-to-file (string file)
+    (make-directory (file-name-directory file) t)
+    (with-temp-file file
+      (insert string)))
+
+  (defun isamert/plist-to-alist (args)
+    (interactive)
+    (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
+
+  (defun isamert/org-get-keyword (keyword)
+    "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.  They can be overridden in header properties."
+    (-if-let (local-val (org-entry-get nil keyword))
+        local-val
+        (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
 
   ;;
   ;; RSS
@@ -2751,154 +3013,6 @@ It works with all kinds of Selectrum completion commands. See the following gif:
      (isamert/write-string-to-file)))
 
   ;;
-  ;; Processing
-  ;;
-
-  (defun isamert/blog-should-export-current ()
-    "Return if the current header should be exported or not."
-    (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
-
-  (defun isamert/blog-pre-process ()
-    "Pre-process the document/header.
-  This does some changes on the original document like:
-  - Set CUSTOM_ID property for each header.  This enables to have
-    meaningful header links in the generated pages.  CUSTOM_IDs are
-    generated based on the header title, like \"My first post\"
-    becomes \"my-first-post\". If you supply the CUSTOM_ID manually
-    it'll be used instead."
-    (interactive)
-    (org-map-entries 'isamert/blog-generate-custom-id))
-
-  (defun isamert/blog-generate-custom-id ()
-    "Create a CUSTOM_ID if the header does not have one.
-  \"My first post\" will become \"my-first-post\"."
-    (when (not (org-entry-get nil "CUSTOM_ID"))
-      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
-
-  (defun isamert/template (template-name &rest args)
-    (s-format
-     (cdr (assoc template-name isamert/blog-templates))
-     'aget
-     (isamert/plist-to-alist args)))
-
-  (defun isamert/blog-pre-process-pure (backend)
-    "This function runs before export procedure and does some changes on the content."
-    ;; Show everything first
-    (outline-show-all)
-    ;; Override global #+OPTIONS with current headers OPTIONS property
-    (goto-char (point-min))
-    (-when-let (opts (org-entry-get nil "OPTIONS"))
-      (org-end-of-meta-data)
-      (insert (format "#+OPTIONS: %s\n" opts)))
-    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
-    (goto-char (point-min))
-    (kill-whole-line))
-
-  (defun isamert/body-html ()
-    (save-current-buffer
-      (let ((org-html-htmlize-output-type nil))
-        (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
-        (org-html-export-as-html nil nil nil t nil)
-        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
-        (buffer-string))))
-
-  ;; TODO: fix document
-  (defun isamert/blog-refresh-templates ()
-    "Load the templates according to following rules.
-  - If there is a codeblock in the document named \"post-template\",
-    use it as the default template for posts, otherwise use
-    the `isamert/blog-post-template' value as the post template.
-  - If there is a codeblock in the document named \"page-template\",
-    use it as the default template for pages, otherwise use
-    the `isamert/blog-page-template' value as the post template.
-  - Load all codeblocks with their names ending with \"-template\"
-    and make them available for use, so that you can set TEMPLATE property
-    to a header and it will be exported using that template.  For example,
-    assume you have codeblock with \"about-template\" name  and you have
-    a header with TEMPLATE property set to \"about\".  This page/post will be
-    exported with the \"about-template\".:
-    ,* A post or page
-    :PROPERTIES:
-    :TEMPLATE: about
-    :END:
-
-    ,* My templates :noexport:
-    ,,#+name: about-template
-    ,,#+begin_src html
-    ...
-    ,#end_src"
-    (interactive)
-    (save-excursion
-      (-as-> (org-property-values "TEMPLATE") templates
-             (append '("post-template" "page-template"))
-             (--keep it templates)
-             (--map `(,it . ,(org-babel-find-named-block it)) templates)
-             (--filter (cdr it) templates)
-             (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
-             (setq isamert/blog-templates templates))))
-
-
-  ;;
-  ;; Page/post utils
-  ;;
-
-  (defun isamert/blog-url-case (str)
-    (->> (downcase str)
-         (s-replace "+" "p")
-         (s-replace "(" "-")
-         (s-replace ")" "-")
-         (s-replace " " "-")
-         (s-replace "---" "-")
-         (s-replace "--" "-")
-         (s-replace "'" "")
-         (s-replace "/" "-")
-         (s-replace "ö" "o")
-         (s-replace "ı" "i")
-         (s-replace "ğ" "g")
-         (s-replace "ü" "u")
-         (s-replace "ş" "s")
-         (s-replace "ö" "o")
-         (s-replace "ç" "c")))
-
-  (defun isamert/blog-mk-path (&optional with-publish-dir)
-    (let* ((title (org-entry-get nil "ITEM"))
-           (publish-date (org-entry-get nil "PUBLISH_DATE"))
-           (custom-id (org-entry-get nil "CUSTOM_ID"))
-           (export-path (org-entry-get nil "EXPORT_AS"))
-           (result (if export-path
-                       (format "%s.html" export-path)
-                     (format "%s/%s.html"
-                             (s-join "/" (isamert/parse-org-date publish-date))
-                             custom-id))))
-      (if with-publish-dir
-          (format "%s/%s" isamert/blog-publish-path result)
-        result)))
-
-  (defun isamert/parse-org-date (date)
-    (save-match-data
-      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
-        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
-
-  ;;
-  ;; General utils
-  ;;
-
-  (defun isamert/read-file-to-string (file-path)
-    "Return FILE-PATH's file content."
-    (with-temp-buffer
-      (insert-file-contents file-path)
-      (buffer-string)))
-
-  (defun isamert/write-string-to-file (string file)
-    (make-directory (file-name-directory file) t)
-    (with-temp-file file
-      (insert string)))
-
-  (defun isamert/plist-to-alist (args)
-    (interactive)
-    (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
-
-  ;;
   ;; Development utils
   ;;
 
@@ -2932,6 +3046,14 @@ It works with all kinds of Selectrum completion commands. See the following gif:
                  (isamert/blog-mk-path)))
       (browse-url
        (isamert/blog-mk-path t))))
+
+  ;;
+  ;; Template functions
+  ;;
+
+  (defun isamert/org-date-to-iso (org-date)
+    "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
+    (s-replace-regexp "[^0-9-]" "" org-date))
 #+end_src
 
 ** TODO Load blog code

@@ -24,5 +24,11 @@
       <pubDate>2020-05-30</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>A (relatively) deep dive into (zsh) shell login process (without a display manager)</title>
+      <link>https://isamert.net/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html</link>
+      <pubDate>2021-03-02</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

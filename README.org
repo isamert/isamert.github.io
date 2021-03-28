@@ -2936,15 +2936,15 @@ It works with all kinds of Selectrum completion commands. See the following gif:
       (isamert/write-string-to-file
        (isamert/blog-make-rss-doc (-map 'cdr items))
        (format "%s/%s/main.rss"
-               isamert/blog-rss-per-tag
-               isamert/blog-publish-path))
+               isamert/blog-publish-path
+               isamert/blog-rss-per-tag))
 
       (--each (hash-table-keys taggeds)
         (isamert/write-string-to-file
          (isamert/blog-make-rss-doc (gethash it taggeds) it)
          (format "%s/%s/%s.rss"
-                 isamert/blog-rss-per-tag
                  isamert/blog-publish-path
+                 isamert/blog-rss-per-tag
                  it)))))
 
   (defun isamert/blog-generate-rss-item-current ()

@@ -7,6 +7,18 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Killing (copying) currently selected candidate's content/text in Selectrum</title>
+      <link>https://isamert.net/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html</link>
+      <pubDate>2021-03-27</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>A (relatively) deep dive into (zsh) shell login process (without a display manager)</title>
+      <link>https://isamert.net/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html</link>
+      <pubDate>2021-03-02</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Emacs'te Türkçe imla denetimi</title>
       <link>https://isamert.net/2021/01/31/emacs-te-turkce-imla-denetimi.html</link>
       <pubDate>2021-01-31</pubDate>

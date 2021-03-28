@@ -14,6 +14,9 @@ This is a very simple static site/blog generator (and my blog itself) for Emacs 
   - Tag headers with =page= tag to mark them as a page instead of a post.
   - Tag every header that you don't want to export with =noexport=.
 - Use =isamert/blog-export-all= ...
+- After adding a new post:
+  - =isamert/blog-generate-tag-pages=
+  - =isamert/blog-generate-rss=
 
 ** Configuration
 *** Template
@@ -363,6 +366,25 @@ This is the file that contains all the logic for my website. I'm trying to keep 
         <<html-footer>>
     </body>
 #+end_src
+**** Tag pages
+#+NAME: tag-template
+#+begin_src html
+  <!DOCTYPE html>
+  <<html-head>>
+    <body>
+      <<html-header>>
+
+        <section>
+          <h1>Posts tagged with ${tag-name}</h1>
+
+          <ul>
+            ${(--map (format "<li><a href=\"/%s\">%s</li>\n" (plist-get it :path) (plist-get it :title)) posts)}
+          </ul>
+        </section>
+
+        <<html-footer>>
+    </body>
+#+end_src
 **** Head
 #+NAME: html-head
 #+begin_src html
@@ -617,7 +639,7 @@ So we can simply use this function to convert any image using our palette. But t
   }
 #+end_src
 
-* Kotlin function application :kotlin:
+* Kotlin function application :kotlin:fp:
 :PROPERTIES:
 :PUBLISH_DATE: [2017-08-15 Tue]
 :CUSTOM_ID: kotlin-function-application
@@ -2742,6 +2764,34 @@ It works with all kinds of Selectrum completion commands. See the following gif:
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
 
+  (defun isamert/blog-generate-tag-pages ()
+    (interactive)
+    (let* ((taggeds (make-hash-table :test 'equal))
+           (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
+                       (--keep it))))
+      (-each items
+        (-lambda ((tags . item))
+          (--each tags (push item (gethash it taggeds '())))))
+
+      (--each (hash-table-keys taggeds)
+        (isamert/write-string-to-file
+         (isamert/template "tag-template"
+                           :title (format "Posts tagged with %s" it)
+                           :tag-name it
+                           :posts `',(gethash it taggeds))
+         (format "%s/%s/%s.html"
+                 isamert/blog-publish-path
+                 "tags"
+                 it)))))
+
+  (defun isamert/blog-generate-tag-info-current ()
+    "Return the list of tags and post information for current item.."
+    (interactive)
+    (when (isamert/blog-should-export-current)
+      `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
+        .
+        (:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
+
   ;;
   ;; Processing
   ;;
@@ -2773,7 +2823,6 @@ It works with all kinds of Selectrum completion commands. See the following gif:
   (defun isamert/plist-values (plist)
     (--filter (not (equal (mod it-index 2) 0)) plist))
 
-
   (defun isamert/eval-code-with-env (env code)
     (let* ((params (->> env
                      (isamert/plist-keys)
@@ -2787,14 +2836,19 @@ It works with all kinds of Selectrum completion commands. See the following gif:
            (eval-code (format "((lambda (%s) %s) %s)" params code values)))
       (eval (car (read-from-string eval-code)))))
 
-  (isamert/eval-code-with-env '(:a 1 :b 2 :d 22 :ww "wewe") "(concat ww \"ee\"\"ee\")")
-
   (defun isamert/template (template-name &rest args)
     (s-format
      (cdr (assoc template-name isamert/blog-templates))
      (lambda (var plist)
        (if (s-prefix? "(" var)
-           (isamert/eval-code-with-env plist var)
+           ;; WARN:  Here I remove "(" and ")" from the output of evaluated code
+           ;; to be able to make lists appear as intended. This may cause  issues
+           ;; if output itself is not alist but a string that is wrapped inside paranthesis
+           (->> (isamert/eval-code-with-env plist var)
+             (format "%s")
+             (s-chop-prefix "(")
+             (s-chop-suffix ")"))
+         ;; Every key in plist starts with ":", hence (concat ":" var)
          (plist-get plist (intern (concat ":" var)))))
      args))
 
@@ -2847,7 +2901,7 @@ It works with all kinds of Selectrum completion commands. See the following gif:
     (interactive)
     (save-excursion
       (-as-> (org-property-values "TEMPLATE") templates
-             (append '("post-template" "page-template"))
+             (append '("post-template" "page-template" "tag-template"))
              (--keep it templates)
              (--map `(,it . ,(org-babel-find-named-block it)) templates)
              (--filter (cdr it) templates)
@@ -2949,7 +3003,6 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 
   (defun isamert/blog-generate-rss-item-current ()
     "Return the list of tags and RSS item for current post."
-    (interactive)
     (when (isamert/blog-should-export-current)
       `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
         .
@@ -3058,8 +3111,7 @@ It works with all kinds of Selectrum completion commands. See the following gif:
   (defun isamert/create-tag-list (tags)
     (->> (s-split ":" tags)
       (--filter (not (s-blank? it)))
-      ;; TODO: tag pages are not ready yet, so just put tag name
-      ;; (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
+      (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
       (s-join ", ")))
 #+end_src
 

@@ -34,7 +34,9 @@ See the following example org file that has two special pages and two posts. It 
   :PUBLISH_DATE: [2016-07-13 Wed]
   :END:
 
-  This is the main page. This is not a post, because it's tagged with =page=. It will be exported as =index.html=, indicated by =EXPORT_AS= property.
+  This is the main page. This is not a post, because it's tagged with
+  =page=. It will be exported as =index.html=, indicated by =EXPORT_AS=
+  property.
 
   ,* Post 1 :tag1:tag2:
   :PROPERTIES:
@@ -42,7 +44,10 @@ See the following example org file that has two special pages and two posts. It 
   :CUSTOM_ID: post-1
   :END:
 
-  This is a simple blog post. =PUBLISH_DATE= property is required. You can supply =CUSTOM_ID= or it will be generated automatically while exporting. Notice that you can also add tags to your posts, just normal org tags.
+  This is a simple blog post. =PUBLISH_DATE= property is required. You
+  can supply =CUSTOM_ID= or it will be generated automatically while
+  exporting. Notice that you can also add tags to your posts, just
+  normal org tags.
 
   ,* Post 2 :tag2:tag3:
   :PROPERTIES:
@@ -51,7 +56,9 @@ See the following example org file that has two special pages and two posts. It 
   :CUSTOM_ID: post-2
   :END:
 
-  This is a post with more customization. We override/change org's HTML export options with the help of =OPTIONS= tag here. This post will not have any table of contents.
+  This is a post with more customization. We override/change org's HTML
+  export options with the help of =OPTIONS= tag here. This post will not
+  have any table of contents.
 
   ,* About page :page:
   :PROPERTIES:
@@ -61,13 +68,19 @@ See the following example org file that has two special pages and two posts. It 
   :CUSTOM_ID: about-page
   :END:
 
-  This is another example page, it will be exported as =about.html=. This uses a different template, named =about-page-template= which you need to provide as a src block somewhere in this document.
+  This is another example page, it will be exported as
+  =about.html=. This uses a different template, named
+  =about-page-template= which you need to provide as a src block
+  somewhere in this document.
 
   ,* Blog configuration :noexport:
-  This header is tagged with =noexport=, which means it will be skipped in the exporting process (including sub-headers). You can utilize this header to do your configuration.
+  This header is tagged with =noexport=, which means it will be skipped
+  in the exporting process (including sub-headers). You can utilize this
+  header to do your configuration.
 
   ,** Templates
-  Templates are simple org src blocks. You can use special =${variable}= or =${(elisp-code)}= syntax in them.
+  Templates are simple org src blocks. You can use special =${variable}=
+  or =${(elisp-code)}= syntax in them.
 
   ,*** Post template example
   Notice that src block is named =post-template=.
@@ -89,14 +102,18 @@ See the following example org file that has two special pages and two posts. It 
   ,#+end_src
 
   ,*** Page template example
-  Notice that src block is named =page-template=. I'll simply use =post-template= again for simplicity. Also notice how we can utilize org babel features.
+  Notice that src block is named =page-template=. I'll simply use
+  =post-template= again for simplicity. Also notice how we can utilize
+  org babel features.
 
   ,#+name: page-template
   ,#+begin_src html :noweb yes
     <<post-template>>
   ,#+end_src
   ,*** Tag page template
-  This is template that tag-overview (pages that lists all the posts belonging to a tag) pages are generated. This also demonstrates how you can utilize elisp within the templates.
+  This is template that tag-overview (pages that lists all the posts
+  belonging to a tag) pages are generated. This also demonstrates how
+  you can utilize elisp within the templates.
 
   ,#+begin_src html
     <section>
@@ -113,8 +130,11 @@ See the following example org file that has two special pages and two posts. It 
       </ul>
     </section>
   ,#+end_src
+
   ,*** Special template: about-page-template
-  Remember how we set =TEMPLATE= property to the [[About page]] as =about-page-template=. Now we are defining the template:
+  Remember how we set =TEMPLATE= property to the [[About page]] as
+  =about-page-template=. Now we are defining the template:
+
   ,#+name: about-page-template
   ,#+begin_src html
     <h1>${title}</h1>

@@ -5,33 +5,135 @@
 #+OPTIONS: html-style:nil num:nil H:4
 
 * Introduction :noexport:
-This is a very simple static site/blog generator (and my blog itself) for Emacs and org-mode. It only uses one org file. Every header is either a post or a page.
+This is a very simple static site/blog generator (and my blog itself) for Emacs and org-mode.
 
-** General usage
-- There are two kind of content: pages and posts.
-  - Difference is they are exported using different templates (See [[Template configuration]]).
-  - By default, every header is treated as a post.
-  - Tag headers with =page= tag to mark them as a page instead of a post.
-  - Tag every header that you don't want to export with =noexport=.
-- Use =isamert/blog-export-all= ...
-- After adding a new post:
-  - =isamert/blog-generate-tag-pages=
-  - =isamert/blog-generate-rss=
+- This static blog/website generator uses only one =org= file. It tries to utilize org-mode features as much as possible. It assumes as little as possible about how you structure your website.
+- Every header in this file is treated as a blog post by default.
+- Headers tagged with =page= are considered to be special pages (non-post pages) that can be exported under any path you want.
+- Header properties are utilized to modify exporting behavior.
+- A very simple templating system is used.
+  - Templates are basically named org src blocks containing some HTML. You can utilize (and encouraged to use) all the features that org-mode and babel gives you.
+  - There are three different templates that you need to provide, just put a named src block somewhere in your org file.
+    - [[Post template]] :: Template that is used while exporting posts. Src block name should be =post-template=.
+    - [[Page template]] :: Template that is used while exporting non-post pages (headers that are tagged with =page= tag). Src block name should be =page-template=.
+    - [[Tag template]] :: Template that is used while exporting pages that list all posts belonging to a tag. Src block name should be =tag-template=.
+    - All of these templates can be overridden by setting =:TEMPLATE:= property to specific header (except =tag-template=, because they are not generated from header.)
 
-** Configuration
-*** Template
-- If a file needs to be statically served, just tangle it into =docs= folder by adding =:tangle docs/file.ext= option to code block header. =docs= folder is simply used by Github pages to serve the content. The content(posts, pages etc.) is also exported under the =docs/= folder.
+See the following example org file that has two special pages and two posts. It also contains all the templates and configuration needed to generate the website.
 
-**** Settings
-- Set the port and return it. I'll use the port value later in JavaScript.
+#+begin_src org
+  ,#+TITLE: Your website title
+  ,#+AUTHOR: Your name
+  ,#+EMAIL: your@email.address
+  ,#+STARTUP: overview
+  ,#+OPTIONS: html-style:nil num:nil H:4
+
+  ,* My main page :page:
+  :PROPERTIES:
+  :EXPORT_AS: index
+  :PUBLISH_DATE: [2016-07-13 Wed]
+  :END:
+
+  This is the main page. This is not a post, because it's tagged with =page=. It will be exported as =index.html=, indicated by =EXPORT_AS= property.
+
+  ,* Post 1 :tag1:tag2:
+  :PROPERTIES:
+  :PUBLISH_DATE: [2016-07-13 Wed]
+  :CUSTOM_ID: post-1
+  :END:
+
+  This is a simple blog post. =PUBLISH_DATE= property is required. You can supply =CUSTOM_ID= or it will be generated automatically while exporting. Notice that you can also add tags to your posts, just normal org tags.
+
+  ,* Post 2 :tag2:tag3:
+  :PROPERTIES:
+  :PUBLISH_DATE: [2016-07-13 Wed]
+  :OPTIONS: toc:nil
+  :CUSTOM_ID: post-2
+  :END:
+
+  This is a post with more customization. We override/change org's HTML export options with the help of =OPTIONS= tag here. This post will not have any table of contents.
+
+  ,* About page :page:
+  :PROPERTIES:
+  :EXPORT_AS: about
+  :PUBLISH_DATE: [2016-07-13 Wed]
+  :TEMPLATE: about-page-template
+  :CUSTOM_ID: about-page
+  :END:
+
+  This is another example page, it will be exported as =about.html=. This uses a different template, named =about-page-template= which you need to provide as a src block somewhere in this document.
+
+  ,* Blog configuration :noexport:
+  This header is tagged with =noexport=, which means it will be skipped in the exporting process (including sub-headers). You can utilize this header to do your configuration.
+
+  ,** Templates
+  Templates are simple org src blocks. You can use special =${variable}= or =${(elisp-code)}= syntax in them.
+
+  ,*** Post template example
+  Notice that src block is named =post-template=.
+
+  ,#+name: post-template
+  ,#+begin_src html
+    <head>
+      <!-- Following will be replaced with posts title -->
+      <title>${title} - My website</title>
+    </head>
+    <body>
+      <h1>${title}</h1>
+      <ul>
+        <li> Publish date: ${publish-date}
+      </ul>
+      <!-- Following will be replaced with org-mode generated HTML content of the specific header -->
+      ${body}
+    </body>
+  ,#+end_src
+
+  ,*** Page template example
+  Notice that src block is named =page-template=. I'll simply use =post-template= again for simplicity. Also notice how we can utilize org babel features.
+
+  ,#+name: page-template
+  ,#+begin_src html :noweb yes
+    <<post-template>>
+  ,#+end_src
+  ,*** Tag page template
+  This is template that tag-overview (pages that lists all the posts belonging to a tag) pages are generated. This also demonstrates how you can utilize elisp within the templates.
+
+  ,#+begin_src html
+    <section>
+      <h1>Posts tagged with ${tag-name}</h1>
+
+      <!-- Create a link to RSS feed for this tag -->
+      <a href="${(format "/%s/%s.rss" isamert/blog-rss-per-tag tag-name)}">
+        RSS feed for ${tag-name} tag
+      </a>
+
+      <!-- Actual list of posts belonging to this tag -->
+      <ul>
+        ${(--map (format "<li><a href=\"/%s\">%s</li>\n" (plist-get it :path) (plist-get it :title)) posts)}
+      </ul>
+    </section>
+  ,#+end_src
+  ,*** Special template: about-page-template
+  Remember how we set =TEMPLATE= property to the [[About page]] as =about-page-template=. Now we are defining the template:
+  ,#+name: about-page-template
+  ,#+begin_src html
+    <h1>${title}</h1>
+    ${body}
+  ,#+end_src
+#+end_src
+
+* My configuration :noexport:
+** General configuration
+Just setting the port and binding it into an org-variable. I'll utilize this later in [[index.js]].
 
 #+name: blog-local-port
 #+begin_src elisp
   (setq isamert/blog-local-port 3000)
 #+end_src
 
-**** index.js
-This is the file that contains all the logic for my website. I'm trying to keep it minimal as possible.
+** Static files
+*** index.js
+This is the file that contains all the dynamic logic for my website. I'm trying to keep it minimal as possible.
 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
   if (location.port !== <<blog-local-port()>>) {
@@ -111,7 +213,8 @@ This is the file that contains all the logic for my website. I'm trying to keep 
   }
 #+end_src
 
-**** main.css
+*** main.css
+The one and only css file that I use for my blog. Also trying to keep it minimal.
 
 #+begin_src css :tangle docs/assets/main.css
   /* Fonts */
@@ -308,7 +411,10 @@ This is the file that contains all the logic for my website. I'm trying to keep 
   }
 #+end_src
 
-**** Post template
+** Templates
+*** Post template
+This is the post template, post pages will be generated based on this.
+
 #+NAME: post-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
@@ -350,7 +456,9 @@ This is the file that contains all the logic for my website. I'm trying to keep 
         <<html-footer>>
     </body>
 #+end_src
-**** Page template
+*** Page template
+Headers tagged with =page= tag will be generated based on this template.
+
 #+NAME: page-template
 #+begin_src html :noweb yes
   <!DOCTYPE html>
@@ -366,7 +474,9 @@ This is the file that contains all the logic for my website. I'm trying to keep 
         <<html-footer>>
     </body>
 #+end_src
-**** Tag pages
+*** Tag template
+Pages that list posts belonging to a particular tag will be generated based on this template.
+
 #+NAME: tag-template
 #+begin_src html
   <!DOCTYPE html>
@@ -387,7 +497,9 @@ This is the file that contains all the logic for my website. I'm trying to keep 
         <<html-footer>>
     </body>
 #+end_src
-**** Head
+*** Head
+Generic head portion that I use in every template.
+
 #+NAME: html-head
 #+begin_src html
   <head>
@@ -405,7 +517,8 @@ This is the file that contains all the logic for my website. I'm trying to keep 
     <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
   </head>
 #+end_src
-**** Header
+*** Header
+
 #+NAME: html-header
 #+begin_src html
   <header>
@@ -413,7 +526,7 @@ This is the file that contains all the logic for my website. I'm trying to keep 
     <a href="/index.html">isamert.net</a>  |
   </header>
 #+end_src
-**** Footer
+*** Footer
 #+NAME: html-footer
 #+begin_src html
   <footer>
@@ -427,28 +540,6 @@ This is the file that contains all the logic for my website. I'm trying to keep 
     </p>
   </footer>
 #+end_src
-*** Post configuration
-- Every post is required to have a =PUBLISH_DATE= which will be available to the template using =${:publish-date}=.
-  #+begin_src org
-    ,* Test post
-    :PROPERTIES:
-    :PUBLISH_DATE: [2021-03-27 Sat]
-    :END:
-  #+end_src
-- Optionally you can add =UPDATE_DATE= property. You can use =${:update-date}= to show it in templates.
-- You can add =:OPTIONS:= property to post's properties to override/add an export option, which supports all of the [[https://orgmode.org/manual/Export-Settings.html#Export-settings][global options]] (scroll down a bit to see what you can use with OPTIONS) but only considered while exporting that post:
-  #+begin_src org
-    ,#+OPTIONS: html-style:nil num:nil H:4
-
-    Above one is a global options list and will be applied to every post.
-
-    ,* Test post
-    :PROPERTIES:
-    :OPTIONS: toc:nil
-    :END:
-
-    This post will not have a table of contents when it's exported.
-  #+end_src
 * Main :page:
 :PROPERTIES:
 :EXPORT_AS: index

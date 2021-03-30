@@ -30,7 +30,7 @@
 
           <ul>
             <li>Published at <em>2021-03-27</em></li>
-            <li>Last updated at <em>2021-03-27</em></li>
+            <li>Last updated at <em>2021-03-31</em></li>
           </ul>
         </div>
 
@@ -76,10 +76,19 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 </p>
 
 
-<figure id="org89b98a2">
+<figure id="org836f8f0">
 <img src="/images/emacs_consult_copy_text.gif" alt="emacs_consult_copy_text.gif" class="centered">
 
 </figure>
+
+<div id="outline-container-for-embark-users" class="outline-2">
+<h2 id="for-embark-users">For <code>embark</code> users</h2>
+<div class="outline-text-2" id="text-for-embark-users">
+<p>
+I found out that <a href="https://github.com/oantolin/embark">embark</a> already provides this sort of feature. So you can call <code>embark-act</code> (which you should do via a keybinding) when you are on a candidate in selectrum and then hit <code>w</code> (which calls <code>embark-save</code> action). This will save the current candidate's string into your kill-ring. If you are an embark user this is also a viable option, but I don't like this because as you may have seen in the code above I do some post-processing to the string before saving it into my kill-ring and it's not conveniently possible in this case. Instead of using <code>embark-save</code> action, you can add <code>isamert/selectrum-kill-current-candidate</code> function as an embark action.
+</p>
+</div>
+</div>
 
 
         <hr />

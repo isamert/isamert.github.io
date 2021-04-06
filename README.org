@@ -280,10 +280,12 @@ The one and only css file that I use for my blog. Also trying to keep it minimal
     padding: 1rem 3.5rem;
     display: block;
     box-shadow: 3px 3px 2px #aaaaaa;
+    display: flex;
+    justify-content: space-around;
   }
 
-  header > a {
-    font-weight: bold;
+  header > .site-title {
+      font-weight: bold;
   }
 
   section {
@@ -528,6 +530,8 @@ Generic head portion that I use in every template.
     <!-- Privacy friendly simple analytics -->
     <script src="https://getinsights.io/js/insights.js"></script>
 
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <script src="/assets/index.js"></script>
     <link rel="stylesheet" href="/assets/main.css">
 
@@ -541,9 +545,12 @@ Generic head portion that I use in every template.
 
 #+NAME: html-header
 #+begin_src html
-  <header>
-    <!-- TODO: right links like RSS About etc. -->
-    <a href="/index.html">isamert.net</a>  |
+    <header>
+      <a href="/index.html" class="site-title">isamert.net</a>
+      <div>
+        <a href="/about.html"><i class="fa fa-user"></i> About</a>
+        <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+      </div>
   </header>
 #+end_src
 *** Footer
@@ -604,6 +611,46 @@ Here are some cool stuff that you can check out:
 :CUSTOM_ID: turkce-yazilar-turkish-posts-
 :END:
 - [[./2021/01/31/emacs-te-turkce-imla-denetimi.html][Emacs'te Türkçe imla denetimi]]
+
+* Feeds :page:
+:PROPERTIES:
+:CUSTOM_ID: feeds
+:EXPORT_AS: feeds
+:OPTIONS: toc:nil
+:PUBLISH_DATE: [2021-04-07 Wed]
+:END:
+
+Every category has it's own RSS feed, you can subscribe them separately or you can just subscribe for all posts using the main feed.
+
+- [[./feed/main.rss][Main feed (feed for all posts)]]
+
+** Feeds for tags
+:PROPERTIES:
+:CUSTOM_ID: feeds-for-tags
+:END:
+
+In no specific order:
+
+#+begin_src elisp :exports results :results value html
+  (->> (isamert/blog-all-tags)
+    (--reduce-from
+     (format "%s<li><a href=\"%s/%s.rss\">%s</a></li>" acc isamert/blog-rss-per-tag it it)
+     "")
+    (format "<ul>%s</ul>"))
+#+end_src
+
+* About :page:
+:PROPERTIES:
+:CUSTOM_ID: about
+:EXPORT_AS: about
+:OPTIONS: toc:nil
+:PUBLISH_DATE: [2021-04-07 Wed]
+:END:
+
+I'm Isa and this page is *WIP*. Meanwhile, check out the following:
+
+- [[./resume.html][My resume]]
+- [[https://github.com/isamert][My GitHub profile]]
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
@@ -3234,6 +3281,10 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
       (--filter (not (s-blank? it)))
       (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
       (s-join ", ")))
+
+  (defun isamert/blog-all-tags ()
+    "Return all tag names that has been used in the blog."
+    (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags))))
 #+end_src
 
 ** TODO Load blog code

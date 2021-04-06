@@ -41,10 +41,12 @@ header {
   padding: 1rem 3.5rem;
   display: block;
   box-shadow: 3px 3px 2px #aaaaaa;
+  display: flex;
+  justify-content: space-around;
 }
 
-header > a {
-  font-weight: bold;
+header > .site-title {
+    font-weight: bold;
 }
 
 section {

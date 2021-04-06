@@ -241,7 +241,8 @@ The one and only css file that I use for my blog. Also trying to keep it minimal
   /* TODO: Maybe I should serve these, instead of using a cdn */
   @import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,400;0,700;0,800;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap');
+  @import url('http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
   :root {
     --font: 'Noto Serif', serif;
@@ -253,7 +254,7 @@ The one and only css file that I use for my blog. Also trying to keep it minimal
     --src-block-bg-color: #f3f2ee;
     --inline-src-block-bg-color: #f8f7f3;
 
-    --header-font: 'Neuton', serif;
+    --header-font: 'Roboto Slab', serif;
     --header-color: #2b2e30;
     --post-title-font-size: 2em;
     --post-first-header-font-size: 1.7em;
@@ -519,6 +520,9 @@ Pages that list posts belonging to a particular tag will be generated based on t
         <<html-footer>>
     </body>
 #+end_src
+** Components
+Components that I use in my templates.
+
 *** Head
 Generic head portion that I use in every template.
 
@@ -529,8 +533,6 @@ Generic head portion that I use in every template.
 
     <!-- Privacy friendly simple analytics -->
     <script src="https://getinsights.io/js/insights.js"></script>
-
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="/assets/index.js"></script>
     <link rel="stylesheet" href="/assets/main.css">
@@ -2825,6 +2827,8 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 :CUSTOM_ID: for-embark-users
 :END:
 I found out that [[https://github.com/oantolin/embark][embark]] already provides this sort of feature. So you can call =embark-act= (which you should do via a keybinding) when you are on a candidate in selectrum and then hit =w= (which calls =embark-save= action). This will save the current candidate's string into your kill-ring. If you are an embark user this is also a viable option, but I don't like this because as you may have seen in the code above I do some post-processing to the string before saving it into my kill-ring and it's not conveniently possible in this case. Instead of using =embark-save= action, you can add =isamert/selectrum-kill-current-candidate= function as an embark action.
+
+- Another update :: Found out that if you install =embark-consult=, the weird character problem goes away while running =embark-save= and =embark-insert= functions. But still, for grep buffer it inserts/copies the ~file-path:line-number~.
 
 * Publish Code :noexport:
 #+NAME: startup

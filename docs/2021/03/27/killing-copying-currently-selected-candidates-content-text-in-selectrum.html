@@ -14,9 +14,12 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-    <header>
-      <!-- TODO: right links like RSS About etc. -->
-      <a href="/index.html">isamert.net</a>  |
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
     </header>
 
       <section>
@@ -76,7 +79,7 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 </p>
 
 
-<figure id="org836f8f0">
+<figure id="orgd9735dc">
 <img src="/images/emacs_consult_copy_text.gif" alt="emacs_consult_copy_text.gif" class="centered">
 
 </figure>
@@ -87,6 +90,10 @@ It works with all kinds of Selectrum completion commands. See the following gif:
 <p>
 I found out that <a href="https://github.com/oantolin/embark">embark</a> already provides this sort of feature. So you can call <code>embark-act</code> (which you should do via a keybinding) when you are on a candidate in selectrum and then hit <code>w</code> (which calls <code>embark-save</code> action). This will save the current candidate's string into your kill-ring. If you are an embark user this is also a viable option, but I don't like this because as you may have seen in the code above I do some post-processing to the string before saving it into my kill-ring and it's not conveniently possible in this case. Instead of using <code>embark-save</code> action, you can add <code>isamert/selectrum-kill-current-candidate</code> function as an embark action.
 </p>
+
+<dl class="org-dl">
+<dt>Another update</dt><dd>Found out that if you install <code>embark-consult</code>, the weird character problem goes away while running <code>embark-save</code> and <code>embark-insert</code> functions. But still, for grep buffer it inserts/copies the <code>file-path:line-number</code>.</dd>
+</dl>
 </div>
 </div>
 

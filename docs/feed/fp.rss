@@ -7,6 +7,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Kotlin function application</title>
+      <link>https://isamert.net/2017/08/15/kotlin-function-application.html</link>
+      <pubDate>2017-08-15</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Functional programming in C++</title>
       <link>https://isamert.net/2018/03/01/functional-programming-in-cpp.html</link>
       <pubDate>2018-03-01</pubDate>

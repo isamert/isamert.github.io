@@ -2682,6 +2682,7 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 * A (relatively) deep dive into (zsh) shell login process (without a display manager) :linux:shell:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-03-02 Tue]
+:UPDATE_DATE: [2021-04-07 Wed]
 :OPTIONS: toc:nil
 :CUSTOM_ID: a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-
 :END:
@@ -2776,6 +2777,12 @@ A problem I was having was related to [[https://www.cis.upenn.edu/~bcpierce/unis
 So when I do =ssh my-machine=, it spawns an /interactive login shell/ and drops me into it. By this time, =/etc/zsh/zprofile= is already sourced and thanks to that I can simply run =unison= binary. When I run =unison= on client, it connects the server through =ssh= *but* it uses a /non-login non-interactive/ shell while doing that. Same goes for this command =ssh my-machine which unison=. This command runs in a /non-login non-interactive shell/. Because =/etc/zsh/zprofile= requires a login shell to get sourced, =~/.nix-profile/bin= never gets added to the =$PATH= variable.
 
 So what's the solution? You know it, only =~/.zshenv= gets sourced when /non-login non-interactive shell/ is spawned. So I just update the =$PATH= there and everything works as expected now.
+
+** Additional resources
+:PROPERTIES:
+:CUSTOM_ID: additional-resources
+:END:
+- [[https://blog.flowblok.id.au/2013-02/shell-startup-scripts.html][Shell startup scripts]] :: I found this great article that summarizes what is going on at startup for different shells with beautiful graphics. It proves me right about using zsh instead of bash.
 
 ** Conclusion
 :PROPERTIES:

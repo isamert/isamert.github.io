@@ -120,7 +120,7 @@ See the following example org file that has two special pages and two posts. It 
       <h1>Posts tagged with ${tag-name}</h1>
 
       <!-- Create a link to RSS feed for this tag -->
-      <a href="${(format "/%s/%s.rss" isamert/blog-rss-per-tag tag-name)}">
+      <a href="${(format "/%s/%s.xml" isamert/blog-rss-per-tag tag-name)}">
         RSS feed for ${tag-name} tag
       </a>
 
@@ -509,7 +509,7 @@ Pages that list posts belonging to a particular tag will be generated based on t
 
         <section>
           <h1>Posts tagged with ${tag-name}</h1>
-          <a href="${(format "/%s/%s.rss" isamert/blog-rss-per-tag tag-name)}">
+          <a href="${(format "/%s/%s.xml" isamert/blog-rss-per-tag tag-name)}">
             RSS feed for this tag
           </a>
           <ul>
@@ -624,7 +624,7 @@ Here are some cool stuff that you can check out:
 
 Every category has it's own RSS feed, you can subscribe them separately or you can just subscribe for all posts using the main feed.
 
-- [[./feed/main.rss][Main feed (feed for all posts)]]
+- [[./feed/main.xml][Main feed (feed for all posts)]]
 
 ** Feeds for tags
 :PROPERTIES:
@@ -636,7 +636,7 @@ In no specific order:
 #+begin_src elisp :exports results :results value html
   (->> (isamert/blog-all-tags)
     (--reduce-from
-     (format "%s<li><a href=\"%s/%s.rss\">%s</a></li>" acc isamert/blog-rss-per-tag it it)
+     (format "%s<li><a href=\"%s/%s.xml\">%s</a></li>" acc isamert/blog-rss-per-tag it it)
      "")
     (format "<ul>%s</ul>"))
 #+end_src
@@ -2840,6 +2840,8 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
+  (require 'org)
+
   ;;
   ;; Variables
   ;;
@@ -2866,8 +2868,10 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 
   (defvar isamert/blog-rss-per-tag
     "feed"
-    "Generate RSS per tag? Non-nil value means generating `TAG.xml' files under given directory.
-  By default it'll create `feed/TAG.xml' for every TAG.")
+    "Whether to generate RSS per tag.
+  Non-nil value means generating `TAG.xml' files under given
+  directory.  By default it'll create `feed/TAG.xml' for every
+  TAG.")
 
   ;;
   ;; Internal vars
@@ -2891,9 +2895,15 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
     (setq org-html-html5-fancy t
           org-html-doctype "html5")
     (org-babel-tangle)
-    (let ((posts (org-map-entries 'isamert/blog-export-current "LEVEL=1")))
-      ;; TODO: create a list of posts
-      ))
+    (isamert/blog-generate-rss)
+    (isamert/blog-generate-sitemap)
+    (isamert/blog-generate-tag-pages)
+    (isamert/blog-export-all-posts-pages))
+
+  (defun isamert/blog-export-all-posts-pages ()
+    (interactive)
+    (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
+
 
   (defun isamert/blog-export-current ()
     "Export/render the current header."
@@ -3021,7 +3031,7 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
        (if (s-prefix? "(" var)
            ;; WARN:  Here I remove "(" and ")" from the output of evaluated code
            ;; to be able to make lists appear as intended. This may cause  issues
-           ;; if output itself is not alist but a string that is wrapped inside paranthesis
+           ;; if output itself is not a list but a string that is wrapped inside paranthesis
            (->> (isamert/eval-code-with-env plist var)
              (format "%s")
              (s-chop-prefix "(")
@@ -3168,14 +3178,14 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 
       (isamert/write-string-to-file
        (isamert/blog-make-rss-doc (-map 'cdr items))
-       (format "%s/%s/main.rss"
+       (format "%s/%s/main.xml"
                isamert/blog-publish-path
                isamert/blog-rss-per-tag))
 
       (--each (hash-table-keys taggeds)
         (isamert/write-string-to-file
          (isamert/blog-make-rss-doc (gethash it taggeds) it)
-         (format "%s/%s/%s.rss"
+         (format "%s/%s/%s.xml"
                  isamert/blog-publish-path
                  isamert/blog-rss-per-tag
                  it)))))

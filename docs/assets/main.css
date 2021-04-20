@@ -3,7 +3,7 @@
 @import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap');
-@import url('http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 :root {
   --font: 'Noto Serif', serif;

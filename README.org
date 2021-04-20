@@ -2837,6 +2837,73 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 
 - Another update :: Found out that if you install =embark-consult=, the weird character problem goes away while running =embark-save= and =embark-insert= functions. But still, for grep buffer it inserts/copies the ~file-path:line-number~.
 
+* Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever) :emacs:org:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-04-21 Wed]
+:UPDATE_DATE: [2021-04-21 Wed]
+:OPTIONS: toc:nil
+:CUSTOM_ID: managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-
+:END:
+I store my contacts in an org file called =people.org=. The file has the following structure:
+
+#+begin_src org
+  ,* John Doe
+  :PROPERTIES:
+  :ID: some-generated-uuid
+  :GROUP:    Work
+  :PHONE:    +1234567890
+  :ADDRESS_HOME: Foo bar street, no 5
+  :EMAIL:    john@doe.com
+  :END:
+  ,* Dohn Joe
+  :PROPERTIES:
+  :GROUP:    High school
+  :PHONE:    +1334567890
+  :END:
+  - Some notes about this person.
+#+end_src
+
+The nice part is, it's just plain org-mode. I only use top-level headings in this file, instead of creating header hierarchies. I utilize =:GROUP:= property to categorize people, this way a person may belong to multiple categories. I use [[https://github.com/alphapapa/org-ql][org-ql]] if I need to find people related to one group or if I want to filter them based on some specific property.
+
+However the main use case is that I reference these headers in my other org files. For example, I also keep my diary in org-mode and I may write about some event that I participated with /John Doe/ from above. I simply reference (using org links) to that person. The benefit of this is being able to recollect all of your notes about a particular person using one simple search.
+
+Anyway, lets jump how I synchronize these contact information with my phone.
+
+** Synchronization
+:PROPERTIES:
+:CUSTOM_ID: synchronization
+:END:
+I simply create =.vcf= file, a format that most of the /contact apps/ that are aware of, based on my =people.org= file. Then I synchronize this =.vcf= file to my phone, using [[https://syncthing.net/][Syncthing]]. The following snippet creates the =.vcf= file.
+
+#+begin_src elisp
+  (defun isamert/build-contact-item (template-string contact-property)
+    (if-let ((stuff (org-entry-get nil contact-property)))
+        (concat (format template-string stuff) "\n")
+      ""))
+
+  (defun isamert/vcard ()
+    "Create a .vcf file containing all contact information."
+    (interactive)
+    (write-region
+     (string-join
+      (org-map-entries
+       (lambda ()
+         (string-join
+          `("BEGIN:VCARD\nVERSION:2.1\n"
+            ,(isamert/build-contact-item "FN:%s" "ITEM")
+            ,(isamert/build-contact-item "TEL;CELL:%s" "PHONE")
+            ,(isamert/build-contact-item "EMAIL:%s" "EMAIL")
+            ,(isamert/build-contact-item "ORG:%s" "GROUP")
+            ,(isamert/build-contact-item "ADR;HOME:;;%s" "ADDRESS_HOME")
+            ,(isamert/build-contact-item "ADR;WORK:;;%s" "ADDRESS_WORK")
+            ,(format "REV:%s\n" (format-time-string "%Y-%m-%dT%T"))
+            "END:VCARD") ""))
+       "LEVEL=1") "\n")
+     nil (read-file-name "Where to save the .vcf file?" "~/Documents/sync/" "contacts.vcf")))
+#+end_src
+
+Simply call the =isamert/vcard= function in your =people.org= file and you get a =.vcf= file. By default, it creates the file under =~/Documents/sync=. This folder is automatically synced with my phone using Syncthing. Then I open my contacts app and import the file. That's it.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
@@ -3110,6 +3177,7 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
          (s-replace "---" "-")
          (s-replace "--" "-")
          (s-replace "'" "")
+         (s-replace "," "")
          (s-replace "/" "-")
          (s-replace "ö" "o")
          (s-replace "ı" "i")

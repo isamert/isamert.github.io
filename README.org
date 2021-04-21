@@ -2874,7 +2874,7 @@ Anyway, lets jump how I synchronize these contact information with my phone.
 :PROPERTIES:
 :CUSTOM_ID: synchronization
 :END:
-I simply create =.vcf= file, a format that most of the /contact apps/ that are aware of, based on my =people.org= file. Then I synchronize this =.vcf= file to my phone, using [[https://syncthing.net/][Syncthing]]. The following snippet creates the =.vcf= file.
+I simply create =.vcf= file, a format that most of the /contacts apps/ that are aware of, based on my =people.org= file. Then I synchronize this =.vcf= file to my phone, using [[https://syncthing.net/][Syncthing]]. The following snippet creates the =.vcf= file.
 
 #+begin_src elisp
   (defun isamert/build-contact-item (template-string contact-property)
@@ -2910,6 +2910,8 @@ I simply create =.vcf= file, a format that most of the /contact apps/ that are a
 #+end_src
 
 Simply call the =isamert/vcard= function in your =people.org= file and you get a =.vcf= file. By default, it creates the file under =~/Documents/sync=. This folder is automatically synced with my phone using Syncthing. Then I open my contacts app and import the file. That's it.
+
+I used to earliest possible =.vcf= format that is available so that every contacts app can import them. You can add/remove fields to your =.vcf= export quite easily, just take a look at this [[https://en.wikipedia.org/wiki/VCard#Properties][wikipedia page for vCard]] and the relevant line to your function.
 
 * Publish Code :noexport:
 #+NAME: startup

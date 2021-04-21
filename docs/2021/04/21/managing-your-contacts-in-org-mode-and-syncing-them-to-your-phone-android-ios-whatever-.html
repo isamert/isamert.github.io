@@ -77,7 +77,7 @@ Anyway, lets jump how I synchronize these contact information with my phone.
 <h2 id="synchronization">Synchronization</h2>
 <div class="outline-text-2" id="text-synchronization">
 <p>
-I simply create <code>.vcf</code> file, a format that most of the <i>contact apps</i> that are aware of, based on my <code>people.org</code> file. Then I synchronize this <code>.vcf</code> file to my phone, using <a href="https://syncthing.net/">Syncthing</a>. The following snippet creates the <code>.vcf</code> file.
+I simply create <code>.vcf</code> file, a format that most of the <i>contacts apps</i> that are aware of, based on my <code>people.org</code> file. Then I synchronize this <code>.vcf</code> file to my phone, using <a href="https://syncthing.net/">Syncthing</a>. The following snippet creates the <code>.vcf</code> file.
 </p>
 
 <div class="org-src-container">
@@ -116,6 +116,10 @@ I simply create <code>.vcf</code> file, a format that most of the <i>contact app
 
 <p>
 Simply call the <code>isamert/vcard</code> function in your <code>people.org</code> file and you get a <code>.vcf</code> file. By default, it creates the file under <code>~/Documents/sync</code>. This folder is automatically synced with my phone using Syncthing. Then I open my contacts app and import the file. That's it.
+</p>
+
+<p>
+I used to earliest possible <code>.vcf</code> format that is available so that every contacts app can import them. You can add/remove fields to your <code>.vcf</code> export quite easily, just take a look at this <a href="https://en.wikipedia.org/wiki/VCard#Properties">wikipedia page for vCard</a> and the relevant line to your function.
 </p>
 </div>
 </div>

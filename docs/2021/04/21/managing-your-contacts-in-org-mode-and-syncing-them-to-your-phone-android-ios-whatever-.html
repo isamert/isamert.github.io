@@ -102,9 +102,15 @@ I simply create <code>.vcf</code> file, a format that most of the <i>contact app
           ,(isamert/build-contact-item "ADR;HOME:;;%s" "ADDRESS_HOME")
           ,(isamert/build-contact-item "ADR;WORK:;;%s" "ADDRESS_WORK")
           ,(format "REV:%s\n" (format-time-string "%Y-%m-%dT%T"))
-          "END:VCARD") ""))
-     "LEVEL=1") "\n")
-   nil (read-file-name "Where to save the .vcf file?" "~/Documents/sync/" "contacts.vcf")))
+          "END:VCARD")
+        ""))
+     "LEVEL=1")
+    "\n")
+   nil
+   (read-file-name
+    "Where to save the .vcf file?"
+    "~/Documents/sync/"
+    "contacts.vcf")))
 </pre>
 </div>
 

@@ -2898,9 +2898,15 @@ I simply create =.vcf= file, a format that most of the /contact apps/ that are a
             ,(isamert/build-contact-item "ADR;HOME:;;%s" "ADDRESS_HOME")
             ,(isamert/build-contact-item "ADR;WORK:;;%s" "ADDRESS_WORK")
             ,(format "REV:%s\n" (format-time-string "%Y-%m-%dT%T"))
-            "END:VCARD") ""))
-       "LEVEL=1") "\n")
-     nil (read-file-name "Where to save the .vcf file?" "~/Documents/sync/" "contacts.vcf")))
+            "END:VCARD")
+          ""))
+       "LEVEL=1")
+      "\n")
+     nil
+     (read-file-name
+      "Where to save the .vcf file?"
+      "~/Documents/sync/"
+      "contacts.vcf")))
 #+end_src
 
 Simply call the =isamert/vcard= function in your =people.org= file and you get a =.vcf= file. By default, it creates the file under =~/Documents/sync=. This folder is automatically synced with my phone using Syncthing. Then I open my contacts app and import the file. That's it.

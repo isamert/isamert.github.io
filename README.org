@@ -2913,6 +2913,41 @@ Simply call the =isamert/vcard= function in your =people.org= file and you get a
 
 I used to earliest possible =.vcf= format that is available so that every contacts app can import them. You can add/remove fields to your =.vcf= export quite easily, just take a look at this [[https://en.wikipedia.org/wiki/VCard#Properties][wikipedia page for vCard]] and the relevant line to your function.
 
+** Appendix: Interactively copy email of a contact from anywhere in Emacs
+:PROPERTIES:
+:CUSTOM_ID: appendix:-interactively-copy-email-of-a-contact-from-anywhere-in-emacs
+:END:
+Here is an example, just to demonstrate how you obtain/copy email of one of your contacts interactively. A use case might be:
+- You open your mail client to send an email to /John Doe/.
+- You call =isamert/contacts-select-email= which presents you all of your contact's names.
+- You select one of your contacts, and their email gets copied into your kill-ring.
+- You paste that email into =To:= field of your email client.
+
+Don't forget to point =find-file-noselect= to your =people.org= file.
+
+#+begin_src elisp
+  (defun isamert/contacts-email-alist ()
+    "Get an alist of contact name and emails."
+    (seq-filter
+     (lambda (it) it)
+     (org-map-entries
+      (lambda ()
+        (when-let ((email (org-entry-get nil "EMAIL")))
+          `(,(org-entry-get nil "ITEM") . ,email)))
+      "LEVEL=1")))
+
+  (defun isamert/contacts-select-email ()
+    "Search through your contacts interactively and copy their email."
+    (interactive)
+    (with-current-buffer (find-file-noselect "~/Documents/notes/people.org")
+      (let ((email-alist (isamert/contacts-email-alist)))
+        (kill-new
+         (cdr
+          (assoc
+           (completing-read "Copy email of: " email-alist)
+           email-alist))))))
+#+end_src
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src emacs-lisp
@@ -3027,26 +3062,6 @@ I used to earliest possible =.vcf= format that is available so that every contac
              file-path)
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
-
-  (defun isamert/blog-generate-tag-pages ()
-    (interactive)
-    (let* ((taggeds (make-hash-table :test 'equal))
-           (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
-                       (--keep it))))
-      (-each items
-        (-lambda ((tags . item))
-          (--each tags (push item (gethash it taggeds '())))))
-
-      (--each (hash-table-keys taggeds)
-        (isamert/write-string-to-file
-         (isamert/template "tag-template"
-                           :title (format "Posts tagged with %s" it)
-                           :tag-name it
-                           :posts `',(gethash it taggeds))
-         (format "%s/%s/%s.html"
-                 isamert/blog-publish-path
-                 "tags"
-                 it)))))
 
   (defun isamert/blog-generate-tag-info-current ()
     "Return the list of tags and post information for current item.."
@@ -3303,6 +3318,27 @@ I used to earliest possible =.vcf= format that is available so that every contac
      isamert/blog-url
      isamert/blog-description
      (--reduce (format "%s%s" it acc) items)))
+
+  (defun isamert/blog-generate-tag-pages ()
+    (interactive)
+    (let* ((taggeds (make-hash-table :test 'equal))
+           (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
+                       (--keep it))))
+      (-each items
+        (-lambda ((tags . item))
+          (--each tags (push item (gethash it taggeds '())))))
+
+      (--each (hash-table-keys taggeds)
+        (isamert/write-string-to-file
+         (isamert/template "tag-template"
+                           :title (format "Posts tagged with %s" it)
+                           :tag-name it
+                           :posts `',(gethash it taggeds))
+         (format "%s/%s/%s.html"
+                 isamert/blog-publish-path
+                 "tags"
+                 it)))))
+
 
   ;;
   ;; Sitemap

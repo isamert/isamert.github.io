@@ -124,6 +124,49 @@ I used to earliest possible <code>.vcf</code> format that is available so that e
 </div>
 </div>
 
+<div id="outline-container-appendix:-interactively-copy-email-of-a-contact-from-anywhere-in-emacs" class="outline-2">
+<h2 id="appendix:-interactively-copy-email-of-a-contact-from-anywhere-in-emacs">Appendix: Interactively copy email of a contact from anywhere in Emacs</h2>
+<div class="outline-text-2" id="text-appendix:-interactively-copy-email-of-a-contact-from-anywhere-in-emacs">
+<p>
+Here is an example, just to demonstrate how you obtain/copy email of one of your contacts interactively. A use case might be:
+</p>
+<ul class="org-ul">
+<li>You open your mail client to send an email to <i>John Doe</i>.</li>
+<li>You call <code>isamert/contacts-select-email</code> which presents you all of your contact's names.</li>
+<li>You select one of your contacts, and their email gets copied into your kill-ring.</li>
+<li>You paste that email into <code>To:</code> field of your email client.</li>
+</ul>
+
+<p>
+Don't forget to point <code>find-file-noselect</code> to your <code>people.org</code> file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun isamert/contacts-email-alist ()
+  "Get an alist of contact name and emails."
+  (seq-filter
+   (lambda (it) it)
+   (org-map-entries
+    (lambda ()
+      (when-let ((email (org-entry-get nil "EMAIL")))
+        `(,(org-entry-get nil "ITEM") . ,email)))
+    "LEVEL=1")))
+
+(defun isamert/contacts-select-email ()
+  "Search through your contacts interactively and copy their email."
+  (interactive)
+  (with-current-buffer (find-file-noselect "~/Documents/notes/people.org")
+    (let ((email-alist (isamert/contacts-email-alist)))
+      (kill-new
+       (cdr
+        (assoc
+         (completing-read "Copy email of: " email-alist)
+         email-alist))))))
+</pre>
+</div>
+</div>
+</div>
+
 
         <hr />
 

@@ -3298,12 +3298,11 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
           (org-entry-get nil "ITEM")
           isamert/blog-url
           (isamert/blog-mk-path)
-          (s-join "-" (isamert/parse-org-date (org-entry-get nil "PUBLISH_DATE")))
+          (format-time-string "%a, %d %b %Y %H:%M:%S %z" (encode-time (org-parse-time-string (org-entry-get nil "PUBLISH_DATE"))))
           (or (org-entry-get nil "ABSTRACT") "")))))
 
   (defun isamert/blog-make-rss-doc (items &optional tag)
-    (format "
-  <?xml version=\"1.0\" ?>
+    (format "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
   <rss version=\"2.0\">
     <channel>
       <title>%s</title>

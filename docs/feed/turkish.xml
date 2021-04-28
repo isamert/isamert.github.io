@@ -1,16 +1,15 @@
-
-<?xml version="1.0" ?>
-<rss version="2.0">
-  <channel>
-    <title>turkish - isamert.net</title>
-    <link>https://isamert.net</link>
-    <description>My notes and ideas.</description>
-    
+<?xml version="1.0" encoding="UTF-8" ?>
+  <rss version="2.0">
+    <channel>
+      <title>turkish - isamert.net</title>
+      <link>https://isamert.net</link>
+      <description>My notes and ideas.</description>
+      
     <item>
       <title>Emacs'te Türkçe imla denetimi</title>
       <link>https://isamert.net/2021/01/31/emacs-te-turkce-imla-denetimi.html</link>
-      <pubDate>2021-01-31</pubDate>
+      <pubDate>Sun, 31 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-  </channel>
-</rss>
+    </channel>
+  </rss>

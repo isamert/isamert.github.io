@@ -1,28 +1,27 @@
-
-<?xml version="1.0" ?>
-<rss version="2.0">
-  <channel>
-    <title>org - isamert.net</title>
-    <link>https://isamert.net</link>
-    <description>My notes and ideas.</description>
-    
+<?xml version="1.0" encoding="UTF-8" ?>
+  <rss version="2.0">
+    <channel>
+      <title>org - isamert.net</title>
+      <link>https://isamert.net</link>
+      <description>My notes and ideas.</description>
+      
     <item>
       <title>Running SQL on org-mode tables</title>
       <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
-      <pubDate>2019-11-14</pubDate>
+      <pubDate>Thu, 14 Nov 2019 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>
       <title>How do I keep my days organized with org-mode and Emacs</title>
       <link>https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html</link>
-      <pubDate>2021-01-25</pubDate>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>
       <title>Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</title>
       <link>https://isamert.net/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html</link>
-      <pubDate>2021-04-21</pubDate>
+      <pubDate>Wed, 21 Apr 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-  </channel>
-</rss>
+    </channel>
+  </rss>

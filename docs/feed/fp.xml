@@ -1,22 +1,21 @@
-
-<?xml version="1.0" ?>
-<rss version="2.0">
-  <channel>
-    <title>fp - isamert.net</title>
-    <link>https://isamert.net</link>
-    <description>My notes and ideas.</description>
-    
+<?xml version="1.0" encoding="UTF-8" ?>
+  <rss version="2.0">
+    <channel>
+      <title>fp - isamert.net</title>
+      <link>https://isamert.net</link>
+      <description>My notes and ideas.</description>
+      
     <item>
       <title>Kotlin function application</title>
       <link>https://isamert.net/2017/08/15/kotlin-function-application.html</link>
-      <pubDate>2017-08-15</pubDate>
+      <pubDate>Tue, 15 Aug 2017 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>
       <title>Functional programming in C++</title>
       <link>https://isamert.net/2018/03/01/functional-programming-in-cpp.html</link>
-      <pubDate>2018-03-01</pubDate>
+      <pubDate>Thu, 01 Mar 2018 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-  </channel>
-</rss>
+    </channel>
+  </rss>

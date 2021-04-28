@@ -1,28 +1,27 @@
-
-<?xml version="1.0" ?>
-<rss version="2.0">
-  <channel>
-    <title>page - isamert.net</title>
-    <link>https://isamert.net</link>
-    <description>My notes and ideas.</description>
-    
+<?xml version="1.0" encoding="UTF-8" ?>
+  <rss version="2.0">
+    <channel>
+      <title>page - isamert.net</title>
+      <link>https://isamert.net</link>
+      <description>My notes and ideas.</description>
+      
     <item>
       <title>Main</title>
       <link>https://isamert.net/index.html</link>
-      <pubDate>2021-01-21</pubDate>
+      <pubDate>Thu, 21 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>
       <title>Feeds</title>
       <link>https://isamert.net/feeds.html</link>
-      <pubDate>2021-04-07</pubDate>
+      <pubDate>Wed, 07 Apr 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>
       <title>About</title>
       <link>https://isamert.net/about.html</link>
-      <pubDate>2021-04-07</pubDate>
+      <pubDate>Wed, 07 Apr 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-  </channel>
-</rss>
+    </channel>
+  </rss>

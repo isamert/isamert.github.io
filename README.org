@@ -655,6 +655,17 @@ I'm Isa and this page is *WIP*. Meanwhile, check out the following:
 - [[./resume.html][My resume]]
 - [[https://github.com/isamert][My GitHub profile]]
 
+* My projects :page:
+:PROPERTIES:
+:CUSTOM_ID: my-projects
+:EXPORT_AS: my-projects
+:OPTIONS: toc:nil
+:PUBLISH_DATE: [2021-04-07 Wed]
+:END:
+
+** Emacs plugins
+- [[https://github.com/isamert/dotfiles/blob/master/.emacs.d/settings.org][My literal Emacs configuration]]
+
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
 :PUBLISH_DATE: [2016-07-13 Wed]
@@ -2417,6 +2428,7 @@ I am always looking for ways to enhance my keyboard usage. I'm not a very-fast t
 * How do I keep my days organized with org-mode and Emacs :emacs:org:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-01-25 Mon]
+:UPDATE_DATE: [2021-05-07 Fri]
 :CUSTOM_ID: how-i-do-keep-my-days-organized-with-org-mode-and-emacs
 :END:
 ** Preamble
@@ -2643,6 +2655,12 @@ After this, if I'm feeling well I just add a few observations about the day or m
 :CUSTOM_ID: conclusion
 :END:
 Well, that's it. I have other org files that I use along with =bullet.org= and I utilize [[https://github.com/alphapapa/org-ql][org-ql]] to connect things together or to find/filter them instead of relying on agenda but I guess that's an another post. I've been using this exact methodology more than one year (earlier I had similar methods but they were quite different in terms of organization etc.) and I can say that it's /somewhat/ effective against my procrastination. I'm not saying that I don't need willpower anymore but it's easier to do things when you're more organized and this file keeps me sane during the day.
+
+** Appendix
+:PROPERTIES:
+:CUSTOM_ID: appendix
+:END:
+- [[https://www.reddit.com/r/orgmode/comments/n5b1zg/how_do_i_keep_my_days_organized_with_orgmode/][Reddit discussion]]
 
 * Emacs'te Türkçe imla denetimi :turkish:micro:
 :PROPERTIES:
@@ -2948,9 +2966,15 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
            email-alist))))))
 #+end_src
 
+** Appendix
+:PROPERTIES:
+:CUSTOM_ID: appendix
+:END:
+- [[https://www.reddit.com/r/orgmode/comments/mvabze/managing_your_contacts_in_orgmode_and_syncing/][Reddit discussion]]
+
 * Publish Code :noexport:
 #+NAME: startup
-#+begin_src emacs-lisp
+#+begin_src elisp
   (require 'org)
 
   ;;
@@ -3042,7 +3066,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
                (file-path nil))
           (when (not isamert/blog-templates)
             (isamert/blog-refresh-templates))
-          (when (isamert/blog-should-export-current)
+          (when (isamert/blog-can-export-current)
             (org-narrow-to-subtree)
             (isamert/blog-pre-process)
 
@@ -3066,7 +3090,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
   (defun isamert/blog-generate-tag-info-current ()
     "Return the list of tags and post information for current item.."
     (interactive)
-    (when (isamert/blog-should-export-current)
+    (when (isamert/blog-can-export-current)
       `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
         .
         (:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
@@ -3075,7 +3099,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
   ;; Processing
   ;;
 
-  (defun isamert/blog-should-export-current ()
+  (defun isamert/blog-can-export-current ()
     "Return if the current header should be exported or not."
     (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
 
@@ -3284,7 +3308,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
 
   (defun isamert/blog-generate-rss-item-current ()
     "Return the list of tags and RSS item for current post."
-    (when (isamert/blog-should-export-current)
+    (when (isamert/blog-can-export-current)
       `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
         .
         ,(format
@@ -3348,7 +3372,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
     (->>
      (org-map-entries
       (lambda ()
-        (when (isamert/blog-should-export-current)
+        (when (isamert/blog-can-export-current)
           (format "
      <url>
         <loc>%s/%s</loc>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-  <rss version="2.0">
-    <channel>
-      <title>bash - isamert.net</title>
-      <link>https://isamert.net</link>
-      <description>My notes and ideas.</description>
-      
+<rss version="2.0">
+  <channel>
+    <title>bash - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
     <item>
       <title>Bash scripting guide</title>
       <link>https://isamert.net/2019/02/21/bash-scripting-guide.html</link>
       <pubDate>Thu, 21 Feb 2019 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-    </channel>
-  </rss>
+  </channel>
+</rss>

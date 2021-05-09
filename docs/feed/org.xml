@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-  <rss version="2.0">
-    <channel>
-      <title>org - isamert.net</title>
-      <link>https://isamert.net</link>
-      <description>My notes and ideas.</description>
-      
+<rss version="2.0">
+  <channel>
+    <title>org - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
     <item>
       <title>Running SQL on org-mode tables</title>
       <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
@@ -23,5 +23,11 @@
       <pubDate>Wed, 21 Apr 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-    </channel>
-  </rss>
+    <item>
+      <title>Migrating my IMDb ratings list and watch list into org-mode</title>
+      <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
+      <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

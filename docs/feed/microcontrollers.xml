@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-  <rss version="2.0">
-    <channel>
-      <title>microcontrollers - isamert.net</title>
-      <link>https://isamert.net</link>
-      <description>My notes and ideas.</description>
-      
+<rss version="2.0">
+  <channel>
+    <title>microcontrollers - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
     <item>
       <title>Programming AVR microcontrollers in Linux</title>
       <link>https://isamert.net/2017/12/22/programming-avr-microcontrollers-in-linux.html</link>
       <pubDate>Fri, 22 Dec 2017 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-    </channel>
-  </rss>
+  </channel>
+</rss>

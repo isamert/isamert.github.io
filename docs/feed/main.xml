@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-  <rss version="2.0">
-    <channel>
-      <title>isamert.net</title>
-      <link>https://isamert.net</link>
-      <description>My notes and ideas.</description>
-      
+<rss version="2.0">
+  <channel>
+    <title>isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Migrating my IMDb ratings list and watch list into org-mode</title>
+      <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
+      <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
     <item>
       <title>Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</title>
       <link>https://isamert.net/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html</link>
@@ -96,6 +102,12 @@
       <description><![CDATA[  ]]></description>
     </item>
     <item>
+      <title>My projects</title>
+      <link>https://isamert.net/my-projects.html</link>
+      <pubDate>Wed, 07 Apr 2021 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>About</title>
       <link>https://isamert.net/about.html</link>
       <pubDate>Wed, 07 Apr 2021 00:00:00 +0300</pubDate>
@@ -113,5 +125,5 @@
       <pubDate>Thu, 21 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
-    </channel>
-  </rss>
+  </channel>
+</rss>

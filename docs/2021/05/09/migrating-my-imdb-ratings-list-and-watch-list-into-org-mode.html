@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<head>
+  <title>Migrating my IMDb ratings list and watch list into org-mode | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Migrating my IMDb ratings list and watch list into org-mode</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a>, <a href="/tags/cli.html" class="tag-link">cli</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2021-05-09</em></li>
+            <li>Last updated at <em>2021-05-09</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#preamble">Preamble</a></li>
+<li><a href="#exporting-the-data-from-imdb">Exporting the data from IMDb</a></li>
+<li><a href="#parsing-the-data">Parsing the data</a></li>
+<li><a href="#generating-the-org-mode-rating-list">Generating the org-mode rating list</a></li>
+<li><a href="#appendix:-getting-the-movie-country-data">Appendix: Getting the movie country data</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-preamble" class="outline-2">
+<h2 id="preamble">Preamble</h2>
+<div class="outline-text-2" id="text-preamble">
+<p>
+I have been using org-mode to keep track of my movie ratings and critiques. Org-mode, combined with <a href="https://github.com/alphapapa/org-ql/">org-ql</a>, gives me quite a lot flexibility. I'm also utilizing <a href="https://en.wikipedia.org/wiki/Zettelkasten">Zettelkasten</a>-like backlinking and references, so keeping these rating information on org-mode makes sense for me. First, let me show you how it looks like:
+</p>
+
+
+<div id="org70704c2" class="figure">
+<p><img src="/images/org_imdb_structre.png" alt="org_imdb_structre.png" class="centered" />
+</p>
+</div>
+
+<p>
+And this is how a movie with it's properties looks like:
+</p>
+
+
+<div id="org4787485" class="figure">
+<p><img src="/images/org_imdb_expanded.png" alt="org_imdb_expanded.png" class="centered" />
+</p>
+</div>
+
+<p>
+I mainly automated the needed information-retrieval using the <a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a>, a package that I wrote. The link contains the related information for automatically filling this data. Before all that, I was using IMDb to log my ratings only. So I just wanted to migrate those ratings into my new org-mode based watch/rating list.
+</p>
+</div>
+</div>
+
+<div id="outline-container-exporting-the-data-from-imdb" class="outline-2">
+<h2 id="exporting-the-data-from-imdb">Exporting the data from IMDb</h2>
+<div class="outline-text-2" id="text-exporting-the-data-from-imdb">
+<p>
+Log in to IMDb and open <a href="https://www.imdb.com/list/ratings">this link</a>. Hit the 3-dot icon on top-right and click <code>Export</code>.
+</p>
+
+
+<div id="orgc207ca0" class="figure">
+<p><img src="/images/org_imdb_export.png" alt="org_imdb_export.png" class="centered" />
+</p>
+</div>
+
+<p>
+This will give you a file named <code>ratings.csv</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-parsing-the-data" class="outline-2">
+<h2 id="parsing-the-data">Parsing the data</h2>
+<div class="outline-text-2" id="text-parsing-the-data">
+<p>
+I just searched for <code>elisp csv</code> and used the first package that came across. I did not want to split lines with "," because there are some quoted texts in the csv and that might contain commas itself. Using a library that handles these cases are just better.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(use-package parse-csv
+  :ensure t)
+</pre>
+</div>
+
+<p>
+With the following we can parse the data into <code>'((movie1 properties ...) (movie2 properties ...))</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(setq
+ my-movie-data
+ (parse-csv-string-rows
+  (with-temp-buffer
+    (insert-file-contents "~/Downloads/ratings.csv")
+    (buffer-string))
+  ?\, ?\" "\n"))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-generating-the-org-mode-rating-list" class="outline-2">
+<h2 id="generating-the-org-mode-rating-list">Generating the org-mode rating list</h2>
+<div class="outline-text-2" id="text-generating-the-org-mode-rating-list">
+<p>
+I like using <a href="https://github.com/magnars/dash.el">dash.el</a> functionality for these kind of one-off scripts, it's very convenient and easy to write. With the following, we can convert the data in the <code>ratings.csv</code> into our custom org mode format.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(-&gt;&gt; my-movie-data
+  ;; Skip the CSV header
+  (-drop 1)
+  ;; Skip empty lines etc.
+  (--filter (cdr it))
+  ;; Format all movies into the format I use in my watchlist
+  (--map (format
+          "** DONE %s (%s) :%s:\n:PROPERTIES:\n:GENRE:    %s\n:RUNTIME:  %s\n:DIRECTOR: %s\n:RATING:   %s\n:WATCHED:  %s\n:IMDB-ID:  %s\n:END:"
+          (nth 3 it)
+          (nth 8 it)
+          (nth 5 it)
+          (nth 9 it)
+          (format "%s mins" (nth 7 it))
+          (nth 12 it)
+          (nth 1 it)
+          (format "[%s]" (nth 2  it))
+          (nth 0 it)))
+  ;; Reduce everything into one single string
+  (--reduce (format "%s\n%s" acc it))
+  ;; Copy the string
+  (kill-new))
+</pre>
+</div>
+
+<p>
+This will format all movies into the format I just showed you above and copy the resulting string into your clipboard, so that you can paste it into your watch list file. Feel free to change the formatting to your liking.
+</p>
+</div>
+</div>
+
+<div id="outline-container-appendix:-getting-the-movie-country-data" class="outline-2">
+<h2 id="appendix:-getting-the-movie-country-data">Appendix: Getting the movie country data</h2>
+<div class="outline-text-2" id="text-appendix:-getting-the-movie-country-data">
+<p>
+I was not satisfied with the above result, because I also like to have a <code>:COUNTRY:</code> field in movies property list so that I can filter based on country etc. As <code>ratings.csv</code> does not provide this information, I had to use the <code>orgmdb</code> package I mentioned earlier.
+</p>
+
+<p>
+First, I needed to format the data in the <code>ratings.csv</code> into something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(setq
+ isamert/movie-rating-list
+ '(("tt1010048" . (7 2016-08-30))
+   ("tt0101540" . (6 2017-03-13))
+   ("tt1019452" . (8 2019-11-29))
+   ...))
+</pre>
+</div>
+
+<p>
+&#x2026;using this command and then doing a bit of manual work:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">cat ratings.csv | awk -F, '{print "(\"" $1 "\" . (" $2, "\""$3 "\"))"}'
+</pre>
+</div>
+
+<p>
+Because I only need the rating I gave to the movie and the date I gave it from the file, I'll get the rest using <code>orgmdb</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(setq isamert/movies
+      (--map
+       (orgmdb :imdb (symbol-name (car it)))
+       isamert/movie-rating-list))
+</pre>
+</div>
+
+<p>
+This may take a few minutes depending on how much movies you have in your list. I had to wait couple of minutes for ~500 movies. Now that we have all information we need, we can generate our custom org rating list:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(-&gt;&gt; isamert/movies
+  (--map (let* ((info (cdr (assoc-string (alist-get 'imdbID it) isamert/movie-rating-list))))
+           `(,@it (MyRating . ,(car info)) (MyRatingDate . ,(cdr info)))))
+  (--map (format "** DONE %s (%s) :%s:\n:PROPERTIES:\n:GENRE:    %s\n:RUNTIME:  %s\n:DIRECTOR: %s\n:COUNTRY:  %s\n:RATING:   %s\n:WATCHED:  %s\n:IMDB-ID:  %s\n:END:"
+                 (alist-get 'Title it)
+                 (alist-get 'Year it)
+                 (alist-get 'Type it)
+                 (alist-get 'Genre it)
+                 (alist-get 'Runtime it)
+                 (alist-get 'Director it)
+                 (alist-get 'Country it)
+                 (alist-get 'MyRating it)
+                 (format "[%s]" (alist-get 'MyRatingDate it))
+                 (alist-get 'imdbID it)))
+  (--reduce (format "%s\n%s" acc it))
+  (kill-new))
+</pre>
+</div>
+
+<p>
+Nice.
+</p>
+</div>
+</div>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      
+          <span>
+            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+          </span>
+        </p>
+      </footer>
+  </body>

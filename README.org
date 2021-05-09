@@ -2972,6 +2972,149 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
 :END:
 - [[https://www.reddit.com/r/orgmode/comments/mvabze/managing_your_contacts_in_orgmode_and_syncing/][Reddit discussion]]
 
+* Migrating my IMDb ratings list and watch list into org-mode :emacs:org:cli:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-05-09 Sun]
+:UPDATE_DATE: [2021-05-09 Sun]
+:CUSTOM_ID: migrating-my-imdb-ratings-list-and-watch-list-into-org-mode
+:END:
+** Preamble
+:PROPERTIES:
+:CUSTOM_ID: preamble
+:END:
+I have been using org-mode to keep track of my movie ratings and critiques. Org-mode, combined with [[https://github.com/alphapapa/org-ql/][org-ql]], gives me quite a lot flexibility. I'm also utilizing [[https://en.wikipedia.org/wiki/Zettelkasten][Zettelkasten]]-like backlinking and references, so keeping these rating information on org-mode makes sense for me. First, let me show you how it looks like:
+
+#+ATTR_HTML: :src /images/org_imdb_structre.png :class centered
+[[file:./docs/images/org_imdb_structre.png]]
+
+And this is how a movie with it's properties looks like:
+
+#+ATTR_HTML: :src /images/org_imdb_expanded.png :class centered
+[[file:./docs/images/org_imdb_expanded.png]]
+
+I mainly automated the needed information-retrieval using the [[https://github.com/isamert/orgmdb.el][orgmdb.el]], a package that I wrote. The link contains the related information for automatically filling this data. Before all that, I was using IMDb to log my ratings only. So I just wanted to migrate those ratings into my new org-mode based watch/rating list.
+
+** Exporting the data from IMDb
+:PROPERTIES:
+:CUSTOM_ID: exporting-the-data-from-imdb
+:END:
+Log in to IMDb and open [[https://www.imdb.com/list/ratings][this link]]. Hit the 3-dot icon on top-right and click ~Export~.
+
+#+ATTR_HTML: :src /images/org_imdb_export.png :class centered
+[[file:docs/images/org_imdb_export.png]]
+
+This will give you a file named ~ratings.csv~.
+
+** Parsing the data
+:PROPERTIES:
+:CUSTOM_ID: parsing-the-data
+:END:
+I just searched for ~elisp csv~ and used the first package that came across. I did not want to split lines with "," because there are some quoted texts in the csv and that might contain commas itself. Using a library that handles these cases are just better.
+
+#+begin_src elisp
+  (use-package parse-csv
+    :ensure t)
+#+end_src
+
+With the following we can parse the data into ='((movie1 properties ...) (movie2 properties ...))=:
+
+#+begin_src elisp
+  (setq
+   my-movie-data
+   (parse-csv-string-rows
+    (with-temp-buffer
+      (insert-file-contents "~/Downloads/ratings.csv")
+      (buffer-string))
+    ?\, ?\" "\n"))
+#+end_src
+
+** Generating the org-mode rating list
+:PROPERTIES:
+:CUSTOM_ID: generating-the-org-mode-rating-list
+:END:
+I like using [[https://github.com/magnars/dash.el][dash.el]] functionality for these kind of one-off scripts, it's very convenient and easy to write. With the following, we can convert the data in the ~ratings.csv~ into our custom org mode format.
+
+#+begin_src elisp
+  (->> my-movie-data
+    ;; Skip the CSV header
+    (-drop 1)
+    ;; Skip empty lines etc.
+    (--filter (cdr it))
+    ;; Format all movies into the format I use in my watchlist
+    (--map (format
+            "** DONE %s (%s) :%s:\n:PROPERTIES:\n:GENRE:    %s\n:RUNTIME:  %s\n:DIRECTOR: %s\n:RATING:   %s\n:WATCHED:  %s\n:IMDB-ID:  %s\n:END:"
+            (nth 3 it)
+            (nth 8 it)
+            (nth 5 it)
+            (nth 9 it)
+            (format "%s mins" (nth 7 it))
+            (nth 12 it)
+            (nth 1 it)
+            (format "[%s]" (nth 2  it))
+            (nth 0 it)))
+    ;; Reduce everything into one single string
+    (--reduce (format "%s\n%s" acc it))
+    ;; Copy the string
+    (kill-new))
+#+end_src
+
+This will format all movies into the format I just showed you above and copy the resulting string into your clipboard, so that you can paste it into your watch list file. Feel free to change the formatting to your liking.
+
+** Appendix: Getting the movie country data
+:PROPERTIES:
+:CUSTOM_ID: appendix:-getting-the-movie-country-data
+:END:
+I was not satisfied with the above result, because I also like to have a ~:COUNTRY:~ field in movies property list so that I can filter based on country etc. As ~ratings.csv~ does not provide this information, I had to use the ~orgmdb~ package I mentioned earlier.
+
+First, I needed to format the data in the ~ratings.csv~ into something like this:
+
+#+begin_src elisp
+  (setq
+   isamert/movie-rating-list
+   '(("tt1010048" . (7 2016-08-30))
+     ("tt0101540" . (6 2017-03-13))
+     ("tt1019452" . (8 2019-11-29))
+     ...))
+#+end_src
+
+...using this command and then doing a bit of manual work:
+
+#+begin_src sh
+  cat ratings.csv | awk -F, '{print "(\"" $1 "\" . (" $2, "\""$3 "\"))"}'
+#+end_src
+
+Because I only need the rating I gave to the movie and the date I gave it from the file, I'll get the rest using ~orgmdb~:
+
+#+begin_src elisp
+  (setq isamert/movies
+        (--map
+         (orgmdb :imdb (symbol-name (car it)))
+         isamert/movie-rating-list))
+#+end_src
+
+This may take a few minutes depending on how much movies you have in your list. I had to wait couple of minutes for ~500 movies. Now that we have all information we need, we can generate our custom org rating list:
+
+#+begin_src elisp
+  (->> isamert/movies
+    (--map (let* ((info (cdr (assoc-string (alist-get 'imdbID it) isamert/movie-rating-list))))
+             `(,@it (MyRating . ,(car info)) (MyRatingDate . ,(cdr info)))))
+    (--map (format "** DONE %s (%s) :%s:\n:PROPERTIES:\n:GENRE:    %s\n:RUNTIME:  %s\n:DIRECTOR: %s\n:COUNTRY:  %s\n:RATING:   %s\n:WATCHED:  %s\n:IMDB-ID:  %s\n:END:"
+                   (alist-get 'Title it)
+                   (alist-get 'Year it)
+                   (alist-get 'Type it)
+                   (alist-get 'Genre it)
+                   (alist-get 'Runtime it)
+                   (alist-get 'Director it)
+                   (alist-get 'Country it)
+                   (alist-get 'MyRating it)
+                   (format "[%s]" (alist-get 'MyRatingDate it))
+                   (alist-get 'imdbID it)))
+    (--reduce (format "%s\n%s" acc it))
+    (kill-new))
+#+end_src
+
+Nice.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

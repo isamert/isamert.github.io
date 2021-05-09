@@ -584,6 +584,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html][Migrating my IMDb ratings list and watch list into org-mode]]
 - [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]]
 - [[./2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html][Killing (copying) currently selected candidate's content/text in Selectrum]]
 - [[./2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html][A (relatively) deep dive into (zsh) shell login process (without a display manager)]]

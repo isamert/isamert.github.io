@@ -3116,6 +3116,58 @@ This may take a few minutes depending on how much movies you have in your list. 
 
 Nice.
 
+* Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs :turkish:micro:
+:PROPERTIES:
+:PUBLISH_DATE: [2021-05-16 Sun]
+:UPDATE_DATE: [2021-05-16 Sun]
+:CUSTOM_ID: eksisozluk-gundem-dikkat-daginikligi-ve-emacs
+:END:
+Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek mümkün olmuyor. Nihayetinde ekşi'ye girişimin temel sebebinin /gündem/'e bakmak olduğunun farkına vardım. Gündem içerisinde de en çok merak ettiğim şey genel itibarıyla en çok entry girilen başlıkların neler olduğunu görmek. Fakat ekşi'de gündem tam olarak entry sayısına göre sıralanmıyor ve bu durum benim için sinir bozucu. Gündemi oluşturan 3-5 başlığa bakıp çıkmak isterken dikkatim diğer başlıklarla dağılıyor veya en çok entry girilen başlıkları bulayım derken zaman kaybediyorum. Zaten çoğu zaman entry'leri de merak etmiyorum, sadece bi başlıkları gözden geçirmek istiyorum. Bunun için çözümüm şu oldu:
+
+#+begin_src sh
+  curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)">(.*) <small>(.*)<\/small>(.*)/(\3) \2/' | sort -V -r | uniq
+#+end_src
+
+2021-05-16 23:28 itibarıyla bu komutun çıktısı şöyle:
+
+#+begin_src
+  (696) 16 mayıs 2021 sedat peker açıklamaları
+  (675) 2020-2021 sezonu şampiyonu beşiktaş
+  (567) 16 mayıs 2021 içişleri bakanlığı genelgesi
+  (553) beşiktaş jean-claude billong skandalı
+  (482) fatih terim
+  (463) 22-23 mayıs 2021 yasak protestoları
+  (339) aynı anda 24 kızla sevgili olan öğretmen
+  (332) hafta sonu sokağa çıkma yasağı
+  ...
+#+end_src
+
+Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu interaktif bir Emacs fonksiyonuna sardım, o da şöyle:
+
+#+begin_src elisp
+  (defun isamert/eksi-gundem-sirali ()
+    "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
+    (interactive)
+    (let* ((selectrum-should-sort nil)
+           (results (->> (shell-command-to-string "curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\">(.*) <small>(.*)<\\/small>(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq")
+                      (s-split "\n")
+                      (--map (s-split "|||" it))
+                      (--map `(,(car it) . ,(cadr it))))))
+      (->> results
+        (completing-read "Baslik: ")
+        (funcall (-flip 'assoc-string) results)
+        (cdr)
+        (format "https://eksisozluk.com/%s")
+        (browse-url))))
+#+end_src
+
+O da böyle gözüküyor:
+
+#+ATTR_HTML: :src /images/eksi_emacs.png :class centered
+[[file:./docs/images/eksi_emacs.png]]
+
+Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

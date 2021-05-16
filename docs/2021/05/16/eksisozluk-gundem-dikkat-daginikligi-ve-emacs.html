@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<head>
+  <title>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2021-05-16</em></li>
+            <li>Last updated at <em>2021-05-16</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek mümkün olmuyor. Nihayetinde ekşi'ye girişimin temel sebebinin <i>gündem</i>'e bakmak olduğunun farkına vardım. Gündem içerisinde de en çok merak ettiğim şey genel itibarıyla en çok entry girilen başlıkların neler olduğunu görmek. Fakat ekşi'de gündem tam olarak entry sayısına göre sıralanmıyor ve bu durum benim için sinir bozucu. Gündemi oluşturan 3-5 başlığa bakıp çıkmak isterken dikkatim diğer başlıklarla dağılıyor veya en çok entry girilen başlıkları bulayım derken zaman kaybediyorum. Zaten çoğu zaman entry'leri de merak etmiyorum, sadece bi başlıkları gözden geçirmek istiyorum. Bunun için çözümüm şu oldu:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)"&gt;(.*) &lt;small&gt;(.*)&lt;\/small&gt;(.*)/(\3) \2/' | sort -V -r | uniq
+</pre>
+</div>
+
+<p>
+2021-05-16 23:28 itibarıyla bu komutun çıktısı şöyle:
+</p>
+
+<pre class="example">
+(696) 16 mayıs 2021 sedat peker açıklamaları
+(675) 2020-2021 sezonu şampiyonu beşiktaş
+(567) 16 mayıs 2021 içişleri bakanlığı genelgesi
+(553) beşiktaş jean-claude billong skandalı
+(482) fatih terim
+(463) 22-23 mayıs 2021 yasak protestoları
+(339) aynı anda 24 kızla sevgili olan öğretmen
+(332) hafta sonu sokağa çıkma yasağı
+...
+</pre>
+
+<p>
+Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu interaktif bir Emacs fonksiyonuna sardım, o da şöyle:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun isamert/eksi-gundem-sirali ()
+  "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
+  (interactive)
+  (let* ((selectrum-should-sort nil)
+         (results (-&gt;&gt; (shell-command-to-string "curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq")
+                    (s-split "\n")
+                    (--map (s-split "|||" it))
+                    (--map `(,(car it) . ,(cadr it))))))
+    (-&gt;&gt; results
+      (completing-read "Baslik: ")
+      (funcall (-flip 'assoc-string) results)
+      (cdr)
+      (format "https://eksisozluk.com/%s")
+      (browse-url))))
+</pre>
+</div>
+
+<p>
+O da böyle gözüküyor:
+</p>
+
+
+<div id="orgb60f956" class="figure">
+<p><img src="/images/eksi_emacs.png" alt="eksi_emacs.png" class="centered" />
+</p>
+</div>
+
+<p>
+Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
+</p>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      
+          <span>
+            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+          </span>
+        </p>
+      </footer>
+  </body>

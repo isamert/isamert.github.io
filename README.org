@@ -614,6 +614,7 @@ Here are some cool stuff that you can check out:
 :PROPERTIES:
 :CUSTOM_ID: turkce-yazilar-turkish-posts-
 :END:
+- [[./2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html][Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs]]
 - [[./2021/01/31/emacs-te-turkce-imla-denetimi.html][Emacs'te Türkçe imla denetimi]]
 
 * Feeds :page:

@@ -6,6 +6,18 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Dealing with APIs, JSONs and databases in org-mode</title>
+      <link>https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html</link>
+      <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</title>
+      <link>https://isamert.net/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html</link>
+      <pubDate>Sun, 16 May 2021 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Migrating my IMDb ratings list and watch list into org-mode</title>
       <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
       <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>

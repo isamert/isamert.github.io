@@ -41,5 +41,11 @@
       <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>Dealing with APIs, JSONs and databases in org-mode</title>
+      <link>https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html</link>
+      <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

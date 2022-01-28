@@ -33,7 +33,7 @@
 
           <ul>
             <li>Published at <em>2021-04-21</em></li>
-            <li>Last updated at <em>2021-04-21</em></li>
+            <li>Last updated at <em>2022-01-29</em></li>
           </ul>
         </div>
 
@@ -95,6 +95,7 @@ I simply create <code>.vcf</code> file, a format that most of the <i>contacts ap
      (lambda ()
        (string-join
         `("BEGIN:VCARD\nVERSION:2.1\n"
+          ,(format "UID:urn:uuid:%s\n" (org-id-get nil t))
           ,(isamert/build-contact-item "FN:%s" "ITEM")
           ,(isamert/build-contact-item "TEL;CELL:%s" "PHONE")
           ,(isamert/build-contact-item "EMAIL:%s" "EMAIL")
@@ -172,6 +173,7 @@ Don't forget to point <code>find-file-noselect</code> to your <code>people.org</
 <div class="outline-text-2" id="text-appendix">
 <ul class="org-ul">
 <li><a href="https://www.reddit.com/r/orgmode/comments/mvabze/managing_your_contacts_in_orgmode_and_syncing/">Reddit discussion</a></li>
+<li><span class="timestamp-wrapper"><span class="timestamp">[2022-01-29 Sat] </span></span> Added <code>UID</code> section to entries so that when you re-import your contacts after an update to the vcf file, already-existing contacts won't get duplicated.</li>
 </ul>
 </div>
 </div>

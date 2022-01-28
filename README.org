@@ -2862,7 +2862,7 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 * Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever) :emacs:org:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-04-21 Wed]
-:UPDATE_DATE: [2021-04-21 Wed]
+:UPDATE_DATE: [2022-01-29 Sat]
 :OPTIONS: toc:nil
 :CUSTOM_ID: managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-
 :END:
@@ -2912,6 +2912,7 @@ I simply create =.vcf= file, a format that most of the /contacts apps/ that are 
        (lambda ()
          (string-join
           `("BEGIN:VCARD\nVERSION:2.1\n"
+            ,(format "UID:urn:uuid:%s\n" (org-id-get nil t))
             ,(isamert/build-contact-item "FN:%s" "ITEM")
             ,(isamert/build-contact-item "TEL;CELL:%s" "PHONE")
             ,(isamert/build-contact-item "EMAIL:%s" "EMAIL")
@@ -2974,6 +2975,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
 :CUSTOM_ID: appendix
 :END:
 - [[https://www.reddit.com/r/orgmode/comments/mvabze/managing_your_contacts_in_orgmode_and_syncing/][Reddit discussion]]
+- [2022-01-29 Sat] Added ~UID~ section to entries so that when you re-import your contacts after an update to the vcf file, already-existing contacts won't get duplicated.
 
 * Migrating my IMDb ratings list and watch list into org-mode :emacs:org:cli:
 :PROPERTIES:

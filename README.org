@@ -615,6 +615,7 @@ Here are some cool stuff that you can check out:
 :PROPERTIES:
 :CUSTOM_ID: turkce-yazilar-turkish-posts-
 :END:
+- [[./2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html][Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması]]
 - [[./2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html][Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs]]
 - [[./2021/01/31/emacs-te-turkce-imla-denetimi.html][Emacs'te Türkçe imla denetimi]]
 
@@ -3353,6 +3354,22 @@ Our executer function example is for ~json-mode~, an already-existing major mode
 
 You can turn any REPL/CLI tool into a language that can be executed right inside an org-mode document. This brings you the benefit of having interactive notes. Your learning environment and testing environment would be same and this let's you progress quicker. I even do production troubleshooting inside org-mode documents, so that at the end of the day I have a clear document that shows exact runnable steps to solve a problem.
 
+* Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması :turkish:micro:
+:PROPERTIES:
+:PUBLISH_DATE: [2022-03-02 Wed]
+:UPDATE_DATE: [2022-03-02 Wed]
+:CUSTOM_ID: duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi
+:END:
+
+Görünüşe göre az da olsa RSS takipçilerim var ve belki aralarından bazıları Türkçe okuyabiliyordur:
+
+Her şeyi Emacs'e taşıma hastalığımın sonucu olarak bir akşamüstü yazdığım birkaç fonksiyondan oluşan [[https://github.com/isamert/sozluk.el][sozluk.el]], ~sozluk.gov.tr~ ve ~etimolojiturkce.com~ API'larını kullanarak çalışan bir sözlük paketi. Sonuçlarını güzelce formatlanmış bir org-mode buffer'ında gösteriyor. README dosyasında çeşitli demo gif'leri bulunmakta. İlgilenenlere duyurulur.
+
+#+ATTR_HTML: :src /images/sozluk_el.gif :class centered
+[[file:docs/images/sozluk_el.gif]]
+
+API'ların kullanım hakları ile alakalı bahsi geçen sitelerde herhangi bir bilgilendirme bulunmuyor. Sadece 3-5 kişinin kullanacağı bu paketten ötürü de üzerime geleceklerini sanmıyorum fakat herhangi bir uyarı almam neticesinde muhtemelen yayından kaldıracağım bir paket olacak.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp
@@ -3601,6 +3618,8 @@ You can turn any REPL/CLI tool into a language that can be executed right inside
          (s-replace "(" "-")
          (s-replace ")" "-")
          (s-replace "=" "-")
+         (s-replace ":" "-")
+         (s-replace "." "-")
          (s-replace " " "-")
          (s-replace "---" "-")
          (s-replace "--" "-")

@@ -3,6 +3,7 @@
 #+EMAIL: isamert@protonmail.com
 #+STARTUP: overview
 #+OPTIONS: html-style:nil num:nil H:4
+#+LINK: gh https://github.com/isamert/%s
 
 * Introduction :noexport:
 This is a very simple static site/blog generator (and my blog itself) for Emacs and org-mode.
@@ -653,11 +654,80 @@ In no specific order:
 :OPTIONS: toc:nil
 :PUBLISH_DATE: [2021-04-07 Wed]
 :END:
-
-I'm Isa and this page is *WIP*. Meanwhile, check out the following:
+** About me
+:PROPERTIES:
+:CUSTOM_ID: about-me
+:END:
+I am a software developer, living in Istanbul. I write and publish all of my work as free/libre software. Here are a few links for you to get me know better:
 
 - [[./resume.html][My resume]]
 - [[https://github.com/isamert][My GitHub profile]]
+
+** About this web site
+:PROPERTIES:
+:CUSTOM_ID: about-this-web-site
+:END:
+I generally write on technical topics like programming languages, algorithms and mostly on workflow automatization, [[https://isamert.net/tags/cli.html][command line applications]], [[https://isamert.net/tags/linux.html][GNU/Linux]], [[https://isamert.net/tags/emacs.html][Emacs]] and [[https://isamert.net/tags/org.html][org-mode]]. I try to publish /somewhat longer/ posts with some /substance/ but lately I've been trying to get in the habit of posting occasional tidbits, snippets, small tips and tricks wh→
+
+I have other planned things for this web site, like the one I just mentioned above. Other than that I'm planning to add some pages containing stuff like:
+- Interactive list of movies/books/articles I have read and rated. Maybe along with some commentary.
+- Computer programs that I use, my use cases links to my configurations (I already have a [[https://github.com/isamert/dotfiles][dotfiles]] repo but I want to move the contents here)
+- Constantly updated everyday life tips, rule of thumbs etc.
+- List of low tech (or high tech too) gadgets that I use and find helpful.
+
+I have been gathering information on these topics but I need to find a way to represent them in my website and also need to go over my notes and rephrase them for public consumption.
+
+** My projects
+:PROPERTIES:
+:CUSTOM_ID: my-projects
+:END:
+I maintain a few projects and occasionally contribute to other free software projects. Following list may be incomplete (please take a look at my  [[https://github.com/isamert][my GitHub profile]] if you want to see my dead/half-baked projects) but here are the projects that I've been working on:
+
+*** Command line applications
+:PROPERTIES:
+:CUSTOM_ID: command-line-applications
+:END:
+- [[gh:scli][scli]] :: A TUI application that let's you use [[https://signal.org/][Signal]] from command line. Now it is mostly (99% percent) maintained by [[https://github.com/exquo][@exquo]].
+- [[gh:jaro][jaro]] :: A resource opener with a DSL, alternative to ~xdg-open~. It let's you specify highly complex use-cases in a very simple form for opening your resources exactly as you want.
+- [[gh:marks][marks]] :: A grep-like tool (or more like a search engine) for Markdown and Org mode documents. Development is slow but I will return to this project whenever I have a bit more spare time.
+
+*** Emacs related projects
+:PROPERTIES:
+:CUSTOM_ID: emacs-related-projects
+:END:
+- [[gh:empv.el][empv.el]] :: An Emacs media player, media library manager, radio player and YouTube frontend.
+- [[gh:orgmdb.el][orgmdb.el]] :: An Emacs/org-mode watchlist manager and OMDb API client.
+- [[gh:jsdoc.el][jsdoc.el]] :: An helper for inserting JSDoc comments easily within Emacs.
+- [[gh:couchbase-query.el][couchbase-query.el]] :: Inferior mode for ~cbq~
+- [[gh:sozluk.el][sozluk.el]] :: Online Turkish dictionary. Shows the results in a nicely formatted org mode buffer.
+
+*** Experimental projects
+:PROPERTIES:
+:CUSTOM_ID: experimental-projects
+:END:
+- [[gh:scheme.rs][scheme.rs]] :: An experimental scheme interpreter written in Rust. This project came into life in an attempt to learn Rust and a bit about interpreters. There is also an online WebAssembly version published by [[https://parkellipsen.de/][Niklas Reppel]], check it out [[https://parkellipsen.de/scheme/][here]].
+- [[gh:techne][techne]] :: Another attempt at learning compilers/interpreters. This time I went ahead and designed my language. It has a mix of ML-style and C-style syntax. It has couple of interesting +and novel ideas+ (it turns out those ideas are already implemented by Scala, Clojure and D lang but I guess it is first language that brings them together.) I still plan to work on this and make it at least usable for real-life scripting.
+
+*** Other projects
+:PROPERTIES:
+:CUSTOM_ID: other-projects
+:END:
+- [[https://github.com/isamert/isamert.github.io][isamert.net]] :: This web site itself. It's simply one file that contains the all website contents, the code that generates the static file based on the contents and the documentation of the generator. It can be abstracted away in a sense that it can be an Emacs web site generator package but you can also copy the file into an org-mode buffer and start using it.
+- [[https://github.com/isamert/dotfiles][dotfiles]] :: All of the configurations for the programs that I use and lot's of automation code. There are some modules that I want to turn into separate Emacs packages, like:
+  - A ~completing-read~ based GitLab interface for creating/listing/acting upon merge requests, cloning/managing projects.
+  - A ~completing-read~ based Jira interface for creating/listing/managing tickets.
+  - A contact manager based on org-mode. I have a blog post about this here: [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]].
+  - Other smaller stuff.
+
+** Contact
+:PROPERTIES:
+:CUSTOM_ID: contact
+:END:
+Please do :). I'm a little bit slow in terms of responding but I always do. You can email me regarding any subject that you think I'll be interested and I'll get back to you.
+
+If you are interested with my projects and want to contribute/maintain, please don't hesitate to contact as I am pretty willing to accept contributions or even share/defer the maintenance.
+
+isamertgurbuz at gmail dot com
 
 * My projects :page:
 :PROPERTIES:

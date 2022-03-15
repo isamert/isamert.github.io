@@ -585,6 +585,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2022/03/16/global-interactive-emacs-functions.html][Global interactive Emacs functions]]
 - [[./2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html][Dealing with APIs, JSONs and databases in org-mode]]
 - [[./2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html][Migrating my IMDb ratings list and watch list into org-mode]]
 - [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]]
@@ -3439,6 +3440,128 @@ Her şeyi Emacs'e taşıma hastalığımın sonucu olarak bir akşamüstü yazd�
 [[file:docs/images/sozluk_el.gif]]
 
 API'ların kullanım hakları ile alakalı bahsi geçen sitelerde herhangi bir bilgilendirme bulunmuyor. Sadece 3-5 kişinin kullanacağı bu paketten ötürü de üzerime geleceklerini sanmıyorum fakat herhangi bir uyarı almam neticesinde muhtemelen yayından kaldıracağım bir paket olacak.
+
+* Global interactive Emacs functions :emacs:
+:PROPERTIES:
+:PUBLISH_DATE: [2022-03-16 Wed]
+:UPDATE_DATE: [2022-03-16 Wed]
+:CUSTOM_ID: global-interactive-emacs-functions
+:END:
+While I spend a good chunk of my days staring at an Emacs window, sometimes I (unfortunately) need to switch to other applications. If I want to call an Emacs function, I need to return back to Emacs, call the command and go back on what I was working. While sometimes justifiable, this is too much work if you are doing this frequently. You can utilize ~emacsclient~ for situations like this. Start Emacs as a daemon or call ~(server-start)~ after starting Emacs. Now you can do this:
+
+#+begin_src sh
+  emacsclient --eval "(arbitrary-elisp-code)"
+#+end_src
+
+It'll simply execute the elisp code you've just supplied. Using a tool like [[https://github.com/baskerville/sxhkd][sxhkd]], you can bind any key to this command and call it outside of the Emacs window without a problem. This is fine if your command does not require user interaction. For example, I use [[gh:empv.el][empv]] to consume multimedia. I can bind the following command to a global key to get a basic pause/resume functionality outside of the Emacs:
+
+#+begin_src sh
+  emacsclient --eval "(empv-toggle)"
+#+end_src
+
+For interactive commands, you need to switch to an Emacs window (or spawn a new one) and call the command. While there is no way around this for certain complex commands, we can do better for simpler ones. Let's take ~(empv-play-radio)~ command as an example. It shows a list of radio channels through ~completing-read~, expects you to select one and it'll start playing the selected one. Switching to Emacs window just to select a radio channel is too much and the following will not help much, as it will jus→
+
+#+begin_src sh
+  emacsclient --eval "(empv-play-radio)"
+#+end_src
+
+But the following will show the radio channels using [[https://github.com/davatorium/rofi][rofi]] (or [[https://github.com/chipsenkbeil/choose][choose]], if you are on macOS) in wherever you've called it:
+
+#+begin_src sh
+  emacsclient --eval "(isamert/globally (empv-play-radio))"
+#+end_src
+
+Here is how the command looks like without wrapping it with ~(isamert/globally)~:
+
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_default.png :class centered
+[[file:docs/images/emacs_global_interactive_fun_default.png]]
+
+Here is how it looks when you wrap it with ~(isamert/globally ...)~, using default rofi config:
+
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun.png :class centered
+[[file:docs/images/emacs_global_interactive_fun.png]]
+
+~isamert/globally~ is a pretty simple macro that overrides ~completing-read-function~ for the current running context.
+
+#+begin_src elisp
+  (defmacro isamert/globally (&rest body)
+    `(let ((completing-read-function #'isamert/dmenu))
+       ,@body))
+#+end_src
+
+~isamert/dmenu~ is a little bit more complex but what it essentially does is that it acts like ~completing-read~ but uses system-level tools like rofi or choose to do that and it returns selected thing just as default ~completing-read~ does.
+
+#+begin_src elisp
+  (defun isamert/dmenu (prompt items &rest ignored)
+    "Like `completing-read' but instead use dmenu.
+  Useful for system-wide scripts."
+    (with-temp-buffer
+      (thread-first
+        (cond
+         ((functionp items)
+          (funcall items "" nil t))
+         ((listp (car items))
+          (mapcar #'car items))
+         (t
+          items))
+        (string-join "\n")
+        string-trim
+        insert)
+      (shell-command-on-region
+       (point-min)
+       (point-max)
+       (pcase system-type
+         ('gnu/linux (format "rofi -dmenu -fuzzy -i -p '%s'" prompt))
+         ('darwin "choose"))
+       nil t "*isamert/dmenu error*" nil)
+      (string-trim (buffer-string))))
+#+end_src
+
+While it is easy to implement this for ~completing-read~ (because it uses a variable called ~completing-read-function~ to do the real lifting), it is not that easy to convert a function like ~read-string~ to a global one that works outside of Emacs. But we can still do something. Let's make ~isamert/globally~ support ~read-string~ too.
+
+First I'm just going to define our system level ~read-string~ alternative:
+
+#+begin_src elisp
+  (defun isamert/system-read-string (prompt)
+    "Like `read-string' but use an Emacs independent system level app
+  to get user input. You need to install `zenity'."
+    (string-trim
+     (shell-command-to-string
+      (format "zenity --entry --text='%s'" prompt))))
+#+end_src
+
+Then I'm going to add an around advice to ~read-string~:
+
+#+begin_src elisp
+  (defvar isamert/defer-to-system-app nil)
+
+  (define-advice read-string (:around (orig-fun prompt &rest args) defer-to-system-app)
+    "Run read-string on system-level when `isamert/defer-to-system-app` is non-nil."
+    (if isamert/defer-to-system-app
+        (isamert/system-read-string prompt)
+      (apply orig-fun prompt args)))
+#+end_src
+
+With this advice, ~read-string~ will use ~isamert/system-read-string~ to get the user input when the variable ~isamert/defer-to-system-app~ is non-nil. We set this variable to ~nil~ by default so that none of our functions that uses ~read-string~ is effected by this chance. Now, the last part:
+
+#+begin_src elisp
+  (defmacro isamert/globally (&rest body)
+    `(let ((completing-read-function #'isamert/dmenu)
+           (isamert/defer-to-system-app t))
+       ,@body))
+#+end_src
+
+We updated ~isamert/globally~ to set ~isamert/defer-to-system-app~ to ~t~ for the current running context. This way the advice we added to ~read-string~ kicks in and changes the default behavior with our ~isamert/system-read-string~ function.
+
+Just to make this concrete, here is how it looks:
+
+#+ATTR_ORG: :width 400
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_read_string.png :class centered
+[[file:docs/images/emacs_global_interactive_fun_read_string.png]]
+
+Now, if you want to extend ~isamert/globally~, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the ~isamert/defer-to-system-app~ variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful to →
+
+Let me know if this seems useful or if you have an improvement over what I described above, I would love to hear more use cases for this!
 
 * Publish Code :noexport:
 #+NAME: startup

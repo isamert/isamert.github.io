@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<head>
+  <title>Global interactive Emacs functions | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Global interactive Emacs functions</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2022-03-16</em></li>
+            <li>Last updated at <em>2022-03-16</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+While I spend a good chunk of my days staring at an Emacs window, sometimes I (unfortunately) need to switch to other applications. If I want to call an Emacs function, I need to return back to Emacs, call the command and go back on what I was working. While sometimes justifiable, this is too much work if you are doing this frequently. You can utilize <code>emacsclient</code> for situations like this. Start Emacs as a daemon or call <code>(server-start)</code> after starting Emacs. Now you can do this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">emacsclient --eval "(arbitrary-elisp-code)"
+</pre>
+</div>
+
+<p>
+It'll simply execute the elisp code you've just supplied. Using a tool like <a href="https://github.com/baskerville/sxhkd">sxhkd</a>, you can bind any key to this command and call it outside of the Emacs window without a problem. This is fine if your command does not require user interaction. For example, I use <a href="https://github.com/isamert/empv.el">empv</a> to consume multimedia. I can bind the following command to a global key to get a basic pause/resume functionality outside of the Emacs:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">emacsclient --eval "(empv-toggle)"
+</pre>
+</div>
+
+<p>
+For interactive commands, you need to switch to an Emacs window (or spawn a new one) and call the command. While there is no way around this for certain complex commands, we can do better for simpler ones. Let's take <code>(empv-play-radio)</code> command as an example. It shows a list of radio channels through <code>completing-read</code>, expects you to select one and it'll start playing the selected one. Switching to Emacs window just to select a radio channel is too much and the following will not help much, as it will just show the completing read interface on an already existing Emacs window:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">emacsclient --eval "(empv-play-radio)"
+</pre>
+</div>
+
+<p>
+But the following will show the radio channels using <a href="https://github.com/davatorium/rofi">rofi</a> (or <a href="https://github.com/chipsenkbeil/choose">choose</a>, if you are on macOS) in wherever you've called it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">emacsclient --eval "(isamert/globally (empv-play-radio))"
+</pre>
+</div>
+
+<p>
+Here is how the command looks like without wrapping it with <code>(isamert/globally)</code>:
+</p>
+
+
+<div id="org723910c" class="figure">
+<p><img src="/images/emacs_global_interactive_fun_default.png" alt="emacs_global_interactive_fun_default.png" class="centered" />
+</p>
+</div>
+
+<p>
+Here is how it looks when you wrap it with <code>(isamert/globally ...)</code>, using default rofi config:
+</p>
+
+
+<div id="orga57f1cf" class="figure">
+<p><img src="/images/emacs_global_interactive_fun.png" alt="emacs_global_interactive_fun.png" class="centered" />
+</p>
+</div>
+
+<p>
+<code>isamert/globally</code> is a pretty simple macro that overrides <code>completing-read-function</code> for the current running context.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defmacro isamert/globally (&amp;rest body)
+  `(let ((completing-read-function #'isamert/dmenu))
+     ,@body))
+</pre>
+</div>
+
+<p>
+<code>isamert/dmenu</code> is a little bit more complex but what it essentially does is that it acts like <code>completing-read</code> but uses system-level tools like rofi or choose to do that and it returns selected thing just as default <code>completing-read</code> does.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun isamert/dmenu (prompt items &amp;rest ignored)
+  "Like `completing-read' but instead use dmenu.
+Useful for system-wide scripts."
+  (with-temp-buffer
+    (thread-first
+      (cond
+       ((functionp items)
+        (funcall items "" nil t))
+       ((listp (car items))
+        (mapcar #'car items))
+       (t
+        items))
+      (string-join "\n")
+      string-trim
+      insert)
+    (shell-command-on-region
+     (point-min)
+     (point-max)
+     (pcase system-type
+       ('gnu/linux (format "rofi -dmenu -fuzzy -i -p '%s'" prompt))
+       ('darwin "choose"))
+     nil t "*isamert/dmenu error*" nil)
+    (string-trim (buffer-string))))
+</pre>
+</div>
+
+<p>
+While it is easy to implement this for <code>completing-read</code> (because it uses a variable called <code>completing-read-function</code> to do the real lifting), it is not that easy to convert a function like <code>read-string</code> to a global one that works outside of Emacs. But we can still do something. Let's make <code>isamert/globally</code> support <code>read-string</code> too.
+</p>
+
+<p>
+First I'm just going to define our system level <code>read-string</code> alternative:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun isamert/system-read-string (prompt)
+  "Like `read-string' but use an Emacs independent system level app
+to get user input. You need to install `zenity'."
+  (string-trim
+   (shell-command-to-string
+    (format "zenity --entry --text='%s'" prompt))))
+</pre>
+</div>
+
+<p>
+Then I'm going to add an around advice to <code>read-string</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defvar isamert/defer-to-system-app nil)
+
+(define-advice read-string (:around (orig-fun prompt &amp;rest args) defer-to-system-app)
+  "Run read-string on system-level when `isamert/defer-to-system-app` is non-nil."
+  (if isamert/defer-to-system-app
+      (isamert/system-read-string prompt)
+    (apply orig-fun prompt args)))
+</pre>
+</div>
+
+<p>
+With this advice, <code>read-string</code> will use <code>isamert/system-read-string</code> to get the user input when the variable <code>isamert/defer-to-system-app</code> is non-nil. We set this variable to <code>nil</code> by default so that none of our functions that uses <code>read-string</code> is effected by this chance. Now, the last part:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defmacro isamert/globally (&amp;rest body)
+  `(let ((completing-read-function #'isamert/dmenu)
+         (isamert/defer-to-system-app t))
+     ,@body))
+</pre>
+</div>
+
+<p>
+We updated <code>isamert/globally</code> to set <code>isamert/defer-to-system-app</code> to <code>t</code> for the current running context. This way the advice we added to <code>read-string</code> kicks in and changes the default behavior with our <code>isamert/system-read-string</code> function.
+</p>
+
+<p>
+Just to make this concrete, here is how it looks:
+</p>
+
+
+<div id="orgaefba0c" class="figure">
+<p><img src="/images/emacs_global_interactive_fun_read_string.png" alt="emacs_global_interactive_fun_read_string.png" class="centered" />
+</p>
+</div>
+
+<p>
+Now, if you want to extend <code>isamert/globally</code>, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the <code>isamert/defer-to-system-app</code> variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful to many, I can turn it into a package but right now my use case is already limited to using this functionality for my custom password manager and multimedia management.
+</p>
+
+<p>
+Let me know if this seems useful or if you have an improvement over what I described above, I would love to hear more use cases for this!
+</p>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      
+          <span>
+            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+          </span>
+        </p>
+      </footer>
+  </body>

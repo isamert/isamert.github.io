@@ -668,7 +668,7 @@ I am a software developer, living in Istanbul. I write and publish all of my wor
 :PROPERTIES:
 :CUSTOM_ID: about-this-web-site
 :END:
-I generally write on technical topics like programming languages, algorithms and mostly on workflow automatization, [[https://isamert.net/tags/cli.html][command line applications]], [[https://isamert.net/tags/linux.html][GNU/Linux]], [[https://isamert.net/tags/emacs.html][Emacs]] and [[https://isamert.net/tags/org.html][org-mode]]. I try to publish /somewhat longer/ posts with some /substance/ but lately I've been trying to get in the habit of posting occasional tidbits, snippets, small tips and tricks wh→
+I generally write on technical topics like programming languages, algorithms and mostly on workflow automatization, [[https://isamert.net/tags/cli.html][command line applications]], [[https://isamert.net/tags/linux.html][GNU/Linux]], [[https://isamert.net/tags/emacs.html][Emacs]] and [[https://isamert.net/tags/org.html][org-mode]]. I try to publish /somewhat longer/ posts with some /substance/ but lately I've been trying to get in the habit of posting occasional tidbits, snippets, small tips and tricks which I appreciate when I see these kinds of posts in other blogs. I also want to curate other blogs or links that I find useful somewhere here, someday soon.
 
 I have other planned things for this web site, like the one I just mentioned above. Other than that I'm planning to add some pages containing stuff like:
 - Interactive list of movies/books/articles I have read and rated. Maybe along with some commentary.
@@ -3459,7 +3459,7 @@ It'll simply execute the elisp code you've just supplied. Using a tool like [[ht
   emacsclient --eval "(empv-toggle)"
 #+end_src
 
-For interactive commands, you need to switch to an Emacs window (or spawn a new one) and call the command. While there is no way around this for certain complex commands, we can do better for simpler ones. Let's take ~(empv-play-radio)~ command as an example. It shows a list of radio channels through ~completing-read~, expects you to select one and it'll start playing the selected one. Switching to Emacs window just to select a radio channel is too much and the following will not help much, as it will jus→
+For interactive commands, you need to switch to an Emacs window (or spawn a new one) and call the command. While there is no way around this for certain complex commands, we can do better for simpler ones. Let's take ~(empv-play-radio)~ command as an example. It shows a list of radio channels through ~completing-read~, expects you to select one and it'll start playing the selected one. Switching to Emacs window just to select a radio channel is too much and the following will not help much, as it will just show the completing-read interface on an already existing Emacs window:
 
 #+begin_src sh
   emacsclient --eval "(empv-play-radio)"
@@ -3473,13 +3473,21 @@ But the following will show the radio channels using [[https://github.com/davato
 
 Here is how the command looks like without wrapping it with ~(isamert/globally)~:
 
+#+ATTR_ORG: :width 400
 #+ATTR_HTML: :src /images/emacs_global_interactive_fun_default.png :class centered
 [[file:docs/images/emacs_global_interactive_fun_default.png]]
 
 Here is how it looks when you wrap it with ~(isamert/globally ...)~, using default rofi config:
 
+#+ATTR_ORG: :width 400
 #+ATTR_HTML: :src /images/emacs_global_interactive_fun.png :class centered
 [[file:docs/images/emacs_global_interactive_fun.png]]
+
+This is how it looks like on macOS with choose:
+
+#+ATTR_ORG: :width 400
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_choose.png :class centered
+[[file:docs/images/emacs_global_interactive_fun_choose.png]]
 
 ~isamert/globally~ is a pretty simple macro that overrides ~completing-read-function~ for the current running context.
 
@@ -3559,7 +3567,7 @@ Just to make this concrete, here is how it looks:
 #+ATTR_HTML: :src /images/emacs_global_interactive_fun_read_string.png :class centered
 [[file:docs/images/emacs_global_interactive_fun_read_string.png]]
 
-Now, if you want to extend ~isamert/globally~, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the ~isamert/defer-to-system-app~ variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful to →
+Now, if you want to extend ~isamert/globally~, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the ~isamert/defer-to-system-app~ variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful, I can turn it into a package. Currently I use it with /empv.el/, my custom password manager, and for interactively selecting inserting my [[https://github.com/Kungsgeten/yankpad/][yankpad]] snippets to other programs.
 
 Let me know if this seems useful or if you have an improvement over what I described above, I would love to hear more use cases for this!
 

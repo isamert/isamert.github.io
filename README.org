@@ -585,6 +585,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html][Typing (unicode) characters programmatically on Linux and macOS]]
 - [[./2022/03/16/global-interactive-emacs-functions.html][Global interactive Emacs functions]]
 - [[./2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html][Dealing with APIs, JSONs and databases in org-mode]]
 - [[./2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html][Migrating my IMDb ratings list and watch list into org-mode]]
@@ -3570,6 +3571,93 @@ Just to make this concrete, here is how it looks:
 Now, if you want to extend ~isamert/globally~, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the ~isamert/defer-to-system-app~ variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful, I can turn it into a package. Currently I use it with /empv.el/, my custom password manager, and for interactively selecting inserting my [[https://github.com/Kungsgeten/yankpad/][yankpad]] snippets to other programs.
 
 Let me know if this seems useful or if you have an improvement over what I described above, I would love to hear more use cases for this!
+
+* Typing (unicode) characters programmatically on Linux and macOS :linux:keyboards:micro:macos:
+:PROPERTIES:
+:CUSTOM_ID: typing-unicode-characters-programmatically-on-linux-and-macos
+:PUBLISH_DATE: [2022-08-12 Fri]
+:UPDATE_DATE: [2022-08-12 Fri]
+:END:
+I've been using [[https://github.com/kmonad/kmonad][KMonad]] on my Linux boxes and on my Mac machine which I do use for work. KMonad is currently the best solution to have a consistent keyboard remapping across different operating systems and different keyboard types/layouts. It's not very well explained, but you can check out [[https://github.com/isamert/dotfiles/blob/master/index.org#kmonad][my KMonad configuration]] here.
+
+One thing I also utilize KMonad for is typing unicode characters. I use them while coding or even casually messaging with people. They are more expressive and better looking. The usual way of inserting unicode characters is using the /compose key/ on your operating system. KMonad also utilizes it, take a look at [[https://github.com/kmonad/kmonad/blob/master/doc/faq.md#q-how-does-unicode-entry-work][here]] to learn more about it. I don't use this approach because it's janky and limiting:
+
+- It's complicated. You need to generate a file with compositions a priori and need to configure KMonad based on that.
+- It does not work reliably for me.
+- It does not work on Mac.
+
+My solution is to use an external program to type for me. For example on X11 systems, you can use ~xdotool~ to write a character or multiple characters for you:
+
+#+begin_src sh
+  xdotool type "qwe"
+#+end_src
+
+When you run this, it literally behaves like you hit ~q~, ~w~ and ~e~ on your keyboard. But ~xdotool~ is also not reliable when it comes to typing unicode characters. Most reliable and extendable solution I found is described in this [[https://superuser.com/questions/1407480/how-to-insert-arbitrary-unicode-characters-in-kde-keyboard-shorctuts-send-keybo/1669624#1669624][post]]. [[https://github.com/moses-palmer/pynput][pynput]] is great and it works! I created this script based on the answer I linked:
+
+#+begin_src python
+  #!/usr/bin/env python
+
+  import sys
+  from pynput.keyboard import Controller
+
+  Controller().type(' '.join(sys.argv[1:]))
+#+end_src
+
+Save it into a file named ~xtype~ and you can do the following:
+
+#+begin_src sh
+  xtype "λ"
+#+end_src
+
+...and it will properly type "λ". It also works quite fine on Mac but I found it a bit slower. So here is a faster solution for Mac (which I simply copied from [[https://apple.stackexchange.com/questions/288536/is-it-possible-to-keystroke-special-characters-in-applescript/289046#289046][here]] but simplified the compiling process a bit for you):
+
+#+begin_src c
+  #import <Foundation/Foundation.h>
+
+  int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+      if (argc > 1) {
+        NSString *theString = [NSString stringWithUTF8String:argv[1]];
+        NSUInteger len = [theString length];
+        NSUInteger n, i = 0;
+        CGEventRef keyEvent = CGEventCreateKeyboardEvent(nil, 0, true);
+        unichar uChars[20];
+        while (i < len) {
+          n = i + 20;
+          if (n>len){n=len;}
+          [theString getCharacters:uChars range:NSMakeRange(i, n-i)];
+          CGEventKeyboardSetUnicodeString(keyEvent, n-i, uChars);
+          CGEventPost(kCGHIDEventTap, keyEvent); // key down
+          CGEventSetType(keyEvent, kCGEventKeyUp);
+          CGEventPost(kCGHIDEventTap, keyEvent); // key up (type 20 characters maximum)
+          CGEventSetType(keyEvent, kCGEventKeyDown);
+          i = n;
+          [NSThread sleepForTimeInterval:0.004]; // wait 4/1000 of second, 0.002 it's OK on my computer, I use 0.004 to be safe, increase it If you still have issues
+        }
+        CFRelease(keyEvent);
+      }
+    }
+    return 0;
+  }
+#+end_src
+
+Save this into a file named ~xtype.m~ and compile it with the following command:
+
+#+begin_src sh
+  clang -framework Foundation -framework ApplicationServices xtype.m -l objc -o xtype
+#+end_src
+
+Now, again, you can do:
+
+#+begin_src sh
+  xtype "λ"
+#+end_src
+
+...and it will properly type "λ", but a bit faster this time. This might be a bit overkill, you can still make use of ~pynput~ on Mac and call it a day.
+
+Now you can use this ~xtype~ command on KMonad (see the [[https://github.com/kmonad/kmonad/blob/master/keymap/tutorial.kbd][tutorial.kbd]] to learn about running commands with ~(cmd-button "...")~), or using your keybinding manger like [[https://github.com/baskerville/sxhkd][sxhkd]] etc.
+
+Unfortunately, ~pynput~ does not work on a pure Wayland session at the moment but there is an [[https://github.com/moses-palmer/pynput/issues/331][issue]] about it that you can track. Meanwhile, you can try [[https://github.com/atx/wtype][wtype]] instead. It works with unicode characters, as stated in the README but this tool does not work on GNOME or KDE Wayland sessions. I haven't been able to find a good solution for Wayland but that is the situation for quite a lot of things in Wayland, at least for now.
 
 * Publish Code :noexport:
 #+NAME: startup

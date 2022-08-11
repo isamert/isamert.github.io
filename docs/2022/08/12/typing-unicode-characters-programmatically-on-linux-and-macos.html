@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<head>
+  <title>Typing (unicode) characters programmatically on Linux and macOS | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Typing (unicode) characters programmatically on Linux and macOS</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/linux.html" class="tag-link">linux</a>, <a href="/tags/keyboards.html" class="tag-link">keyboards</a>, <a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/macos.html" class="tag-link">macos</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2022-08-12</em></li>
+            <li>Last updated at <em>2022-08-12</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+I've been using <a href="https://github.com/kmonad/kmonad">KMonad</a> on my Linux boxes and on my Mac machine which I do use for work. KMonad is currently the best solution to have a consistent keyboard remapping across different operating systems and different keyboard types/layouts. It's not very well explained, but you can check out <a href="https://github.com/isamert/dotfiles/blob/master/index.org#kmonad">my KMonad configuration</a> here.
+</p>
+
+<p>
+One thing I also utilize KMonad for is typing unicode characters. I use them while coding or even casually messaging with people. They are more expressive and better looking. The usual way of inserting unicode characters is using the <i>compose key</i> on your operating system. KMonad also utilizes it, take a look at <a href="https://github.com/kmonad/kmonad/blob/master/doc/faq.md#q-how-does-unicode-entry-work">here</a> to learn more about it. I don't use this approach because it's janky and limiting:
+</p>
+
+<ul class="org-ul">
+<li>It's complicated. You need to generate a file with compositions a priori and need to configure KMonad based on that.</li>
+<li>It does not work reliably for me.</li>
+<li>It does not work on Mac.</li>
+</ul>
+
+<p>
+My solution is to use an external program to type for me. For example on X11 systems, you can use <code>xdotool</code> to write a character or multiple characters for you:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">xdotool type "qwe"
+</pre>
+</div>
+
+<p>
+When you run this, it literally behaves like you hit <code>q</code>, <code>w</code> and <code>e</code> on your keyboard. But <code>xdotool</code> is also not reliable when it comes to typing unicode characters. Most reliable and extendable solution I found is described in this <a href="https://superuser.com/questions/1407480/how-to-insert-arbitrary-unicode-characters-in-kde-keyboard-shorctuts-send-keybo/1669624#1669624">post</a>. <a href="https://github.com/moses-palmer/pynput">pynput</a> is great and it works! I created this script based on the answer I linked:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">#!/usr/bin/env python
+
+import sys
+from pynput.keyboard import Controller
+
+Controller().type(' '.join(sys.argv[1:]))
+</pre>
+</div>
+
+<p>
+Save it into a file named <code>xtype</code> and you can do the following:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">xtype "λ"
+</pre>
+</div>
+
+<p>
+&#x2026;and it will properly type "λ". It also works quite fine on Mac but I found it a bit slower. So here is a faster solution for Mac (which I simply copied from <a href="https://apple.stackexchange.com/questions/288536/is-it-possible-to-keystroke-special-characters-in-applescript/289046#289046">here</a> but simplified the compiling process a bit for you):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">#import &lt;Foundation/Foundation.h&gt;
+
+int main(int argc, const char * argv[]) {
+  @autoreleasepool {
+    if (argc &gt; 1) {
+      NSString *theString = [NSString stringWithUTF8String:argv[1]];
+      NSUInteger len = [theString length];
+      NSUInteger n, i = 0;
+      CGEventRef keyEvent = CGEventCreateKeyboardEvent(nil, 0, true);
+      unichar uChars[20];
+      while (i &lt; len) {
+        n = i + 20;
+        if (n&gt;len){n=len;}
+        [theString getCharacters:uChars range:NSMakeRange(i, n-i)];
+        CGEventKeyboardSetUnicodeString(keyEvent, n-i, uChars);
+        CGEventPost(kCGHIDEventTap, keyEvent); // key down
+        CGEventSetType(keyEvent, kCGEventKeyUp);
+        CGEventPost(kCGHIDEventTap, keyEvent); // key up (type 20 characters maximum)
+        CGEventSetType(keyEvent, kCGEventKeyDown);
+        i = n;
+        [NSThread sleepForTimeInterval:0.004]; // wait 4/1000 of second, 0.002 it's OK on my computer, I use 0.004 to be safe, increase it If you still have issues
+      }
+      CFRelease(keyEvent);
+    }
+  }
+  return 0;
+}
+</pre>
+</div>
+
+<p>
+Save this into a file named <code>xtype.m</code> and compile it with the following command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">clang -framework Foundation -framework ApplicationServices xtype.m -l objc -o xtype
+</pre>
+</div>
+
+<p>
+Now, again, you can do:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">xtype "λ"
+</pre>
+</div>
+
+<p>
+&#x2026;and it will properly type "λ", but a bit faster this time. This might be a bit overkill, you can still make use of <code>pynput</code> on Mac and call it a day.
+</p>
+
+<p>
+Now you can use this <code>xtype</code> command on KMonad (see the <a href="https://github.com/kmonad/kmonad/blob/master/keymap/tutorial.kbd">tutorial.kbd</a> to learn about running commands with <code>(cmd-button "...")</code>), or using your keybinding manger like <a href="https://github.com/baskerville/sxhkd">sxhkd</a> etc.
+</p>
+
+<p>
+Unfortunately, <code>pynput</code> does not work on a pure Wayland session at the moment but there is an <a href="https://github.com/moses-palmer/pynput/issues/331">issue</a> about it that you can track. Meanwhile, you can try <a href="https://github.com/atx/wtype">wtype</a> instead. It works with unicode characters, as stated in the README but this tool does not work on GNOME or KDE Wayland sessions. I haven't been able to find a good solution for Wayland but that is the situation for quite a lot of things in Wayland, at least for now.
+</p>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      
+          <span>
+            Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+          </span>
+        </p>
+      </footer>
+  </body>

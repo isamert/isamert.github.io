@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Typing (unicode) characters programmatically on Linux and macOS</title>
+      <link>https://isamert.net/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html</link>
+      <pubDate>Fri, 12 Aug 2022 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Global interactive Emacs functions</title>
       <link>https://isamert.net/2022/03/16/global-interactive-emacs-functions.html</link>
       <pubDate>Wed, 16 Mar 2022 00:00:00 +0300</pubDate>

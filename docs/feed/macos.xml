@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>macos - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Typing (unicode) characters programmatically on Linux and macOS</title>
+      <link>https://isamert.net/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html</link>
+      <pubDate>Fri, 12 Aug 2022 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

@@ -3779,7 +3779,7 @@ Unfortunately, ~pynput~ does not work on a pure Wayland session at the moment bu
     (interactive)
     (when (isamert/blog-can-export-current)
       (cons (--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
-            (:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
+            `(:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
 
   ;;
   ;; Processing

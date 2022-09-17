@@ -154,7 +154,7 @@
 
         document.body.style.backgroundImage = `url('${bgurl}')`;
 
-        if (!lastImage.url || lastImage.url !== imageInfo.url) {
+        if (!lastImage.url || bgurl !== lastImage.url) {
           localStorage.setItem(
             "lastImage",
             JSON.stringify({ url: bgurl, ts: Date.now() })

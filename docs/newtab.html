@@ -138,7 +138,7 @@
         const cache = getStorageItem("cachedImages", []);
 
         let bgurl, result;
-        if (imageInfo.url) {
+        if (imageInfo && imageInfo.url) {
           bgurl = imageInfo.url;
         } else if (xhr.status == 403 || shouldUseCache) {
           bgurl = cache[Math.floor(Math.random() * cache.length)];

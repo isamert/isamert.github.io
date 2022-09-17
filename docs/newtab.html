@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New tab</title>
+    <style>
+      html {
+        height: 100%;
+      }
+
+      body {
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: black;
+        opacity: 0.85;
+        color: white;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+      }
+
+      #title {
+        padding: 0px 50px;
+      }
+
+      #clock {
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        position: absolute;
+
+        font-size: 120px;
+      }
+
+      #notes-container {
+        padding: 5px;
+
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        width: 70%;
+        height: 150px;
+      }
+
+      #notes {
+        background: transparent;
+        color: #fff;
+        resize: none;
+        border: 0 none;
+        width: 100%;
+        font-size: 1.5em;
+        outline: none;
+        height: 100%;
+        position: absolute;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1
+      id="title"
+      contenteditable="true"
+      spellcheck="false"
+      oninput="onTitleChanged(this.innerText.trim())"
+    >
+      New Tab
+    </h1>
+    <div id="clock"></div>
+    <div id="notes-container">
+      <textarea id="notes" oninput="onNoteChanged(this.value)"> </textarea>
+    </div>
+    <script>
+      // Get this from Unsplash. See the following link
+      // https://unsplash.com/documentation#creating-a-developer-account
+      const UNSPLASH_API_KEY = getStorageItem("unsplashApiKey", null);
+      // How many seconds before fetching a new image? (Following sets to 5 minutes)
+      // Setting it to false causes every refresh to fetch a new random image.
+      const NEW_IMAGE_INTERVAL = getStorageItem("newImageInterval", 5 * 60);
+      // Following are self explanatory
+      const SHOW_CLOCK = getStorageItem("showClock", true);
+      const SHOW_TITLE = getStorageItem("showTitle", true);
+      const SHOW_NOTES = getStorageItem("showNotes", true);
+
+      if (!SHOW_TITLE) {
+        document.getElementById("title").style.display = "none";
+      }
+      if (!SHOW_CLOCK) {
+        document.getElementById("clock").style.display = "none";
+      }
+      if (!SHOW_NOTES) {
+        document.getElementById("notes").style.display = "none";
+      }
+
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      let title = params["title"] && params["title"].trim();
+      const shouldUseCache = params["cache"]
+        ? JSON.parse(params["cache"])
+        : false;
+      if (title) {
+        document.title = title;
+        document.getElementById("title").innerText = title;
+      }
+      const lastImage = getStorageItem("lastImage", {});
+
+      const note = localStorage.getItem(`noteFor${title}`);
+      document.getElementById("notes").value = note;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open(
+        "GET",
+        "https://api.unsplash.com/photos/random?orientation=landscape"
+      );
+      xhr.setRequestHeader("Authorization", `Client-ID ${UNSPLASH_API_KEY}`);
+
+      if (
+        NEW_IMAGE_INTERVAL &&
+        lastImage.ts &&
+        lastImage.ts > Date.now() - NEW_IMAGE_INTERVAL * 1000
+      ) {
+        onResponse(lastImage);
+      } else if (shouldUseCache) {
+        onResponse();
+      } else {
+        xhr.send();
+      }
+
+      xhr.onload = onResponse;
+
+      setClock();
+      setInterval(setClock, 30 * 1000);
+
+      function onResponse(imageInfo) {
+        const cache = getStorageItem("cachedImages", []);
+
+        let bgurl, result;
+        if (imageInfo.url) {
+          bgurl = imageInfo.url;
+        } else if (xhr.status == 403 || shouldUseCache) {
+          bgurl = cache[Math.floor(Math.random() * cache.length)];
+        } else if (xhr.status == 200) {
+          result = JSON.parse(xhr.responseText);
+          bgurl = `${result.urls.raw}&w=${screen.width}&q=85`;
+          cache.push(bgurl);
+          localStorage.setItem(
+            "cachedImages",
+            JSON.stringify([...new Set(cache)])
+          );
+        }
+
+        document.body.style.backgroundImage = `url('${bgurl}')`;
+
+        if (!lastImage.url || lastImage.url !== imageInfo.url) {
+          localStorage.setItem(
+            "lastImage",
+            JSON.stringify({ url: bgurl, ts: Date.now() })
+          );
+        }
+
+        console.log({
+          status: xhr.status,
+          remaining: xhr.getResponseHeader("X-Ratelimit-Remaining"),
+          result,
+          imageInfo,
+        });
+      }
+
+      const onTitleChanged = debounce((value) => {
+        title = value;
+
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("title", value);
+        history.pushState(
+          null,
+          "",
+          window.location.pathname + "?" + searchParams.toString()
+        );
+      });
+
+      const onNoteChanged = debounce((value) => {
+        localStorage.setItem(`noteFor${title}`, value);
+      }, 500);
+
+      function setClock() {
+        const date = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        document.getElementById("clock").innerText = date;
+      }
+
+      function getStorageItem(key, def) {
+        const result = localStorage.getItem(key);
+        if (result !== null) {
+          return JSON.parse(result);
+        } else {
+          return def;
+        }
+      }
+
+      // Source: https://gist.github.com/beaucharman/1f93fdd7c72860736643d1ab274fee1a
+      function debounce(callback, wait, context = this) {
+        let timeout = null;
+        let callbackArgs = null;
+
+        const later = () => callback.apply(context, callbackArgs);
+
+        return function ({ id }) {
+          callbackArgs = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      window.newtab = {};
+      window.newtab.export = () => {
+        const a = window.document.createElement("a");
+        a.href = window.URL.createObjectURL(
+          new Blob([JSON.stringify(localStorage)], { type: "application/json" })
+        );
+        a.download = "newtab.json";
+        document.body.appendChild(a);
+        a.click();
+      };
+
+      window.newtab.import = () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.readAsText(file, "UTF-8");
+          reader.onload = (readerEvent) => {
+            const content = readerEvent.target.result;
+            Object.entries(JSON.parse(content)).map(([key, val]) => {
+              localStorage.setItem(key, val);
+            });
+          };
+        };
+
+        input.click();
+      };
+    </script>
+  </body>
+</html>

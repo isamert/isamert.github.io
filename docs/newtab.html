@@ -76,7 +76,7 @@
     <script>
       // Get this from Unsplash. See the following link
       // https://unsplash.com/documentation#creating-a-developer-account
-      const UNSPLASH_API_KEY = getStorageItem("unsplashApiKey", null);
+      const UNSPLASH_API_KEY = localStorage.getItem("unsplashApiKey");
       // How many seconds before fetching a new image? (Following sets to 5 minutes)
       // Setting it to false causes every refresh to fetch a new random image.
       const NEW_IMAGE_INTERVAL = getStorageItem("newImageInterval", 5 * 60);

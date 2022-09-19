@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+<!-- TODO: Add image credits -->
+
 <html>
   <head>
     <title>New tab</title>
@@ -125,8 +128,13 @@
         onResponse(lastImage);
       } else if (shouldUseCache) {
         onResponse();
-      } else {
+      } else if (UNSPLASH_API_KEY) {
         xhr.send();
+      } else {
+        onResponse({
+          url: `https://images.unsplash.com/photo-1511884642898-4c92249e20b6?width=${screen.width}&q=85`,
+          ts: Date.now(),
+        });
       }
 
       xhr.onload = onResponse;

@@ -171,6 +171,7 @@
 
       const onTitleChanged = debounce((value) => {
         title = value;
+        document.title = title;
 
         const searchParams = new URLSearchParams(window.location.search);
         searchParams.set("title", value);

@@ -188,7 +188,7 @@
           "",
           window.location.pathname + "?" + searchParams.toString()
         );
-      });
+      }, 500);
 
       const onNoteChanged = debounce((value) => {
         localStorage.setItem(`noteFor${title}`, value);

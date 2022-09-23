@@ -33,7 +33,7 @@
 
           <ul>
             <li>Published at <em>2022-08-12</em></li>
-            <li>Last updated at <em>2022-08-12</em></li>
+            <li>Last updated at <em>2022-09-23</em></li>
           </ul>
         </div>
 
@@ -91,6 +91,9 @@ Save it into a file named <code>xtype</code> and you can do the following:
 
 <div class="org-src-container">
 <pre class="src src-c">#import &lt;Foundation/Foundation.h&gt;
+// Following import may or may not be needed. It does not build on M1
+// Pro without this but it was building on 2019 Pro.
+#import &lt;CoreGraphics/CoreGraphics.h&gt;
 
 int main(int argc, const char * argv[]) {
   @autoreleasepool {

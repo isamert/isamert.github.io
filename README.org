@@ -3577,7 +3577,7 @@ Let me know if this seems useful or if you have an improvement over what I descr
 :PROPERTIES:
 :CUSTOM_ID: typing-unicode-characters-programmatically-on-linux-and-macos
 :PUBLISH_DATE: [2022-08-12 Fri]
-:UPDATE_DATE: [2022-08-12 Fri]
+:UPDATE_DATE: [2022-09-23 Fri]
 :END:
 I've been using [[https://github.com/kmonad/kmonad][KMonad]] on my Linux boxes and on my Mac machine which I do use for work. KMonad is currently the best solution to have a consistent keyboard remapping across different operating systems and different keyboard types/layouts. It's not very well explained, but you can check out [[https://github.com/isamert/dotfiles/blob/master/index.org#kmonad][my KMonad configuration]] here.
 
@@ -3614,6 +3614,9 @@ Save it into a file named ~xtype~ and you can do the following:
 
 #+begin_src c
   #import <Foundation/Foundation.h>
+  // Following import may or may not be needed. It does not build on M1
+  // Pro without this but it was building on 2019 Pro.
+  #import <CoreGraphics/CoreGraphics.h>
 
   int main(int argc, const char * argv[]) {
     @autoreleasepool {

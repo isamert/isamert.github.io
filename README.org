@@ -1,6 +1,6 @@
 #+TITLE: isamert.net
 #+AUTHOR: isamert
-#+EMAIL: isamert@protonmail.com
+#+EMAIL: isamertgurbuz@gmail.com
 #+STARTUP: overview
 #+OPTIONS: html-style:nil num:nil H:4
 #+LINK: gh https://github.com/isamert/%s
@@ -562,10 +562,10 @@ Generic head portion that I use in every template.
   <footer>
     <hr />
     <p>
-      Isa Mert Gurbuz <a href="mailto:isamert@protonmail.com">&lt;isamert@protonmail.com&gt;</a>
+      Isa Mert Gurbuz © 2022
 
       <span>
-        Check out the <a href="https://github.com/isamert/isamert.github.io">source</a>.
+        <a href="https://github.com/isamert/isamert.github.io">Source</a>
       </span>
     </p>
   </footer>
@@ -733,17 +733,6 @@ Please do :). I'm a little bit slow in terms of responding but I always do. You 
 If you are interested with my projects and want to contribute/maintain, please don't hesitate to contact as I am pretty willing to accept contributions or even share/defer the maintenance.
 
 isamertgurbuz at gmail dot com
-
-* My projects :page:
-:PROPERTIES:
-:CUSTOM_ID: my-projects
-:EXPORT_AS: my-projects
-:OPTIONS: toc:nil
-:PUBLISH_DATE: [2021-04-07 Wed]
-:END:
-
-** Emacs plugins
-- [[https://github.com/isamert/dotfiles/blob/master/.emacs.d/settings.org][My literal Emacs configuration]]
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
@@ -3821,7 +3810,8 @@ There are also two other functions that you can use:
                (tags (or (org-entry-get nil "TAGS") ""))
                (is-page (string-match-p "page" tags))
                ;; ^ Is this a page or post?
-               (template (org-entry-get nil "TEMPLATE"))
+               (template (or (org-entry-get nil "TEMPLATE")
+                             (if is-page "page-template" "post-template")))
                ;; ^ The template can be overridden by "TEMPLATE" property
                (export-path (org-entry-get nil "EXPORT_AS"))
                ;; ^ The export path can be overridden by "EXPORT_AS" property
@@ -3843,15 +3833,15 @@ There are also two other functions that you can use:
             (setq file-path (isamert/blog-mk-path t))
 
             (isamert/write-string-to-file
+             file-path
              (isamert/template
-              (or template (if is-page "page-template" "post-template"))
+              template
               :title title
               :body (isamert/body-html)
               :publish-date publish-date
               :update-date update-date
               :author author
-              :tags tags)
-             file-path)
+              :tags tags))
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
 
@@ -4033,7 +4023,7 @@ There are also two other functions that you can use:
       (insert-file-contents file-path)
       (buffer-string)))
 
-  (defun isamert/write-string-to-file (string file)
+  (defun isamert/write-string-to-file (file string)
     (make-directory (file-name-directory file) t)
     (with-temp-file file
       (insert string)))
@@ -4062,18 +4052,18 @@ There are also two other functions that you can use:
           (--each tags (push item (gethash it taggeds '())))))
 
       (isamert/write-string-to-file
-       (isamert/blog-make-rss-doc (-map 'cdr items))
        (format "%s/%s/main.xml"
                isamert/blog-publish-path
-               isamert/blog-rss-per-tag))
+               isamert/blog-rss-per-tag)
+       (isamert/blog-make-rss-doc (-map 'cdr items)))
 
       (--each (hash-table-keys taggeds)
         (isamert/write-string-to-file
-         (isamert/blog-make-rss-doc (gethash it taggeds) it)
          (format "%s/%s/%s.xml"
                  isamert/blog-publish-path
                  isamert/blog-rss-per-tag
-                 it)))))
+                 it)
+         (isamert/blog-make-rss-doc (gethash it taggeds) it)))))
 
   (defun isamert/blog-generate-rss-item-current ()
     "Return the list of tags and RSS item for current post."
@@ -4122,14 +4112,14 @@ There are also two other functions that you can use:
 
       (--each (hash-table-keys taggeds)
         (isamert/write-string-to-file
-         (isamert/template "tag-template"
-                           :title (format "Posts tagged with %s" it)
-                           :tag-name it
-                           :posts `',(gethash it taggeds))
          (format "%s/%s/%s.html"
                  isamert/blog-publish-path
                  "tags"
-                 it)))))
+                 it)
+         (isamert/template "tag-template"
+                           :title (format "Posts tagged with %s" it)
+                           :tag-name it
+                           :posts `',(gethash it taggeds))))))
 
 
   ;;
@@ -4157,7 +4147,7 @@ There are also two other functions that you can use:
      (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
   <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">%s
   </urlset>")
-     (isamert/write-string-to-file)))
+     (isamert/write-string-to-file (format "%s/sitemap.xml" isamert/blog-publish-path))))
 
   ;;
   ;; Development utils

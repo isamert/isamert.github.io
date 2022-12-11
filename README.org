@@ -700,6 +700,8 @@ I maintain a few projects and occasionally contribute to other free software pro
 :END:
 - [[gh:empv.el][empv.el]] :: An Emacs media player, media library manager, radio player and YouTube frontend.
 - [[gh:orgmdb.el][orgmdb.el]] :: An Emacs/org-mode watchlist manager and OMDb API client.
+- [[gh:lab.el][lab.el]] :: A package that integrates GitLab with Emacs, provides you simple interfaces for interacting with GiLab, right inside Emacs!
+- [[gh:swagg.el][swagg.el]] :: A Swagger UI for Emacs.
 - [[gh:jsdoc.el][jsdoc.el]] :: An helper for inserting JSDoc comments easily within Emacs.
 - [[gh:couchbase-query.el][couchbase-query.el]] :: Inferior mode for ~cbq~
 - [[gh:sozluk.el][sozluk.el]] :: Online Turkish dictionary. Shows the results in a nicely formatted org mode buffer.

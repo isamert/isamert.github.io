@@ -3803,6 +3803,7 @@ There are also two other functions that you can use:
     (save-window-excursion
       (save-current-buffer
         (let* ((title (org-entry-get nil "ITEM"))
+               (cool-uri (org-entry-get nil "COOL_URI"))
                (publish-date (org-entry-get nil "PUBLISH_DATE"))
                ;; ^ The post path will be determined based on this.
                (update-date (org-entry-get nil "UPDATE_DATE"))
@@ -3830,18 +3831,20 @@ There are also two other functions that you can use:
 
             ;; Update the id after the pre-process
             (setq custom-id (org-entry-get nil "CUSTOM_ID"))
-            (setq file-path (isamert/blog-mk-path t))
+            (setq file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path)))
 
-            (isamert/write-string-to-file
-             file-path
-             (isamert/template
-              template
-              :title title
-              :body (isamert/body-html)
-              :publish-date publish-date
-              :update-date update-date
-              :author author
-              :tags tags))
+            (let ((contents
+                   (isamert/template
+                    template
+                    :title title
+                    :body (isamert/body-html)
+                    :publish-date publish-date
+                    :update-date update-date
+                    :author author
+                    :tags tags)))
+              (isamert/write-string-to-file file-path contents)
+              (when cool-uri
+                (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
             (widen)
             `(,title ,export-path ,is-page ,publish-date))))))
 
@@ -3994,19 +3997,20 @@ There are also two other functions that you can use:
          (s-replace "ö" "o")
          (s-replace "ç" "c")))
 
-  (defun isamert/blog-mk-path (&optional with-publish-dir)
+  (defun isamert/blog-mk-path ()
     (let* ((title (org-entry-get nil "ITEM"))
            (publish-date (org-entry-get nil "PUBLISH_DATE"))
            (custom-id (org-entry-get nil "CUSTOM_ID"))
-           (export-path (org-entry-get nil "EXPORT_AS"))
-           (result (if export-path
-                       (format "%s.html" export-path)
-                     (format "%s/%s.html"
-                             (s-join "/" (isamert/parse-org-date publish-date))
-                             custom-id))))
-      (if with-publish-dir
-          (format "%s/%s" isamert/blog-publish-path result)
-        result)))
+           (export-path (org-entry-get nil "EXPORT_AS")))
+      (if export-path
+          (format "%s.html" export-path)
+        (format "%s/%s.html"
+                (s-join "/" (isamert/parse-org-date publish-date))
+                custom-id))))
+
+  (defun isamert/blog-with-publish-dir (path)
+    "Return PATH but `isamert/blog-publish-path' appended before it."
+    (format "%s/%s" isamert/blog-publish-path path))
 
   (defun isamert/parse-org-date (date)
     (save-match-data
@@ -4105,17 +4109,14 @@ There are also two other functions that you can use:
     (interactive)
     (let* ((taggeds (make-hash-table :test 'equal))
            (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
-                       (--keep it))))
+                     (--keep it))))
       (-each items
         (-lambda ((tags . item))
           (--each tags (push item (gethash it taggeds '())))))
 
       (--each (hash-table-keys taggeds)
         (isamert/write-string-to-file
-         (format "%s/%s/%s.html"
-                 isamert/blog-publish-path
-                 "tags"
-                 it)
+         (isamert/blog-with-publish-dir (format "%s/%s.html" isamert/blog-tags-dir it))
          (isamert/template "tag-template"
                            :title (format "Posts tagged with %s" it)
                            :tag-name it
@@ -4182,7 +4183,7 @@ There are also two other functions that you can use:
          (format "http://localhost:3000/%s"
                  (isamert/blog-mk-path)))
       (browse-url
-       (isamert/blog-mk-path t))))
+       (isamert/blog-with-publish-dir (isamert/blog-mk-path)))))
 
   ;;
   ;; Template functions

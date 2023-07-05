@@ -644,10 +644,14 @@ In no specific order:
 
 #+begin_src elisp :exports results :results value html
   (->> (isamert/blog-all-tags)
-    (--reduce-from
-     (format "%s<li><a href=\"%s/%s.xml\">%s</a></li>" acc isamert/blog-rss-per-tag it it)
-     "")
-    (format "<ul>%s</ul>"))
+     (--reduce-from
+      (format
+       "%s<li><b>%s</b> :: <a href=\"%s/%s.xml\">rss</a>, <a href=\"%s/%s.html\">html</a></li>"
+       acc it
+       isamert/blog-rss-per-tag it
+       isamert/blog-tags-dir it)
+      "")
+     (format "<ul>%s</ul>"))
 #+end_src
 
 * About :page:
@@ -3764,6 +3768,9 @@ There are also two other functions that you can use:
   Non-nil value means generating `TAG.xml' files under given
   directory.  By default it'll create `feed/TAG.xml' for every
   TAG.")
+
+  (defvar isamert/blog-tags-dir "tags"
+    "Where to store tag pages.")
 
   ;;
   ;; Internal vars

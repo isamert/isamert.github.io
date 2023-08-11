@@ -3733,6 +3733,132 @@ There are also two other functions that you can use:
   newtab.import()
 #+end_src
 
+* Elisp development tips :emacs:elisp:
+
+Here are some workflow tips that I accumulated over time working with elisp. I try to embrace the interactive nature of developing elisp programs (some may call this REPL-driven development) and you'll see that in the following sections.
+
+** ~eval-{last-sexp,region,defun,buffer,expression}~
+
+These are the basic evaluation functions that you can use. Having a different binding for each of them might be a little bit cumbersome, so I generalized ~eval-{last-sexp,region,defun}~ into one binding, using the following definition:
+
+#+begin_src emacs-lisp
+  (defun im-eval-dwim (lastf regionf defunf)
+    "Generate an interactive function that you can bind to a key for evaluating.
+  The returned function will call LASTF, REGIONF or DEFUNF
+  depending on the context when called.  If you have an active
+  region, REGIONF will be called, if you are in middle of an
+  expression DEFUNF will be called.  If your cursor is near a
+  closing parenthesis, LASTF will be called."
+    (lambda ()
+      (interactive)
+      (cond
+       ((use-region-p)
+        (call-interactively regionf))
+       ((or (-contains? '(?\) ?\") (char-before))
+            (-contains? '(?\ ?\)) (char-after)))
+        (call-interactively lastf))
+       (t
+        (call-interactively defunf)))))
+#+end_src
+
+So that I can do:
+
+#+begin_src emacs-lisp
+  (bind-key "<key-of-your-choice>" (im-eval-dwim #'eval-last-sexp #'eval-region #'eval-defun))
+#+end_src
+
+And when you hit /<key-of-your-choice>/, the right eval function (most of the time) will be called. I also utilize ~im-eval-dwim~ for other lispy languages, like Clojure, Scheme etc.
+
+** Better feedback for evaluation results with /eros/
+If you have used [[https://github.com/clojure-emacs/cider][cider]] for Clojure development (if you didn't, don't worry), you would've seen that it has a nice overlay that shows the evaluation result near your cursor, instead of at the bottom echo area. To get the same functionality for elisp, you can use [[https://github.com/xiongtx/eros][eros]] package.
+
+Now you can use ~eros-eval-{last-sexp,defun}~ functions to evaluate your expressions instead of ~eval-{last-sexp,defun}~ to get a nicer feedback. Or simply call ~(eros-mode)~ to take eros eval functions in place of original eval functions, but if you decided to use ~im-eval-dwim~, you need to use the following:
+
+#+begin_src emacs-lisp
+  (bind-key "<key-of-your-choice>" (im-eval-dwim #'eros-eval-last-sexp #'eval-region #'eros-eval-defun))
+#+end_src
+
+Akin ~cider-inspect-last-last-result~, we have ~eros-inspect-last-result~ (see the [[https://github.com/xiongtx/eros/pull/6][PR]] I opened for this feature to get more information. It's already merged). With this, you can inspect the evaluation result in a nicely formatted buffer which makes exploring data really pleasant. The buffer is automatically gets updated whenever you eval an expression.
+
+** Better editing
+*** [[https://github.com/Wilfred/emacs-refactor][emacs-refactor]]
+
+This package offers lot's of convenient functionality for Elisp, see the features [[https://github.com/Wilfred/emacs-refactor/tree/master#elisp][here]]. I found the context-sensitive menu that pops up when you do ~M-x emr-show-refactor-menu~ a bit clumsy. It does not list every action all the time, but you can simply do ~M-x emr-el-~ to filter out all Elisp related functionality /emacs-refactor/ offers. Here are some the functions I use frequently: ~emr-el-extract-function~, ~emr-el-toggle-let*~, ~emr-el-extract-to-let~, ~emr-el-extract-constant~, ~emr-el-extract-variable~, ~emr-el-implement-function~.
+
+*** [[https://github.com/emacsattic/redshank][redshank]]
+This package is aimed at Common Lisp users but some of the functions it offers works well with Elisp sexps:
+
+- redshank-condify-form :: Converts ~if~ expressions to ~cond~ expressions.
+- redshank-enclose-form-with-lambda :: Saves you from typing ~(lambda (x) ...)~.
+  #+begin_src emacs-lisp
+    (mapcar (* 2 it|) '(1 2 3 4))
+    ;; M-x redshank-enclose-form-with-lambda RET RET
+    (mapcar (lambda (it) (* 2 it)) '(1 2 3 4))
+  #+end_src
+
+*** ~clojure-thread-{last,first}-all~ from [[https://github.com/clojure-emacs/clojure-mode][clojure-mode]]
+
+Even though it's for Clojure, works well with Elisp sexps.
+
+Converts your expression into a threaded expression. Assume that you have written something horrible like this (which I did):
+
+#+begin_src emacs-lisp
+  (s-chop-suffix "]" (s-chop-prefix "[" (substring-no-properties (car (s-match "\\[.*?\\]" (org-get-heading))))))
+#+end_src
+
+Calling ~clojure-thread-last-all~ at the beginning this expression will turn it into:
+
+#+begin_src emacs-lisp
+  (->>
+   (org-get-heading)
+   (s-match "\\[.*?\\]")
+   car
+   substring-no-properties
+   (s-chop-prefix "[")
+   (s-chop-suffix "]"))
+#+end_src
+
+Which (I believe) is nicer. You can replace ~->>~ with ~thread-last~ if you want to use the built-in threading function instead of [[https://github.com/magnars/dash.el][dash.el]] provided one.
+
+If you are a [[https://github.com/abo-abo/lispy][lispy]] user, it also offers similar functionality. I don't use structural editing tools much because I am an [[https://github.com/emacs-evil/evil][evil]] user.
+
+~clojure-mode~ has lots of functionality like this but they do not play well with elisp. But aforementioned /emacs-refactor/ and /redshank/ does the job.
+
+** Other helpful packages
+
+- [[https://github.com/Wilfred/suggest.el][suggest]] :: Enter your inputs and your desired output. It will suggest you some elisp functions to achieve that.
+- [[https://github.com/Fanael/highlight-quoted][highlight-quoted]] :: Simply highlights quotes and symbols. Makes reading easier and feels natural.
+- hs-minor-mode :: Built-in mode for folding. It works fairly well with elisp code. Evil mode is also automatically integrates itself with it, so that you can use folding bindings (~za zm zr~ etc.)
+
+  #+begin_src emacs-lisp
+(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
+(add-hook 'lisp-interaction-mode-hook #'hs-minor-mode)
+  #+end_src
+
+- [[https://github.com/Malabarba/aggressive-indent-mode][aggressive-indent-mode]] :: Aggressively indents your code. I found it to be less useful for other languages (which I generally use an auto-formatter on save kinda solution) but for lisp, it works fairly well and I can't do without it.
+
+  #+begin_src emacs-lisp
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  ;; If you are an evil user, this might be useful:
+  (add-to-list 'aggressive-indent-protected-commands 'evil-undo)
+  #+end_src
+
+- [[https://github.com/Wilfred/helpful][helpful]] :: Better help pages.
+- [[https://github.com/xuchunyang/elisp-demos][elisp-demos]] :: Code example for elisp functions in help pages. Integrates with /helpful/.
+
+** Automatic indentation fix
+Automatic indentation works fairly well but it fails on plists. I use [[https://github.com/Fuco1/.emacs.d/blob/2c302dcbedf2722c5c412b6a6d3e3258f6ac1ccf/site-lisp/my-redef.el#LL18C1-L100C62][Fuco1's solution]], just copied that into my configuration verbatim. Here is the illustration of what it fixes:
+
+#+begin_src emacs-lisp
+;; before
+;;   (:foo bar
+;;         :baz qux)
+;; after
+;;   (:foo bar
+;;    :baz qux)
+#+end_src
+
+Especially useful if you are a user of /aggressive-indent-mode/ that I've talked about above.
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

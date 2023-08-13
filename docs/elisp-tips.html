@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<head>
+  <title>Elisp editing/development tips | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Elisp editing/development tips</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/elisp.html" class="tag-link">elisp</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2023-08-14</em></li>
+            <li>Last updated at <em>2023-08-14</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#eval-last-sexp-region-defun-buffer-expression"><code>eval-{last-sexp,region,defun,buffer,expression}</code></a></li>
+<li><a href="#better-feedback-for-evaluation-results-with-eros">Better feedback for evaluation results with <i>eros</i></a></li>
+<li><a href="#m-x-ielm">M-x <code>ielm</code></a></li>
+<li><a href="#refactoring-faster-editing">Refactoring &amp; faster editing</a>
+<ul>
+<li><a href="#https-github-com-wilfred-emacs-refactor-emacs-refactor">emacs-refactor</a></li>
+<li><a href="#https-github-com-emacsattic-redshank-redshank">redshank</a></li>
+<li><a href="#clojure-thread-lastfirst-all-from-https-github-com-clojure-emacs-clojure-mode-clojure-mode"><code>clojure-thread-{last,first}-all</code> from clojure-mode</a></li>
+</ul>
+</li>
+<li><a href="#supplementary-functions">Supplementary functions</a>
+<ul>
+<li><a href="#im-tap">im-tap</a></li>
+<li><a href="#im-debug">im-debug</a></li>
+</ul>
+</li>
+<li><a href="#other-helpful-packages">Other helpful packages</a></li>
+<li><a href="#automatic-indentation-fix">Automatic indentation fix</a></li>
+</ul>
+</div>
+</div>
+<p>
+Here are some workflow tips that I have accumulated over time working with elisp. I try to embrace the interactive nature of developing elisp programs (some may call this REPL-driven development) and you'll see that in the following sections. Tips are generally about editing. There is also <a href="https://alphapapa.github.io/emacs-package-dev-handbook/#outline-container-Checkers%20%2F%20linters">this page</a> by <a href="https://github.com/alphapapa">alphapapa</a> , that goes really deep into every single topic about elisp development, which I highly recommend you to read.
+</p>
+
+<div id="outline-container-eval-last-sexp-region-defun-buffer-expression" class="outline-2">
+<h2 id="eval-last-sexp-region-defun-buffer-expression"><code>eval-{last-sexp,region,defun,buffer,expression}</code></h2>
+<div class="outline-text-2" id="text-eval-last-sexp-region-defun-buffer-expression">
+<p>
+These are the basic evaluation functions that you can use. Having a different binding for each of them might prove to be slightly burdensome, so I generalized <code>eval-{last-sexp,region,defun}</code> into one binding, using the following definition:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun im-eval-dwim (lastf regionf defunf)
+  "Generate an interactive function that you can bind to a key for evaluating.
+The returned function will call LASTF, REGIONF or DEFUNF
+depending on the context when called.  If you have an active
+region, REGIONF will be called, if you are in middle of an
+expression DEFUNF will be called.  If your cursor is near a
+closing parenthesis, LASTF will be called."
+  (lambda ()
+    (interactive)
+    (cond
+     ((use-region-p)
+      (call-interactively regionf))
+     ((or (-contains? '(?\) ?\") (char-before))
+          (-contains? '(?\ ?\)) (char-after)))
+      (call-interactively lastf))
+     (t
+      (call-interactively defunf)))))
+</pre>
+</div>
+
+<p>
+So that I can do:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eval-last-sexp #'eval-region #'eval-defun))
+</pre>
+</div>
+
+<p>
+Upon hitting <i>&lt;key-of-your-choice&gt;</i>, the right eval function (most of the time) will be invoked. I also utilize <code>im-eval-dwim</code> for other lispy languages, like Clojure, Scheme etc. by using their eval counterparts.
+</p>
+</div>
+</div>
+
+<div id="outline-container-better-feedback-for-evaluation-results-with-eros" class="outline-2">
+<h2 id="better-feedback-for-evaluation-results-with-eros">Better feedback for evaluation results with <i>eros</i></h2>
+<div class="outline-text-2" id="text-better-feedback-for-evaluation-results-with-eros">
+<p>
+If you have used <a href="https://github.com/clojure-emacs/cider">cider</a> for Clojure development (if you didn't, don't worry), you would've seen that it has a delightful overlay that shows the evaluation result near your cursor, instead of at the bottom echo area. To attain the same functionality for elisp, you can use <a href="https://github.com/xiongtx/eros">eros</a> package.
+</p>
+
+<p>
+Now you can use <code>eros-eval-{last-sexp,defun}</code> functions to evaluate your expressions instead of <code>eval-{last-sexp,defun}</code> to get a nicer feedback. Or simply call <code>(eros-mode)</code> to take eros eval functions in place of original eval functions, but if you decided to use <code>im-eval-dwim</code>, you need to use the following:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eros-eval-last-sexp #'eval-region #'eros-eval-defun))
+</pre>
+</div>
+
+<p>
+Akin to <code>cider-inspect-last-last-result</code>, we have <code>eros-inspect-last-result</code> (see the <a href="https://github.com/xiongtx/eros/pull/6">PR</a> I opened for this feature to get more information. It's already merged). With this, you can inspect the evaluation result in a nicely formatted buffer which makes exploring data really pleasant. The buffer is automatically gets updated whenever you eval an expression.
+</p>
+</div>
+</div>
+
+<div id="outline-container-m-x-ielm" class="outline-2">
+<h2 id="m-x-ielm">M-x <code>ielm</code></h2>
+<div class="outline-text-2" id="text-m-x-ielm">
+<p>
+IELM is just a REPL for elisp and I don't really use it that much, given that you can evaluate code anywhere in Emacs. The nice thing about is that, it's good for experimentation sessions where you have a history of the trials you made during the session. Other than this, I have no use for it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-refactoring-faster-editing" class="outline-2">
+<h2 id="refactoring-faster-editing">Refactoring &amp; faster editing</h2>
+<div class="outline-text-2" id="text-refactoring-faster-editing">
+</div>
+<div id="outline-container-https-github-com-wilfred-emacs-refactor-emacs-refactor" class="outline-3">
+<h3 id="https-github-com-wilfred-emacs-refactor-emacs-refactor"><a href="https://github.com/Wilfred/emacs-refactor">emacs-refactor</a></h3>
+<div class="outline-text-3" id="text-https-github-com-wilfred-emacs-refactor-emacs-refactor">
+<p>
+This package offers lot's of convenient functionality for Elisp, see the features <a href="https://github.com/Wilfred/emacs-refactor/tree/master#elisp">here</a>. I found the context-sensitive menu that pops up when you do <code>M-x emr-show-refactor-menu</code> a bit clumsy. It does not list every action all the time, but you can simply do <code>M-x emr-el-</code> to filter out all Elisp related functionality <i>emacs-refactor</i> offers. Here are some the functions I use frequently: <code>emr-el-extract-function</code>, <code>emr-el-toggle-let*</code>, <code>emr-el-extract-to-let</code>, <code>emr-el-extract-constant</code>, <code>emr-el-extract-variable</code>, <code>emr-el-implement-function</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-https-github-com-emacsattic-redshank-redshank" class="outline-3">
+<h3 id="https-github-com-emacsattic-redshank-redshank"><a href="https://github.com/emacsattic/redshank">redshank</a></h3>
+<div class="outline-text-3" id="text-https-github-com-emacsattic-redshank-redshank">
+<p>
+This package is aimed at Common Lisp users but some of the functions it offers works well with Elisp sexps:
+</p>
+
+<dl class="org-dl">
+<dt>redshank-condify-form</dt><dd>Converts <code>if</code> expressions to <code>cond</code> expressions.</dd>
+<dt>redshank-enclose-form-with-lambda</dt><dd><p>
+Saves you from typing <code>(lambda (x) ...)</code>.
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp">(mapcar (* 2 it|) '(1 2 3 4))
+;; M-x redshank-enclose-form-with-lambda RET RET
+(mapcar (lambda (it) (* 2 it)) '(1 2 3 4))
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-clojure-thread-lastfirst-all-from-https-github-com-clojure-emacs-clojure-mode-clojure-mode" class="outline-3">
+<h3 id="clojure-thread-lastfirst-all-from-https-github-com-clojure-emacs-clojure-mode-clojure-mode"><code>clojure-thread-{last,first}-all</code> from <a href="https://github.com/clojure-emacs/clojure-mode">clojure-mode</a></h3>
+<div class="outline-text-3" id="text-clojure-thread-lastfirst-all-from-https-github-com-clojure-emacs-clojure-mode-clojure-mode">
+<p>
+Even though it's for Clojure, works well with Elisp sexps.
+</p>
+
+<p>
+Converts your expression into a threaded expression. Assume that you have written something horrible like this (which I did):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(s-chop-suffix "]" (s-chop-prefix "[" (substring-no-properties (car (s-match "\\[.*?\\]" (org-get-heading))))))
+</pre>
+</div>
+
+<p>
+Calling <code>clojure-thread-last-all</code> at the beginning this expression will turn it into:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(-&gt;&gt;
+ (org-get-heading)
+ (s-match "\\[.*?\\]")
+ car
+ substring-no-properties
+ (s-chop-prefix "[")
+ (s-chop-suffix "]"))
+</pre>
+</div>
+
+<p>
+Which (I believe) is nicer. You can replace <code>-&gt;&gt;</code> with <code>thread-last</code> if you want to use the built-in threading function instead of <a href="https://github.com/magnars/dash.el">dash.el</a> provided one.
+</p>
+
+<p>
+If you are a <a href="https://github.com/abo-abo/lispy">lispy</a> user, it also offers similar functionality. I don't use structural editing tools much because I am an <a href="https://github.com/emacs-evil/evil">evil</a> user.
+</p>
+
+<p>
+<code>clojure-mode</code> has lots of functionality like this but they do not play well with elisp. But aforementioned <i>emacs-refactor</i> and <i>redshank</i> does the job.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-supplementary-functions" class="outline-2">
+<h2 id="supplementary-functions">Supplementary functions</h2>
+<div class="outline-text-2" id="text-supplementary-functions">
+<p>
+Here are some functions I frequently use while doing elisp development:
+</p>
+</div>
+
+<div id="outline-container-im-tap" class="outline-3">
+<h3 id="im-tap">im-tap</h3>
+<div class="outline-text-3" id="text-im-tap">
+<div class="org-src-container">
+<pre class="src src-elisp">(defmacro im-tap (form)
+  "Evaluate FORM and return its result.
+Additionally, print a message to the *Messages* buffer showing
+the form and its result.
+
+This macro is useful for debugging and inspecting the
+intermediate results of Elisp code without changing your code
+structure. Just wrap the form with `im-tap' that you want to see
+it's output without introducing an intermediate let-form."
+  `(let ((result ,form))
+     (message "[im-tap :: %s] → %s" ,(prin1-to-string form) result)
+     result))
+</pre>
+</div>
+
+<p>
+See the following for it's usefulness:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">;; I want to print-debug those input values
+
+(defun test ()
+  (final-func (func-a 1 2) (func-b 3 4)))
+
+;; Normally I have to introduce a let-binding
+
+(defun test ()
+  (let ((a (func-a 1 2))
+        (b (func-b 3 4)))
+    (message "func-a: %s" a)
+    (message "func-b: %s" b)
+    (final-func a b)))
+
+;; But with im-tap, I can do
+
+(defun test ()
+  (final-func (im-tap (func-a 1 2)) (im-tap (func-b 3 4))))
+
+;; Also useful for threading situations
+
+(-&gt;&gt;
+ (org-get-heading)
+ (s-match "\\[.*?\\]")
+ car
+ substring-no-properties
+ im-tap ;; → Print the result so far
+ (s-chop-prefix "[")
+ (s-chop-suffix "]"))
+</pre>
+</div>
+
+<p>
+It also prints the form itself with the value the form returns, so that you can use it multiple times and not get confused which printed value belongs to which form.
+</p>
+</div>
+</div>
+
+<div id="outline-container-im-debug" class="outline-3">
+<h3 id="im-debug">im-debug</h3>
+<div class="outline-text-3" id="text-im-debug">
+<div class="org-src-container">
+<pre class="src src-elisp">(defun im-debug (thing)
+  "Like `im-tap' but uses `pp-display-expression' to display the
+result instead of `message'."
+  (pp-display-expression thing "*im-debug*")
+  thing)
+</pre>
+</div>
+
+<p>
+This also works like <code>im-tap</code>, so that you can simply wrap a form with it and the code continues to work. This is useful for long outputs that you want to inspect.
+</p>
+
+<p>
+Also useful inside an interactive <code>eval-expression</code> call. Does the same thing as calling <code>pp-display-expression</code> but easier to type :).
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-other-helpful-packages" class="outline-2">
+<h2 id="other-helpful-packages">Other helpful packages</h2>
+<div class="outline-text-2" id="text-other-helpful-packages">
+<dl class="org-dl">
+<dt><a href="https://github.com/Wilfred/suggest.el">suggest</a></dt><dd>Enter your inputs and your desired output. It will suggest you some elisp functions to achieve that. I quite frequently use this because I forget most basic functions all the time.</dd>
+<dt><a href="https://github.com/Fanael/highlight-quoted">highlight-quoted</a></dt><dd>Simply highlights quotes and symbols. Makes reading easier and feels natural.</dd>
+<dt>hs-minor-mode</dt><dd><p>
+Built-in mode for folding. It works fairly well with elisp code. Evil mode is also automatically integrates itself with it, so that you can use folding bindings (<code>za zm zr</code> etc.)
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp">(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
+(add-hook 'lisp-interaction-mode-hook #'hs-minor-mode)
+</pre>
+</div></dd>
+<dt><a href="https://github.com/Malabarba/aggressive-indent-mode">aggressive-indent-mode</a></dt><dd><p>
+Aggressively indents your code. I found it to be less useful for other languages (which I generally use an auto-formatter on save kinda solution) but for lisp, it works fairly well and I can't do without it.
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp">(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+;; If you are an evil user, this might be useful:
+(add-to-list 'aggressive-indent-protected-commands 'evil-undo)
+</pre>
+</div></dd>
+<dt><a href="https://github.com/Wilfred/helpful">helpful</a></dt><dd>Better help pages.</dd>
+<dt><a href="https://github.com/xuchunyang/elisp-demos">elisp-demos</a></dt><dd>Code example for elisp functions in help pages. Integrates with <i>helpful</i>.</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-automatic-indentation-fix" class="outline-2">
+<h2 id="automatic-indentation-fix">Automatic indentation fix</h2>
+<div class="outline-text-2" id="text-automatic-indentation-fix">
+<p>
+Automatic indentation works fairly well but it fails on quoted lists. I use <a href="https://github.com/Fuco1/.emacs.d/blob/2c302dcbedf2722c5c412b6a6d3e3258f6ac1ccf/site-lisp/my-redef.el#LL18C1-L100C62">Fuco1's solution</a>, just copied that into my configuration verbatim. Here is the illustration of what it fixes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">;; before
+;;   (:foo bar
+;;         :baz qux)
+;; after
+;;   (:foo bar
+;;    :baz qux)
+</pre>
+</div>
+
+<p>
+Especially useful if you are a user of <i>aggressive-indent-mode</i> that I've talked about above.</p>
+</div>
+</div>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz © 2022
+      
+          <span>
+            <a href="https://github.com/isamert/isamert.github.io">Source</a>
+          </span>
+        </p>
+      </footer>
+  </body>

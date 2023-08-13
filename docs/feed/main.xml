@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Elisp editing/development tips</title>
+      <link>https://isamert.net/2023/08/14/elisp-editing-development-tips.html</link>
+      <pubDate>Mon, 14 Aug 2023 00:00:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>A simple new tab page (that works with TreeStyleTab)</title>
       <link>https://isamert.net/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html</link>
       <pubDate>Sat, 17 Sep 2022 00:00:00 +0300</pubDate>

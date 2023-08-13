@@ -3983,26 +3983,23 @@ There are also two other functions that you can use:
   ;;
 
   (defun isamert/blog-url-case (str)
-    (->> (downcase str)
-         (s-replace "+" "p")
-         (s-replace "(" "-")
-         (s-replace ")" "-")
-         (s-replace "=" "-")
-         (s-replace ":" "-")
-         (s-replace "." "-")
-         (s-replace " " "-")
-         (s-replace "---" "-")
-         (s-replace "--" "-")
-         (s-replace "'" "")
-         (s-replace "," "")
-         (s-replace "/" "-")
-         (s-replace "ö" "o")
-         (s-replace "ı" "i")
-         (s-replace "ğ" "g")
-         (s-replace "ü" "u")
-         (s-replace "ş" "s")
-         (s-replace "ö" "o")
-         (s-replace "ç" "c")))
+    (->>
+     str
+     downcase
+     (s-replace-all
+      '(("'" . "")
+        ("ö" . "o")
+        ("ı" . "i")
+        ("ğ" . "g")
+        ("ü" . "u")
+        ("ş" . "s")
+        ("ö" . "o")
+        ("ç" . "c")))
+     (s-trim)
+     (replace-regexp-in-string "[^a-zA-Z0-9]" "-")
+     (replace-regexp-in-string "-+" "-")
+     (s-chop-prefix "-")
+     (s-chop-suffix "-")))
 
   (defun isamert/blog-mk-path ()
     (let* ((title (org-entry-get nil "ITEM"))

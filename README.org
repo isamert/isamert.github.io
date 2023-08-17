@@ -3788,7 +3788,7 @@ Now you can use ~eros-eval-{last-sexp,defun}~ functions to evaluate your express
   (bind-key "<key-of-your-choice>" (im-eval-dwim #'eros-eval-last-sexp #'eval-region #'eros-eval-defun))
 #+end_src
 
-Akin to ~cider-inspect-last-last-result~, we have ~eros-inspect-last-result~ (see the [[https://github.com/xiongtx/eros/pull/6][PR]] I opened for this feature to get more information. It's already merged). With this, you can inspect the evaluation result in a nicely formatted buffer which makes exploring data really pleasant. The buffer is automatically gets updated whenever you eval an expression.
+Akin to ~cider-inspect-last-last-result~, we have ~eros-inspect-last-result~ (see the [[https://github.com/xiongtx/eros/pull/6][PR]] I opened for this feature to get more information. It's already merged). With this, you can inspect the evaluation result in a nicely formatted buffer which makes exploring data really pleasant. The buffer gets updated automatically whenever you evaluate an expression.
 
 ** M-x ~ielm~
 :PROPERTIES:

@@ -4393,7 +4393,7 @@ Especially useful if you are a user of /aggressive-indent-mode/ that I've talked
     (interactive)
     (let ((default-directory (expand-file-name isamert/blog-publish-path)))
       (setq isamert/blog-server-process
-            (start-process "isamert/blog-server-process" nil "python" "-m" "http.server" (format "%s" isamert/blog-local-port)))
+            (start-process "isamert/blog-server-process" nil "python3" "-m" "http.server" (format "%s" isamert/blog-local-port)))
       (browse-url (format "http://localhost:%s" isamert/blog-local-port))))
 
   (defun isamert/blog-stop-local-server ()
@@ -4414,7 +4414,8 @@ Especially useful if you are a user of /aggressive-indent-mode/ that I've talked
     (interactive)
     (if isamert/blog-server-process
         (browse-url
-         (format "http://localhost:3000/%s"
+         (format "http://localhost:%s/%s"
+                 isamert/blog-local-port
                  (isamert/blog-mk-path)))
       (browse-url
        (isamert/blog-with-publish-dir (isamert/blog-mk-path)))))

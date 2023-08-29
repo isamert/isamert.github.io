@@ -739,6 +739,90 @@ If you are interested with my projects and want to contribute/maintain, please d
 
 isamertgurbuz at gmail dot com
 
+* Watchlist :page:
+:PROPERTIES:
+:CUSTOM_ID: watchlist
+:EXPORT_AS: watchlist
+:OPTIONS: toc:nil
+:PUBLISH_DATE: [2023-08-30]
+:END:
+
+#+begin_comment
+Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-ratings-list-and-watch-list-into-org-mode][Migrating my IMDb ratings list and watch list into org-mode]] to learn more about my watchlist.org file format.
+#+end_comment
+
+#+begin_src emacs-lisp :exports results
+  (let* ((root default-directory)
+         (posters-dir (let ((dir (f-full "docs/images/posters/")))
+                        (mkdir dir t) dir))
+         (movie-data
+          (with-current-buffer (find-file-noselect "~/Documents/notes/watchlist.org")
+            (widen)
+            (->>
+             (org-map-entries
+              (lambda ()
+                (let ((props (org-entry-properties))
+                      body image)
+                  (when (s-matches? "\\(series\\|movie\\)" (or (alist-get "TAGS" props nil nil #'equal) ""))
+                    ;; Extract and copy the image
+                    (setq body (substring-no-properties (org-agenda-get-some-entry-text (point-marker) most-positive-fixnum)))
+                    (setq image (when-let (match (s-match "\\[\\[file:\\(.*?\\)\\.\\(png\\|jpg\\|jpeg\\)]]" body))
+                                  (concat (nth 1 match) "." (nth 2 match))))
+                    (when image
+                      (let ((path (f-join posters-dir (f-filename image))))
+                        (copy-file (expand-file-name image) path 'overwrite)
+                        (setq image (f-relative path (f-join root "docs/")))))
+                    ;; Props
+                    (setq props
+                          (map-apply
+                           (lambda (key val)
+                             (cons
+                              (s-replace "-" "_" (downcase key))
+                              (if (equal "N/A" val) nil val)))
+                           props))
+                    `(("image" . ,image)
+                      ,@(map-remove (lambda (key _val) (-contains? '("why" "blocked" "alltags" "file" "category") key)) props)))))
+              "LEVEL=1")
+             (-filter #'identity)
+             (json-encode)))))
+    (f-write movie-data 'utf-8 "docs/assets/watchlist.json"))
+#+end_src
+
+#+begin_comment
+Following code uses the exported watchlist JSON movies data and populates the page.
+#+end_comment
+
+#+begin_src js :tangle docs/assets/watchlist.js :exports none
+  async function init() {
+    const movies = await fetch("assets/watchlist.json").then((response) =>
+      response.json()
+    );
+
+    const root = document.getElementById("movie-list");
+    movies.forEach((movie) => {
+      const movieDiv = document.createElement("div");
+      const moviePoster = document.createElement("img");
+      const movieTitle = document.createElement("h2");
+      const movieDescription = document.createElement("p");
+
+      moviePoster.src = movie.poster;
+      movieTitle.innerHTML = movie.item;
+      movieDescription.innerText = "lorem ipsum dolor sit amet";
+
+      movieDiv.appendChild(movieTitle);
+      movieDiv.appendChild(moviePoster);
+      movieDiv.appendChild(movieDescription);
+      root.appendChild(movieDiv);
+    });
+  }
+
+  init();
+#+end_src
+
+#+begin_src elisp :exports results :results value html
+  "<script src=\"/assets/watchlist.js\"></script><div id=\"movie-list\" />"
+#+end_src
+
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
 :PUBLISH_DATE: [2016-07-13 Wed]

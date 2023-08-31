@@ -774,14 +774,18 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
                         (setq image (f-relative path (f-join root "docs/")))))
                     ;; Props
                     (setq props
-                          (map-apply
-                           (lambda (key val)
-                             (cons
-                              (s-replace "-" "_" (downcase key))
-                              (if (equal "N/A" val) nil val)))
-                           props))
-                    `(("image" . ,image)
-                      ,@(map-remove (lambda (key _val) (-contains? '("why" "blocked" "alltags" "file" "category") key)) props)))))
+                          (ht-from-alist (map-apply
+                                          (lambda (key val)
+                                            (cons
+                                             (s-replace "-" "_" (downcase key))
+                                             (if (equal "N/A" val) nil val)))
+                                          props)))
+                    (map-put! props "image" image)
+                    (map-put! props "directors" (s-split ", " (or (map-elt props "director") "") t))
+                    (map-put! props "actors" (s-split ", " (or (map-elt props "actors") "") t))
+                    (map-put! props "genres" (s-split ", " (or (map-elt props "genre") "") t))
+                    (map-put! props "tags" (s-split ":" (or (map-elt props "tags") "") t))
+                    (setq props (ht-reject (lambda (key _val) (-contains? '("why" "blocked" "alltags" "file" "category") key)) props)))))
               "LEVEL=1")
              (-filter #'identity)
              (json-encode)))))
@@ -793,28 +797,212 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 #+end_comment
 
 #+begin_src js :tangle docs/assets/watchlist.js :exports none
+  let FILTER = {};
+  let MOVIES = [];
+
   async function init() {
-    const movies = await fetch("assets/watchlist.json").then((response) =>
+    let hash = window.location.hash.substring(1);
+    if (hash === "") {
+      hash = "{}";
+    }
+
+    FILTER = JSON.parse(decodeURIComponent(hash));
+    MOVIES = await fetch("assets/watchlist.json").then((response) =>
       response.json()
     );
 
+    updateFilter();
+  }
+
+  function isString(x) {
+    return typeof x === "string";
+  }
+
+  function isFunction(x) {
+    return typeof x === "function";
+  }
+
+  function container(items, clazz) {
+    const elem = div(null, clazz);
+    items?.forEach((x) => {
+      elem.appendChild(
+        (() => {
+          if (isString(x)) {
+            return div(x);
+          } else if (Array.isArray(x)) {
+            return container(x);
+          } else if (x == null) {
+            return div("");
+          } else {
+            return x;
+          }
+        })()
+      );
+    });
+    return elem;
+  }
+
+  function div(text, clazz) {
+    return elem("div", text, clazz);
+  }
+
+  function h2(text, clazz) {
+    return elem("h2", text, clazz);
+  }
+
+  function a(text, href, clazz) {
+    const x = elem("a", text, clazz);
+    if (isFunction(href)) {
+      x.href = "#";
+      x.addEventListener("click", function (e) {
+        e.preventDefault();
+        href();
+      });
+    } else {
+      x.href = href;
+    }
+    return x;
+  }
+
+  function img(src, clazz) {
+    const x = elem("img", null, clazz);
+    x.src = src;
+    return x;
+  }
+
+  function elem(type, text, clazz) {
+    const x = document.createElement(type);
+    if (text) {
+      x.innerText = text;
+    }
+    if (clazz) {
+      x.classList.add(clazz);
+    }
+    return x;
+  }
+
+  async function draw(movies) {
     const root = document.getElementById("movie-list");
+    root.innerHTML = "";
+
     movies.forEach((movie) => {
-      const movieDiv = document.createElement("div");
-      const moviePoster = document.createElement("img");
-      const movieTitle = document.createElement("h2");
-      const movieDescription = document.createElement("p");
+      const movieContainer = container(
+        [
+          img(movie.image, "poster"),
+          container(
+            [
+              h2(movie.item, "title"),
+              container(
+                [
+                  movie.runtime,
+                  movie.runtime ? "|" : "",
+                  container(
+                    movie.genres
+                      ?.flatMap((genre) => [
+                        a(genre, () => updateFilter({ genres: genre })),
+                        div(",", "commasep"),
+                      ])
+                      .slice(0, -1),
+                    "inline-children"
+                  ),
+                ],
+                "inline-children"
+              ),
+              container(
+                [movie.rating, movie.rating ? "|" : "", movie.imdb_rating],
+                "inline-children"
+              ),
+              div(movie.plot ?? "...", "movie-plot"),
+              container(
+                [
+                  container(
+                    movie.directors
+                      ?.flatMap((director) => [
+                        a(director, () => updateFilter({ directors: director })),
+                        div(",", "commasep"),
+                      ])
+                      .slice(0, -1),
+                    "inline-children"
+                  ),
+                  movie.directors ? "|" : "",
+                  container(
+                    movie.actors
+                      ?.flatMap((actor) => [
+                        a(actor, () => updateFilter({ actors: actor })),
+                        div(",", "commasep"),
+                      ])
+                      .slice(0, -1),
+                    "inline-children"
+                  ),
+                ],
+                "inline-children"
+              ),
+            ],
+            "info"
+          ),
+        ],
+        "movie"
+      );
 
-      moviePoster.src = movie.poster;
-      movieTitle.innerHTML = movie.item;
-      movieDescription.innerText = "lorem ipsum dolor sit amet";
-
-      movieDiv.appendChild(movieTitle);
-      movieDiv.appendChild(moviePoster);
-      movieDiv.appendChild(movieDescription);
-      root.appendChild(movieDiv);
+      root.appendChild(movieContainer);
     });
   }
+
+  function updateFilter(opts) {
+    Object.entries(opts ?? {}).forEach((entry) => {
+      const [key, val] = entry;
+      const current = FILTER[key];
+      FILTER[key] = [
+        ...new Set([
+          ...(FILTER[key] ?? []).filter((x) => x !== val),
+          ...(current?.includes(val) ? [] : [val]),
+        ]),
+      ];
+    });
+
+    window.location.hash = "#" + JSON.stringify(FILTER);
+    draw(
+      MOVIES.filter((movie) => {
+        return (
+          (FILTER.genres ?? []).every((x) => (movie.genres ?? []).includes(x)) &&
+          (FILTER.actors ?? []).every((x) => (movie.actors ?? []).includes(x)) &&
+          (FILTER.directors ?? []).every((x) =>
+            (movie.directors ?? []).includes(x)
+          )
+        );
+      })
+    );
+  }
+
+  const style = elem("style");
+  style.innerHTML = `
+  .poster {
+    float: left;
+    max-width: 13rem;
+    margin-right: 1rem;
+  }
+  .movie {
+    overflow: auto;
+    margin-bottom: 2rem;
+  }
+  .movie-plot {
+    margin: 0.5rem;
+  }
+  .info {
+    margin-left: 1rem;
+  }
+  .inline-children > div {
+    display: inline-block;
+  }
+  .title {
+    font-size: 1.3rem;
+    margin-top: 0px;
+  }
+  .commasep {
+    margin-right: 0.3rem;
+  }
+  `;
+  document.head.appendChild(style);
 
   init();
 #+end_src

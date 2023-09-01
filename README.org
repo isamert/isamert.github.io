@@ -744,7 +744,7 @@ isamertgurbuz at gmail dot com
 :CUSTOM_ID: watchlist
 :EXPORT_AS: watchlist
 :OPTIONS: toc:nil
-:PUBLISH_DATE: [2023-08-30]
+:PUBLISH_DATE: [2023-08-30 Wed]
 :END:
 
 #+begin_comment
@@ -797,21 +797,30 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 #+end_comment
 
 #+begin_src js :tangle docs/assets/watchlist.js :exports none
-  let FILTER = {};
   let MOVIES = [];
+  let FILTER = {};
 
   async function init() {
-    let hash = window.location.hash.substring(1);
-    if (hash === "") {
-      hash = "{}";
-    }
+    await loadGlobals();
+    updateFilter();
+    scrollToHashElement();
+  }
 
-    FILTER = JSON.parse(decodeURIComponent(hash));
+  async function loadGlobals() {
+    FILTER = JSON.parse(getURLParam("filter", "{}"));
     MOVIES = await fetch("assets/watchlist.json").then((response) =>
       response.json()
     );
+  }
 
-    updateFilter();
+  function scrollToHashElement() {
+    const x = document.getElementById(window.location.hash.substring(1));
+    if (x) {
+      window.scrollTo({
+        top: x.getBoundingClientRect().top,
+        behavior: "smooth",
+      });
+    }
   }
 
   function isString(x) {
@@ -836,7 +845,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
           } else {
             return x;
           }
-        })()
+        })(),
       );
     });
     return elem;
@@ -844,6 +853,10 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 
   function div(text, clazz) {
     return elem("div", text, clazz);
+  }
+
+  function i(clazz) {
+    return elem("i", "", clazz);
   }
 
   function h2(text, clazz) {
@@ -875,10 +888,33 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     if (text) {
       x.innerText = text;
     }
-    if (clazz) {
-      x.classList.add(clazz);
+    if (clazz && isString(clazz)) {
+      clazz.split(" ").forEach((c) => x.classList.add(c));
+    } else if (clazz) {
+      Object.entries(clazz).forEach((p) => {
+        const [key, val] = p;
+        if (key === "clazz") {
+          val.split(" ").forEach((c) => x.classList.add(c));
+        } else if (key.startsWith("on")) {
+          x.addEventListener(key.substring(2), function (e) {
+            e.preventDefault();
+            val(e);
+          });
+        } else {
+          x[key] = val;
+        }
+      });
     }
     return x;
+  }
+
+  function getStarForRating(rating) {
+    if (rating <= 5) {
+      return "star-o";
+    } else if (rating > 5 && rating <= 7) {
+      return "star-half-o"
+    }
+    return "star";
   }
 
   async function draw(movies) {
@@ -888,64 +924,80 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     movies.forEach((movie) => {
       const movieContainer = container(
         [
-          img(movie.image, "poster"),
+          img(movie.image, "movie-poster"),
           container(
             [
-              h2(movie.item, "title"),
+              container(
+                [
+                  div(movie.item, {
+                    clazz: "movie-title",
+                    onclick: () => (window.location.hash = movie.id),
+                  }),
+                  a(movie.todo, () => updateFilter({ todo: movie.todo })),
+                ],
+                "movie-info-row",
+              ),
               container(
                 [
                   movie.runtime,
                   movie.runtime ? "|" : "",
-                  container(
-                    movie.genres
-                      ?.flatMap((genre) => [
-                        a(genre, () => updateFilter({ genres: genre })),
-                        div(",", "commasep"),
-                      ])
-                      .slice(0, -1),
-                    "inline-children"
-                  ),
+                  ...(movie.genres ?? []).flatMap((genre) => [
+                    a(genre, () => updateFilter({ genres: genre })),
+                    div(",", "comma"),
+                  ]).slice(0, -1),
                 ],
-                "inline-children"
+                "movie-info-row",
               ),
-              container(
-                [movie.rating, movie.rating ? "|" : "", movie.imdb_rating],
-                "inline-children"
-              ),
-              div(movie.plot ?? "...", "movie-plot"),
               container(
                 [
-                  container(
-                    movie.directors
-                      ?.flatMap((director) => [
-                        a(director, () => updateFilter({ directors: director })),
-                        div(",", "commasep"),
-                      ])
-                      .slice(0, -1),
-                    "inline-children"
-                  ),
-                  movie.directors ? "|" : "",
-                  container(
-                    movie.actors
-                      ?.flatMap((actor) => [
-                        a(actor, () => updateFilter({ actors: actor })),
-                        div(",", "commasep"),
-                      ])
-                      .slice(0, -1),
-                    "inline-children"
-                  ),
+                  movie.rating ? i({clazz: `fa fa-${getStarForRating(movie.rating)} movie-icon`, title: "My rating"}) : "",
+                  div(movie.rating, {title: "My Rating"}),
+                  movie.rating ? "|" : "",
+                  movie.imdb_rating ? i({clazz: "fa fa-imdb movie-icon", title: "IMDb rating"}) : "",
+                  div(movie.imdb_rating, {title: "IMDb Rating"}),
+                  movie.metascore ? i({clazz: "fa fa-ticket movie-icon", title: "Metascore"}) : "",
+                  div(movie.metascore, {title: "Metascore"}),
                 ],
-                "inline-children"
+                "movie-info-row",
+              ),
+              div(movie.plot ?? "...", "movie-info-row"),
+              container(
+                [
+                  ...(movie.directors ?? []).flatMap((director) => [
+                    a(director, () => updateFilter({ directors: director })),
+                    div(", "),
+                  ]).slice(0, -1),
+                  movie.directors ? "|" : "",
+                  ...(movie.actors ?? []).flatMap((actor) => [
+                    a(actor, () => updateFilter({ actors: actor })),
+                    div(", ", "comma"),
+                  ]).slice(0, -1),
+                ],
+                "movie-info-row",
               ),
             ],
-            "info"
+            "movie-info",
           ),
         ],
-        "movie"
+        { clazz: "movie", id: movie.id },
       );
 
       root.appendChild(movieContainer);
     });
+  }
+
+  function updateURLParam(key, val) {
+    const href = new URL(window.location.href);
+    href.searchParams.set(key, val);
+    window.history.pushState({}, "", href);
+  }
+
+  function getURLParam(key, def) {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has(key)) {
+      return params.get(key);
+    }
+    return def;
   }
 
   function updateFilter(opts) {
@@ -960,45 +1012,48 @@ Following code uses the exported watchlist JSON movies data and populates the pa
       ];
     });
 
-    window.location.hash = "#" + JSON.stringify(FILTER);
+    updateURLParam("filter", JSON.stringify(FILTER));
     draw(
-      MOVIES.filter((movie) => {
-        return (
-          (FILTER.genres ?? []).every((x) => (movie.genres ?? []).includes(x)) &&
-          (FILTER.actors ?? []).every((x) => (movie.actors ?? []).includes(x)) &&
-          (FILTER.directors ?? []).every((x) =>
-            (movie.directors ?? []).includes(x)
-          )
-        );
-      })
+      MOVIES.filter((movie) =>
+        Object.entries(opts ?? {}).reduce((acc, pred) => {
+          const [key, val] = pred;
+          return acc && FILTER[key].every((x) => (movie[key] ?? []).includes(x));
+        }, true)
+      ),
     );
   }
 
   const style = elem("style");
   style.innerHTML = `
-  .poster {
-    float: left;
+  .movie {
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2rem;
+  }
+  .movie-info-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+  }
+  .movie-poster {
     max-width: 13rem;
     margin-right: 1rem;
   }
-  .movie {
-    overflow: auto;
-    margin-bottom: 2rem;
-  }
   .movie-plot {
-    margin: 0.5rem;
   }
-  .info {
-    margin-left: 1rem;
+  .movie-info {
   }
-  .inline-children > div {
-    display: inline-block;
-  }
-  .title {
+  .movie-title {
     font-size: 1.3rem;
-    margin-top: 0px;
   }
-  .commasep {
+  .comma {
+    margin-right: 0.3rem;
+  }
+  .movie-icon {
+    font-size: 1.5rem;
+    margin-left: 0.3rem;
     margin-right: 0.3rem;
   }
   `;

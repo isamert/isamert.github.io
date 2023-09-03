@@ -3575,6 +3575,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 :UPDATE_DATE: [2022-01-04 Tue]
 :OPTIONS: toc:nil
 :CUSTOM_ID: dealing-with-apis-jsons-and-databases-in-org-mode
+:COOL_URI: orgmode-executors-and-apis.html
 :END:
 
 I deal with web API's quite a lot in my daily job. I use org-mode and [[https://github.com/zweifisch/ob-http][ob-http]] to make requests and display their results. See this:
@@ -4290,6 +4291,13 @@ Automatic indentation works fairly well but it fails on quoted lists. I use [[ht
 #+end_src
 
 Especially useful if you are a user of /aggressive-indent-mode/ that I've talked about above.
+* Announcement: swagg.el -- Swagger UI, inside Emacs :ann:
+This is just a post announcing the release of my new package, [[https://github.com/isamert/swagg.el][swagg.el]]. It is an Emacs package that lets you fetch and interact with Swagger definitions. You can think of it like a Swagger UI that your app has but works for multiple definitions and it's right inside your Emacs frame!
+
+The [[https://github.com/isamert/swagg.el][README]] has some GIF's that you can take a look at, just scroll down to see them. It became a package I use quite often at my day job. It complements my [[/orgmode-executors-and-apis.html][org-mode based workflow]] (which changed slightly, now I use [[https://github.com/federicotdn/verb][verb]] package instead of [[https://github.com/zweifisch/ob-http][ob-http]] but the idea is still same) quite a bit, now I can construct queries semi-automatically using swagg.el.
+
+Hope you find it useful.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

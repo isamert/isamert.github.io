@@ -3,7 +3,7 @@ let FILTER = {};
 
 async function init() {
   await loadGlobals();
-  updateFilter();
+  draw(FILTER, MOVIES);
   scrollToHashElement();
 }
 
@@ -30,6 +30,10 @@ function isString(x) {
 
 function isFunction(x) {
   return typeof x === "function";
+}
+
+function isEmpty(x) {
+  return x == null || (x.length == 0);
 }
 
 function container(items, clazz) {
@@ -84,6 +88,12 @@ function img(src, clazz) {
   return x;
 }
 
+function input(type, clazz) {
+  const x = elem("input", null, clazz);
+  x.type = type;
+  return x;
+}
+
 function elem(type, text, clazz) {
   const x = document.createElement(type);
   if (text) {
@@ -97,7 +107,6 @@ function elem(type, text, clazz) {
       if (key === "clazz") {
         val.split(" ").forEach((c) => x.classList.add(c));
       } else if (key.startsWith("on")) {
-        console.log("Registering event listener :: " + key.substring(2));
         x.addEventListener(key.substring(2), function (e) {
           e.preventDefault();
           val(e);
@@ -110,21 +119,137 @@ function elem(type, text, clazz) {
   return x;
 }
 
+function withDebounce(callback, delay) {
+  let timeoutId;
+
+  return function () {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => {
+      callback.apply(this, arguments);
+    }, delay);
+  };
+}
+
 function getStarForRating(rating) {
   if (rating <= 5) {
     return "star-o";
   } else if (rating > 5 && rating <= 7) {
-    return "star-half-o"
+    return "star-half-o";
   }
   return "star";
 }
 
-async function draw(movies) {
-  const root = document.getElementById("movie-list");
-  root.innerHTML = "";
+function drawProp(name, prop) {
+  return a(prop, () => draw(updateFilter({ [name]: prop }), MOVIES), {
+    clazz: FILTER[name]?.includes(prop) ? "selected-prop" : "normal-prop",
+  });
+}
 
-  movies.forEach((movie) => {
-    const movieContainer = container(
+function drawProps(name, props) {
+  return (props ?? []).flatMap((prop) => [
+    drawProp(name, prop),
+    div(",", "comma"),
+  ]).slice(0, -1);
+}
+
+function drawTodo(movie) {
+  const todo = movie.todo;
+  const [text, title] = (() => {
+    if (todo === "DONE") {
+      const when = movie.closed || movie.watched;
+      return ["Watched", when];
+    } else if (todo === "PROG") {
+      return ["In progress"];
+    } else if (todo === "WAIT") {
+      return ["Waiting"];
+    } else if (todo === "TODO") {
+      return ["Will watch"];
+    }
+  })();
+  return a(text, () => draw(updateFilter({ todo: movie.todo }), MOVIES), {
+    clazz: "movie-todo",
+    title,
+  });
+}
+
+function drawFilterPopup({ show, x, y, items, parent, filter }) {
+  let filterElems = container(
+    items.map((x) => drawProp(filter, x)),
+    "filter-popup",
+  );
+  const popup = container([
+    input("text", {
+      placeholder: "Filter...",
+      oninput: withDebounce((e) => {
+        const filteredElems = container(
+          items.filter((x) => x?.toLowerCase().includes(e.target.value)).map((
+            x,
+          ) => drawProp(filter, x)),
+          "filter-popup",
+        );
+        filterElems.replaceWith(filteredElems);
+        filterElems = filteredElems;
+      }, 300),
+    }),
+    filterElems,
+  ], "filter-popup-outer");
+  parent.append(popup);
+  popup.style.display = show ? "block" : "none";
+  if (show) {
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
+  }
+
+  // FIXME: This causes a memory leak but who cares
+  document.addEventListener("click", (e) => {
+    if (!popup.contains(e.target)) {
+      popup.remove();
+    }
+  });
+}
+
+function drawFilters(filters) {
+  const filtersRoot = div("", "filters");
+  const items = Object.entries({
+    todo: [],
+    genres: [],
+    directors: [],
+    actors: [],
+    ...filters,
+  }).map((f) => {
+    const [filter, val] = f;
+    const onAdd = (e) => {
+      const items = [
+        ...new Set(MOVIES.flatMap((movie) => {
+          const x = movie[filter];
+          return Array.isArray(x) ? x : [x];
+        })),
+      ].filter((x) => !FILTER[filter]?.includes(x));
+      drawFilterPopup({
+        items,
+        x: e.clientX,
+        y: e.clientY,
+        show: true,
+        parent: filtersRoot,
+        filter,
+      });
+      e.stopPropagation();
+    };
+    return container([
+      div(`${filter}: `, "filter-title"),
+      ...drawProps(filter, val),
+      div("+", { clazz: "selected-prop", onclick: onAdd }),
+    ], "filter-row");
+  });
+  filtersRoot.append(...items);
+  return filtersRoot;
+}
+
+function drawMovies(movies) {
+  const movieRoot = document.createElement("div");
+  const items = movies.map((movie) =>
+    container(
       [
         img(movie.image, "movie-poster"),
         container(
@@ -135,45 +260,45 @@ async function draw(movies) {
                   clazz: "movie-title",
                   onclick: () => (window.location.hash = movie.id),
                 }),
-                a(movie.todo, () => updateFilter({ todo: movie.todo })),
+                drawTodo(movie),
               ],
-              "movie-info-row",
+              "movie-info-row spaced",
             ),
             container(
               [
                 movie.runtime,
                 movie.runtime ? "|" : "",
-                ...(movie.genres ?? []).flatMap((genre) => [
-                  a(genre, () => updateFilter({ genres: genre })),
-                  div(",", "comma"),
-                ]).slice(0, -1),
+                ...drawProps("genres", movie.genres),
               ],
               "movie-info-row",
             ),
             container(
               [
-                movie.rating ? i({clazz: `fa fa-${getStarForRating(movie.rating)} movie-icon`, title: "My rating"}) : "",
-                div(movie.rating, {title: "My Rating"}),
+                movie.rating
+                  ? i({
+                    clazz: `fa fa-${getStarForRating(movie.rating)} movie-icon`,
+                    title: "My rating",
+                  })
+                  : "",
+                div(movie.rating, { title: "My Rating" }),
                 movie.rating ? "|" : "",
-                movie.imdb_rating ? i({clazz: "fa fa-imdb movie-icon", title: "IMDb rating"}) : "",
-                div(movie.imdb_rating, {title: "IMDb Rating"}),
-                movie.metascore ? i({clazz: "fa fa-ticket movie-icon", title: "Metascore"}) : "",
-                div(movie.metascore, {title: "Metascore"}),
+                movie.imdb_rating
+                  ? i({ clazz: "fa fa-imdb movie-icon", title: "IMDb rating" })
+                  : "",
+                div(movie.imdb_rating, { title: "IMDb Rating" }),
+                movie.metascore
+                  ? i({ clazz: "fa fa-ticket movie-icon", title: "Metascore" })
+                  : "",
+                div(movie.metascore, { title: "Metascore" }),
               ],
               "movie-info-row",
             ),
             div(movie.plot ?? "...", "movie-info-row"),
             container(
               [
-                ...(movie.directors ?? []).flatMap((director) => [
-                  a(director, () => updateFilter({ directors: director })),
-                  div(", "),
-                ]).slice(0, -1),
-                movie.directors ? "|" : "",
-                ...(movie.actors ?? []).flatMap((actor) => [
-                  a(actor, () => updateFilter({ actors: actor })),
-                  div(", ", "comma"),
-                ]).slice(0, -1),
+                ...drawProps("directors", movie.directors),
+                !isEmpty(movie.directors) ? "|" : "",
+                ...drawProps("actors", movie.actors),
               ],
               "movie-info-row",
             ),
@@ -182,10 +307,26 @@ async function draw(movies) {
         ),
       ],
       { clazz: "movie", id: movie.id },
-    );
+    )
+  );
 
-    root.appendChild(movieContainer);
-  });
+  movieRoot.append(...items);
+  return movieRoot;
+}
+
+function draw(filters, movies) {
+  const root = document.getElementById("movie-list");
+  root.innerHTML = "";
+
+  const filteredMovies = movies.filter((movie) =>
+    Object.entries(filters ?? {}).reduce((acc, pred) => {
+      const [key, val] = pred;
+      return acc && val.every((x) => (movie[key] ?? []).includes(x));
+    }, true)
+  );
+
+  root.appendChild(drawFilters(filters));
+  root.appendChild(drawMovies(filteredMovies));
 }
 
 function updateURLParam(key, val) {
@@ -213,16 +354,8 @@ function updateFilter(opts) {
       ]),
     ];
   });
-
   updateURLParam("filter", JSON.stringify(FILTER));
-  draw(
-    MOVIES.filter((movie) =>
-      Object.entries(opts ?? {}).reduce((acc, pred) => {
-        const [key, val] = pred;
-        return acc && FILTER[key].every((x) => (movie[key] ?? []).includes(x));
-      }, true)
-    ),
-  );
+  return FILTER;
 }
 
 const style = elem("style");
@@ -243,12 +376,17 @@ style.innerHTML = `
   max-width: 13rem;
   margin-right: 1rem;
 }
+.movie-todo {
+  padding-left: 3px;
+  padding-right: 3px;
+}
 .movie-plot {
 }
 .movie-info {
 }
 .movie-title {
   font-size: 1.3rem;
+  cursor: pointer;
 }
 .comma {
   margin-right: 0.3rem;
@@ -257,6 +395,53 @@ style.innerHTML = `
   font-size: 1.5rem;
   margin-left: 0.3rem;
   margin-right: 0.3rem;
+}
+.spaced {
+  justify-content: space-between;
+}
+.selected-prop {
+  padding-left: 3px;
+  padding-right: 3px;
+  border: 2px solid;
+  border-radius: 3px;
+}
+.selected-prop:hover {
+  text-decoration: line-through;
+}
+.normal-prop {
+  border: none;
+}
+.filters {
+  margin-bottom: 1.3rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.filter-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.filter-title {
+  text-transform: capitalize;
+  font-weight: bold;
+  margin-right: 0.3rem;
+}
+.filter-popup-outer {
+  display: none;
+  position: absolute;
+  border: 1px solid;
+  padding: 10px;
+  background: white;
+}
+.filter-popup {
+  max-height: 17rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: none;
 }
 `;
 document.head.appendChild(style);

@@ -216,6 +216,8 @@ function drawFilters(filters) {
     genres: [],
     directors: [],
     actors: [],
+    tags: [],
+    countries: [],
     ...filters,
   }).map((f) => {
     const [filter, val] = f;

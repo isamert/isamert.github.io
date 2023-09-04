@@ -783,6 +783,7 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
                     (map-put! props "image" image)
                     (map-put! props "directors" (s-split ", " (or (map-elt props "director") "") t))
                     (map-put! props "actors" (s-split ", " (or (map-elt props "actors") "") t))
+                    (map-put! props "countries" (s-split ", " (or (map-elt props "country") "") t))
                     (map-put! props "genres" (s-split ", " (or (map-elt props "genre") "") t))
                     (map-put! props "tags" (s-split ":" (or (map-elt props "tags") "") t))
                     (setq props (ht-reject (lambda (key _val) (-contains? '("why" "blocked" "alltags" "file" "category") key)) props)))))
@@ -1015,6 +1016,8 @@ Following code uses the exported watchlist JSON movies data and populates the pa
       genres: [],
       directors: [],
       actors: [],
+      tags: [],
+      countries: [],
       ...filters,
     }).map((f) => {
       const [filter, val] = f;

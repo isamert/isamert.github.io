@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>announcement - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
+      <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
+      <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

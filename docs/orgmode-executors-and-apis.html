@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<head>
+  <title>Dealing with APIs, JSONs and databases in org-mode | isamert.net</title>
+
+  <!-- Privacy friendly simple analytics -->
+  <script src="https://getinsights.io/js/insights.js"></script>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Dealing with APIs, JSONs and databases in org-mode</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2022-01-04</em></li>
+            <li>Last updated at <em>2022-01-04</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+I deal with web API's quite a lot in my daily job. I use org-mode and <a href="https://github.com/zweifisch/ob-http">ob-http</a> to make requests and display their results. See this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src http :pretty
+GET https://jsonplaceholder.typicode.com/todos/1
+#+end_src
+
+#+RESULTS:
+: {
+:   "userId": 1,
+:   "id": 1,
+:   "title": "delectus aut autem",
+:   "completed": false
+: }
+</pre>
+</div>
+
+<p>
+Hitting <code>C-c C-c</code> on the first block will make a get request to the given URL and it will paste the results into the <code>#+RESULTS:</code> part. This is quite cool, and pretty good for quickly prototyping stuff right inside the org-mode. You can build a quite nice workflow around this if you are dealing with API's a lot.
+</p>
+
+<p>
+An improvement that you can apply to this is wrapping the result into an JSON block so that you can get JSON highlighting and other goodies. Let's see how we can do that:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src http :pretty :wrap src json
+GET https://jsonplaceholder.typicode.com/todos/1
+#+end_src
+
+#+RESULTS:
+#+begin_src json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+#+end_src
+</pre>
+</div>
+
+<p>
+Now we have nice syntax highlighting, thanks to the <code>:wrap src json</code> parameter on the first line.
+</p>
+
+<p>
+Another good thing you can do is manipulating the result. <code>ob-http</code> offers a very convenient way to do this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src http :pretty :select .title
+GET https://jsonplaceholder.typicode.com/todos/1
+#+end_src
+
+#+RESULTS:
+: delectus aut autem
+</pre>
+</div>
+
+<p>
+It simply pipes the result of the request into <a href="https://stedolan.github.io/jq/">jq</a> with the value you provided to <code>:select</code> in the header of the code block. This is especially good if you want to pipe this result into another code block. You can give a name to this code block by putting <code>#+name: todo-title</code> right above the code block and pass the result of this code block into other code blocks by adding <code>:var TODO-TITLE=todo-title</code> into their block headers etc. Quite convenient! You can also utilize <a href="https://orgmode.org/manual/Noweb-Reference-Syntax.html">noweb syntax</a> if you want to get fancy.
+</p>
+
+<p>
+There is one little problem with the <code>:select</code> approach though: If you are dealing with big JSONs and you want to explore the JSON or try things out by changing the <code>:select</code> parameter, you send the same request over and over again. This is not cool for many reasons. So how do we fix this? We can implement an executer function for <code>JSON</code> blocks. See how it works in action:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src http :pretty :wrap src json
+GET https://jsonplaceholder.typicode.com/todos/1
+#+end_src
+
+#+RESULTS:
+#+begin_src json :jq .title
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+#+end_src
+
+#+RESULTS:
+: delectus aut autem
+</pre>
+</div>
+
+<p>
+First I hit <code>C-c C-c</code> on the <code>http</code> block and it outputs the JSON response. Then I add the <code>:jq .title</code> part to the resulting JSON block and hit <code>C-c C-c</code> on it and it outputs the result of my <i>jq</i> expression. Like the <code>:select</code> parameter of <code>ob-http</code>, the <code>:jq</code> parameter for the JSON block simply pipes the JSON into <code>jq</code> with given jq expression. I used <code>:jq</code> instead of <code>:select</code> as the parameter name because my custom executer also supports manipulating the JSON using <code>node</code>. See this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src json :node it.title.toUpperCase()
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+#+end_src
+
+#+RESULTS:
+: DELECTUS AUT AUTEM
+</pre>
+</div>
+
+<p>
+The <code>:node</code> parameter takes arbitrary JavaScript code and runs it using the <code>node</code> binary. The variable <code>it</code> represents the whole JSON. And here is the implementation for this executer:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(defun org-babel-execute:json (body params)
+  (let ((jq (cdr (assoc :jq params)))
+        (node (cdr (assoc :node params))))
+    (cond
+     (jq
+      (with-temp-buffer
+        ;; Insert the JSON into the temp buffer
+        (insert body)
+        ;; Run jq command on the whole buffer, and replace the buffer
+        ;; contents with the result returned from jq
+        (shell-command-on-region (point-min) (point-max) (format "jq -r \"%s\"" jq) nil 't)
+        ;; Return the contents of the temp buffer as the result
+        (buffer-string)))
+     (node
+      (with-temp-buffer
+        (insert (format "const it = %s;" body))
+        (insert node)
+        (shell-command-on-region (point-min) (point-max) "node -p" nil 't)
+        (buffer-string))))))
+</pre>
+</div>
+
+<p>
+Simple, isn't it? Just to summarize, here is what is going on:
+</p>
+<ul class="org-ul">
+<li>If you want to implement a custom executer for an arbitrary source code block, you need to create a function named <code>org-babel-execute:$SRC_BLOCK_LANG_NAME</code>.
+<ul class="org-ul">
+<li>This function takes two parameters, the body of the block and an alist of parameters passed to the header of the source block.</li>
+<li>You need to return the result body from the function.</li>
+</ul></li>
+<li>For piping some arbitrary text into a binary, use <code>shell-command-on-region</code> in combination with <code>with-temp-buffer</code>. It'll save you from a lot of trouble, like escaping quotes and all the other shell quirks.</li>
+</ul>
+
+<p>
+Note that you can fold a source block by hitting <code>TAB</code>. With that in mind, you can use this executer as a live JSON playground, change your expression, fold the codeblock to hide the clutter, hit <code>C-c C-c</code>, see the result, and repeat.
+</p>
+
+<div id="outline-container-custom-executers-for-custom-modes" class="outline-2">
+<h2 id="custom-executers-for-custom-modes">Custom executers for custom modes</h2>
+<div class="outline-text-2" id="text-custom-executers-for-custom-modes">
+<p>
+Our executer function example is for <code>json-mode</code>, an already-existing major mode. You can also create arbitrary major modes, create executers for them and you can start using them in your org-mode documents right away. Here is another example case: We use Couchbase quite a lot at work and I have bunch of queries saved in org-mode documents. It would be good to have an <code>ob-n1ql</code> package (<a href="https://www.couchbase.com/products/n1ql">N1QL</a> is Couchbase's SQL-like language) that let's me run <a href="https://www.couchbase.com/">Couchbase</a> queries right inside org-mode. I looked it up found no N1QL mode for Emacs, let alone a package like <code>ob-n1ql</code> for org-mode. But it was quite easy to roll my own, see this:
+</p>
+
+<ul class="org-ul">
+<li>First I created a derived major mode named <code>n1ql-mode</code>. N1QL is just like SQL, so I simply extended it. This way we get syntax highlighting and bunch of other stuff for free.</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-elisp">(define-derived-mode n1ql-mode sql-mode "n1ql-mode")
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Then I created a function that executes given N1QL query using the <a href="https://docs.couchbase.com/server/current/tools/cbq-shell.html">cbq</a> command line tool that Couchbase provides:</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-elisp">(cl-defun isamert/cbq (query &amp;key host username password (select "."))
+"Run a couchbase query and return the result."
+(with-temp-buffer
+  (insert query)
+  (shell-command-on-region
+   (point-min)
+   (point-max)
+   (format "cbq -quiet -engine %s -credentials '%s'"
+           host
+           (format "%s:%s" username password))
+   nil t)
+  ;; Do some cleaning up
+  (replace-regexp-in-region "^cbq&gt; " "" (point-min) (point-max))
+  ;; N1QL returns a JSON response, so it might be a good idea to
+  ;; provide a way to filter the result with jq, like what ob-http
+  ;; does with it :select parameter
+  (shell-command-on-region (point-min) (point-max) (format "jq -r %s" select) nil t)
+  (buffer-string)))
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>And finally, an executer function for N1QL mode, so that we can run our queries right inside org-mode:</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-elisp">(defun org-babel-execute:n1ql (body params)
+  (isamert/cbq
+   body
+   :host (alist-get :host params)
+   :username (alist-get :username params)
+   :password (alist-get :password params)
+   :select (alist-get :select params)))
+</pre>
+</div>
+
+<p>
+&#x2026;and this is how you would use it:
+</p>
+<div class="org-src-container">
+<pre class="src src-org">#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
+  SELECT * FROM SomeTable LIMIT 10;
+#+end_src
+</pre>
+</div>
+
+<p>
+You can turn any REPL/CLI tool into a language that can be executed right inside an org-mode document. This brings you the benefit of having interactive notes. Your learning environment and testing environment would be same and this let's you progress quicker. I even do production troubleshooting inside org-mode documents, so that at the end of the day I have a clear document that shows exact runnable steps to solve a problem.
+</p>
+</div>
+</div>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz © 2022
+      
+          <span>
+            <a href="https://github.com/isamert/isamert.github.io">Source</a>
+          </span>
+        </p>
+      </footer>
+  </body>

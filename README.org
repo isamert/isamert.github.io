@@ -585,6 +585,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html][Announcement: swagg.el -- Swagger UI, inside Emacs]]
 - [[./elisp-tips.html][Elisp editing/development tips]]
 - [[./2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html][A simple new tab page (that works with TreeStyleTab)]]
 - [[./2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html][Typing (unicode) characters programmatically on Linux and macOS]]
@@ -4480,12 +4481,16 @@ Automatic indentation works fairly well but it fails on quoted lists. I use [[ht
 #+end_src
 
 Especially useful if you are a user of /aggressive-indent-mode/ that I've talked about above.
-* Announcement: swagg.el -- Swagger UI, inside Emacs :ann:
+* Announcement: swagg.el -- Swagger UI, inside Emacs :announcement:emacs:
+:PROPERTIES:
+:PUBLISH_DATE: [2023-09-04 Mon]
+:CUSTOM_ID: announcement-swagg-el-swagger-ui-inside-emacs
+:END:
 This is just a post announcing the release of my new package, [[https://github.com/isamert/swagg.el][swagg.el]]. It is an Emacs package that lets you fetch and interact with Swagger definitions. You can think of it like a Swagger UI that your app has but works for multiple definitions and it's right inside your Emacs frame!
 
-The [[https://github.com/isamert/swagg.el][README]] has some GIF's that you can take a look at, just scroll down to see them. It became a package I use quite often at my day job. It complements my [[/orgmode-executors-and-apis.html][org-mode based workflow]] (which changed slightly, now I use [[https://github.com/federicotdn/verb][verb]] package instead of [[https://github.com/zweifisch/ob-http][ob-http]] but the idea is still same) quite a bit, now I can construct queries semi-automatically using swagg.el.
+The [[https://github.com/isamert/swagg.el][README]] has some GIF's that you can take a look at, just scroll down to see them. It became a package that I use quite often at my day job. It complements my [[https://isamert.net/orgmode-executors-and-apis.html][org-mode based workflow]] (which changed slightly, now I use [[https://github.com/federicotdn/verb][verb]] package instead of [[https://github.com/zweifisch/ob-http][ob-http]] but the idea is still the same) quite a bit, now I can construct queries semi-automatically using swagg.el.
 
-Hope you find it useful.
+Hope you find it useful. Have a nice one!
 
 * Publish Code :noexport:
 #+NAME: startup

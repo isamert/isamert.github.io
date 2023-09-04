@@ -613,7 +613,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 Here are some cool stuff that you can check out:
 
 - My [[https://github.com/isamert/dotfiles][dotfiles]].
-- My [[https://www.imdb.com/user/ur51538143/ratings][movie ratings]] and my [[https://www.imdb.com/user/ur51538143/watchlist][watchlist]].
+- My [[./watchlist.html][movie ratings and watchlist]].
 - My [[https://libre.fm/user/isamert][libre.fm]] page.
 
 ** Türkçe yazılar (Turkish posts)
@@ -1252,7 +1252,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 #+end_src
 
 #+begin_src elisp :exports results :results value html
-  "<script src=\"/assets/watchlist.js\"></script><div id=\"movie-list\" />"
+  "<script src=\"/assets/watchlist.js\"></script><div id=\"movie-list\">Loading...</div>"
 #+end_src
 
 * Median cut algorithm in C++/Qt :cpp:qt:

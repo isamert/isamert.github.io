@@ -1252,11 +1252,14 @@ Following code uses the exported watchlist JSON movies data and populates the pa
   init();
 #+end_src
 
-This page showcases my watchlist and ratings for films that I have already watched. It is a work in progress, but it encompasses the majority of its intended features. By clicking on any actor, director, genre, etc., you can filter the displayed movies or series accordingly. To eliminate the filter, simply click on the same item again. Movies/series that are accompanied by a star icon signify my personal rating. Additionally, if applicable, the IMDb and Metascore ratings are also presented alongside my evaluation.
+- This page showcases my watchlist and ratings for films that I have already watched. It is a work in progress, but it encompasses the majority of its intended features.
+- By clicking on any actor, director, genre, etc., you can filter the displayed movies or series accordingly. To eliminate the filter, simply click on the same item again.
+- Movies/series that are accompanied by a star icon signify my personal rating. Additionally, if applicable, the IMDb and Metascore ratings are also presented alongside my evaluation.
 
-#+begin_src elisp :exports results :results value html
-  "<script src=\"/assets/watchlist.js\"></script><div id=\"movie-list\">Loading...</div>"
-#+end_src
+#+begin_export html
+  <div id="movie-list" style="margin-top: 2rem;">Loading...</div>
+  <script src="/assets/watchlist.js"></script>
+#+end_export
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:

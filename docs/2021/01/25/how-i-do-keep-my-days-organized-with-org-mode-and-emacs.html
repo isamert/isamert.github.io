@@ -36,7 +36,7 @@
 
         <hr />
 
-        <div id="table-of-contents" role="doc-toc">
+        <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -58,7 +58,7 @@
 <li><a href="#appendix">Appendix</a></li>
 </ul>
 </div>
-</div>
+</nav>
 <div id="outline-container-preamble" class="outline-2">
 <h2 id="preamble">Preamble</h2>
 <div class="outline-text-2" id="text-preamble">
@@ -85,10 +85,10 @@ Every new day, I create a new level 1 header with today's date and start plannin
 </p>
 
 
-<div id="org8e5e7bd" class="figure">
-<p><img src="/images/bullet_routines.png" alt="bullet_routines.png" class="centered" />
-</p>
-</div>
+<figure id="org2853ddc">
+<img src="/images/bullet_routines.png" alt="bullet_routines.png" class="centered">
+
+</figure>
 
 <p>
 I use <a href="https://orgmode.org/manual/Clocking-Work-Time.html">clocking</a> functionality to keep track of how much time I spent on doing stuff. So I just start clocking on the <code>Daily planning</code> TODO item. I'll show how I utilize this later in the post.
@@ -114,29 +114,29 @@ The reason for having all of these routines under a header called <code>Routines
 So when I finish planning, I just clock out:
 </p>
 
-<div id="orge9b2ce3" class="figure">
-<p><img src="/images/bullet_2.png" alt="bullet_2.png" class="centered" />
-</p>
-</div>
+<figure id="orge2037ac">
+<img src="/images/bullet_2.png" alt="bullet_2.png" class="centered">
+
+</figure>
 
 <p>
 And this is what the whole day looks like after planning:
 </p>
 
-<div id="org4973c83" class="figure">
-<p><img src="/images/bullet_4.png" alt="bullet_4.png" class="centered" />
-</p>
-</div>
+<figure id="orge855e40">
+<img src="/images/bullet_4.png" alt="bullet_4.png" class="centered">
+
+</figure>
 
 <p>
 Right now, it's weekend and there is nothing related to work here. When there is work items, I just tag them with <code>work</code> tag, so that I can do just hide/show work-related and non-work-related pretty easily. Other than this case, I don't use tags much. Here is an example working day:
 </p>
 
 
-<div id="orgc873ae7" class="figure">
-<p><img src="/images/bullet_work.png" alt="bullet_work.png" class="centered" />
-</p>
-</div>
+<figure id="orgb098572">
+<img src="/images/bullet_work.png" alt="bullet_work.png" class="centered">
+
+</figure>
 
 <p>
 I tend to schedule things to specific hours, so that I can see them on my agenda view and when I sync this files to my phone <a href="http://www.orgzly.com">orgzly</a> sends me notifications before the scheduled time. I don't really use <i>orgzly</i> anything other than this, except using it's pretty widget on my main screen so that when I pull up my phone, the first thing I see is my <code>TODO</code> items.
@@ -243,10 +243,10 @@ This does not need any external dependency, it's possible to do it with <code>pr
 It's quite important to be able to easily open and take notes into this file. Thus, I created a shortcut that toggles this file on right side of Emacs. See the following:
 </p>
 
-<div id="orgeae9c38" class="figure">
-<p><img src="/images/bullet_toggling.png" alt="bullet_toggling.png" class="centered" />
-</p>
-</div>
+<figure id="orgef685fd">
+<img src="/images/bullet_toggling.png" alt="bullet_toggling.png" class="centered">
+
+</figure>
 
 <p>
 The code is a bit long but the important function is <code>isamert/toggle-side-bullet-org-buffer</code>. I assigned a keybinding to this and it simply toggles the file in a side buffer.
@@ -355,10 +355,10 @@ If you've seen in the above screenshots, there was another header called <code>S
 </dl>
 
 
-<div id="org8cef1d5" class="figure">
-<p><img src="/images/bullet_summary_clocktable.png" alt="bullet_summary_clocktable.png" class="centered" />
-</p>
-</div>
+<figure id="org51651db">
+<img src="/images/bullet_summary_clocktable.png" alt="bullet_summary_clocktable.png" class="centered">
+
+</figure>
 
 <p>
 After this, if I'm feeling well I just add a few observations about the day or maybe note down unexpected things that I encountered during the day. I also open my <code>Notes</code> header and try to create tasks based on those and simply move easy ones to where they belong (like moving snippets to my snippet file etc.).

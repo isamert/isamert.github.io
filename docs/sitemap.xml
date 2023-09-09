@@ -16,6 +16,11 @@
       <changefreq>monthly</changefreq>
    </url>
    <url>
+      <loc>https://isamert.net/watchlist.html</loc>
+      <lastmod>2023-08-30</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
       <loc>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</loc>
       <lastmod>2016-07-13</lastmod>
       <changefreq>monthly</changefreq>
@@ -123,6 +128,16 @@
    <url>
       <loc>https://isamert.net/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html</loc>
       <lastmod>2022-09-17</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://isamert.net/2023/08/14/elisp-editing-development-tips.html</loc>
+      <lastmod>2023-08-14</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</loc>
+      <lastmod>2023-09-04</lastmod>
       <changefreq>monthly</changefreq>
    </url>
 </urlset>

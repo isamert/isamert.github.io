@@ -2,9 +2,6 @@
 <head>
   <title>Programming AVR microcontrollers in Linux | isamert.net</title>
 
-  <!-- Privacy friendly simple analytics -->
-  <script src="https://getinsights.io/js/insights.js"></script>
-
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
 
@@ -39,7 +36,7 @@
 
         <hr />
 
-        <nav id="table-of-contents" role="doc-toc">
+        <div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -48,7 +45,7 @@
 <li><a href="#the-correct-way-of-using--avrdude-">The correct way of using <code>avrdude</code></a></li>
 </ul>
 </div>
-</nav>
+</div>
 <p>
 The <i>Windows way</i> of doing that is just using <i>ATMEL Studio</i> but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite <i>IDE</i>, if you are using one, is your job.
 </p>
@@ -111,21 +108,23 @@ When you do the last step, you will get an error that says you don't have permis
 <li><p>
 Write this into file:
 </p>
-<pre class="example">
-# USB-ASPcable
+<div class="org-src-container">
+<pre class="src src-nil"># USB-ASPcable
 ATTR{idVendor}=="16c0", ATTR{idProduct}=="05dc", GROUP="plugdev", MODE="0666"~
 </pre>
+</div>
 
 <ul class="org-ul">
 <li><p>
 Again, as you can see this configuration is for my programmer, <code>usbasp</code>. You need to change <code>idVendor</code> and <code>idProduct</code> according to your device. To find these values, just run <code>lsusb</code> (If you are using usb extender cord or something like that, it is possible that lsusb might not display your device. Just connect your programmer directly to your PC if that is the case):
 </p>
-<pre class="example">
-&gt; lsusb
+<div class="org-src-container">
+<pre class="src src-nil">&gt; lsusb
 ...
 Bus 003 Device 010: ID 16c0:05dc Van Ooijen Technische Informatica shared ID for use with libu
 ...
-</pre></li>
+</pre>
+</div></li>
 <li>In sixth column, you can see your devices vendor id and product id in this format <code>VENDOR_ID:PRODUCT_ID</code>. So edit your file according to this information.</li>
 </ul></li>
 

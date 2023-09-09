@@ -2,9 +2,6 @@
 <head>
   <title>Migrating my IMDb ratings list and watch list into org-mode | isamert.net</title>
 
-  <!-- Privacy friendly simple analytics -->
-  <script src="https://getinsights.io/js/insights.js"></script>
-
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
 
@@ -39,7 +36,7 @@
 
         <hr />
 
-        <nav id="table-of-contents" role="doc-toc">
+        <div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -50,7 +47,7 @@
 <li><a href="#appendix:-getting-the-movie-country-data">Appendix: Getting the movie country data</a></li>
 </ul>
 </div>
-</nav>
+</div>
 <div id="outline-container-preamble" class="outline-2">
 <h2 id="preamble">Preamble</h2>
 <div class="outline-text-2" id="text-preamble">
@@ -59,20 +56,20 @@ I have been using org-mode to keep track of my movie ratings and critiques. Org-
 </p>
 
 
-<figure id="orgf5c8c31">
-<img src="/images/org_imdb_structre.png" alt="org_imdb_structre.png" class="centered">
-
-</figure>
+<div id="org82d0b0f" class="figure">
+<p><img src="/images/org_imdb_structre.png" alt="org_imdb_structre.png" class="centered" />
+</p>
+</div>
 
 <p>
 And this is how a movie with it's properties looks like:
 </p>
 
 
-<figure id="org1e2e02b">
-<img src="/images/org_imdb_expanded.png" alt="org_imdb_expanded.png" class="centered">
-
-</figure>
+<div id="org1783e2f" class="figure">
+<p><img src="/images/org_imdb_expanded.png" alt="org_imdb_expanded.png" class="centered" />
+</p>
+</div>
 
 <p>
 I mainly automated the needed information-retrieval using the <a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a>, a package that I wrote. The link contains the related information for automatically filling this data. Before all that, I was using IMDb to log my ratings only. So I just wanted to migrate those ratings into my new org-mode based watch/rating list.
@@ -88,10 +85,10 @@ Log in to IMDb and open <a href="https://www.imdb.com/list/ratings">this link</a
 </p>
 
 
-<figure id="org0a72c2f">
-<img src="/images/org_imdb_export.png" alt="org_imdb_export.png" class="centered">
-
-</figure>
+<div id="org1006c67" class="figure">
+<p><img src="/images/org_imdb_export.png" alt="org_imdb_export.png" class="centered" />
+</p>
+</div>
 
 <p>
 This will give you a file named <code>ratings.csv</code>.

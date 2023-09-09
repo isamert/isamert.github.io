@@ -2,9 +2,6 @@
 <head>
   <title>Global interactive Emacs functions | isamert.net</title>
 
-  <!-- Privacy friendly simple analytics -->
-  <script src="https://getinsights.io/js/insights.js"></script>
-
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
 
@@ -80,30 +77,30 @@ Here is how the command looks like without wrapping it with <code>(isamert/globa
 </p>
 
 
-<figure id="org9200286">
-<img src="/images/emacs_global_interactive_fun_default.png" alt="emacs_global_interactive_fun_default.png" class="centered">
-
-</figure>
+<div id="orgdf5c4dc" class="figure">
+<p><img src="/images/emacs_global_interactive_fun_default.png" alt="emacs_global_interactive_fun_default.png" class="centered" />
+</p>
+</div>
 
 <p>
 Here is how it looks when you wrap it with <code>(isamert/globally ...)</code>, using default rofi config:
 </p>
 
 
-<figure id="org63133c3">
-<img src="/images/emacs_global_interactive_fun.png" alt="emacs_global_interactive_fun.png" class="centered">
-
-</figure>
+<div id="orgb91de3d" class="figure">
+<p><img src="/images/emacs_global_interactive_fun.png" alt="emacs_global_interactive_fun.png" class="centered" />
+</p>
+</div>
 
 <p>
 This is how it looks like on macOS with choose:
 </p>
 
 
-<figure id="orgf8de9a6">
-<img src="/images/emacs_global_interactive_fun_choose.png" alt="emacs_global_interactive_fun_choose.png" class="centered">
-
-</figure>
+<div id="org646bd61" class="figure">
+<p><img src="/images/emacs_global_interactive_fun_choose.png" alt="emacs_global_interactive_fun_choose.png" class="centered" />
+</p>
+</div>
 
 <p>
 <code>isamert/globally</code> is a pretty simple macro that overrides <code>completing-read-function</code> for the current running context.
@@ -201,10 +198,10 @@ Just to make this concrete, here is how it looks:
 </p>
 
 
-<figure id="org13fc1bc">
-<img src="/images/emacs_global_interactive_fun_read_string.png" alt="emacs_global_interactive_fun_read_string.png" class="centered">
-
-</figure>
+<div id="orgf1ae512" class="figure">
+<p><img src="/images/emacs_global_interactive_fun_read_string.png" alt="emacs_global_interactive_fun_read_string.png" class="centered" />
+</p>
+</div>
 
 <p>
 Now, if you want to extend <code>isamert/globally</code>, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the <code>isamert/defer-to-system-app</code> variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful, I can turn it into a package. Currently I use it with <i>empv.el</i>, my custom password manager, and for interactively selecting inserting my <a href="https://github.com/Kungsgeten/yankpad/">yankpad</a> snippets to other programs.

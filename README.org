@@ -157,11 +157,7 @@ Just setting the port and binding it into an org-variable. I'll utilize this lat
 This is the file that contains all the dynamic logic for my website. I'm trying to keep it minimal as possible.
 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
-  if (location.port !== <<blog-local-port()>>) {
-      // Simple, privacy friendly analytics
-      insights.init('GCMG1yjLS_qn7cS3');
-      insights.trackPages();
-  }
+  if (location.port !== <<blog-local-port()>>) {}
 
   document.addEventListener('DOMContentLoaded', () => {
     addLinksToHeaders()
@@ -531,9 +527,6 @@ Generic head portion that I use in every template.
 #+begin_src html
   <head>
     <title>${title} | isamert.net</title>
-
-    <!-- Privacy friendly simple analytics -->
-    <script src="https://getinsights.io/js/insights.js"></script>
 
     <script src="/assets/index.js"></script>
     <link rel="stylesheet" href="/assets/main.css">
@@ -4963,7 +4956,7 @@ Hope you find it useful. Have a nice one!
 
   (defun isamert/org-date-to-iso (org-date)
     "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
-    (s-replace-regexp "[^0-9-]" "" org-date))
+    (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
 
   (defun isamert/create-tag-list (tags)
     (->> (s-split ":" tags)

@@ -575,7 +575,7 @@ Generic head portion that I use in every template.
 :EXPORT_AS: index
 :OPTIONS: toc:nil
 :CUSTOM_ID: main
-:PUBLISH_DATE: [2021-01-21 Thu]
+:PUBLISH_DATE: [2021-01-21 Thu 00:00] Europe/Istanbul
 :END:
 #+begin_comment
 Currently all the sections are curated by hand, hopefully I'll automatize this in the future.
@@ -630,7 +630,7 @@ Here are some cool stuff that you can check out:
 :CUSTOM_ID: feeds
 :EXPORT_AS: feeds
 :OPTIONS: toc:nil
-:PUBLISH_DATE: [2021-04-07 Wed]
+:PUBLISH_DATE: [2021-04-07 Wed 00:00] Europe/Istanbul
 :END:
 
 Every category has it's own RSS feed, you can subscribe them separately or you can just subscribe for all posts using the main feed.
@@ -661,7 +661,7 @@ In no specific order:
 :CUSTOM_ID: about
 :EXPORT_AS: about
 :OPTIONS: toc:nil
-:PUBLISH_DATE: [2021-04-07 Wed]
+:PUBLISH_DATE: [2021-04-07 Wed 00:00] Europe/Istanbul
 :END:
 ** About me
 :PROPERTIES:
@@ -745,7 +745,7 @@ isamertgurbuz at gmail dot com
 :CUSTOM_ID: watchlist
 :EXPORT_AS: watchlist
 :OPTIONS: toc:nil
-:PUBLISH_DATE: [2023-08-30 Wed]
+:PUBLISH_DATE: [2023-08-30 Wed 00:00] Europe/Amsterdam
 :END:
 
 #+begin_comment
@@ -1252,13 +1252,15 @@ Following code uses the exported watchlist JSON movies data and populates the pa
   init();
 #+end_src
 
+This page showcases my watchlist and ratings for films that I have already watched. It is a work in progress, but it encompasses the majority of its intended features. By clicking on any actor, director, genre, etc., you can filter the displayed movies or series accordingly. To eliminate the filter, simply click on the same item again. Movies/series that are accompanied by a star icon signify my personal rating. Additionally, if applicable, the IMDb and Metascore ratings are also presented alongside my evaluation.
+
 #+begin_src elisp :exports results :results value html
   "<script src=\"/assets/watchlist.js\"></script><div id=\"movie-list\">Loading...</div>"
 #+end_src
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
-:PUBLISH_DATE: [2016-07-13 Wed]
+:PUBLISH_DATE: [2016-07-13 Wed 00:00] Europe/Istanbul
 :CUSTOM_ID: median-cut-algorithm-in-cpp-qt
 :END:
 I needed a simple color quantization algorithm for my project. I didn't want to use any other program/library for this simple job. So I implemented /median cut/ with /Qt/. I just used the explanation of the algorithm in [[https://en.wikipedia.org/wiki/Median_cut][Wikipedia]], I didn't make any other research, so the code is not well optimized but it just works. I'll try to explain step by step:
@@ -1405,7 +1407,7 @@ So we can simply use this function to convert any image using our palette. But t
 
 * Kotlin function application :kotlin:fp:
 :PROPERTIES:
-:PUBLISH_DATE: [2017-08-15 Tue]
+:PUBLISH_DATE: [2017-08-15 Tue 00:00] Europe/Istanbul
 :CUSTOM_ID: kotlin-function-application
 :END:
 I often write some code like this:
@@ -1495,7 +1497,7 @@ Also this code is equivalent of this one:
 
 * Programming AVR microcontrollers in Linux :linux:microcontrollers:
 :PROPERTIES:
-:PUBLISH_DATE: [2017-12-22 Fri]
+:PUBLISH_DATE: [2017-12-22 Fri 00:00] Europe/Istanbul
 :CUSTOM_ID: programming-avr-microcontrollers-in-linux
 :END:
 The /Windows way/ of doing that is just using /ATMEL Studio/ but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite /IDE/, if you are using one, is your job.
@@ -1558,7 +1560,7 @@ When you do the last step, you will get an error that says you don't have permis
 
 * Functional programming in C++ :fp:cpp:
 :PROPERTIES:
-:PUBLISH_DATE: [2018-03-01 Thu]
+:PUBLISH_DATE: [2018-03-01 Thu 00:00] Europe/Istanbul
 :CUSTOM_ID: functional-programming-in-cpp
 :END:
 C++ enables you to do nearly everything with every possible paradigm. I actually consider it as a huge mess or maybe I'm the one that can not comprehend that much stuff. Considering C++ is made by people smarter than me, probably the latter is true.
@@ -2001,7 +2003,7 @@ But what if you have a variable of type =B<A>= and a function of type =B<C> func
 
 * Nice little curl commands :cli:
 :PROPERTIES:
-:PUBLISH_DATE: [2018-03-24 Sat]
+:PUBLISH_DATE: [2018-03-24 Sat 00:00] Europe/Istanbul
 :CUSTOM_ID: nice-little-curl-commands
 :END:
 Here are some curl friendly web services that you can use in your terminal:
@@ -2102,7 +2104,7 @@ I'll just leave a link here: [[https://docverter.com/][docverter.com]]. You can 
 
 * Automatize your logins with gnome-keyring (and optionally with KeePassXC) :cli:linux:
 :PROPERTIES:
-:PUBLISH_DATE: [2018-05-04 Fri]
+:PUBLISH_DATE: [2018-05-04 Fri 00:00] Europe/Istanbul
 :CUSTOM_ID: automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-
 :END:
 Storing passwords in plain-text is not an encouraged act but typing your password every time you start an application is also cumbersome. To solve this dilemma, the easiest solution I came up with is using =gnome-keyring= to store my passwords. I'm not using gnome either but =gnome-keyring= does not have much dependencies and a lot of applications already requires it. So I believe =gnome-keyring= is a good choice. The thing I want to achieve is something like this:
@@ -2191,7 +2193,7 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 
 * Emacs - Run flycheck on all buffers after save :emacs:
 :PROPERTIES:
-:PUBLISH_DATE: [2018-06-06 Wed]
+:PUBLISH_DATE: [2018-06-06 Wed 00:00] Europe/Istanbul
 :OPTIONS: toc:nil
 :CUSTOM_ID: emacs-run-flycheck-on-all-buffers-after-save
 :END:
@@ -2270,7 +2272,7 @@ Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, whe
 #+end_src
 * Bash scripting guide :bash:
 :PROPERTIES:
-:PUBLISH_DATE: [2019-02-21 Thu]
+:PUBLISH_DATE: [2019-02-21 Thu 00:00] Europe/Istanbul
 :CUSTOM_ID: bash-scripting-guide
 :END:
 I've been writing some bash scripts lately and I've learned a lot. I must say that it's really fun to write bash scripts, every line of code feels hacky and no matter what I wrote, it felt bad which is kind of liberating. I found my real self in bash scripts. Here are some of the things that I find useful or/and important.
@@ -2634,7 +2636,7 @@ Now your function will concatenate your arguments and set it to =str= or if ther
 It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called =shellcheck= addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using [[https://github.com/w0rp/ale][ALE]] extension, it works out of the box with shellcheck.) For /emacs/ users, /Flycheck/ works out of the box with shellcheck.
 * Running SQL on org-mode tables :emacs:org:
 :PROPERTIES:
-:PUBLISH_DATE: [2019-11-14 Thu]
+:PUBLISH_DATE: [2019-11-14 Thu 00:00] Europe/Istanbul
 :CUSTOM_ID: running-sql-on-org-mode-tables
 :END:
 I was tracking some sleep related information about myself using org tables and I wanted to visualize them. I thought to myself, /I know R! Let's do all that stuff in R!/. Oh boy, I was wrong. I used R in the past for an undergraduate course and I wasn't heavily invested in taking notes at those times. (Now thanks to org-mode +and zotero+, I don't forget /anything/ anymore) I quickly gave up using R for manipulating the data but I was going to use it for plotting anyway. At that point I was about to give up, firstly because I didn't want to have an overly-complex solution for such a worthless thing and secondly I was extremely lazy.
@@ -2789,7 +2791,7 @@ I believe things can be simplified with /a little bit of/ elisp but it may not w
 
 * Better keyboard experience in Linux :linux:
 :PROPERTIES:
-:PUBLISH_DATE: [2020-05-30 Sat]
+:PUBLISH_DATE: [2020-05-30 Sat 00:00] Europe/Istanbul
 :CUSTOM_ID: better-keyboard-experience-in-linux
 :END:
 In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
@@ -3017,7 +3019,7 @@ I try to create one-key bindings whenever I can. While this is not really possib
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!
 * How do I keep my days organized with org-mode and Emacs :emacs:org:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-01-25 Mon]
+:PUBLISH_DATE: [2021-01-25 Mon 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-05-07 Fri]
 :CUSTOM_ID: how-i-do-keep-my-days-organized-with-org-mode-and-emacs
 :END:
@@ -3254,7 +3256,7 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
 
 * Emacs'te Türkçe imla denetimi :turkish:micro:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-01-31 Sun]
+:PUBLISH_DATE: [2021-01-31 Sun 00:00] Europe/Istanbul
 :OPTIONS: toc:nil
 :CUSTOM_ID: emacs-te-turkce-imla-denetimi
 :END:
@@ -3290,7 +3292,7 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 
 * A (relatively) deep dive into (zsh) shell login process (without a display manager) :linux:shell:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-03-02 Tue]
+:PUBLISH_DATE: [2021-03-02 Tue 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-04-07 Wed]
 :OPTIONS: toc:nil
 :CUSTOM_ID: a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-
@@ -3401,7 +3403,7 @@ That's it. This was just some kind of a braindump. From now on, I'll just try to
 
 * Killing (copying) currently selected candidate's content/text in Selectrum :emacs:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-03-27 Sat]
+:PUBLISH_DATE: [2021-03-27 Sat 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-03-31 Wed]
 :OPTIONS: toc:nil
 :CUSTOM_ID: killing-copying-currently-selected-candidates-content-text-in-selectrum
@@ -3448,7 +3450,7 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 
 * Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever) :emacs:org:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-04-21 Wed]
+:PUBLISH_DATE: [2021-04-21 Wed 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-01-29 Sat]
 :OPTIONS: toc:nil
 :CUSTOM_ID: managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-
@@ -3566,7 +3568,7 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
 
 * Migrating my IMDb ratings list and watch list into org-mode :emacs:org:cli:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-05-09 Sun]
+:PUBLISH_DATE: [2021-05-09 Sun 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-05-09 Sun]
 :CUSTOM_ID: migrating-my-imdb-ratings-list-and-watch-list-into-org-mode
 :END:
@@ -3709,7 +3711,7 @@ Nice.
 
 * Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs :turkish:micro:
 :PROPERTIES:
-:PUBLISH_DATE: [2021-05-16 Sun]
+:PUBLISH_DATE: [2021-05-16 Sun 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-05-16 Sun]
 :CUSTOM_ID: eksisozluk-gundem-dikkat-daginikligi-ve-emacs
 :END:
@@ -3761,7 +3763,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 
 * Dealing with APIs, JSONs and databases in org-mode :emacs:org:
 :PROPERTIES:
-:PUBLISH_DATE: [2022-01-04 Tue]
+:PUBLISH_DATE: [2022-01-04 Tue 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-01-04 Tue]
 :OPTIONS: toc:nil
 :CUSTOM_ID: dealing-with-apis-jsons-and-databases-in-org-mode
@@ -3943,7 +3945,7 @@ You can turn any REPL/CLI tool into a language that can be executed right inside
 
 * Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması :turkish:micro:
 :PROPERTIES:
-:PUBLISH_DATE: [2022-03-02 Wed]
+:PUBLISH_DATE: [2022-03-02 Wed 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-03-02 Wed]
 :CUSTOM_ID: duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi
 :END:
@@ -3959,7 +3961,7 @@ API'ların kullanım hakları ile alakalı bahsi geçen sitelerde herhangi bir b
 
 * Global interactive Emacs functions :emacs:
 :PROPERTIES:
-:PUBLISH_DATE: [2022-03-16 Wed]
+:PUBLISH_DATE: [2022-03-16 Wed 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-03-16 Wed]
 :CUSTOM_ID: global-interactive-emacs-functions
 :END:
@@ -4090,7 +4092,7 @@ Let me know if this seems useful or if you have an improvement over what I descr
 * Typing (unicode) characters programmatically on Linux and macOS :linux:keyboards:micro:macos:
 :PROPERTIES:
 :CUSTOM_ID: typing-unicode-characters-programmatically-on-linux-and-macos
-:PUBLISH_DATE: [2022-08-12 Fri]
+:PUBLISH_DATE: [2022-08-12 Fri 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-09-23 Fri]
 :END:
 I've been using [[https://github.com/kmonad/kmonad][KMonad]] on my Linux boxes and on my Mac machine which I do use for work. KMonad is currently the best solution to have a consistent keyboard remapping across different operating systems and different keyboard types/layouts. It's not very well explained, but you can check out [[https://github.com/isamert/dotfiles/blob/master/index.org#kmonad][my KMonad configuration]] here.
@@ -4179,7 +4181,7 @@ Unfortunately, ~pynput~ does not work on a pure Wayland session at the moment bu
 
 * A simple new tab page (that works with TreeStyleTab) :micro:browsers:
 :PROPERTIES:
-:PUBLISH_DATE: [2022-09-17 Sat]
+:PUBLISH_DATE: [2022-09-17 Sat 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-09-17 Sat]
 :CUSTOM_ID: a-simple-new-tab-page-that-works-with-treestyletab
 :OPTIONS: toc:nil
@@ -4256,7 +4258,7 @@ There are also two other functions that you can use:
 :PROPERTIES:
 :CUSTOM_ID: elisp-editing-development-tips
 :COOL_URI: elisp-tips.html
-:PUBLISH_DATE: [2023-08-14 Mon]
+:PUBLISH_DATE: [2023-08-14 Mon 00:00] Europe/Amsterdam
 :END:
 Here are some workflow tips that I have accumulated over time working with elisp. I try to embrace the interactive nature of developing elisp programs (some may call this REPL-driven development) and you'll see that in the following sections. Tips are generally about editing. There is also [[https://alphapapa.github.io/emacs-package-dev-handbook/#outline-container-Checkers%20%2F%20linters][this page]] by [[https://github.com/alphapapa][alphapapa]] , that goes really deep into every single topic about elisp development, which I highly recommend you to read.
 
@@ -4483,7 +4485,7 @@ Automatic indentation works fairly well but it fails on quoted lists. I use [[ht
 Especially useful if you are a user of /aggressive-indent-mode/ that I've talked about above.
 * Announcement: swagg.el -- Swagger UI, inside Emacs :announcement:emacs:
 :PROPERTIES:
-:PUBLISH_DATE: [2023-09-04 Mon]
+:PUBLISH_DATE: [2023-09-04 Mon 00:00] Europe/Amsterdam
 :CUSTOM_ID: announcement-swagg-el-swagger-ui-inside-emacs
 :END:
 This is just a post announcing the release of my new package, [[https://github.com/isamert/swagg.el][swagg.el]]. It is an Emacs package that lets you fetch and interact with Swagger definitions. You can think of it like a Swagger UI that your app has but works for multiple definitions and it's right inside your Emacs frame!
@@ -4848,7 +4850,10 @@ Hope you find it useful. Have a nice one!
           (org-entry-get nil "ITEM")
           isamert/blog-url
           (isamert/blog-mk-path)
-          (format-time-string "%a, %d %b %Y %H:%M:%S %z" (encode-time (org-parse-time-string (org-entry-get nil "PUBLISH_DATE"))))
+          (-let (((time zone) (s-split "] " (org-entry-get nil "PUBLISH_DATE"))))
+            (concat
+             (format-time-string "%a, %d %b %Y %H:%M:%S" (encode-time (org-parse-time-string time)))
+             (format-time-string " %z" nil zone)))
           (or (org-entry-get nil "ABSTRACT") "")))))
 
   (defun isamert/blog-make-rss-doc (items &optional tag)
@@ -4861,12 +4866,12 @@ Hope you find it useful. Have a nice one!
       %s
     </channel>
   </rss>"
-     (if tag
-         (format "%s - %s" tag isamert/blog-title)
-       isamert/blog-title)
-     isamert/blog-url
-     isamert/blog-description
-     (--reduce (format "%s%s" it acc) items)))
+            (if tag
+                (format "%s - %s" tag isamert/blog-title)
+              isamert/blog-title)
+            isamert/blog-url
+            isamert/blog-description
+            (--reduce (format "%s%s" it acc) items)))
 
   (defun isamert/blog-generate-tag-pages ()
     (interactive)

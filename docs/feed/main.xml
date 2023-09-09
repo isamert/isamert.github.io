@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
+      <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
+      <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Elisp editing/development tips</title>
       <link>https://isamert.net/2023/08/14/elisp-editing-development-tips.html</link>
       <pubDate>Mon, 14 Aug 2023 00:00:00 +0200</pubDate>
@@ -141,6 +147,12 @@
       <title>Median cut algorithm in C++/Qt</title>
       <link>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</link>
       <pubDate>Wed, 13 Jul 2016 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>Watchlist</title>
+      <link>https://isamert.net/watchlist.html</link>
+      <pubDate>Wed, 30 Aug 2023 00:00:00 +0200</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
     <item>

@@ -4548,8 +4548,6 @@ Hope you find it useful. Have a nice one!
   (defun isamert/blog-export-all ()
     "Export/render current file as a whole blog."
     (interactive)
-    (setq org-html-html5-fancy t
-          org-html-doctype "html5")
     (org-babel-tangle)
     (isamert/blog-generate-rss)
     (isamert/blog-generate-sitemap)
@@ -4969,9 +4967,12 @@ Hope you find it useful. Have a nice one!
     (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags))))
 #+end_src
 
-** TODO Load blog code
-- The following thing automatically loads the code above when this file is opened. This basically makes use of [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables][file local variables]].
+* Load blog code :noexport:
+- The following eval part automatically loads the code above when this file is opened. This basically makes use of [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables][file local variables]].
+- I also set some useful variables that improves HTML generation.
 
 # Local Variables:
+# org-html-html5-fancy: t
+# org-html-doctype: "html5"
 # eval: (progn (org-babel-goto-named-src-block "startup") (let ((code (org-babel-expand-noweb-references))) (with-temp-buffer (insert code) (eval-buffer))))
 # End:

@@ -1,9 +1,16 @@
 let MOVIES = [];
 let FILTER = {};
+let SORT = "rating";
+
+const sorters = {
+  "isamert's rating": "rating",
+  "IMDb": "imdb_rating",
+  "Metascore": "metascore",
+};
 
 async function init() {
   await loadGlobals();
-  draw(FILTER, MOVIES);
+  draw(FILTER, SORT, MOVIES);
   scrollToHashElement();
 }
 
@@ -15,7 +22,8 @@ async function loadGlobals() {
 }
 
 function scrollToHashElement() {
-  const x = document.getElementById(window.location.hash.substring(1));
+  const hash = window.location.hash.substring(1);
+  const x = hash && document.getElementById(hash);
   if (x) {
     window.scrollTo({
       top: x.getBoundingClientRect().top,
@@ -82,6 +90,18 @@ function a(text, href, clazz) {
   return x;
 }
 
+function select(options, clazz) {
+  const x = elem("select", null, clazz);
+  options.forEach((it) => x.add(isString(it) ? option(it) : it));
+  return x;
+}
+
+function option(text, clazz) {
+  const x = elem("option", null, clazz);
+  x.text = text;
+  return x;
+}
+
 function img(src, clazz) {
   const x = elem("img", null, clazz);
   x.src = src;
@@ -141,7 +161,7 @@ function getStarForRating(rating) {
 }
 
 function drawProp(name, prop) {
-  return a(prop, () => draw(updateFilter({ [name]: prop }), MOVIES), {
+  return a(prop, () => draw(updateFilter({ [name]: prop }), SORT, MOVIES), {
     clazz: FILTER[name]?.includes(prop) ? "selected-prop" : "normal-prop",
   });
 }
@@ -167,7 +187,7 @@ function drawTodo(movie) {
       return ["Will watch"];
     }
   })();
-  return a(text, () => draw(updateFilter({ todo: movie.todo }), MOVIES), {
+  return a(text, () => draw(updateFilter({ todo: movie.todo }), SORT, MOVIES), {
     clazz: "movie-todo",
     title,
   });
@@ -210,6 +230,7 @@ function drawFilterPopup({ show, x, y, items, parent, filter }) {
 }
 
 function drawFilters(filters) {
+  const root = div("");
   const filtersRoot = div("", "filters");
   const items = Object.entries({
     todo: [],
@@ -245,7 +266,19 @@ function drawFilters(filters) {
     ], "filter-row");
   });
   filtersRoot.append(...items);
-  return filtersRoot;
+  root.append(filtersRoot);
+
+  const sortCombo = select(Object.keys(sorters), {
+    onchange: () => {
+      SORT = sorters[sortCombo.value];
+      draw(FILTER, SORT, MOVIES);
+    },
+  });
+  root.append(
+    container([div("Sort by:", "filter-title"), sortCombo], "sort-row"),
+  );
+
+  return root;
 }
 
 function drawMovies(movies) {
@@ -316,16 +349,28 @@ function drawMovies(movies) {
   return movieRoot;
 }
 
-function draw(filters, movies) {
+function draw(filters, sortBy, movies) {
   const root = document.getElementById("movie-list");
   root.innerHTML = "";
 
-  const filteredMovies = movies.filter((movie) =>
-    Object.entries(filters ?? {}).reduce((acc, pred) => {
-      const [key, val] = pred;
-      return acc && val.every((x) => (movie[key] ?? []).includes(x));
-    }, true)
-  );
+  const filteredMovies = movies
+    .sort((a, b) => {
+      if (sortBy) {
+        if (a[sortBy] && b[sortBy]) {
+          return b[sortBy] - a[sortBy];
+        } else if (b[sortBy]) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+    })
+    .filter((movie) =>
+      Object.entries(filters ?? {}).reduce((acc, pred) => {
+        const [key, val] = pred;
+        return acc && val.every((x) => (movie[key] ?? []).includes(x));
+      }, true)
+    );
 
   root.appendChild(drawFilters(filters));
   root.appendChild(drawMovies(filteredMovies));
@@ -425,6 +470,13 @@ style.innerHTML = `
   flex-direction: row;
   flex-wrap: wrap;
   margin-bottom: 0.4rem;
+}
+.sort-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+  justify-content: flex-end;
 }
 .filter-title {
   text-transform: capitalize;

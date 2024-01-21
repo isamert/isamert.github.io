@@ -746,6 +746,19 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
 #+end_comment
 
 #+begin_src emacs-lisp :exports none :tangle ~/.emacs.d/load/isamert-blog.el
+  ;; -*- lexical-binding: t; -*-
+
+  (add-hook 'midnight-hook #'im-update-remote-watchlist)
+
+  (defun im-update-remote-watchlist ()
+    "Update my watchlist on my website."
+    (im-git-temp-clone
+     "git@github.com:isamert/isamert.github.io.git"
+     :on-success
+     (lambda ()
+       (im-git-use/apply-my/personal-config)
+       (isamert/blog-generate-watchlist-json t))))
+
   (defun isamert/blog-generate-watchlist-json (push?)
     "Generate the watchlist.json file.
   If PUSH? is non-nil then also automatically commit and push to
@@ -793,11 +806,16 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
                (json-encode)))))
       (f-write movie-data 'utf-8 watchlist-json)
       (when push?
-        (shell-command
-         (format
-          "git pull --rebase --autostash && git add '%s' && git add 'docs/images/posters/' &&  git commit -m \"watchlist.html: Update json %s\" && git push origin master &"
-          watchlist-json
-          (format-time-string "%Y-%m-%d"))))))
+        (shell-command-to-string (format "git add '%s'" watchlist-json))
+        (shell-command-to-string "git add 'docs/images/posters/'")
+        (shell-command-to-string (format "git commit -m \"watchlist.html: Update json %s\""
+                                         (format-time-string "%Y-%m-%d")))
+        (set-process-sentinel
+         (start-process "git-watchlist-json-update" nil "git" "push" "origin" "master")
+         (lambda (proc event)
+           (if (eq (process-exit-status proc) 0)
+               (alert "Updated!" :title "watchlist.json")
+             (alert "Failed to push!" :title "watchlist.json")))))))
 #+end_src
 
 #+begin_comment

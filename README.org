@@ -748,10 +748,12 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
 #+begin_src emacs-lisp :exports none :tangle ~/.emacs.d/load/isamert-blog.el
   ;; -*- lexical-binding: t; -*-
 
+  ;; To automatically update watchlist.
   (add-hook 'midnight-hook #'im-update-remote-watchlist)
 
   (defun im-update-remote-watchlist ()
     "Update my watchlist on my website."
+    (interactive)
     (im-git-temp-clone
      "git@github.com:isamert/isamert.github.io.git"
      :on-success
@@ -816,37 +818,6 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
            (if (eq (process-exit-status proc) 0)
                (alert "Updated!" :title "watchlist.json")
              (alert "Failed to push!" :title "watchlist.json")))))))
-#+end_src
-
-#+begin_comment
-I also would like to automatically update and push the generated json weekly so that my watchlist would be in sync. Thus, here I define a systemd timer with a service. On the computer that you want this to periodically run, issue the following command:
-
-systemctl --user enable watchlist-json-generator.timer
-
-To check if it's enabled, do:
-
-systemctl --user list-timers
-#+end_comment
-
-#+begin_src conf :exports none :tangle ~/.config/systemd/user/watchlist-json-generator.timer
-  [Unit]
-  Description=Update watchlist.json
-
-  [Timer]
-  OnCalendar=weekly
-  Persistent=true
-
-  [Install]
-  WantedBy=timers.target
-#+end_src
-
-#+begin_src conf :exports none :tangle ~/.config/systemd/user/watchlist-json-generator.service
-  [Unit]
-  Description=Update watchlist.json
-
-  [Service]
-  Type=simple
-  ExecStart=emacsclient --eval "(let ((default-directory (expand-file-name \"~/Workspace/apps/isamert.net\"))) (isamert/blog-generate-watchlist-json t))"
 #+end_src
 
 #+begin_comment

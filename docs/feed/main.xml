@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Announcement: upver.el -- Interactively update your project dependencies</title>
+      <link>https://isamert.net/2024/05/14/upver-el-announchement.html</link>
+      <pubDate>Tue, 14 May 2024 23:00:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
       <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
       <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>

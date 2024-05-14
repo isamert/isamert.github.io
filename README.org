@@ -578,6 +578,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2024/05/14/announcement-upver-el-interactively-update-your-project-dependencies.html][Announcement: upver.el -- Interactively update your project dependencies]]
 - [[./2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html][Announcement: swagg.el -- Swagger UI, inside Emacs]]
 - [[./elisp-tips.html][Elisp editing/development tips]]
 - [[./2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html][A simple new tab page (that works with TreeStyleTab)]]
@@ -4575,6 +4576,21 @@ The [[https://github.com/isamert/swagg.el][README]] has some GIF's that you can 
 
 Hope you find it useful. Have a nice one!
 
+* Announcement: upver.el -- Interactively update your project dependencies :announcement:emacs:
+:PROPERTIES:
+:PUBLISH_DATE: [2024-05-14 Tue 23:00] Europe/Amsterdam
+:CUSTOM_ID: upver-el-announchement
+:END:
+I released a new package called [[https://github.com/isamert/upver.el][upver.el]]. It is an Emacs package that lets you interactively update your npm dependencies within a ~package.json~ buffer. Inspired by the [[https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens][Version Lens]] package that saw on a colleague's screen.
+
+I intend to incorporate support for other package managers, like ~cargo~ and ~maven~ in forthcoming updates. Once a couple more package managers are integrated, I hope that the interface will stabilize, allowing for the addition of more package manager support.
+
+The [[https://github.com/isamert/upver.el][README]] has detailed instructions and all, please check it out. But here is a tiny gif to summarize what it does:
+
+#+html: <img src="https://github.com/isamert/upver.el/assets/8031017/afa8cbad-840f-45dd-a4d9-164d43f3da7a">
+
+Hope you find it useful. Have a nice one!
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp
@@ -4697,7 +4713,6 @@ Hope you find it useful. Have a nice one!
 
   (defun isamert/blog-generate-tag-info-current ()
     "Return the list of tags and post information for current item.."
-    (interactive)
     (when (isamert/blog-can-export-current)
       (cons (--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
             `(:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))

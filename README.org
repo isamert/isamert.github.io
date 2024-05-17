@@ -578,6 +578,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2024/05/17/running-invidious-on-sub-folder-with-nginx.html][Hosting Invidious on sub-folder with Nginx]]
 - [[./2024/05/14/announcement-upver-el-interactively-update-your-project-dependencies.html][Announcement: upver.el -- Interactively update your project dependencies]]
 - [[./2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html][Announcement: swagg.el -- Swagger UI, inside Emacs]]
 - [[./elisp-tips.html][Elisp editing/development tips]]
@@ -4591,6 +4592,67 @@ The [[https://github.com/isamert/upver.el][README]] has detailed instructions an
 
 Hope you find it useful. Have a nice one!
 
+* Hosting Invidious on sub-folder with Nginx :micro:selfhosting:
+:PROPERTIES:
+:PUBLISH_DATE: [2024-05-17 Fri 17:40] Europe/Amsterdam
+:CUSTOM_ID: running-invidious-on-sub-folder-with-nginx
+:END:
+
+If you intend to self-host [[https://github.com/iv-org/invidious][Invidious]] within a sub-folder, like ~your-website.com/invidious/~, this is not officially supported and is [[https://github.com/iv-org/invidious/issues/2441][unlikely to be in the future]]. I understand their viewpoint, yet I believe this is a legitimate scenario. For an individual self-hoster, getting an additional domain solely for Invidious may not be that easy. While a subdomain remains an option, there are scenarios where it may not be viable.
+
+Continuing with the example above, let's assume that you want to serve Invidious under ~your-website.com/invidious/~. Firstly, follow [[https://docs.invidious.io/installation/#manual-installation][the officail guide]] to install Invidious. Then we need to a few configuration changes in ~config/config.yml~:
+
+#+begin_src yaml
+  # If your nginx serves through https, then change this to 443:
+  external_port: 443
+
+  # Again, if your nginx serves through https, then this needs to be true:
+  https_only: true
+
+  # Your domain
+  domain: your-website.com
+#+end_src
+
+And here is the relevant nginx configuration:
+
+#+begin_src nginx
+  # Change each instance of the text "/invidious/" with the subfolder
+  # path that you want in the following configuration:
+
+  location /invidious/ {
+    # 3000 is the default port, change the following if you have changed
+    # it (see config/config.yml port):
+    proxy_pass http://127.0.0.1:3000/;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header Host $host;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_cookie_path / /invidious/;
+    proxy_redirect / /invidious/;
+
+    # Now we are going to do some sub_filter'ing which is essentially
+    # doing some simple string replacements on the response.
+
+    # Disable compression (from invidious to nginx) so that sub_filter
+    # works
+    proxy_set_header Accept-Encoding "";
+
+    # Disable sub_filter_once so that each instance of strings that we
+    # want to replace gets replaced instead of getting replaced once.
+
+    sub_filter_once off;
+    sub_filter_types text/javascript application/json;
+    sub_filter /api/ /invidious/api/;
+    sub_filter /vi/ /invidious/vi/;
+    sub_filter 'src="/' 'src="/invidious/';
+    sub_filter 'href="/' 'href="/invidious/';
+    sub_filter 'action="/' 'action="/invidious/';
+  }
+#+end_src
+
+Also see [[https://docs.invidious.io/nginx/][the official nginx configuration]] for reference.
+
+Of course this is not a very sound way to do things, each update to Invidious has a chance to cause some breakage but it works for now. I'll try to keep this updated.
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

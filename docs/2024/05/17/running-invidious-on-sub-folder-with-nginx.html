@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<head>
+  <title>Hosting Invidious on sub-folder with Nginx | isamert.net</title>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Hosting Invidious on sub-folder with Nginx</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/selfhosting.html" class="tag-link">selfhosting</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2024-05-17</em></li>
+            <li>Last updated at <em>2024-05-17</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+If you intend to self-host <a href="https://github.com/iv-org/invidious">Invidious</a> within a sub-folder, like <code>your-website.com/invidious/</code>, this is not officially supported and is <a href="https://github.com/iv-org/invidious/issues/2441">unlikely to be in the future</a>. I understand their viewpoint, yet I believe this is a legitimate scenario. For an individual self-hoster, getting an additional domain solely for Invidious may not be that easy. While a subdomain remains an option, there are scenarios where it may not be viable.
+</p>
+
+<p>
+Continuing with the example above, let's assume that you want to serve Invidious under <code>your-website.com/invidious/</code>. Firstly, follow <a href="https://docs.invidious.io/installation/#manual-installation">the officail guide</a> to install Invidious. Then we need to a few configuration changes in <code>config/config.yml</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"># If your nginx serves through https, then change this to 443:
+external_port: 443
+
+# Again, if your nginx serves through https, then this needs to be true:
+https_only: true
+
+# Your domain
+domain: your-website.com
+</pre>
+</div>
+
+<p>
+And here is the relevant nginx configuration:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nginx"># Change each instance of the text "/invidious/" with the subfolder
+# path that you want in the following configuration:
+
+location /invidious/ {
+  # 3000 is the default port, change the following if you have changed
+  # it (see config/config.yml port):
+  proxy_pass http://127.0.0.1:3000/;
+  proxy_set_header X-Forwarded-For $remote_addr;
+  proxy_set_header Host $host;
+  proxy_http_version 1.1;
+  proxy_set_header Connection "";
+  proxy_cookie_path / /invidious/;
+  proxy_redirect / /invidious/;
+
+  # Now we are going to do some sub_filter'ing which is essentially
+  # doing some simple string replacements on the response.
+
+  # Disable compression (from invidious to nginx) so that sub_filter
+  # works
+  proxy_set_header Accept-Encoding "";
+
+  # Disable sub_filter_once so that each instance of strings that we
+  # want to replace gets replaced instead of getting replaced once.
+
+  sub_filter_once off;
+  sub_filter_types text/javascript application/json;
+  sub_filter /api/ /invidious/api/;
+  sub_filter /vi/ /invidious/vi/;
+  sub_filter 'src="/' 'src="/invidious/';
+  sub_filter 'href="/' 'href="/invidious/';
+  sub_filter 'action="/' 'action="/invidious/';
+}
+</pre>
+</div>
+
+<p>
+Also see <a href="https://docs.invidious.io/nginx/">the official nginx configuration</a> for reference.
+</p>
+
+<p>
+Of course this is not a very sound way to do things, each update to Invidious has a chance to cause some breakage but it works for now. I'll try to keep this updated.</p>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz © 2022
+      
+          <span>
+            <a href="https://github.com/isamert/isamert.github.io">Source</a>
+          </span>
+        </p>
+      </footer>
+  </body>

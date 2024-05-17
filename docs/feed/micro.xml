@@ -35,5 +35,11 @@
       <pubDate>Sat, 17 Sep 2022 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>Hosting Invidious on sub-folder with Nginx</title>
+      <link>https://isamert.net/2024/05/17/running-invidious-on-sub-folder-with-nginx.html</link>
+      <pubDate>Fri, 17 May 2024 17:40:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

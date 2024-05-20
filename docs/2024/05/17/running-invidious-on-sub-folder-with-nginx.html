@@ -30,7 +30,7 @@
 
           <ul>
             <li>Published at <em>2024-05-17</em></li>
-            <li>Last updated at <em>2024-05-17</em></li>
+            <li>Last updated at <em>2024-05-20</em></li>
           </ul>
         </div>
 
@@ -89,6 +89,7 @@ location /invidious/ {
   sub_filter_types text/javascript application/json;
   sub_filter /api/ /invidious/api/;
   sub_filter /vi/ /invidious/vi/;
+  sub_filter /ggpht/ /invidious/ggpht/;
   sub_filter 'src="/' 'src="/invidious/';
   sub_filter 'href="/' 'href="/invidious/';
   sub_filter 'action="/' 'action="/invidious/';

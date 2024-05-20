@@ -4595,6 +4595,7 @@ Hope you find it useful. Have a nice one!
 * Hosting Invidious on sub-folder with Nginx :micro:selfhosting:
 :PROPERTIES:
 :PUBLISH_DATE: [2024-05-17 Fri 17:40] Europe/Amsterdam
+:UPDATE_DATE: [2024-05-20 Mon 10:13] Europe/Amsterdam
 :CUSTOM_ID: running-invidious-on-sub-folder-with-nginx
 :END:
 
@@ -4644,6 +4645,7 @@ And here is the relevant nginx configuration:
     sub_filter_types text/javascript application/json;
     sub_filter /api/ /invidious/api/;
     sub_filter /vi/ /invidious/vi/;
+    sub_filter /ggpht/ /invidious/ggpht/;
     sub_filter 'src="/' 'src="/invidious/';
     sub_filter 'href="/' 'href="/invidious/';
     sub_filter 'action="/' 'action="/invidious/';

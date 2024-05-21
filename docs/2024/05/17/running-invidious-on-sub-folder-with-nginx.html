@@ -30,7 +30,7 @@
 
           <ul>
             <li>Published at <em>2024-05-17</em></li>
-            <li>Last updated at <em>2024-05-20</em></li>
+            <li>Last updated at <em>2024-05-21</em></li>
           </ul>
         </div>
 
@@ -72,7 +72,6 @@ location /invidious/ {
   proxy_set_header Host $host;
   proxy_http_version 1.1;
   proxy_set_header Connection "";
-  proxy_cookie_path / /invidious/;
   proxy_redirect / /invidious/;
 
   # Now we are going to do some sub_filter'ing which is essentially
@@ -89,7 +88,11 @@ location /invidious/ {
   sub_filter_types text/javascript application/json;
   sub_filter /api/ /invidious/api/;
   sub_filter /vi/ /invidious/vi/;
+  sub_filter /channel /invidious/channel;
   sub_filter /ggpht/ /invidious/ggpht/;
+  sub_filter /toggle_theme /invidious/toggle_theme;
+  sub_filter /token /invidious/token;
+  sub_filter /subscription /invidious/subscription;
   sub_filter 'src="/' 'src="/invidious/';
   sub_filter 'href="/' 'href="/invidious/';
   sub_filter 'action="/' 'action="/invidious/';

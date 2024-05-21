@@ -4595,7 +4595,7 @@ Hope you find it useful. Have a nice one!
 * Hosting Invidious on sub-folder with Nginx :micro:selfhosting:
 :PROPERTIES:
 :PUBLISH_DATE: [2024-05-17 Fri 17:40] Europe/Amsterdam
-:UPDATE_DATE: [2024-05-20 Mon 10:13] Europe/Amsterdam
+:UPDATE_DATE: [2024-05-21 Tue 17:40] Europe/Amsterdam
 :CUSTOM_ID: running-invidious-on-sub-folder-with-nginx
 :END:
 
@@ -4628,7 +4628,6 @@ And here is the relevant nginx configuration:
     proxy_set_header Host $host;
     proxy_http_version 1.1;
     proxy_set_header Connection "";
-    proxy_cookie_path / /invidious/;
     proxy_redirect / /invidious/;
 
     # Now we are going to do some sub_filter'ing which is essentially
@@ -4645,7 +4644,11 @@ And here is the relevant nginx configuration:
     sub_filter_types text/javascript application/json;
     sub_filter /api/ /invidious/api/;
     sub_filter /vi/ /invidious/vi/;
+    sub_filter /channel /invidious/channel;
     sub_filter /ggpht/ /invidious/ggpht/;
+    sub_filter /toggle_theme /invidious/toggle_theme;
+    sub_filter /token /invidious/token;
+    sub_filter /subscription /invidious/subscription;
     sub_filter 'src="/' 'src="/invidious/';
     sub_filter 'href="/' 'href="/invidious/';
     sub_filter 'action="/' 'action="/invidious/';

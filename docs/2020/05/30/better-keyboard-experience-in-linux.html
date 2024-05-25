@@ -68,7 +68,6 @@
 <p>
 In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
 </p>
-
 <div id="outline-container-the-case-against-the-mouse" class="outline-2">
 <h2 id="the-case-against-the-mouse">The case against the mouse</h2>
 <div class="outline-text-2" id="text-the-case-against-the-mouse">
@@ -85,7 +84,6 @@ There are use cases for mouse too, of course! Mindlessly scrolling down a websit
 </p>
 </div>
 </div>
-
 <div id="outline-container-modifying-the-keymap" class="outline-2">
 <h2 id="modifying-the-keymap">Modifying the keymap</h2>
 <div class="outline-text-2" id="text-modifying-the-keymap">
@@ -93,7 +91,6 @@ There are use cases for mouse too, of course! Mindlessly scrolling down a websit
 To get the most out of your keyboard, we need to create a specialized keymap for ourselves. For doing that I'll be using <code>xmodmap</code>. <code>xmodmap</code> is a simple utility tool for modifying your keymaps. The configuration is generally done through <code>~/.Xmodmap</code> file.
 </p>
 </div>
-
 <div id="outline-container-selecting-the-proper-base-keymap" class="outline-3">
 <h3 id="selecting-the-proper-base-keymap">Selecting the proper base keymap</h3>
 <div class="outline-text-3" id="text-selecting-the-proper-base-keymap">
@@ -116,7 +113,6 @@ You need to restart your X session to get it working or you can simply do this:
 </div>
 </div>
 </div>
-
 <div id="outline-container-fixing-some-problems-with-the--us-intl--" class="outline-3">
 <h3 id="fixing-some-problems-with-the--us-intl--">Fixing some problems with the <code>us(intl)</code></h3>
 <div class="outline-text-3" id="text-fixing-some-problems-with-the--us-intl--">
@@ -131,7 +127,6 @@ keysym dead_acute = apostrophe quotedbl
 </div>
 </div>
 </div>
-
 <div id="outline-container-empowering-the--[-,--]--keys" class="outline-3">
 <h3 id="empowering-the--[-,--]--keys">Empowering the <code>[</code>, <code>]</code> keys</h3>
 <div class="outline-text-3" id="text-empowering-the--[-,--]--keys">
@@ -147,7 +142,6 @@ keysym bracketright = bracketright braceright bracketright braceright parenright
 </div>
 </div>
 </div>
-
 <div id="outline-container-more-utf-8-chars" class="outline-3">
 <h3 id="more-utf-8-chars">More UTF-8 chars</h3>
 <div class="outline-text-3" id="text-more-utf-8-chars">
@@ -182,7 +176,6 @@ keysym semicolon = semicolon colon semicolon colon U2237
 </div>
 </div>
 </div>
-
 <div id="outline-container-a-new-modifier-key,-hyper" class="outline-3">
 <h3 id="a-new-modifier-key,-hyper">A new modifier key, Hyper</h3>
 <div class="outline-text-3" id="text-a-new-modifier-key,-hyper">
@@ -210,7 +203,6 @@ Another thing is that some people like to do is that using <code>CapsLock</code>
 </p>
 </div>
 </div>
-
 <div id="outline-container--rightctrl-?" class="outline-3">
 <h3 id="-rightctrl-?"><code>RightCtrl</code>?</h3>
 <div class="outline-text-3" id="text--rightctrl-?">
@@ -224,7 +216,6 @@ I don't know if anybody uses this key unironically but the only use case I found
 </div>
 </div>
 </div>
-
 <div id="outline-container-global-directional-keys" class="outline-3">
 <h3 id="global-directional-keys">Global directional keys</h3>
 <div class="outline-text-3" id="text-global-directional-keys">
@@ -254,7 +245,6 @@ Side note for Emacs users: I generally do not use these bindings in Emacs to mak
 </div>
 </div>
 </div>
-
 <div id="outline-container-more-with--altgr-" class="outline-3">
 <h3 id="more-with--altgr-">More with <code>AltGr</code></h3>
 <div class="outline-text-3" id="text-more-with--altgr-">
@@ -275,7 +265,6 @@ You can use <code>AltGr</code> to create accented characters, this might be a ni
 </div>
 </div>
 </div>
-
 <div id="outline-container-shortcuts,-key-bindings" class="outline-2">
 <h2 id="shortcuts,-key-bindings">Shortcuts, key-bindings</h2>
 <div class="outline-text-2" id="text-shortcuts,-key-bindings">
@@ -324,7 +313,6 @@ Automating stuff through shortcuts is nice, especially if the program offers a n
 </p>
 </div>
 </div>
-
 <div id="outline-container-various-tools-configurations" class="outline-2">
 <h2 id="various-tools-configurations">Various tools/configurations</h2>
 <div class="outline-text-2" id="text-various-tools-configurations">
@@ -350,7 +338,6 @@ You can also use <code>shift</code> or <code>ctrl</code> (or any modifier) keys 
 </p>
 </div>
 </div>
-
 <div id="outline-container--xev-" class="outline-3">
 <h3 id="-xev-"><code>xev</code></h3>
 <div class="outline-text-3" id="text--xev-">
@@ -360,7 +347,6 @@ You can also use <code>shift</code> or <code>ctrl</code> (or any modifier) keys 
 </div>
 </div>
 </div>
-
 <div id="outline-container-things-to-consider" class="outline-2">
 <h2 id="things-to-consider">Things to consider</h2>
 <div class="outline-text-2" id="text-things-to-consider">
@@ -369,7 +355,6 @@ I try to create one-key bindings whenever I can. While this is not really possib
 </p>
 </div>
 </div>
-
 <div id="outline-container-conclusion" class="outline-2">
 <h2 id="conclusion">Conclusion</h2>
 <div class="outline-text-2" id="text-conclusion">

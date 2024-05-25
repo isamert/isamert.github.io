@@ -90,7 +90,6 @@ I've been writing some bash scripts lately and I've learned a lot. I must say th
 <p>
 I'll be talking about <code>bash</code> specifically, but I lot of the features in here are implemented in very similar ways in other shells.
 </p>
-
 <div id="outline-container-shebangs" class="outline-2">
 <h2 id="shebangs">shebangs</h2>
 <div class="outline-text-2" id="text-shebangs">
@@ -102,7 +101,6 @@ The most portable shebang for bash scripting is: <code>#!/usr/local/env bash</co
 shebangs also let's you do some cool tricks:
 </p>
 </div>
-
 <div id="outline-container-running-scripts-with-sudo" class="outline-3">
 <h3 id="running-scripts-with-sudo">Running scripts with sudo</h3>
 <div class="outline-text-3" id="text-running-scripts-with-sudo">
@@ -147,7 +145,6 @@ I'm not entirely sure about this style of sudo calls. There may be implications 
 </p>
 </div>
 </div>
-
 <div id="outline-container-running-other-programs-with-shebangs" class="outline-3">
 <h3 id="running-other-programs-with-shebangs">Running other programs with shebangs</h3>
 <div class="outline-text-3" id="text-running-other-programs-with-shebangs">
@@ -166,7 +163,6 @@ This script directly calls <code>cat</code> with <code>${HOME}/.bashrc</code> ar
 </div>
 </div>
 </div>
-
 <div id="outline-container-primitives" class="outline-2">
 <h2 id="primitives">Primitives</h2>
 <div class="outline-text-2" id="text-primitives">
@@ -174,7 +170,6 @@ This script directly calls <code>cat</code> with <code>${HOME}/.bashrc</code> ar
 Here are some basic tips that makes your code faster and easy to reason.
 </p>
 </div>
-
 <div id="outline-container--true--and--false-" class="outline-3">
 <h3 id="-true--and--false-"><code>true</code> and <code>false</code></h3>
 <div class="outline-text-3" id="text--true--and--false-">
@@ -218,7 +213,6 @@ if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
 </ul>
 </div>
 </div>
-
 <div id="outline-container--[[-]]--and------instead-of--[-]-" class="outline-3">
 <h3 id="-[[-]]--and------instead-of--[-]-"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></h3>
 <div class="outline-text-3" id="text--[[-]]--and------instead-of--[-]-">
@@ -246,7 +240,6 @@ fi
 </ul>
 </div>
 </div>
-
 <div id="outline-container--let--instead-of-----" class="outline-3">
 <h3 id="-let--instead-of-----"><code>let</code> instead of <code>(( ))</code></h3>
 <div class="outline-text-3" id="text--let--instead-of-----">
@@ -261,7 +254,6 @@ Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It
 </div>
 </div>
 </div>
-
 <div id="outline-container-variables" class="outline-2">
 <h2 id="variables">Variables</h2>
 <div class="outline-text-2" id="text-variables">
@@ -307,7 +299,6 @@ echo "$greeting $name"
 </ul>
 </div>
 </div>
-
 <div id="outline-container-string-manipulation" class="outline-3">
 <h3 id="string-manipulation">String manipulation</h3>
 <div class="outline-text-3" id="text-string-manipulation">
@@ -357,7 +348,6 @@ Also there is stuff for case manipulation. Given variable <code>EXAMPLE="An ExaM
 </p>
 </div>
 </div>
-
 <div id="outline-container-regular-expression-matching" class="outline-3">
 <h3 id="regular-expression-matching">Regular expression matching</h3>
 <div class="outline-text-3" id="text-regular-expression-matching">
@@ -374,7 +364,6 @@ fi
 </div>
 </div>
 </div>
-
 <div id="outline-container-default-vaules" class="outline-3">
 <h3 id="default-vaules">Default vaules</h3>
 <div class="outline-text-3" id="text-default-vaules">
@@ -393,7 +382,6 @@ There is also a version of this which uses <code>=</code> instead of <code>-</co
 </div>
 </div>
 </div>
-
 <div id="outline-container-parameters" class="outline-2">
 <h2 id="parameters">Parameters</h2>
 <div class="outline-text-2" id="text-parameters">
@@ -425,7 +413,6 @@ done
 </p>
 </div>
 </div>
-
 <div id="outline-container-preserving" class="outline-3">
 <h3 id="preserving">Preserving</h3>
 <div class="outline-text-3" id="text-preserving">
@@ -450,7 +437,6 @@ else
 </ul>
 </div>
 </div>
-
 <div id="outline-container-looping-through-arguments" class="outline-3">
 <h3 id="looping-through-arguments">Looping through arguments</h3>
 <div class="outline-text-3" id="text-looping-through-arguments">
@@ -478,7 +464,6 @@ done
 </div>
 </div>
 </div>
-
 <div id="outline-container-subshells" class="outline-2">
 <h2 id="subshells">Subshells</h2>
 <div class="outline-text-2" id="text-subshells">
@@ -507,7 +492,6 @@ In this example, usage of <code>|</code> introduces a subshell and the <code>som
 Here <code>|</code> still introduces a subshell but we continue to do our stuff in that subshell. But still you can't communicate with the parent shell, after the <code>{ ... }</code> is over <code>some_var</code> is not available for use. At this point you have two solutions: <i>here strings</i> and <i>process substitutions</i>.
 </p>
 </div>
-
 <div id="outline-container-here-strings" class="outline-3">
 <h3 id="here-strings">Here strings</h3>
 <div class="outline-text-3" id="text-here-strings">
@@ -527,7 +511,6 @@ read some_var &lt;&lt;&lt; $(echo "stuff")
 </p>
 </div>
 </div>
-
 <div id="outline-container-process-substitution" class="outline-3">
 <h3 id="process-substitution">Process substitution</h3>
 <div class="outline-text-3" id="text-process-substitution">
@@ -546,7 +529,6 @@ Here, the effect is same as with <i>here strings</i> but what happens is a lot d
 </div>
 </div>
 </div>
-
 <div id="outline-container-functions" class="outline-2">
 <h2 id="functions">Functions</h2>
 <div class="outline-text-2" id="text-functions">
@@ -569,7 +551,6 @@ Now your function will concatenate your arguments and set it to <code>str</code>
 </div>
 </div>
 </div>
-
 <div id="outline-container-linting-bash-scripts" class="outline-2">
 <h2 id="linting-bash-scripts">Linting bash scripts</h2>
 <div class="outline-text-2" id="text-linting-bash-scripts">

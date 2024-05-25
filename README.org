@@ -4717,6 +4717,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
     "Export/render current file as a whole blog."
     (interactive)
     (org-babel-tangle)
+    (isamert/blog-refresh-templates)
     (isamert/blog-generate-rss)
     (isamert/blog-generate-sitemap)
     (isamert/blog-generate-tag-pages)
@@ -5131,7 +5132,9 @@ Of course this is not a very sound way to do things, each update to Invidious ha
 
   (defun isamert/blog-all-tags ()
     "Return all tag names that has been used in the blog."
-    (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags))))
+    (save-restriction
+      (widen)
+      (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags)))))
 #+end_src
 
 * Load blog code :noexport:

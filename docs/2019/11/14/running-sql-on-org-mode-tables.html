@@ -61,7 +61,6 @@ I was tracking some sleep related information about myself using org tables and 
 <p>
 Then I remembered about <code>sqldf</code>. It's an R package that manipulates R dataframes (basically tables, at least for our purposes in this post) using SQL. Behind the scenes it uses an SQL DB implementation for this. It handles all the dirty stuff for us; like creating tables, running the SQL and conversion between the formats. So I simply used <code>sqldf</code> and R's plot function to accomplish my goal (Yeah, <code>ob-R</code> package supports passing org tables to R code as variables). Then I thought it may be really nice to have an SQL backend for manipulating org tables. Because why not? Nearly every <i>table-like technology</i> have some kind of SQL-like query language.
 </p>
-
 <div id="outline-container-preparation" class="outline-2">
 <h2 id="preparation">Preparation</h2>
 <div class="outline-text-2" id="text-preparation">
@@ -121,7 +120,6 @@ That's all for the R part.
 </p>
 </div>
 </div>
-
 <div id="outline-container-emacs" class="outline-3">
 <h3 id="emacs">Emacs</h3>
 <div class="outline-text-3" id="text-emacs">
@@ -147,7 +145,6 @@ This is optional but for R syntax highlighting and stuff you may want to install
 </div>
 </div>
 </div>
-
 <div id="outline-container-running-sql-on-org-tables" class="outline-2">
 <h2 id="running-sql-on-org-tables">Running SQL on org tables</h2>
 <div class="outline-text-2" id="text-running-sql-on-org-tables">
@@ -207,7 +204,6 @@ sqldf("&lt;&lt;tbltest-sql&gt;&gt;")
 Now we have a nice syntax highlighting for our SQL. But for this you need to have at least 2 different code blocks every time.
 </p>
 </div>
-
 <div id="outline-container-using-sql-instead-of-table-formulas" class="outline-3">
 <h3 id="using-sql-instead-of-table-formulas">Using SQL instead of table formulas</h3>
 <div class="outline-text-3" id="text-using-sql-instead-of-table-formulas">

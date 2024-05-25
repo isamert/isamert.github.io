@@ -88,7 +88,6 @@ So trying to use C++ as a purely functional programming language is probably pos
 <p>
 There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
 </p>
-
 <div id="outline-container-first-things" class="outline-2">
 <h2 id="first-things">First things</h2>
 <div class="outline-text-2" id="text-first-things">
@@ -127,7 +126,6 @@ Not only we get rid of the overhead, we also have a shorter code. And considerin
 </p>
 </div>
 </div>
-
 <div id="outline-container-try-not-to-deal-with-manual-memory-management-cpp11-" class="outline-3">
 <h3 id="try-not-to-deal-with-manual-memory-management-cpp11-">Try not to deal with manual memory management (C++11)</h3>
 <div class="outline-text-3" id="text-try-not-to-deal-with-manual-memory-management-cpp11-">
@@ -143,7 +141,6 @@ Another core thing about functional programming is that you just tell computer w
 </div>
 </div>
 </div>
-
 <div id="outline-container-concepts-patterns" class="outline-2">
 <h2 id="concepts-patterns">Concepts/Patterns</h2>
 <div class="outline-text-2" id="text-concepts-patterns">
@@ -272,7 +269,6 @@ I'll talk about <code>std::bind</code> and placeholders in a bit. But <a href="h
 </p>
 </div>
 </div>
-
 <div id="outline-container-partial-application-and-currying" class="outline-3">
 <h3 id="partial-application-and-currying">Partial Application and Currying</h3>
 <div class="outline-text-3" id="text-partial-application-and-currying">
@@ -320,7 +316,6 @@ However there is no out of the box support for currying and implementing it is n
 </p>
 </div>
 </div>
-
 <div id="outline-container-folding" class="outline-3">
 <h3 id="folding">Folding</h3>
 <div class="outline-text-3" id="text-folding">
@@ -328,7 +323,6 @@ However there is no out of the box support for currying and implementing it is n
 Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at <a href="https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)">here</a>. I'm going to inspect folding in 2 categories:
 </p>
 </div>
-
 <div id="outline-container-1.-folding-stl-containers" class="outline-4">
 <h4 id="1.-folding-stl-containers">1. Folding STL containers</h4>
 <div class="outline-text-4" id="text-1.-folding-stl-containers">
@@ -373,7 +367,6 @@ bool anyTrue = std::any_of(bs.begin(), vec.end(), [](bool x) { return x; } );
 </div>
 </div>
 </div>
-
 <div id="outline-container-2.-folding-arbitrary-number-of-arguments" class="outline-4">
 <h4 id="2.-folding-arbitrary-number-of-arguments">2. Folding arbitrary number of arguments</h4>
 <div class="outline-text-4" id="text-2.-folding-arbitrary-number-of-arguments">
@@ -420,7 +413,6 @@ auto sum(Args ...args) {
 </div>
 </div>
 </div>
-
 <div id="outline-container-sum-types-std::variant-cpp17-" class="outline-3">
 <h3 id="sum-types-std::variant-cpp17-">Sum types (std::variant) (C++17)</h3>
 <div class="outline-text-3" id="text-sum-types-std::variant-cpp17-">
@@ -493,7 +485,6 @@ Still a bit verbose but at least its in-place and more useful thanks to lambdas.
 </p>
 </div>
 </div>
-
 <div id="outline-container-functors" class="outline-3">
 <h3 id="functors">Functors</h3>
 <div class="outline-text-3" id="text-functors">
@@ -509,7 +500,6 @@ In case you don't know about functors; a functor is a mapping that preservers th
 For example, everytime you need to apply some function to a vector, you need to loop through it, apply the function to every individual element then put those elements back to a vector. Another example would be a pointer. Lets say you have a pointer to an int and a function that requires an int as input. To apply this function to your pointer, firstly you need to dereference it and then apply the function. Afterwards you need to wrap the result in a pointer again.
 </p>
 </div>
-
 <div id="outline-container-stl-containers-as-functors" class="outline-4">
 <h4 id="stl-containers-as-functors">STL Containers as Functors</h4>
 <div class="outline-text-4" id="text-stl-containers-as-functors">
@@ -531,7 +521,6 @@ We applied the lambda function to xs without exposing the inner data structure.
 </p>
 </div>
 </div>
-
 <div id="outline-container-std::optional-as-functor-cpp17-" class="outline-4">
 <h4 id="std::optional-as-functor-cpp17-">std::optional as Functor (C++17)</h4>
 <div class="outline-text-4" id="text-std::optional-as-functor-cpp17-">
@@ -590,7 +579,6 @@ So this is great, we can use functions with <code>std::optional</code> even thou
 </p>
 </div>
 </div>
-
 <div id="outline-container-pointers-as-functors" class="outline-4">
 <h4 id="pointers-as-functors">Pointers as Functors</h4>
 <div class="outline-text-4" id="text-pointers-as-functors">
@@ -619,7 +607,6 @@ std:unique_pointer&lt;std::string&gt; result = transform(number, convert);
 </div>
 </div>
 </div>
-
 <div id="outline-container-taking-functors-a-bit-further" class="outline-4">
 <h4 id="taking-functors-a-bit-further">Taking functors a bit further</h4>
 <div class="outline-text-4" id="text-taking-functors-a-bit-further">

@@ -770,6 +770,7 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
   main remote.
 
   This function must be called inside the root if the blog project."
+    (interactive (list nil))
     (let* ((root default-directory)
            (posters-dir (let ((dir (f-full "docs/images/posters/")))
                           (mkdir dir t) dir))
@@ -805,6 +806,12 @@ Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-r
                       (map-put! props "countries" (s-split ", " (or (map-elt props "country") "") t))
                       (map-put! props "genres" (s-split ", " (or (map-elt props "genre") "") t))
                       (map-put! props "tags" (s-split ":" (or (map-elt props "tags") "") t))
+
+                      (map-put! props "runtime" (car (s-split " " (or (map-elt props "runtime") ""))))
+                      (-let (((_ year-start year-end) (s-match "(\\([0-9]+\\)[–-]?\\([0-9]+\\)?)$" (map-elt props "item"))))
+                        (map-put! props "year" year-start)
+                        (map-put! props "year_end" year-end))
+
                       (setq props (ht-reject (lambda (key _val) (-contains? '("why" "blocked" "alltags" "file" "category") key)) props)))))
                 "LEVEL=1")
                (-filter #'identity)
@@ -828,14 +835,21 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 #+end_comment
 
 #+begin_src js :tangle docs/assets/watchlist.js :exports none
+  // * State
+
   let MOVIES = [];
   let FILTER = {};
-  let SORT = "rating";
+  let SORT = null;
 
-  const sorters = {
+  // * Constants
+
+  const SORTERS = {
     "isamert's rating": "rating",
     "IMDb": "imdb_rating",
     "Metascore": "metascore",
+    "Added on": "created_at",
+    "Runtime": "runtime",
+    "Year": "year",
   };
 
   async function init() {
@@ -849,18 +863,10 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     MOVIES = await fetch("assets/watchlist.json").then((response) =>
       response.json()
     );
+    SORT = getURLParam("sort", "rating");
   }
 
-  function scrollToHashElement() {
-    const hash = window.location.hash.substring(1);
-    const x = hash && document.getElementById(hash);
-    if (x) {
-      window.scrollTo({
-        top: x.getBoundingClientRect().top,
-        behavior: "smooth",
-      });
-    }
-  }
+  // * JS Utils
 
   function isString(x) {
     return typeof x === "string";
@@ -873,6 +879,34 @@ Following code uses the exported watchlist JSON movies data and populates the pa
   function isEmpty(x) {
     return x == null || (x.length == 0);
   }
+
+
+  // * UI utils
+
+  function scrollToHashElement() {
+    const hash = window.location.hash.substring(1);
+    const x = hash && document.getElementById(hash);
+    if (x) {
+      window.scrollTo({
+        top: x.getBoundingClientRect().top,
+        behavior: "smooth",
+      });
+    }
+  }
+
+  function withDebounce(callback, delay) {
+    let timeoutId;
+
+    return function () {
+      clearTimeout(timeoutId);
+
+      timeoutId = setTimeout(() => {
+        callback.apply(this, arguments);
+      }, delay);
+    };
+  }
+
+  // * UI Kit
 
   function container(items, clazz) {
     const elem = div(null, clazz);
@@ -957,8 +991,15 @@ Following code uses the exported watchlist JSON movies data and populates the pa
         if (key === "clazz") {
           val.split(" ").forEach((c) => x.classList.add(c));
         } else if (key.startsWith("on")) {
-          x.addEventListener(key.substring(2), function (e) {
-            e.preventDefault();
+          const shouldPrevent = !key.endsWith("!");
+          let event = key.substring(2);
+          if (!shouldPrevent) {
+            event = event.slice(0, -1);
+          }
+          x.addEventListener(event, function (e) {
+            if (shouldPrevent) {
+              e.preventDefault();
+            }
             val(e);
           });
         } else {
@@ -969,18 +1010,6 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     return x;
   }
 
-  function withDebounce(callback, delay) {
-    let timeoutId;
-
-    return function () {
-      clearTimeout(timeoutId);
-
-      timeoutId = setTimeout(() => {
-        callback.apply(this, arguments);
-      }, delay);
-    };
-  }
-
   function getStarForRating(rating) {
     if (rating <= 5) {
       return "star-o";
@@ -989,6 +1018,8 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     }
     return "star";
   }
+
+  // * Main UI
 
   function drawProp(name, prop) {
     return a(prop, () => draw(updateFilter({ [name]: prop }), SORT, MOVIES), {
@@ -1059,7 +1090,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     });
   }
 
-  function drawFilters(filters) {
+  function drawFilters(filters, sortBy) {
     const root = div("");
     const filtersRoot = div("", "filters");
     const items = Object.entries({
@@ -1098,12 +1129,13 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     filtersRoot.append(...items);
     root.append(filtersRoot);
 
-    const sortCombo = select(Object.keys(sorters), {
-      onchange: () => {
-        SORT = sorters[sortCombo.value];
-        draw(FILTER, SORT, MOVIES);
+    const sortCombo = select(Object.keys(SORTERS), {
+      'onchange': (e) => {
+        draw(FILTER, updateSort(SORTERS[e.target.value]), MOVIES);
       },
     });
+    sortCombo.selectedIndex = Object.values(SORTERS).findIndex(x => x === sortBy);
+
     root.append(
       container([div("Sort by:", "filter-title"), sortCombo], "sort-row"),
     );
@@ -1131,7 +1163,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
               ),
               container(
                 [
-                  movie.runtime,
+                  `${movie.runtime} min`,
                   movie.runtime ? "|" : "",
                   ...drawProps("genres", movie.genres),
                 ],
@@ -1167,6 +1199,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
                 ],
                 "movie-info-row",
               ),
+              movie.created_date ? div(`Added on ${movie.created_at}`, "bottom") : null,
             ],
             "movie-info",
           ),
@@ -1183,11 +1216,21 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     const root = document.getElementById("movie-list");
     root.innerHTML = "";
 
+    const tryInt = (x) => parseInt()
     const filteredMovies = movies
-      .sort((a, b) => {
+      .toSorted((a, b) => {
         if (sortBy) {
           if (a[sortBy] && b[sortBy]) {
-            return b[sortBy] - a[sortBy];
+            const x = a[sortBy];
+            const y = b[sortBy];
+            if (isFinite(x) && isFinite(y)) {
+              return y - x;
+            } else if (x < y) {
+              return 1;
+            } else if (x > y) {
+              return -1;
+            }
+            return 0;
           } else if (b[sortBy]) {
             return 1;
           } else {
@@ -1202,7 +1245,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
         }, true)
       );
 
-    root.appendChild(drawFilters(filters));
+    root.appendChild(drawFilters(filters, sortBy));
     root.appendChild(drawMovies(filteredMovies));
   }
 
@@ -1235,6 +1278,14 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     return FILTER;
   }
 
+  function updateSort(sortBy) {
+    SORT = sortBy;
+    updateURLParam("sort", SORT);
+    return SORT;
+  }
+
+  // * Style
+
   const style = elem("style");
   style.innerHTML = `
   .movie {
@@ -1260,6 +1311,8 @@ Following code uses the exported watchlist JSON movies data and populates the pa
   .movie-plot {
   }
   .movie-info {
+    display: flex;
+    flex-direction: column;
   }
   .movie-title {
     font-size: 1.3rem;
@@ -1327,8 +1380,13 @@ Following code uses the exported watchlist JSON movies data and populates the pa
     flex-direction: column;
     flex-wrap: none;
   }
+  .bottom {
+    margin-top: auto;
+  }
   `;
   document.head.appendChild(style);
+
+  // * Main
 
   init();
 #+end_src

@@ -1,11 +1,18 @@
+// * State
+
 let MOVIES = [];
 let FILTER = {};
-let SORT = "rating";
+let SORT = null;
 
-const sorters = {
+// * Constants
+
+const SORTERS = {
   "isamert's rating": "rating",
   "IMDb": "imdb_rating",
   "Metascore": "metascore",
+  "Added on": "created_at",
+  "Runtime": "runtime",
+  "Year": "year",
 };
 
 async function init() {
@@ -19,18 +26,10 @@ async function loadGlobals() {
   MOVIES = await fetch("assets/watchlist.json").then((response) =>
     response.json()
   );
+  SORT = getURLParam("sort", "rating");
 }
 
-function scrollToHashElement() {
-  const hash = window.location.hash.substring(1);
-  const x = hash && document.getElementById(hash);
-  if (x) {
-    window.scrollTo({
-      top: x.getBoundingClientRect().top,
-      behavior: "smooth",
-    });
-  }
-}
+// * JS Utils
 
 function isString(x) {
   return typeof x === "string";
@@ -43,6 +42,34 @@ function isFunction(x) {
 function isEmpty(x) {
   return x == null || (x.length == 0);
 }
+
+
+// * UI utils
+
+function scrollToHashElement() {
+  const hash = window.location.hash.substring(1);
+  const x = hash && document.getElementById(hash);
+  if (x) {
+    window.scrollTo({
+      top: x.getBoundingClientRect().top,
+      behavior: "smooth",
+    });
+  }
+}
+
+function withDebounce(callback, delay) {
+  let timeoutId;
+
+  return function () {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => {
+      callback.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// * UI Kit
 
 function container(items, clazz) {
   const elem = div(null, clazz);
@@ -127,8 +154,15 @@ function elem(type, text, clazz) {
       if (key === "clazz") {
         val.split(" ").forEach((c) => x.classList.add(c));
       } else if (key.startsWith("on")) {
-        x.addEventListener(key.substring(2), function (e) {
-          e.preventDefault();
+        const shouldPrevent = !key.endsWith("!");
+        let event = key.substring(2);
+        if (!shouldPrevent) {
+          event = event.slice(0, -1);
+        }
+        x.addEventListener(event, function (e) {
+          if (shouldPrevent) {
+            e.preventDefault();
+          }
           val(e);
         });
       } else {
@@ -139,18 +173,6 @@ function elem(type, text, clazz) {
   return x;
 }
 
-function withDebounce(callback, delay) {
-  let timeoutId;
-
-  return function () {
-    clearTimeout(timeoutId);
-
-    timeoutId = setTimeout(() => {
-      callback.apply(this, arguments);
-    }, delay);
-  };
-}
-
 function getStarForRating(rating) {
   if (rating <= 5) {
     return "star-o";
@@ -159,6 +181,8 @@ function getStarForRating(rating) {
   }
   return "star";
 }
+
+// * Main UI
 
 function drawProp(name, prop) {
   return a(prop, () => draw(updateFilter({ [name]: prop }), SORT, MOVIES), {
@@ -229,7 +253,7 @@ function drawFilterPopup({ show, x, y, items, parent, filter }) {
   });
 }
 
-function drawFilters(filters) {
+function drawFilters(filters, sortBy) {
   const root = div("");
   const filtersRoot = div("", "filters");
   const items = Object.entries({
@@ -268,12 +292,13 @@ function drawFilters(filters) {
   filtersRoot.append(...items);
   root.append(filtersRoot);
 
-  const sortCombo = select(Object.keys(sorters), {
-    onchange: () => {
-      SORT = sorters[sortCombo.value];
-      draw(FILTER, SORT, MOVIES);
+  const sortCombo = select(Object.keys(SORTERS), {
+    'onchange': (e) => {
+      draw(FILTER, updateSort(SORTERS[e.target.value]), MOVIES);
     },
   });
+  sortCombo.selectedIndex = Object.values(SORTERS).findIndex(x => x === sortBy);
+
   root.append(
     container([div("Sort by:", "filter-title"), sortCombo], "sort-row"),
   );
@@ -301,7 +326,7 @@ function drawMovies(movies) {
             ),
             container(
               [
-                movie.runtime,
+                `${movie.runtime} min`,
                 movie.runtime ? "|" : "",
                 ...drawProps("genres", movie.genres),
               ],
@@ -337,6 +362,7 @@ function drawMovies(movies) {
               ],
               "movie-info-row",
             ),
+            movie.created_date ? div(`Added on ${movie.created_at}`, "bottom") : null,
           ],
           "movie-info",
         ),
@@ -353,11 +379,21 @@ function draw(filters, sortBy, movies) {
   const root = document.getElementById("movie-list");
   root.innerHTML = "";
 
+  const tryInt = (x) => parseInt()
   const filteredMovies = movies
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       if (sortBy) {
         if (a[sortBy] && b[sortBy]) {
-          return b[sortBy] - a[sortBy];
+          const x = a[sortBy];
+          const y = b[sortBy];
+          if (isFinite(x) && isFinite(y)) {
+            return y - x;
+          } else if (x < y) {
+            return 1;
+          } else if (x > y) {
+            return -1;
+          }
+          return 0;
         } else if (b[sortBy]) {
           return 1;
         } else {
@@ -372,7 +408,7 @@ function draw(filters, sortBy, movies) {
       }, true)
     );
 
-  root.appendChild(drawFilters(filters));
+  root.appendChild(drawFilters(filters, sortBy));
   root.appendChild(drawMovies(filteredMovies));
 }
 
@@ -405,6 +441,14 @@ function updateFilter(opts) {
   return FILTER;
 }
 
+function updateSort(sortBy) {
+  SORT = sortBy;
+  updateURLParam("sort", SORT);
+  return SORT;
+}
+
+// * Style
+
 const style = elem("style");
 style.innerHTML = `
 .movie {
@@ -430,6 +474,8 @@ style.innerHTML = `
 .movie-plot {
 }
 .movie-info {
+  display: flex;
+  flex-direction: column;
 }
 .movie-title {
   font-size: 1.3rem;
@@ -497,7 +543,12 @@ style.innerHTML = `
   flex-direction: column;
   flex-wrap: none;
 }
+.bottom {
+  margin-top: auto;
+}
 `;
 document.head.appendChild(style);
+
+// * Main
 
 init();

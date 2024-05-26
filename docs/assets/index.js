@@ -1,5 +1,3 @@
-if (location.port !== 3000) {}
-
 document.addEventListener('DOMContentLoaded', () => {
   addLinksToHeaders()
   highlightCodeBlocks()

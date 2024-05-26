@@ -7,8 +7,15 @@
 
   <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
-  <script defer src="https://u.isamert.net/u.js" data-website-id="049cb414-45e0-4b83-a82c-2d19fd8827ce"></script>
-
+  <script>
+    if (location.port != 3000) {
+      let script = document.createElement('script');
+      script.src = 'https://u.isamert.net/u.js';
+      script.setAttribute("defer", "true");
+      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+      document.head.appendChild(script);
+    }
+  </script>
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
@@ -183,7 +190,7 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
                 label="> 💬"
                 theme="github-light"
                 crossorigin="anonymous"
-                async>
+                defer>
         </script>
       </section>
 

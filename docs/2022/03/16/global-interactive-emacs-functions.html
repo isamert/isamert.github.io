@@ -7,8 +7,15 @@
 
   <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
-  <script defer src="https://u.isamert.net/u.js" data-website-id="049cb414-45e0-4b83-a82c-2d19fd8827ce"></script>
-
+  <script>
+    if (location.port != 3000) {
+      let script = document.createElement('script');
+      script.src = 'https://u.isamert.net/u.js';
+      script.setAttribute("defer", "true");
+      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+      document.head.appendChild(script);
+    }
+  </script>
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
@@ -78,7 +85,7 @@ Here is how the command looks like without wrapping it with <code>(isamert/globa
 </p>
 
 
-<figure id="orgd1af30c">
+<figure id="org35b8c13">
 <img src="/images/emacs_global_interactive_fun_default.png" alt="emacs_global_interactive_fun_default.png" class="centered">
 
 </figure>
@@ -88,7 +95,7 @@ Here is how it looks when you wrap it with <code>(isamert/globally ...)</code>, 
 </p>
 
 
-<figure id="orgef8060e">
+<figure id="orgf7437a4">
 <img src="/images/emacs_global_interactive_fun.png" alt="emacs_global_interactive_fun.png" class="centered">
 
 </figure>
@@ -98,7 +105,7 @@ This is how it looks like on macOS with choose:
 </p>
 
 
-<figure id="org25297be">
+<figure id="org19ec33c">
 <img src="/images/emacs_global_interactive_fun_choose.png" alt="emacs_global_interactive_fun_choose.png" class="centered">
 
 </figure>
@@ -199,7 +206,7 @@ Just to make this concrete, here is how it looks:
 </p>
 
 
-<figure id="org1e8d290">
+<figure id="org3336c94">
 <img src="/images/emacs_global_interactive_fun_read_string.png" alt="emacs_global_interactive_fun_read_string.png" class="centered">
 
 </figure>
@@ -221,7 +228,7 @@ Let me know if this seems useful or if you have an improvement over what I descr
                 label="> 💬"
                 theme="github-light"
                 crossorigin="anonymous"
-                async>
+                defer>
         </script>
       </section>
 

@@ -4662,11 +4662,11 @@ Of course this is not a very sound way to do things, each update to Invidious ha
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp
+  ;;; Code
+
   (require 'org)
 
-  ;;
-  ;; Variables
-  ;;
+  ;;;; Variables
 
   (defvar isamert/blog-publish-path
     "docs"
@@ -4698,21 +4698,13 @@ Of course this is not a very sound way to do things, each update to Invidious ha
   (defvar isamert/blog-tags-dir "tags"
     "Where to store tag pages.")
 
-  ;;
-  ;; Internal vars
-  ;;
-
-  (defvar isamert/blog-server-process
-    nil
-    "The process running server.")
+  ;;;; Internal vars
 
   (defvar isamert/blog-templates
     '()
     "Template name-value pairs.")
 
-  ;;
-  ;; Main logic
-  ;;
+  ;;;; Main logic
 
   (defun isamert/blog-export-all ()
     "Export/render current file as a whole blog."
@@ -4786,9 +4778,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
       (cons (--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
             `(:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
 
-  ;;
-  ;; Processing
-  ;;
+  ;;;; Processing
 
   (defun isamert/blog-can-export-current ()
     "Return if the current header should be exported or not."
@@ -4902,9 +4892,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
              (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
              (setq isamert/blog-templates templates))))
 
-  ;;
-  ;; Page/post utils
-  ;;
+  ;;;; Page/post utils
 
   (defun isamert/blog-url-case (str)
     (->>
@@ -4945,9 +4933,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
       (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
         `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
 
-  ;;
-  ;; General utils
-  ;;
+  ;;;; General utils
 
   (defun isamert/read-file-to-string (file-path)
     "Return FILE-PATH's file content."
@@ -4968,17 +4954,15 @@ Of course this is not a very sound way to do things, each update to Invidious ha
     "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.  They can be overridden in header properties."
     (-if-let (local-val (org-entry-get nil keyword))
         local-val
-        (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
+      (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
 
-  ;;
-  ;; RSS
-  ;;
+  ;;;; RSS
 
   (defun isamert/blog-generate-rss ()
     (interactive)
     (let* ((taggeds (make-hash-table :test 'equal))
            (items (->> (org-map-entries 'isamert/blog-generate-rss-item-current "LEVEL=1")
-                       (--keep it))))
+                     (--keep it))))
       (-each items
         (-lambda ((tags . item))
           (--each tags (push item (gethash it taggeds '())))))
@@ -5053,10 +5037,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
                            :tag-name it
                            :posts `',(gethash it taggeds))))))
 
-
-  ;;
-  ;; Sitemap
-  ;;
+  ;;;; Sitemap
 
   (defun isamert/blog-generate-sitemap ()
     (interactive)
@@ -5081,24 +5062,20 @@ Of course this is not a very sound way to do things, each update to Invidious ha
   </urlset>")
      (isamert/write-string-to-file (format "%s/sitemap.xml" isamert/blog-publish-path))))
 
-  ;;
-  ;; Development utils
-  ;;
+  ;;;; Development utils
 
   (defun isamert/blog-start-local-server ()
     "Start the local server."
     (interactive)
-    (let ((default-directory (expand-file-name isamert/blog-publish-path)))
-      (setq isamert/blog-server-process
-            (start-process "isamert/blog-server-process" nil "python3" "-m" "http.server" (format "%s" isamert/blog-local-port)))
-      (browse-url (format "http://localhost:%s" isamert/blog-local-port))))
+    (unless (-contains? (elnode-ports) isamert/blog-local-port)
+      (elnode-make-webserver (expand-file-name isamert/blog-publish-path) isamert/blog-local-port)
+      (when (called-interactively-p 'interactive)
+        (browse-url (format "http://localhost:%s" isamert/blog-local-port)))))
 
   (defun isamert/blog-stop-local-server ()
     "Stop the local server."
     (interactive)
-    (when isamert/blog-server-process
-      (delete-process isamert/blog-server-process)
-      (setq isamert/blog-server-process nil)))
+    (ignore-errors (elnode-stop isamert/blog-local-port)))
 
   (defun isamert/blog-restart-local-server ()
     "Restart the local server."
@@ -5109,27 +5086,23 @@ Of course this is not a very sound way to do things, each update to Invidious ha
   (defun isamert/blog-open-current ()
     "Open the current headers exported file in browser."
     (interactive)
-    (if isamert/blog-server-process
-        (browse-url
-         (format "http://localhost:%s/%s"
-                 isamert/blog-local-port
-                 (isamert/blog-mk-path)))
-      (browse-url
-       (isamert/blog-with-publish-dir (isamert/blog-mk-path)))))
+    (isamert/blog-start-local-server)
+    (browse-url
+     (format "http://localhost:%s/%s"
+             isamert/blog-local-port
+             (isamert/blog-mk-path))))
 
-  ;;
-  ;; Template functions
-  ;;
+  ;;;; Template functions
 
   (defun isamert/org-date-to-iso (org-date)
     "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
     (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
 
   (defun isamert/create-tag-list (tags)
-    (->> (s-split ":" tags)
-      (--filter (not (s-blank? it)))
-      (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
-      (s-join ", ")))
+  (->> (s-split ":" tags)
+     (--filter (not (s-blank? it)))
+     (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
+     (s-join ", ")))
 
   (defun isamert/blog-all-tags ()
     "Return all tag names that has been used in the blog."

@@ -3440,7 +3440,7 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 * A (relatively) deep dive into (zsh) shell login process (without a display manager) :linux:shell:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-03-02 Tue 00:00] Europe/Istanbul
-:UPDATE_DATE: [2021-04-07 Wed]
+:UPDATE_DATE: [2024-07-25 Thu]
 :OPTIONS: toc:nil
 :CUSTOM_ID: a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-
 :END:
@@ -3454,7 +3454,7 @@ When you log into a TTY, you get a /interactive login shell/. When you spawn a n
 
 I use =zsh= as my main shell and I also set it to be my login shell. =zsh= has a much simpler sourcing hierarchy, I'm not even going to bother myself explaining how bash does it. So here is how it goes:
 
-- First, =/etc/zshenv= and then =~/.zshev= is sourced. This is done no matter what type of shell you are spawning. These files gets sourced every time you are spawning a shell.
+- First, =/etc/zshenv= and then =~/.zshenv= is sourced. This is done no matter what type of shell you are spawning. These files gets sourced every time you are spawning a shell.
   - =/etc/zshenv=
     - This file might be under =/etc/zsh/zshenv= instead of =/etc/zsh= even if =man zsh= says the exact opposite. Some distributions change this path for =zsh= and they forgot to update the manual.
     - I don't recommend editing this file unless you really know what you are doing. Just try to utilize files under your home directory, instead of global ones.

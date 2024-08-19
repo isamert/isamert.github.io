@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+  <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers | isamert.net</title>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+
+  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+  <script>
+    if (location.port != 3000) {
+      let script = document.createElement('script');
+      script.src = 'https://u.isamert.net/u.js';
+      script.setAttribute("defer", "true");
+      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+      document.head.appendChild(script);
+    }
+  </script>
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+      <header>
+        <a href="/index.html" class="site-title">isamert.net</a>
+        <div>
+          <a href="/about.html"><i class="fa fa-user"></i> About</a>
+          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
+        </div>
+    </header>
+
+      <section>
+        <h1>Announcement: corg.el -- Seamless auto completion for org-mode block headers</h1>
+
+        <div class="post-information">
+          <ul>
+            <li>Author: isamert</li>
+            <li>Tags: <a href="/tags/announcement.html" class="tag-link">announcement</a>, <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
+          </ul>
+
+          <ul>
+            <li>Published at <em>2024-08-20</em></li>
+            <li>Last updated at <em>2024-08-20</em></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <p>
+I released a new package called <a href="https://github.com/isamert/corg.el">corg.el</a>. It is an Emacs package that provides completion-at-point for Org-mode source block and dynamic block headers. Check out the GIF below for a quick demonstration::
+</p>
+
+<img src="https://github.com/user-attachments/assets/25086366-3570-4638-a3f5-98ae8f9b1819" width=600 class="centered">
+
+<p>
+For detailed instructions, please refer to the <a href="https://github.com/isamert/corg.el">README</a>.
+</p>
+
+<p>
+This package tackles a frequent issue I encounter when dealing with various Babel blocks. I often need to switch between numerous dynamic block and source block definitions. They are used too often to refer to documentation each time but not frequently enough to memorize all the options.
+</p>
+
+<p>
+For example, my other package <a href="https://github.com/isamert/lab.el">lab.el</a> includes a dynamic block named <code>lab-merge-requests</code> that lists merge requests. corg.el simplifies creating these queries for me. Instead of relying on trial-and-error or looking up documentation, <i>corg.el</i> automates parameter name completion. While it doesn't autocomplete parameter values for this specific block, corg.el shows the executor's documentation, making it easier to understand the required parameters.
+</p>
+
+
+<figure id="org6f76f3d">
+<img src="/images/corg_lab_completion_doc_example.png" alt="corg_lab_completion_doc_example.png" class="centered">
+
+</figure>
+
+<p>
+It's a nice quality-of-life package. Give it a try and let me know if it improves your workflow!
+</p>
+
+<p>
+Also see the <a href="https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_for_block_headers_and_their/">Reddit discussion</a>.
+</p>
+
+
+        <hr />
+
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                defer>
+        </script>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz © 2022-2024
+      
+          <span>
+            <a href="https://github.com/isamert/isamert.github.io">Source</a>
+          </span>
+        </p>
+      </footer>
+  </body>

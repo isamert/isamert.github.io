@@ -584,6 +584,7 @@ Currently all the sections are curated by hand, hopefully I'll automatize this i
 :PROPERTIES:
 :CUSTOM_ID: all-posts
 :END:
+- [[./2024/08/20/corg-el-announcement.html][Announcement: corg.el -- Seamless auto completion for org-mode block headers]]
 - [[./2024/05/17/running-invidious-on-sub-folder-with-nginx.html][Hosting Invidious on sub-folder with Nginx]]
 - [[./2024/05/14/announcement-upver-el-interactively-update-your-project-dependencies.html][Announcement: upver.el -- Interactively update your project dependencies]]
 - [[./2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html][Announcement: swagg.el -- Swagger UI, inside Emacs]]
@@ -4722,6 +4723,29 @@ And here is the relevant nginx configuration:
 Also see [[https://docs.invidious.io/nginx/][the official nginx configuration]] for reference.
 
 Of course this is not a very sound way to do things, each update to Invidious has a chance to cause some breakage but it works for now. I'll try to keep this updated.
+* Announcement: corg.el -- Seamless auto completion for org-mode block headers :announcement:emacs:
+:PROPERTIES:
+:PUBLISH_DATE: [2024-08-20 Tue 00:06] Europe/Amsterdam
+:CUSTOM_ID: corg-el-announcement
+:END:
+I released a new package called [[https://github.com/isamert/corg.el][corg.el]]. It is an Emacs package that provides completion-at-point for Org-mode source block and dynamic block headers. Check out the GIF below for a quick demonstration::
+
+#+html: <img src="https://github.com/user-attachments/assets/25086366-3570-4638-a3f5-98ae8f9b1819" width=600 class="centered">
+
+For detailed instructions, please refer to the [[https://github.com/isamert/corg.el][README]].
+
+This package tackles a frequent issue I encounter when dealing with various Babel blocks. I often need to switch between numerous dynamic block and source block definitions. They are used too often to refer to documentation each time but not frequently enough to memorize all the options.
+
+For example, my other package [[https://github.com/isamert/lab.el][lab.el]] includes a dynamic block named ~lab-merge-requests~ that lists merge requests. corg.el simplifies creating these queries for me. Instead of relying on trial-and-error or looking up documentation, /corg.el/ automates parameter name completion. While it doesn't autocomplete parameter values for this specific block, corg.el shows the executor's documentation, making it easier to understand the required parameters.
+
+#+ATTR_ORG: :width 400
+#+ATTR_HTML: :src /images/corg_lab_completion_doc_example.png :class centered
+[[file:./docs/images/corg_lab_completion_doc_example.png]]
+
+It's a nice quality-of-life package. Give it a try and let me know if it improves your workflow!
+
+Also see the [[https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_for_block_headers_and_their/][Reddit discussion]].
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

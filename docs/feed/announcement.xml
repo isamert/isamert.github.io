@@ -17,5 +17,11 @@
       <pubDate>Tue, 14 May 2024 23:00:00 +0200</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers</title>
+      <link>https://isamert.net/2024/08/20/corg-el-announcement.html</link>
+      <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

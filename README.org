@@ -4796,53 +4796,59 @@ TAG.")
 (defun isamert/blog-export-all ()
   "Export/render current file as a whole blog."
   (interactive)
+  (isamert/blog-export-meta)
+  (isamert/blog-export-all-posts-pages))
+
+(defun isamert/blog-export-all-posts-pages-with-meta ()
+  (interactive)
+  (isamert/blog-export-meta)
+  (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
+
+(defun isamert/blog-export-current-with-meta ()
+  (interactive)
+  (isamert/blog-export-meta)
+  (isamert/blog-export-current))
+
+(defun isamert/blog-export-meta ()
+  "Generate meta stuff, like RSS pages, sitemap, tag pages etc."
   (org-babel-tangle)
   (isamert/blog-refresh-templates)
   (isamert/blog-generate-rss)
   (isamert/blog-generate-sitemap)
-  (isamert/blog-generate-tag-pages)
-  (isamert/blog-export-all-posts-pages))
-
-(defun isamert/blog-export-all-posts-pages ()
-  (interactive)
-  (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
-
+  (isamert/blog-generate-tag-pages))
 
 (defun isamert/blog-export-current ()
   "Export/render the current header."
   (interactive)
+  (when (not isamert/blog-templates)
+    (isamert/blog-refresh-templates))
   (save-window-excursion
     (save-current-buffer
-      (let* ((title (org-entry-get nil "ITEM"))
-             (cool-uri (org-entry-get nil "COOL_URI"))
-             (publish-date (org-entry-get nil "PUBLISH_DATE"))
-             ;; ^ The post path will be determined based on this.
-             (update-date (org-entry-get nil "UPDATE_DATE"))
-             ;; ^ When the post is updated last.
-             (tags (or (org-entry-get nil "TAGS") ""))
-             (is-page (string-match-p "page" tags))
-             ;; ^ Is this a page or post?
-             (template (or (org-entry-get nil "TEMPLATE")
-                           (if is-page "page-template" "post-template")))
-             ;; ^ The template can be overridden by "TEMPLATE" property
-             (export-path (org-entry-get nil "EXPORT_AS"))
-             ;; ^ The export path can be overridden by "EXPORT_AS" property
-             (custom-id (org-entry-get nil "CUSTOM_ID"))
-             ;; ^ ...
-             (options (org-entry-get nil "OPTIONS"))
-             ;; ^ Like #+OPTIONS but for current header only
-             (author (isamert/org-get-keyword "AUTHOR"))
-             ;; ^ AUTHOR of the current header OR the global #+AUTHOR
-             (file-path nil))
-        (when (not isamert/blog-templates)
-          (isamert/blog-refresh-templates))
-        (when (isamert/blog-can-export-current)
-          (org-narrow-to-subtree)
-          (isamert/blog-pre-process)
+      (when (isamert/blog-can-export-current)
+        (org-narrow-to-subtree)
+        (isamert/blog-pre-process)
 
-          ;; Update the id after the pre-process
-          (setq custom-id (org-entry-get nil "CUSTOM_ID"))
-          (setq file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path)))
+        (let* ((title (org-entry-get nil "ITEM"))
+               (cool-uri (org-entry-get nil "COOL_URI"))
+               (publish-date (org-entry-get nil "PUBLISH_DATE"))
+               ;; ^ The post path will be determined based on this.
+               (update-date (org-entry-get nil "UPDATE_DATE"))
+               ;; ^ When the post is updated last.
+               (tags (or (org-entry-get nil "TAGS") ""))
+               (is-page (string-match-p "page" tags))
+               ;; ^ Is this a page or post?
+               (template (or (org-entry-get nil "TEMPLATE")
+                             (if is-page "page-template" "post-template")))
+               ;; ^ The template can be overridden by "TEMPLATE" property
+               (export-path (org-entry-get nil "EXPORT_AS"))
+               ;; ^ The export path can be overridden by "EXPORT_AS" property
+               (custom-id (org-entry-get nil "CUSTOM_ID"))
+               ;; ^ ...
+               (options (org-entry-get nil "OPTIONS"))
+               ;; ^ Like #+OPTIONS but for current header only
+               (author (isamert/org-get-keyword "AUTHOR"))
+               ;; ^ AUTHOR of the current header OR the global #+AUTHOR
+               (file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path))))
 
           (let ((contents
                  (isamert/template
@@ -4874,12 +4880,18 @@ TAG.")
 (defun isamert/blog-pre-process ()
   "Pre-process the document/header.
 This does some changes on the original document like:
+- Set PUBLISH_DATE if not added.
 - Set CUSTOM_ID property for each header.  This enables to have
   meaningful header links in the generated pages.  CUSTOM_IDs are
   generated based on the header title, like \"My first post\"
   becomes \"my-first-post\". If you supply the CUSTOM_ID manually
   it'll be used instead."
   (interactive)
+  (goto-char (point-min))
+  (unless (org-entry-get nil "PUBLISH_DATE")
+    (org-set-property
+     "PUBLISH_DATE"
+     (format-time-string "[%Y-%m-%d %a %H:%M] %Z")))
   (org-map-entries 'isamert/blog-generate-custom-id))
 
 (defun isamert/blog-generate-custom-id ()

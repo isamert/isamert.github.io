@@ -4728,7 +4728,7 @@ Of course this is not a very sound way to do things, each update to Invidious ha
 :PUBLISH_DATE: [2024-08-20 Tue 00:06] Europe/Amsterdam
 :CUSTOM_ID: corg-el-announcement
 :END:
-I released a new package called [[https://github.com/isamert/corg.el][corg.el]]. It is an Emacs package that provides completion-at-point for Org-mode source block and dynamic block headers. Check out the GIF below for a quick demonstration::
+I released a new package called [[https://github.com/isamert/corg.el][corg.el]]. It is an Emacs package that provides completion-at-point for Org-mode source block and dynamic block headers. Check out the GIF below for a quick demonstration:
 
 #+html: <img src="https://github.com/user-attachments/assets/25086366-3570-4638-a3f5-98ae8f9b1819" width=600 class="centered">
 

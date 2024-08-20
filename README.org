@@ -4749,453 +4749,453 @@ Also see the [[https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_f
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp
-  ;;; Code
+;;; Code
 
-  (require 'org)
+(require 'org)
 
-  ;;;; Variables
+;;;; Variables
 
-  (defvar isamert/blog-publish-path
-    "docs"
-    "A (relative) directory name.  All the generated files will be exported under this directory.")
+(defvar isamert/blog-publish-path
+  "docs"
+  "A (relative) directory name.  All the generated files will be exported under this directory.")
 
-  (defvar isamert/blog-url
-    "https://isamert.net"
-    "URL of the blog.")
+(defvar isamert/blog-url
+  "https://isamert.net"
+  "URL of the blog.")
 
-  (defvar isamert/blog-title
-    "isamert.net"
-    "Title of the blog, used while generating RSS etc.")
+(defvar isamert/blog-title
+  "isamert.net"
+  "Title of the blog, used while generating RSS etc.")
 
-  (defvar isamert/blog-description
-    "My notes and ideas."
-    "Description of the blog, used while generating RSS etc.")
+(defvar isamert/blog-description
+  "My notes and ideas."
+  "Description of the blog, used while generating RSS etc.")
 
-  (defvar isamert/blog-local-port
-    "3000"
-    "Port to serve local blog instance.")
+(defvar isamert/blog-local-port
+  "3000"
+  "Port to serve local blog instance.")
 
-  (defvar isamert/blog-rss-per-tag
-    "feed"
-    "Whether to generate RSS per tag.
-  Non-nil value means generating `TAG.xml' files under given
-  directory.  By default it'll create `feed/TAG.xml' for every
-  TAG.")
+(defvar isamert/blog-rss-per-tag
+  "feed"
+  "Whether to generate RSS per tag.
+Non-nil value means generating `TAG.xml' files under given
+directory.  By default it'll create `feed/TAG.xml' for every
+TAG.")
 
-  (defvar isamert/blog-tags-dir "tags"
-    "Where to store tag pages.")
+(defvar isamert/blog-tags-dir "tags"
+  "Where to store tag pages.")
 
-  ;;;; Internal vars
+;;;; Internal vars
 
-  (defvar isamert/blog-templates
-    '()
-    "Template name-value pairs.")
+(defvar isamert/blog-templates
+  '()
+  "Template name-value pairs.")
 
-  ;;;; Main logic
+;;;; Main logic
 
-  (defun isamert/blog-export-all ()
-    "Export/render current file as a whole blog."
-    (interactive)
-    (org-babel-tangle)
-    (isamert/blog-refresh-templates)
-    (isamert/blog-generate-rss)
-    (isamert/blog-generate-sitemap)
-    (isamert/blog-generate-tag-pages)
-    (isamert/blog-export-all-posts-pages))
+(defun isamert/blog-export-all ()
+  "Export/render current file as a whole blog."
+  (interactive)
+  (org-babel-tangle)
+  (isamert/blog-refresh-templates)
+  (isamert/blog-generate-rss)
+  (isamert/blog-generate-sitemap)
+  (isamert/blog-generate-tag-pages)
+  (isamert/blog-export-all-posts-pages))
 
-  (defun isamert/blog-export-all-posts-pages ()
-    (interactive)
-    (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
+(defun isamert/blog-export-all-posts-pages ()
+  (interactive)
+  (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
 
 
-  (defun isamert/blog-export-current ()
-    "Export/render the current header."
-    (interactive)
-    (save-window-excursion
-      (save-current-buffer
-        (let* ((title (org-entry-get nil "ITEM"))
-               (cool-uri (org-entry-get nil "COOL_URI"))
-               (publish-date (org-entry-get nil "PUBLISH_DATE"))
-               ;; ^ The post path will be determined based on this.
-               (update-date (org-entry-get nil "UPDATE_DATE"))
-               ;; ^ When the post is updated last.
-               (tags (or (org-entry-get nil "TAGS") ""))
-               (is-page (string-match-p "page" tags))
-               ;; ^ Is this a page or post?
-               (template (or (org-entry-get nil "TEMPLATE")
-                             (if is-page "page-template" "post-template")))
-               ;; ^ The template can be overridden by "TEMPLATE" property
-               (export-path (org-entry-get nil "EXPORT_AS"))
-               ;; ^ The export path can be overridden by "EXPORT_AS" property
-               (custom-id (org-entry-get nil "CUSTOM_ID"))
-               ;; ^ ...
-               (options (org-entry-get nil "OPTIONS"))
-               ;; ^ Like #+OPTIONS but for current header only
-               (author (isamert/org-get-keyword "AUTHOR"))
-               ;; ^ AUTHOR of the current header OR the global #+AUTHOR
-               (file-path nil))
-          (when (not isamert/blog-templates)
-            (isamert/blog-refresh-templates))
-          (when (isamert/blog-can-export-current)
-            (org-narrow-to-subtree)
-            (isamert/blog-pre-process)
-
-            ;; Update the id after the pre-process
-            (setq custom-id (org-entry-get nil "CUSTOM_ID"))
-            (setq file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path)))
-
-            (let ((contents
-                   (isamert/template
-                    template
-                    :title title
-                    :body (isamert/body-html)
-                    :publish-date publish-date
-                    :update-date update-date
-                    :author author
-                    :tags tags)))
-              (isamert/write-string-to-file file-path contents)
-              (when cool-uri
-                (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
-            (widen)
-            `(,title ,export-path ,is-page ,publish-date))))))
-
-  (defun isamert/blog-generate-tag-info-current ()
-    "Return the list of tags and post information for current item.."
-    (when (isamert/blog-can-export-current)
-      (cons (--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
-            `(:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
-
-  ;;;; Processing
-
-  (defun isamert/blog-can-export-current ()
-    "Return if the current header should be exported or not."
-    (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
-
-  (defun isamert/blog-pre-process ()
-    "Pre-process the document/header.
-  This does some changes on the original document like:
-  - Set CUSTOM_ID property for each header.  This enables to have
-    meaningful header links in the generated pages.  CUSTOM_IDs are
-    generated based on the header title, like \"My first post\"
-    becomes \"my-first-post\". If you supply the CUSTOM_ID manually
-    it'll be used instead."
-    (interactive)
-    (org-map-entries 'isamert/blog-generate-custom-id))
-
-  (defun isamert/blog-generate-custom-id ()
-    "Create a CUSTOM_ID if the header does not have one.
-  \"My first post\" will become \"my-first-post\"."
-    (when (not (org-entry-get nil "CUSTOM_ID"))
-      (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
-
-  (defun isamert/plist-keys (plist)
-    (--filter (equal (mod it-index 2) 0) plist))
-
-  (defun isamert/plist-values (plist)
-    (--filter (not (equal (mod it-index 2) 0)) plist))
-
-  (defun isamert/eval-code-with-env (env code)
-    (let* ((params (->> env
-                     (isamert/plist-keys)
-                     (-map #'symbol-name)
-                     (--map (s-chop-prefix ":" it))
-                     (s-join " ")))
-           (values (->> env
-                     (isamert/plist-values)
-                     (-map #'prin1-to-string)
-                     (s-join " ")))
-           (eval-code (format "((lambda (%s) %s) %s)" params code values)))
-      (eval (car (read-from-string eval-code)))))
-
-  (defun isamert/template (template-name &rest args)
-    (s-format
-     (cdr (assoc template-name isamert/blog-templates))
-     (lambda (var plist)
-       (if (s-prefix? "(" var)
-           ;; WARN:  Here I remove "(" and ")" from the output of evaluated code
-           ;; to be able to make lists appear as intended. This may cause  issues
-           ;; if output itself is not a list but a string that is wrapped inside paranthesis
-           (->> (isamert/eval-code-with-env plist var)
-             (format "%s")
-             (s-chop-prefix "(")
-             (s-chop-suffix ")"))
-         ;; Every key in plist starts with ":", hence (concat ":" var)
-         (plist-get plist (intern (concat ":" var)))))
-     args))
-
-  (defun isamert/blog-pre-process-pure (backend)
-    "This function runs before export procedure and does some changes on the content."
-    ;; Show everything first
-    (outline-show-all)
-    ;; Override global #+OPTIONS with current headers OPTIONS property
-    (goto-char (point-min))
-    (-when-let (opts (org-entry-get nil "OPTIONS"))
-      (org-end-of-meta-data)
-      (insert (format "#+OPTIONS: %s\n" opts)))
-    ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
-    (goto-char (point-min))
-    (kill-whole-line))
-
-  (defun isamert/body-html ()
+(defun isamert/blog-export-current ()
+  "Export/render the current header."
+  (interactive)
+  (save-window-excursion
     (save-current-buffer
-      (let ((org-html-htmlize-output-type nil))
-        (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
-        (org-html-export-as-html nil nil nil t nil)
-        (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
-        (buffer-string))))
-
-  ;; TODO: fix document
-  (defun isamert/blog-refresh-templates ()
-    "Load the templates according to following rules.
-  - If there is a codeblock in the document named \"post-template\",
-    use it as the default template for posts, otherwise use
-    the `isamert/blog-post-template' value as the post template.
-  - If there is a codeblock in the document named \"page-template\",
-    use it as the default template for pages, otherwise use
-    the `isamert/blog-page-template' value as the post template.
-  - Load all codeblocks with their names ending with \"-template\"
-    and make them available for use, so that you can set TEMPLATE property
-    to a header and it will be exported using that template.  For example,
-    assume you have codeblock with \"about-template\" name  and you have
-    a header with TEMPLATE property set to \"about\".  This page/post will be
-    exported with the \"about-template\".:
-    ,* A post or page
-    :PROPERTIES:
-    :TEMPLATE: about
-    :END:
-
-    ,* My templates :noexport:
-    ,,#+name: about-template
-    ,,#+begin_src html
-    ...
-    ,#end_src"
-    (interactive)
-    (save-excursion
-      (-as-> (org-property-values "TEMPLATE") templates
-             (append '("post-template" "page-template" "tag-template"))
-             (--keep it templates)
-             (--map `(,it . ,(org-babel-find-named-block it)) templates)
-             (--filter (cdr it) templates)
-             (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
-             (setq isamert/blog-templates templates))))
-
-  ;;;; Page/post utils
-
-  (defun isamert/blog-url-case (str)
-    (->>
-     str
-     downcase
-     (s-replace-all
-      '(("'" . "")
-        ("ö" . "o")
-        ("ı" . "i")
-        ("ğ" . "g")
-        ("ü" . "u")
-        ("ş" . "s")
-        ("ö" . "o")
-        ("ç" . "c")))
-     (s-trim)
-     (replace-regexp-in-string "[^a-zA-Z0-9]" "-")
-     (replace-regexp-in-string "-+" "-")
-     (s-chop-prefix "-")
-     (s-chop-suffix "-")))
-
-  (defun isamert/blog-mk-path ()
-    (let* ((title (org-entry-get nil "ITEM"))
-           (publish-date (org-entry-get nil "PUBLISH_DATE"))
-           (custom-id (org-entry-get nil "CUSTOM_ID"))
-           (export-path (org-entry-get nil "EXPORT_AS")))
-      (if export-path
-          (format "%s.html" export-path)
-        (format "%s/%s.html"
-                (s-join "/" (isamert/parse-org-date publish-date))
-                custom-id))))
-
-  (defun isamert/blog-with-publish-dir (path)
-    "Return PATH but `isamert/blog-publish-path' appended before it."
-    (format "%s/%s" isamert/blog-publish-path path))
-
-  (defun isamert/parse-org-date (date)
-    (save-match-data
-      (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
-        `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
-
-  ;;;; General utils
-
-  (defun isamert/read-file-to-string (file-path)
-    "Return FILE-PATH's file content."
-    (with-temp-buffer
-      (insert-file-contents file-path)
-      (buffer-string)))
-
-  (defun isamert/write-string-to-file (file string)
-    (make-directory (file-name-directory file) t)
-    (with-temp-file file
-      (insert string)))
-
-  (defun isamert/plist-to-alist (args)
-    (interactive)
-    (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
-
-  (defun isamert/org-get-keyword (keyword)
-    "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.  They can be overridden in header properties."
-    (-if-let (local-val (org-entry-get nil keyword))
-        local-val
-      (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
-
-  ;;;; RSS
-
-  (defun isamert/blog-generate-rss ()
-    (interactive)
-    (let* ((taggeds (make-hash-table :test 'equal))
-           (items (->> (org-map-entries 'isamert/blog-generate-rss-item-current "LEVEL=1")
-                     (--keep it))))
-      (-each items
-        (-lambda ((tags . item))
-          (--each tags (push item (gethash it taggeds '())))))
-
-      (isamert/write-string-to-file
-       (format "%s/%s/main.xml"
-               isamert/blog-publish-path
-               isamert/blog-rss-per-tag)
-       (isamert/blog-make-rss-doc (-map 'cdr items)))
-
-      (--each (hash-table-keys taggeds)
-        (isamert/write-string-to-file
-         (format "%s/%s/%s.xml"
-                 isamert/blog-publish-path
-                 isamert/blog-rss-per-tag
-                 it)
-         (isamert/blog-make-rss-doc (gethash it taggeds) it)))))
-
-  (defun isamert/blog-generate-rss-item-current ()
-    "Return the list of tags and RSS item for current post."
-    (when (isamert/blog-can-export-current)
-      `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
-        .
-        ,(format
-          "
-      <item>
-        <title>%s</title>
-        <link>%s/%s</link>
-        <pubDate>%s</pubDate>
-        <description><![CDATA[ %s ]]></description>
-      </item>"
-          (org-entry-get nil "ITEM")
-          isamert/blog-url
-          (isamert/blog-mk-path)
-          (-let (((time zone) (s-split "] " (org-entry-get nil "PUBLISH_DATE"))))
-            (concat
-             (format-time-string "%a, %d %b %Y %H:%M:%S" (encode-time (org-parse-time-string time)))
-             (format-time-string " %z" nil zone)))
-          (or (org-entry-get nil "ABSTRACT") "")))))
-
-  (defun isamert/blog-make-rss-doc (items &optional tag)
-    (format "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
-  <rss version=\"2.0\">
-    <channel>
-      <title>%s</title>
-      <link>%s</link>
-      <description>%s</description>
-      %s
-    </channel>
-  </rss>"
-            (if tag
-                (format "%s - %s" tag isamert/blog-title)
-              isamert/blog-title)
-            isamert/blog-url
-            isamert/blog-description
-            (--reduce (format "%s%s" it acc) items)))
-
-  (defun isamert/blog-generate-tag-pages ()
-    (interactive)
-    (let* ((taggeds (make-hash-table :test 'equal))
-           (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
-                     (--keep it))))
-      (-each items
-        (-lambda ((tags . item))
-          (--each tags (push item (gethash it taggeds '())))))
-
-      (--each (hash-table-keys taggeds)
-        (isamert/write-string-to-file
-         (isamert/blog-with-publish-dir (format "%s/%s.html" isamert/blog-tags-dir it))
-         (isamert/template "tag-template"
-                           :title (format "Posts tagged with %s" it)
-                           :tag-name it
-                           :posts `',(gethash it taggeds))))))
-
-  ;;;; Sitemap
-
-  (defun isamert/blog-generate-sitemap ()
-    (interactive)
-    (->>
-     (org-map-entries
-      (lambda ()
+      (let* ((title (org-entry-get nil "ITEM"))
+             (cool-uri (org-entry-get nil "COOL_URI"))
+             (publish-date (org-entry-get nil "PUBLISH_DATE"))
+             ;; ^ The post path will be determined based on this.
+             (update-date (org-entry-get nil "UPDATE_DATE"))
+             ;; ^ When the post is updated last.
+             (tags (or (org-entry-get nil "TAGS") ""))
+             (is-page (string-match-p "page" tags))
+             ;; ^ Is this a page or post?
+             (template (or (org-entry-get nil "TEMPLATE")
+                           (if is-page "page-template" "post-template")))
+             ;; ^ The template can be overridden by "TEMPLATE" property
+             (export-path (org-entry-get nil "EXPORT_AS"))
+             ;; ^ The export path can be overridden by "EXPORT_AS" property
+             (custom-id (org-entry-get nil "CUSTOM_ID"))
+             ;; ^ ...
+             (options (org-entry-get nil "OPTIONS"))
+             ;; ^ Like #+OPTIONS but for current header only
+             (author (isamert/org-get-keyword "AUTHOR"))
+             ;; ^ AUTHOR of the current header OR the global #+AUTHOR
+             (file-path nil))
+        (when (not isamert/blog-templates)
+          (isamert/blog-refresh-templates))
         (when (isamert/blog-can-export-current)
-          (format "
-     <url>
-        <loc>%s/%s</loc>
-        <lastmod>%s</lastmod>
-        <changefreq>monthly</changefreq>
-     </url>"
-                  isamert/blog-url
-                  (isamert/blog-mk-path)
-                  (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "MODIFY_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
-        ) "LEVEL=1")
-     (--keep it)
-     (--reduce (format "%s%s" acc it))
-     (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-  <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">%s
-  </urlset>")
-     (isamert/write-string-to-file (format "%s/sitemap.xml" isamert/blog-publish-path))))
+          (org-narrow-to-subtree)
+          (isamert/blog-pre-process)
 
-  ;;;; Development utils
+          ;; Update the id after the pre-process
+          (setq custom-id (org-entry-get nil "CUSTOM_ID"))
+          (setq file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path)))
 
-  (defun isamert/blog-start-local-server ()
-    "Start the local server."
-    (interactive)
-    (unless (-contains? (elnode-ports) isamert/blog-local-port)
-      (elnode-make-webserver (expand-file-name isamert/blog-publish-path) isamert/blog-local-port)
-      (when (called-interactively-p 'interactive)
-        (browse-url (format "http://localhost:%s" isamert/blog-local-port)))))
+          (let ((contents
+                 (isamert/template
+                  template
+                  :title title
+                  :body (isamert/body-html)
+                  :publish-date publish-date
+                  :update-date update-date
+                  :author author
+                  :tags tags)))
+            (isamert/write-string-to-file file-path contents)
+            (when cool-uri
+              (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
+          (widen)
+          `(,title ,export-path ,is-page ,publish-date))))))
 
-  (defun isamert/blog-stop-local-server ()
-    "Stop the local server."
-    (interactive)
-    (ignore-errors (elnode-stop isamert/blog-local-port)))
+(defun isamert/blog-generate-tag-info-current ()
+  "Return the list of tags and post information for current item.."
+  (when (isamert/blog-can-export-current)
+    (cons (--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
+          `(:title ,(org-entry-get nil "ITEM") :path ,(isamert/blog-mk-path) :abstract ,(or (org-entry-get nil "ABSTRACT") "")))))
 
-  (defun isamert/blog-restart-local-server ()
-    "Restart the local server."
-    (interactive)
-    (isamert/blog-stop-local-server)
-    (isamert/blog-start-local-server))
+;;;; Processing
 
-  (defun isamert/blog-open-current ()
-    "Open the current headers exported file in browser."
-    (interactive)
-    (isamert/blog-start-local-server)
-    (browse-url
-     (format "http://localhost:%s/%s"
-             isamert/blog-local-port
-             (isamert/blog-mk-path))))
+(defun isamert/blog-can-export-current ()
+  "Return if the current header should be exported or not."
+  (not (string-match-p "noexport" (or (org-entry-get nil "TAGS") ""))))
 
-  ;;;; Template functions
+(defun isamert/blog-pre-process ()
+  "Pre-process the document/header.
+This does some changes on the original document like:
+- Set CUSTOM_ID property for each header.  This enables to have
+  meaningful header links in the generated pages.  CUSTOM_IDs are
+  generated based on the header title, like \"My first post\"
+  becomes \"my-first-post\". If you supply the CUSTOM_ID manually
+  it'll be used instead."
+  (interactive)
+  (org-map-entries 'isamert/blog-generate-custom-id))
 
-  (defun isamert/org-date-to-iso (org-date)
-    "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
-    (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
+(defun isamert/blog-generate-custom-id ()
+  "Create a CUSTOM_ID if the header does not have one.
+\"My first post\" will become \"my-first-post\"."
+  (when (not (org-entry-get nil "CUSTOM_ID"))
+    (org-set-property "CUSTOM_ID" (isamert/blog-url-case (org-entry-get nil "ITEM")))))
 
-  (defun isamert/create-tag-list (tags)
-  (->> (s-split ":" tags)
-     (--filter (not (s-blank? it)))
-     (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
-     (s-join ", ")))
+(defun isamert/plist-keys (plist)
+  (--filter (equal (mod it-index 2) 0) plist))
 
-  (defun isamert/blog-all-tags ()
-    "Return all tag names that has been used in the blog."
-    (save-restriction
-      (widen)
-      (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags)))))
+(defun isamert/plist-values (plist)
+  (--filter (not (equal (mod it-index 2) 0)) plist))
+
+(defun isamert/eval-code-with-env (env code)
+  (let* ((params (->> env
+                   (isamert/plist-keys)
+                   (-map #'symbol-name)
+                   (--map (s-chop-prefix ":" it))
+                   (s-join " ")))
+         (values (->> env
+                   (isamert/plist-values)
+                   (-map #'prin1-to-string)
+                   (s-join " ")))
+         (eval-code (format "((lambda (%s) %s) %s)" params code values)))
+    (eval (car (read-from-string eval-code)))))
+
+(defun isamert/template (template-name &rest args)
+  (s-format
+   (cdr (assoc template-name isamert/blog-templates))
+   (lambda (var plist)
+     (if (s-prefix? "(" var)
+         ;; WARN:  Here I remove "(" and ")" from the output of evaluated code
+         ;; to be able to make lists appear as intended. This may cause  issues
+         ;; if output itself is not a list but a string that is wrapped inside paranthesis
+         (->> (isamert/eval-code-with-env plist var)
+           (format "%s")
+           (s-chop-prefix "(")
+           (s-chop-suffix ")"))
+       ;; Every key in plist starts with ":", hence (concat ":" var)
+       (plist-get plist (intern (concat ":" var)))))
+   args))
+
+(defun isamert/blog-pre-process-pure (backend)
+  "This function runs before export procedure and does some changes on the content."
+  ;; Show everything first
+  (outline-show-all)
+  ;; Override global #+OPTIONS with current headers OPTIONS property
+  (goto-char (point-min))
+  (-when-let (opts (org-entry-get nil "OPTIONS"))
+    (org-end-of-meta-data)
+    (insert (format "#+OPTIONS: %s\n" opts)))
+  ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
+  (goto-char (point-min))
+  (kill-whole-line))
+
+(defun isamert/body-html ()
+  (save-current-buffer
+    (let ((org-html-htmlize-output-type nil))
+      (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+      (org-html-export-as-html nil nil nil t nil)
+      (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+      (buffer-string))))
+
+;; TODO: fix document
+(defun isamert/blog-refresh-templates ()
+  "Load the templates according to following rules.
+- If there is a codeblock in the document named \"post-template\",
+  use it as the default template for posts, otherwise use
+  the `isamert/blog-post-template' value as the post template.
+- If there is a codeblock in the document named \"page-template\",
+  use it as the default template for pages, otherwise use
+  the `isamert/blog-page-template' value as the post template.
+- Load all codeblocks with their names ending with \"-template\"
+  and make them available for use, so that you can set TEMPLATE property
+  to a header and it will be exported using that template.  For example,
+  assume you have codeblock with \"about-template\" name  and you have
+  a header with TEMPLATE property set to \"about\".  This page/post will be
+  exported with the \"about-template\".:
+  ,* A post or page
+  :PROPERTIES:
+  :TEMPLATE: about
+  :END:
+
+  ,* My templates :noexport:
+  ,,#+name: about-template
+  ,,#+begin_src html
+  ...
+  ,#end_src"
+  (interactive)
+  (save-excursion
+    (-as-> (org-property-values "TEMPLATE") templates
+           (append '("post-template" "page-template" "tag-template"))
+           (--keep it templates)
+           (--map `(,it . ,(org-babel-find-named-block it)) templates)
+           (--filter (cdr it) templates)
+           (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
+           (setq isamert/blog-templates templates))))
+
+;;;; Page/post utils
+
+(defun isamert/blog-url-case (str)
+  (->>
+   str
+   downcase
+   (s-replace-all
+    '(("'" . "")
+      ("ö" . "o")
+      ("ı" . "i")
+      ("ğ" . "g")
+      ("ü" . "u")
+      ("ş" . "s")
+      ("ö" . "o")
+      ("ç" . "c")))
+   (s-trim)
+   (replace-regexp-in-string "[^a-zA-Z0-9]" "-")
+   (replace-regexp-in-string "-+" "-")
+   (s-chop-prefix "-")
+   (s-chop-suffix "-")))
+
+(defun isamert/blog-mk-path ()
+  (let* ((title (org-entry-get nil "ITEM"))
+         (publish-date (org-entry-get nil "PUBLISH_DATE"))
+         (custom-id (org-entry-get nil "CUSTOM_ID"))
+         (export-path (org-entry-get nil "EXPORT_AS")))
+    (if export-path
+        (format "%s.html" export-path)
+      (format "%s/%s.html"
+              (s-join "/" (isamert/parse-org-date publish-date))
+              custom-id))))
+
+(defun isamert/blog-with-publish-dir (path)
+  "Return PATH but `isamert/blog-publish-path' appended before it."
+  (format "%s/%s" isamert/blog-publish-path path))
+
+(defun isamert/parse-org-date (date)
+  (save-match-data
+    (when (string-match "\\([0-9]\\{4\\}\\)-\\([0-9]\\{2\\}\\)-\\([0-9]\\{2\\}\\)" date)
+      `(,(match-string 1 date) ,(match-string 2 date) ,(match-string 3 date)))))
+
+;;;; General utils
+
+(defun isamert/read-file-to-string (file-path)
+  "Return FILE-PATH's file content."
+  (with-temp-buffer
+    (insert-file-contents file-path)
+    (buffer-string)))
+
+(defun isamert/write-string-to-file (file string)
+  (make-directory (file-name-directory file) t)
+  (with-temp-file file
+    (insert string)))
+
+(defun isamert/plist-to-alist (args)
+  (interactive)
+  (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
+
+(defun isamert/org-get-keyword (keyword)
+  "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.  They can be overridden in header properties."
+  (-if-let (local-val (org-entry-get nil keyword))
+      local-val
+    (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
+
+;;;; RSS
+
+(defun isamert/blog-generate-rss ()
+  (interactive)
+  (let* ((taggeds (make-hash-table :test 'equal))
+         (items (->> (org-map-entries 'isamert/blog-generate-rss-item-current "LEVEL=1")
+                   (--keep it))))
+    (-each items
+      (-lambda ((tags . item))
+        (--each tags (push item (gethash it taggeds '())))))
+
+    (isamert/write-string-to-file
+     (format "%s/%s/main.xml"
+             isamert/blog-publish-path
+             isamert/blog-rss-per-tag)
+     (isamert/blog-make-rss-doc (-map 'cdr items)))
+
+    (--each (hash-table-keys taggeds)
+      (isamert/write-string-to-file
+       (format "%s/%s/%s.xml"
+               isamert/blog-publish-path
+               isamert/blog-rss-per-tag
+               it)
+       (isamert/blog-make-rss-doc (gethash it taggeds) it)))))
+
+(defun isamert/blog-generate-rss-item-current ()
+  "Return the list of tags and RSS item for current post."
+  (when (isamert/blog-can-export-current)
+    `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
+      .
+      ,(format
+        "
+    <item>
+      <title>%s</title>
+      <link>%s/%s</link>
+      <pubDate>%s</pubDate>
+      <description><![CDATA[ %s ]]></description>
+    </item>"
+        (org-entry-get nil "ITEM")
+        isamert/blog-url
+        (isamert/blog-mk-path)
+        (-let (((time zone) (s-split "] " (org-entry-get nil "PUBLISH_DATE"))))
+          (concat
+           (format-time-string "%a, %d %b %Y %H:%M:%S" (encode-time (org-parse-time-string time)))
+           (format-time-string " %z" nil zone)))
+        (or (org-entry-get nil "ABSTRACT") "")))))
+
+(defun isamert/blog-make-rss-doc (items &optional tag)
+  (format "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
+<rss version=\"2.0\">
+  <channel>
+    <title>%s</title>
+    <link>%s</link>
+    <description>%s</description>
+    %s
+  </channel>
+</rss>"
+          (if tag
+              (format "%s - %s" tag isamert/blog-title)
+            isamert/blog-title)
+          isamert/blog-url
+          isamert/blog-description
+          (--reduce (format "%s%s" it acc) items)))
+
+(defun isamert/blog-generate-tag-pages ()
+  (interactive)
+  (let* ((taggeds (make-hash-table :test 'equal))
+         (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
+                   (--keep it))))
+    (-each items
+      (-lambda ((tags . item))
+        (--each tags (push item (gethash it taggeds '())))))
+
+    (--each (hash-table-keys taggeds)
+      (isamert/write-string-to-file
+       (isamert/blog-with-publish-dir (format "%s/%s.html" isamert/blog-tags-dir it))
+       (isamert/template "tag-template"
+                         :title (format "Posts tagged with %s" it)
+                         :tag-name it
+                         :posts `',(gethash it taggeds))))))
+
+;;;; Sitemap
+
+(defun isamert/blog-generate-sitemap ()
+  (interactive)
+  (->>
+   (org-map-entries
+    (lambda ()
+      (when (isamert/blog-can-export-current)
+        (format "
+   <url>
+      <loc>%s/%s</loc>
+      <lastmod>%s</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>"
+                isamert/blog-url
+                (isamert/blog-mk-path)
+                (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "MODIFY_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
+      ) "LEVEL=1")
+   (--keep it)
+   (--reduce (format "%s%s" acc it))
+   (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">%s
+</urlset>")
+   (isamert/write-string-to-file (format "%s/sitemap.xml" isamert/blog-publish-path))))
+
+;;;; Development utils
+
+(defun isamert/blog-start-local-server ()
+  "Start the local server."
+  (interactive)
+  (unless (-contains? (elnode-ports) isamert/blog-local-port)
+    (elnode-make-webserver (expand-file-name isamert/blog-publish-path) isamert/blog-local-port)
+    (when (called-interactively-p 'interactive)
+      (browse-url (format "http://localhost:%s" isamert/blog-local-port)))))
+
+(defun isamert/blog-stop-local-server ()
+  "Stop the local server."
+  (interactive)
+  (ignore-errors (elnode-stop isamert/blog-local-port)))
+
+(defun isamert/blog-restart-local-server ()
+  "Restart the local server."
+  (interactive)
+  (isamert/blog-stop-local-server)
+  (isamert/blog-start-local-server))
+
+(defun isamert/blog-open-current ()
+  "Open the current headers exported file in browser."
+  (interactive)
+  (isamert/blog-start-local-server)
+  (browse-url
+   (format "http://localhost:%s/%s"
+           isamert/blog-local-port
+           (isamert/blog-mk-path))))
+
+;;;; Template functions
+
+(defun isamert/org-date-to-iso (org-date)
+  "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
+  (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
+
+(defun isamert/create-tag-list (tags)
+(->> (s-split ":" tags)
+   (--filter (not (s-blank? it)))
+   (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
+   (s-join ", ")))
+
+(defun isamert/blog-all-tags ()
+  "Return all tag names that has been used in the blog."
+  (save-restriction
+    (widen)
+    (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags)))))
 #+end_src
 
 * Load blog code :noexport:

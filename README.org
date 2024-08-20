@@ -4942,7 +4942,12 @@ This does some changes on the original document like:
       (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
       (org-html-export-as-html nil nil nil t nil)
       (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
-      (buffer-string))))
+      (->>
+       (buffer-string)
+       ;; Replace <figure id="org...."> with <figure> so that
+       ;; generating same page again would yield the same result
+       ;; instead of creating unnecessary diffs
+       (replace-regexp-in-string "<figure id=\"[a-zA-Z0-9]+\">" "<figure>")))))
 
 ;; TODO: fix document
 (defun isamert/blog-refresh-templates ()

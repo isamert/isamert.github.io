@@ -4799,9 +4799,8 @@ TAG.")
   (isamert/blog-export-meta)
   (isamert/blog-export-all-posts-pages))
 
-(defun isamert/blog-export-all-posts-pages-with-meta ()
+(defun isamert/blog-export-all-posts-pages ()
   (interactive)
-  (isamert/blog-export-meta)
   (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
 
 (defun isamert/blog-export-current-with-meta ()

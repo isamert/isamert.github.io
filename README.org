@@ -4749,15 +4749,21 @@ Also see the [[https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_f
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp
+;;; isamert/blog --- My blog generating code -*- lexical-binding: t; -*-
+
 ;;; Code
 
 (require 'org)
+(require 'dash)
+(require 's)
+(require 'elnode)
 
 ;;;; Variables
 
 (defvar isamert/blog-publish-path
   "docs"
-  "A (relative) directory name.  All the generated files will be exported under this directory.")
+  "A (relative) directory name.
+All the generated files will be exported under this directory.")
 
 (defvar isamert/blog-url
   "https://isamert.net"
@@ -4842,9 +4848,9 @@ TAG.")
                ;; ^ The template can be overridden by "TEMPLATE" property
                (export-path (org-entry-get nil "EXPORT_AS"))
                ;; ^ The export path can be overridden by "EXPORT_AS" property
-               (custom-id (org-entry-get nil "CUSTOM_ID"))
+               (_custom-id (org-entry-get nil "CUSTOM_ID"))
                ;; ^ ...
-               (options (org-entry-get nil "OPTIONS"))
+               (_options (org-entry-get nil "OPTIONS"))
                ;; ^ Like #+OPTIONS but for current header only
                (author (isamert/org-get-keyword "AUTHOR"))
                ;; ^ AUTHOR of the current header OR the global #+AUTHOR
@@ -4935,7 +4941,7 @@ This does some changes on the original document like:
        (plist-get plist (intern (concat ":" var)))))
    args))
 
-(defun isamert/blog-pre-process-pure (backend)
+(defun isamert/blog-pre-process-pure (_backend)
   "This function runs before export procedure and does some changes on the content."
   ;; Show everything first
   (outline-show-all)
@@ -4951,9 +4957,9 @@ This does some changes on the original document like:
 (defun isamert/body-html ()
   (save-current-buffer
     (let ((org-html-htmlize-output-type nil))
-      (add-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+      (add-hook 'org-export-before-parsing-functions 'isamert/blog-pre-process-pure)
       (org-html-export-as-html nil nil nil t nil)
-      (remove-hook 'org-export-before-parsing-hook 'isamert/blog-pre-process-pure)
+      (remove-hook 'org-export-before-parsing-functions 'isamert/blog-pre-process-pure)
       (->>
        (buffer-string)
        ;; Replace <figure id="org...."> with <figure> so that
@@ -5018,8 +5024,7 @@ This does some changes on the original document like:
    (s-chop-suffix "-")))
 
 (defun isamert/blog-mk-path ()
-  (let* ((title (org-entry-get nil "ITEM"))
-         (publish-date (org-entry-get nil "PUBLISH_DATE"))
+  (let* ((publish-date (org-entry-get nil "PUBLISH_DATE"))
          (custom-id (org-entry-get nil "CUSTOM_ID"))
          (export-path (org-entry-get nil "EXPORT_AS")))
     (if export-path
@@ -5055,7 +5060,8 @@ This does some changes on the original document like:
   (--map `(,(car it) . ,(cadr it)) (-partition-all 2 args)))
 
 (defun isamert/org-get-keyword (keyword)
-  "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.  They can be overridden in header properties."
+  "Used to get KEYWORDs like \"AUTHOR\" \"TITLE\" etc.
+They can be overridden in header properties."
   (-if-let (local-val (org-entry-get nil keyword))
       local-val
     (cadr (assoc keyword (org-collect-keywords `(,keyword))))))

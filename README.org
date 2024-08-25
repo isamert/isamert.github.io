@@ -4796,6 +4796,7 @@ TAG.")
 (defun isamert/blog-export-all ()
   "Export/render current file as a whole blog."
   (interactive)
+  (isamert/blog-refresh-templates)
   (isamert/blog-export-meta)
   (isamert/blog-export-all-posts-pages))
 

@@ -2422,7 +2422,7 @@ Run =M-x= then call =enable-flycheck-all-file-buffers-on-save=. From now on, whe
     (interactive)
     (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
 #+end_src
-* Bash scripting guide :bash:
+* Bash scripting guide :bash:cli:shell:
 :PROPERTIES:
 :PUBLISH_DATE: [2019-02-21 Thu 00:00] Europe/Istanbul
 :CUSTOM_ID: bash-scripting-guide
@@ -2941,7 +2941,7 @@ I believe things can be simplified with /a little bit of/ elisp but it may not w
 
 *UPDATE*: Here is an interesting package, called [[https://github.com/tbanel/orgaggregate][orgaggregate]], which covers most of the use cases presented here and much more but without any external dependencies and does everything with a sane syntax. Check it out!
 
-* Better keyboard experience in Linux :linux:
+* Better keyboard experience in Linux :linux:keyboards:
 :PROPERTIES:
 :PUBLISH_DATE: [2020-05-30 Sat 00:00] Europe/Istanbul
 :CUSTOM_ID: better-keyboard-experience-in-linux

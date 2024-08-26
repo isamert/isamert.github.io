@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Bash scripting guide</title>
+      <link>https://isamert.net/2019/02/21/bash-scripting-guide.html</link>
+      <pubDate>Thu, 21 Feb 2019 00:00:00 +0300</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>A (relatively) deep dive into (zsh) shell login process (without a display manager)</title>
       <link>https://isamert.net/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html</link>
       <pubDate>Tue, 02 Mar 2021 00:00:00 +0300</pubDate>

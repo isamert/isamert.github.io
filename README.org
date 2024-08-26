@@ -435,44 +435,49 @@ This is the post template, post pages will be generated based on this.
 
 #+NAME: post-template
 #+begin_src html :noweb yes
-  <!DOCTYPE html>
-  <<html-head>>
-    <body>
-      <<html-header>>
+<!DOCTYPE html>
+<<html-head>>
+  <body>
+    <<html-header>>
 
-        <section>
-          <h1>${title}</h1>
+      <section>
+        <h1>${title}</h1>
 
-          <div class="post-information">
-            <ul>
-              <li>Author: ${author}</li>
-              <li>Tags: ${(isamert/create-tag-list tags)}</li>
-            </ul>
+        <div class="post-information">
+          <ul>
+            <li>Author: ${author}</li>
+            <li>Tags: ${(isamert/create-tag-list tags)}</li>
+          </ul>
 
-            <ul>
-              <li>Published at <em>${(isamert/org-date-to-iso publish-date)}</em></li>
-              <li>Last updated at <em>${(isamert/org-date-to-iso (or update-date publish-date))}</em></li>
-            </ul>
-          </div>
+          <ul>
+            <li>Published at <em>${(isamert/org-date-to-iso publish-date)}</em></li>
+            <li>Last updated at <em>${(isamert/org-date-to-iso (or update-date publish-date))}</em></li>
+          </ul>
+        </div>
 
-          <hr />
+        <hr />
 
-          ${body}
+        ${body}
 
-          <hr />
+        <h2>Similar posts</h2>
+        <ul>
+          ${(->> (--map (let ((post (map-elt isamert/blog-all-posts (car it)))) (format "<li><a href=\"/%s\">%s</a></li>" (plist-get post :path) (plist-get post :title))) (-take 5 (-drop 1 similar))))}
+        </ul>
 
-          <script src="https://utteranc.es/client.js"
-                  repo="isamert/isamert.github.io"
-                  issue-term="pathname"
-                  label="> 💬"
-                  theme="github-light"
-                  crossorigin="anonymous"
-                  defer>
-          </script>
-        </section>
+        <hr />
 
-        <<html-footer>>
-    </body>
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                defer>
+        </script>
+      </section>
+
+      <<html-footer>>
+  </body>
 #+end_src
 *** Page template
 Headers tagged with =page= tag will be generated based on this template.
@@ -544,7 +549,6 @@ Generic head portion that I use in every template.
   </head>
 #+end_src
 *** Header
-
 #+NAME: html-header
 #+begin_src html
     <header>
@@ -4791,6 +4795,11 @@ TAG.")
 (defvar isamert/blog-tags-dir "tags"
   "Where to store tag pages.")
 
+(defvar isamert/blog-all-posts nil
+  "A dynamic variable used for templates.
+It is available during template expansion and contains a map from post
+id's to their info, which is a plist.")
+
 ;;;; Internal vars
 
 (defvar isamert/blog-templates
@@ -4808,24 +4817,90 @@ TAG.")
 
 (defun isamert/blog-export-all-posts-pages ()
   (interactive)
-  (org-map-entries 'isamert/blog-export-current "LEVEL=1"))
+  (let ((extras (isamert/blog-prepare-post-extras)))
+    (org-map-entries (lambda () (isamert/blog-export-current extras)) "LEVEL=1")))
 
 (defun isamert/blog-export-current-with-meta ()
   (interactive)
   (isamert/blog-export-meta)
   (isamert/blog-export-current))
 
+(defun isamert/blog-prepare-post-extras ()
+  (let ((posts (make-hash-table :size 100 :test 'equal))
+        (all-tags (make-hash-table :size 300 :test 'equal))
+        (all-words (make-hash-table :size 500 :test 'equal)))
+    ;; Prepare post infos
+    (org-map-entries
+     (lambda ()
+       (let ((tags (s-split ":" (or (org-entry-get nil "TAGS") "") t)))
+         (when (isamert/blog-can-export-current)
+           (let* ((id (or (org-entry-get nil "CUSTOM_ID")
+                          (org-entry-get nil "ID")))
+                  (title (org-entry-get nil "ITEM"))
+                  (path (isamert/blog-mk-path))
+                  (words (s-split " " title t)))
+             (puthash
+              id
+              (list
+               :title title
+               :path path
+               :file-path (isamert/blog-with-publish-dir path)
+               :tags tags
+               :words words)
+              posts)
+             (--each tags
+               (puthash
+                it
+                (append (list id) (gethash it all-tags '()))
+                all-tags))
+             (--each words
+               (puthash
+                it
+                (append (list id) (gethash it all-words '()))
+                all-words))))))
+     "LEVEL=1")
+    ;; Calculate similar posts
+    (map-do
+     (lambda (id props)
+       (puthash
+        id
+        (map-insert
+         props
+         :similar
+         (--sort
+          (> (cdr it) (cdr other))
+          (map-apply
+           (lambda (key val) (cons key val))
+           (map-merge-with
+            'hash-table
+            (lambda (v1 v2) (+ (* 1.3 v1) v2))
+            (isamert/blog-calculate-similarity all-tags (plist-get props :tags))
+            (isamert/blog-calculate-similarity all-words (plist-get props :words))))))
+        posts))
+     posts)
+    posts))
+
+(defun isamert/blog-calculate-similarity (all lst)
+  (let ((similarity-table (make-hash-table :size 30 :test 'equal)))
+    (--each (--mapcat (gethash it all) lst)
+      (puthash it (1+ (gethash it similarity-table 0)) similarity-table))
+    similarity-table))
+
 (defun isamert/blog-export-meta ()
   "Generate meta stuff, like RSS pages, sitemap, tag pages etc."
-  (org-babel-tangle)
+  ;; FIXME: wtf?
+  (ignore-errors
+    (org-babel-tangle))
   (isamert/blog-refresh-templates)
   (isamert/blog-generate-rss)
   (isamert/blog-generate-sitemap)
   (isamert/blog-generate-tag-pages))
 
-(defun isamert/blog-export-current ()
+(defun isamert/blog-export-current (&optional extras)
   "Export/render the current header."
   (interactive)
+  (unless extras
+    (setq extras (isamert/blog-prepare-post-extras)))
   (when (not isamert/blog-templates)
     (isamert/blog-refresh-templates))
   (save-window-excursion
@@ -4834,7 +4909,12 @@ TAG.")
         (org-narrow-to-subtree)
         (isamert/blog-pre-process)
 
-        (let* ((title (org-entry-get nil "ITEM"))
+        (let* ((custom-id (org-entry-get nil "CUSTOM_ID"))
+               ;; ^ ...
+               (id (or custom-id (org-entry-get nil "ID")))
+               ;; ^ ...
+               (info (map-elt extras id))
+               (title (plist-get info :title))
                (cool-uri (org-entry-get nil "COOL_URI"))
                (publish-date (org-entry-get nil "PUBLISH_DATE"))
                ;; ^ The post path will be determined based on this.
@@ -4848,23 +4928,23 @@ TAG.")
                ;; ^ The template can be overridden by "TEMPLATE" property
                (export-path (org-entry-get nil "EXPORT_AS"))
                ;; ^ The export path can be overridden by "EXPORT_AS" property
-               (_custom-id (org-entry-get nil "CUSTOM_ID"))
-               ;; ^ ...
                (_options (org-entry-get nil "OPTIONS"))
                ;; ^ Like #+OPTIONS but for current header only
                (author (isamert/org-get-keyword "AUTHOR"))
                ;; ^ AUTHOR of the current header OR the global #+AUTHOR
-               (file-path (isamert/blog-with-publish-dir (isamert/blog-mk-path))))
+               (file-path (plist-get info :file-path)))
 
           (let ((contents
-                 (isamert/template
-                  template
-                  :title title
-                  :body (isamert/body-html)
-                  :publish-date publish-date
-                  :update-date update-date
-                  :author author
-                  :tags tags)))
+                 (let ((isamert/blog-all-posts extras))
+                   (isamert/template
+                    template
+                    :title title
+                    :body (isamert/body-html)
+                    :publish-date publish-date
+                    :update-date update-date
+                    :author author
+                    :tags tags
+                    :similar (map-elt info :similar)))))
             (isamert/write-string-to-file file-path contents)
             (when cool-uri
               (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
@@ -4914,14 +4994,18 @@ This does some changes on the original document like:
 
 (defun isamert/eval-code-with-env (env code)
   (let* ((params (->> env
-                   (isamert/plist-keys)
-                   (-map #'symbol-name)
-                   (--map (s-chop-prefix ":" it))
-                   (s-join " ")))
+                    (isamert/plist-keys)
+                    (-map #'symbol-name)
+                    (--map (s-chop-prefix ":" it))
+                    (s-join " ")))
          (values (->> env
-                   (isamert/plist-values)
-                   (-map #'prin1-to-string)
-                   (s-join " ")))
+                    (isamert/plist-values)
+                    (--map (cl-typecase it
+                             ;; prin1-to-string does not quote lists
+                             ;; and we need it for eval
+                             (cons (format "'%S" it))
+                             (otherwise (prin1-to-string it))))
+                    (s-join " ")))
          (eval-code (format "((lambda (%s) %s) %s)" params code values)))
     (eval (car (read-from-string eval-code)))))
 
@@ -4934,9 +5018,9 @@ This does some changes on the original document like:
          ;; to be able to make lists appear as intended. This may cause  issues
          ;; if output itself is not a list but a string that is wrapped inside paranthesis
          (->> (isamert/eval-code-with-env plist var)
-           (format "%s")
-           (s-chop-prefix "(")
-           (s-chop-suffix ")"))
+            (format "%s")
+            (s-chop-prefix "(")
+            (s-chop-suffix ")"))
        ;; Every key in plist starts with ":", hence (concat ":" var)
        (plist-get plist (intern (concat ":" var)))))
    args))
@@ -4993,14 +5077,15 @@ This does some changes on the original document like:
   ...
   ,#end_src"
   (interactive)
-  (save-excursion
-    (-as-> (org-property-values "TEMPLATE") templates
-           (append '("post-template" "page-template" "tag-template"))
-           (--keep it templates)
-           (--map `(,it . ,(org-babel-find-named-block it)) templates)
-           (--filter (cdr it) templates)
-           (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
-           (setq isamert/blog-templates templates))))
+  (org-fold-save-outline-visibility nil
+    (save-excursion
+      (-as-> (org-property-values "TEMPLATE") templates
+             (append '("post-template" "page-template" "tag-template"))
+             (--keep it templates)
+             (--map `(,it . ,(org-babel-find-named-block it)) templates)
+             (--filter (cdr it) templates)
+             (--map `(,(car it) . ,(progn (goto-char (cdr it)) (org-babel-expand-noweb-references))) templates)
+             (setq isamert/blog-templates templates)))))
 
 ;;;; Page/post utils
 
@@ -5145,7 +5230,7 @@ They can be overridden in header properties."
        (isamert/template "tag-template"
                          :title (format "Posts tagged with %s" it)
                          :tag-name it
-                         :posts `',(gethash it taggeds))))))
+                         :posts (gethash it taggeds))))))
 
 ;;;; Sitemap
 
@@ -5209,10 +5294,10 @@ They can be overridden in header properties."
   (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
 
 (defun isamert/create-tag-list (tags)
-(->> (s-split ":" tags)
-   (--filter (not (s-blank? it)))
-   (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
-   (s-join ", ")))
+  (->> (s-split ":" tags)
+     (--filter (not (s-blank? it)))
+     (--map (format "<a href=\"/tags/%s.html\" class=\"tag-link\">%s</a>" it it))
+     (s-join ", ")))
 
 (defun isamert/blog-all-tags ()
   "Return all tag names that has been used in the blog."

@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Signing long PDF documents automatically with Bash</title>
+      <link>https://isamert.net/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html</link>
+      <pubDate>Wed, 25 Dec 2024 20:49:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers</title>
       <link>https://isamert.net/2024/08/20/corg-el-announcement.html</link>
       <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>

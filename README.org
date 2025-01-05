@@ -251,16 +251,16 @@ The one and only css file that I use for my blog. Also trying to keep it minimal
     --post-fourth-header-font-size: 1em;
 
     --body-bg-color: #fafafa;
-    --font-color: #2e3a46; /* A softer, dark gray for main text */
-    --header-bg-color: #ffffff; /* Clean white for a fresh header */
-    --header-shadow-color: rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    --light-font-color: #6b6b6b; /* Medium gray for lighter text */
-    --muted-color: #9e9e9e; /* Muted gray for secondary elements */
-    --src-block-bg-color: #eef3f8; /* Light blue-gray for code background */
-    --inline-src-block-bg-color: #e2e8f0; /* Slightly darker blue-gray for inline code */
-    --header-color: #23395d; /* A modern navy for headers */
-    --link-color: #0077b6; /* Bright blue for links */
-    --link-hover-color: #0096c7; /* Lighter blue for link hover */
+    --font-color: #2e3a46;
+    --header-bg-color: #ffffff;
+    --header-shadow-color: rgba(0, 0, 0, 0.1);
+    --light-font-color: #6b6b6b;
+    --muted-color: #9e9e9e;
+    --src-block-bg-color: #eef3f8;
+    --inline-src-block-bg-color: #e2e8f0;
+    --header-color: #23395d;
+    --link-color: #0077b6;
+    --link-hover-color: #0096c7;
 }
 
 /* * Header */
@@ -337,7 +337,7 @@ h2 {
 }
 
 #table-of-contents li li {
-    margin-left: 0.7rem; /* Further indentation for nested items */
+    margin-left: 0.7rem;
 }
 
 /* * Main page */
@@ -377,7 +377,7 @@ h2 {
 }
 
 .main-post-title::before {
-    content: "\f007"; /* Font Awesome user icon */
+    content: "\f040";
     font-family: FontAwesome;
     margin-right: 5px;
 }
@@ -388,7 +388,7 @@ h2 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px; /* Adjust as needed */
+    max-width: 150px;
 }
 
 .main-post-tags span {
@@ -431,7 +431,7 @@ h5,
 h6 {
     font-family: var(--header-font);
     color: var(--header-color);
-    line-height: 1.4; /* Slightly increased for better readability */
+    line-height: 1.4;
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
 }
@@ -457,16 +457,16 @@ h3 {
 h4,
 h5,
 h6 {
-    font-weight: 400; /* Consistent weight for smaller headers */
+    font-weight: 400;
 }
 
 h1:hover,
 h2:hover,
 h3:hover,
 h4:hover {
-    color: var(--link-color); /* Lively color change on hover */
+    color: var(--link-color);
     cursor: pointer;
-    text-decoration: underline; /* Modern underlined effect */
+    text-decoration: underline;
 }
 
 blockquote {
@@ -551,25 +551,25 @@ hr {
 }
 
 #author::before {
-    content: "\f007"; /* Font Awesome user icon */
+    content: "\f007";
     font-family: FontAwesome;
     margin-right: 5px;
 }
 
 #tags::before {
-    content: "\f02b"; /* Font Awesome tags icon */
+    content: "\f02b";
     font-family: FontAwesome;
     margin-right: 5px;
 }
 
 #publish-date::before {
-    content: "\f073"; /* Font Awesome calendar icon */
+    content: "\f073";
     font-family: FontAwesome;
     margin-right: 5px;
 }
 
 #updated-date::before {
-    content: "\f021"; /* Font Awesome refresh icon */
+    content: "\f021";
     font-family: FontAwesome;
     margin-right: 5px;
 }
@@ -600,9 +600,9 @@ footer > p > span {
 #similar-posts,
 #footnotes {
     padding: 10px;
-    background-color: #f5f5f5; /* Light grey background */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
 }
 
@@ -650,21 +650,21 @@ footer > p > span {
     padding: 0.5em;
     background: var(
         --src-block-bg-color
-    ); /* Light blue-gray for code background */
-    color: var(--font-color); /* Main font color for better readability */
+    );
+    color: var(--font-color);
 }
 
 .hljs-comment,
 .hljs-quote {
     color: var(
         --muted-color
-    ); /* Muted gray for secondary, less prominent code elements */
+    );
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-addition {
-    color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
+    color: #0077b6;
 }
 
 .hljs-number,
@@ -673,7 +673,7 @@ footer > p > span {
 .hljs-literal,
 .hljs-doctag,
 .hljs-regexp {
-    color: #6c757d; /* A medium gray to highlight data and strings gracefully */
+    color: #6c757d;
 }
 
 .hljs-title,
@@ -681,7 +681,7 @@ footer > p > span {
 .hljs-name,
 .hljs-selector-id,
 .hljs-selector-class {
-    color: #23395d; /* A modern navy, aligning with your header color */
+    color: #23395d;
 }
 
 .hljs-attribute,
@@ -690,7 +690,7 @@ footer > p > span {
 .hljs-template-variable,
 .hljs-class .hljs-title,
 .hljs-type {
-    color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
+    color: #0096c7;
 }
 
 .hljs-symbol,
@@ -701,16 +701,16 @@ footer > p > span {
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-link {
-    color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
+    color: #2e3a46;
 }
 
 .hljs-built_in,
 .hljs-deletion {
-    color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
+    color: #dc322f;
 }
 
 .hljs-formula {
-    background: #e2e8f0; /* Highlight formulas with a slightly darker background */
+    background: #e2e8f0;
 }
 
 .hljs-emphasis {
@@ -883,7 +883,6 @@ Generic head portion that I use in every template.
         ,@(--map
            (let-plist it
              `(li ()
-                  (i ((class . "fa fa-pen-nib main-post-icon")))
                   (a ((class . "main-post-title")
                       (href . ,.path))
                      ,.title)

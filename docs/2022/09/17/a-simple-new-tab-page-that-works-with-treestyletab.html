@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,32 +17,39 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>A simple new tab page (that works with TreeStyleTab)</h1>
+        <h1 id="post-title">A simple new tab page (that works with TreeStyleTab)</h1>
 
-        <div class="post-information">
+        <div id="post-information">
           <ul>
-            <li>Author: isamert</li>
-            <li>Tags: <a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/browsers.html" class="tag-link">browsers</a></li>
-          </ul>
-
-          <ul>
-            <li>Published at <em>2022-09-17</em></li>
-            <li>Last updated at <em>2022-09-17</em></li>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/browsers.html" class="tag-link">browsers</a></li>
+            <li id="publish-date">2022-09-17</li>
+            <li id="updated-date">2022-09-17</li>
           </ul>
         </div>
 
-        <hr />
-
-        <p>
+        <div id="post">
+          <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#[[https---isamert-net-newtab-html][isamert-net-newtab-html]]">isamert.net/newtab.html</a></li>
+</ul>
+</div>
+</nav>
+<p>
 I use <a href="https://github.com/piroor/treestyletab">TreeStyleTab</a> to manage my tabs. It's quite powerful, it has quite a lot of extensions to expand it's functionality even more, but it's missing one little piece: named tab groups. You can group tabs under another tab but you can't create dummy tabs with a specific name. One workaround is that using a blank tab to group tabs under that and rename tabs title by using <code>document.title = "THE TITLE YOU WANT"</code>. This is well but if you accidentally refresh this tab or restart your Firefox session, your tab name will be gone.
 </p>
 
@@ -143,14 +148,17 @@ newtab.import()
 </div>
 </div>
 
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li> <li><a href="/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html">Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -159,6 +167,7 @@ newtab.import()
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

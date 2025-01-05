@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,32 +17,31 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Announcement: upver.el -- Interactively update your project dependencies</h1>
+        <h1 id="post-title">Announcement: upver.el -- Interactively update your project dependencies</h1>
 
-        <div class="post-information">
+        <div id="post-information">
           <ul>
-            <li>Author: isamert</li>
-            <li>Tags: <a href="/tags/announcement.html" class="tag-link">announcement</a>, <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
-          </ul>
-
-          <ul>
-            <li>Published at <em>2024-05-14</em></li>
-            <li>Last updated at <em>2024-05-14</em></li>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/announcement.html" class="tag-link">announcement</a>, <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
+            <li id="publish-date">2024-05-14</li>
+            <li id="updated-date">2024-05-14</li>
           </ul>
         </div>
 
-        <hr />
-
-        <p>
+        <div id="post">
+          <p>
 I released a new package called <a href="https://github.com/isamert/upver.el">upver.el</a>. It is an Emacs package that lets you interactively update your npm dependencies within a <code>package.json</code> buffer. Inspired by the <a href="https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens">Version Lens</a> package that saw on a colleague's screen.
 </p>
 
@@ -62,14 +59,17 @@ The <a href="https://github.com/isamert/upver.el">README</a> has detailed instru
 Hope you find it useful. Have a nice one!
 </p>
 
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li> <li><a href="/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2023/08/14/elisp-editing-development-tips.html">Elisp editing/development tips</a></li> <li><a href="/2022/03/16/global-interactive-emacs-functions.html">Global interactive Emacs functions</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li> <li><a href="/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2023/08/14/elisp-editing-development-tips.html">Elisp editing/development tips</a></li> <li><a href="/2022/03/16/global-interactive-emacs-functions.html">Global interactive Emacs functions</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -78,6 +78,7 @@ Hope you find it useful. Have a nice one!
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

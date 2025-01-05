@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,16 +17,19 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Feeds</h1>
+        <h1 id="post-title">Feeds</h1>
         <p>
 Every category has it's own RSS feed, you can subscribe them separately or you can just subscribe for all posts using the main feed.
 </p>
@@ -43,7 +44,7 @@ Every category has it's own RSS feed, you can subscribe them separately or you c
 In no specific order:
 </p>
 
-<ul><li><b>selfhosting</b> :: <a href="feed/selfhosting.xml">rss</a>, <a href="tags/selfhosting.html">html</a></li><li><b>announcement</b> :: <a href="feed/announcement.xml">rss</a>, <a href="tags/announcement.html">html</a></li><li><b>elisp</b> :: <a href="feed/elisp.xml">rss</a>, <a href="tags/elisp.html">html</a></li><li><b>browsers</b> :: <a href="feed/browsers.xml">rss</a>, <a href="tags/browsers.html">html</a></li><li><b>macos</b> :: <a href="feed/macos.xml">rss</a>, <a href="tags/macos.html">html</a></li><li><b>micro</b> :: <a href="feed/micro.xml">rss</a>, <a href="tags/micro.html">html</a></li><li><b>turkish</b> :: <a href="feed/turkish.xml">rss</a>, <a href="tags/turkish.html">html</a></li><li><b>keyboards</b> :: <a href="feed/keyboards.xml">rss</a>, <a href="tags/keyboards.html">html</a></li><li><b>org</b> :: <a href="feed/org.xml">rss</a>, <a href="tags/org.html">html</a></li><li><b>shell</b> :: <a href="feed/shell.xml">rss</a>, <a href="tags/shell.html">html</a></li><li><b>bash</b> :: <a href="feed/bash.xml">rss</a>, <a href="tags/bash.html">html</a></li><li><b>emacs</b> :: <a href="feed/emacs.xml">rss</a>, <a href="tags/emacs.html">html</a></li><li><b>cli</b> :: <a href="feed/cli.xml">rss</a>, <a href="tags/cli.html">html</a></li><li><b>microcontrollers</b> :: <a href="feed/microcontrollers.xml">rss</a>, <a href="tags/microcontrollers.html">html</a></li><li><b>linux</b> :: <a href="feed/linux.xml">rss</a>, <a href="tags/linux.html">html</a></li><li><b>fp</b> :: <a href="feed/fp.xml">rss</a>, <a href="tags/fp.html">html</a></li><li><b>kotlin</b> :: <a href="feed/kotlin.xml">rss</a>, <a href="tags/kotlin.html">html</a></li><li><b>qt</b> :: <a href="feed/qt.xml">rss</a>, <a href="tags/qt.html">html</a></li><li><b>cpp</b> :: <a href="feed/cpp.xml">rss</a>, <a href="tags/cpp.html">html</a></li></ul>
+<ul> <li>automation ::  <a href="feed/automation.xml">rss</a>,  <a href="tags/automation.html">html</a></li> <li>selfhosting ::  <a href="feed/selfhosting.xml">rss</a>,  <a href="tags/selfhosting.html">html</a></li> <li>announcement ::  <a href="feed/announcement.xml">rss</a>,  <a href="tags/announcement.html">html</a></li> <li>elisp ::  <a href="feed/elisp.xml">rss</a>,  <a href="tags/elisp.html">html</a></li> <li>browsers ::  <a href="feed/browsers.xml">rss</a>,  <a href="tags/browsers.html">html</a></li> <li>macos ::  <a href="feed/macos.xml">rss</a>,  <a href="tags/macos.html">html</a></li> <li>micro ::  <a href="feed/micro.xml">rss</a>,  <a href="tags/micro.html">html</a></li> <li>turkish ::  <a href="feed/turkish.xml">rss</a>,  <a href="tags/turkish.html">html</a></li> <li>keyboards ::  <a href="feed/keyboards.xml">rss</a>,  <a href="tags/keyboards.html">html</a></li> <li>org ::  <a href="feed/org.xml">rss</a>,  <a href="tags/org.html">html</a></li> <li>shell ::  <a href="feed/shell.xml">rss</a>,  <a href="tags/shell.html">html</a></li> <li>bash ::  <a href="feed/bash.xml">rss</a>,  <a href="tags/bash.html">html</a></li> <li>emacs ::  <a href="feed/emacs.xml">rss</a>,  <a href="tags/emacs.html">html</a></li> <li>cli ::  <a href="feed/cli.xml">rss</a>,  <a href="tags/cli.html">html</a></li> <li>microcontrollers ::  <a href="feed/microcontrollers.xml">rss</a>,  <a href="tags/microcontrollers.html">html</a></li> <li>linux ::  <a href="feed/linux.xml">rss</a>,  <a href="tags/linux.html">html</a></li> <li>fp ::  <a href="feed/fp.xml">rss</a>,  <a href="tags/fp.html">html</a></li> <li>kotlin ::  <a href="feed/kotlin.xml">rss</a>,  <a href="tags/kotlin.html">html</a></li> <li>qt ::  <a href="feed/qt.xml">rss</a>,  <a href="tags/qt.html">html</a></li> <li>cpp ::  <a href="feed/cpp.xml">rss</a>,  <a href="tags/cpp.html">html</a></li></ul>
 </div>
 </div>
 

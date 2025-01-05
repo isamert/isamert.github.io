@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,32 +17,31 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</h1>
+        <h1 id="post-title">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</h1>
 
-        <div class="post-information">
+        <div id="post-information">
           <ul>
-            <li>Author: isamert</li>
-            <li>Tags: <a href="/tags/cli.html" class="tag-link">cli</a>, <a href="/tags/linux.html" class="tag-link">linux</a></li>
-          </ul>
-
-          <ul>
-            <li>Published at <em>2018-05-04</em></li>
-            <li>Last updated at <em>2018-05-04</em></li>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/cli.html" class="tag-link">cli</a>, <a href="/tags/linux.html" class="tag-link">linux</a></li>
+            <li id="publish-date">2018-05-04</li>
+            <li id="updated-date">2018-05-04</li>
           </ul>
         </div>
 
-        <hr />
-
-        <nav id="table-of-contents" role="doc-toc">
+        <div id="post">
+          <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -181,14 +178,17 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 </div>
 </div>
 
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -197,6 +197,7 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

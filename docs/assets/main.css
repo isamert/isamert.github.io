@@ -1,18 +1,18 @@
 /* Fonts */
 /* TODO: Maybe I should serve these, instead of using a cdn */
-@import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap');
-@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url("https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap");
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
 :root {
-    --font: 'Noto Serif', serif;
-    --monospace-font: 'TypoPRO Iosevka Term', monospace;
+    --font: "Noto Serif", serif;
+    --monospace-font: "TypoPRO Iosevka Term", monospace;
 
-    --header-font: 'Roboto Slab', serif;
+    --header-font: "Roboto Slab", serif;
     --post-title-font-size: 1.5em;
     --post-first-header-font-size: 1.35em;
-    --post-second-header-font-size: 1.20em;
+    --post-second-header-font-size: 1.2em;
     --post-third-header-font-size: 1.15em;
     --post-fourth-header-font-size: 1em;
 
@@ -86,8 +86,8 @@ header nav a {
     text-align: left;
 }
 
-
-#table-of-contents h1, h2 {
+#table-of-contents h1,
+h2 {
     font-size: 1em !important;
 }
 
@@ -106,7 +106,71 @@ header nav a {
     margin-left: 0.7rem; /* Further indentation for nested items */
 }
 
+/* * Main page */
+
+#main-post-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#main-post-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#main-post-list li:last-child {
+    border-bottom: none;
+}
+
+.main-post-date {
+    font-size: 14px;
+    color: #666;
+    margin-left: 20px;
+}
+
+.main-post-icon {
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.main-post-title {
+    font-size: 16px;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.main-post-title::before {
+    content: "\f007"; /* Font Awesome user icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
+}
+
+.main-post-tags {
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust as needed */
+}
+
+.main-post-tags span {
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    padding: 2px 5px;
+    margin-right: 5px;
+}
+
 /* * Body & Post */
+
+#post-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 body {
     font-family: var(--font);
@@ -125,7 +189,12 @@ section {
     padding: 0 10px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--header-font);
     color: var(--header-color);
     line-height: 1.4; /* Slightly increased for better readability */
@@ -151,11 +220,16 @@ h3 {
     padding-bottom: 0.2rem;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
     font-weight: 400; /* Consistent weight for smaller headers */
 }
 
-h1:hover, h2:hover, h3:hover, h4:hover {
+h1:hover,
+h2:hover,
+h3:hover,
+h4:hover {
     color: var(--link-color); /* Lively color change on hover */
     cursor: pointer;
     text-decoration: underline; /* Modern underlined effect */
@@ -208,11 +282,12 @@ hr {
 }
 
 /* Code blocks */
-.src, .example {
+.src,
+.example {
     /* font-size: 0.85em; */
     font-family: var(--monospace-font);
     background: var(--src-block-bg-color);
-    padding: .4rem .7rem !important;
+    padding: 0.4rem 0.7rem !important;
     border-radius: 0.3rem !important;
     display: block !important;
 }
@@ -220,54 +295,54 @@ hr {
 /* * Post information */
 
 #post-information {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Centers items horizontally */
-  gap: 20px;
-  font-size: 0.9em;
-  color: #2e3a46;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers items horizontally */
+    gap: 20px;
+    font-size: 0.9em;
+    color: #2e3a46;
 }
 
 #post-information ul {
-  display: flex;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  gap: 15px;
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
 }
 
 #post-information li {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 #author::before {
-  content: "\f007"; /* Font Awesome user icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f007"; /* Font Awesome user icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #tags::before {
-  content: "\f02b"; /* Font Awesome tags icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f02b"; /* Font Awesome tags icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #publish-date::before {
-  content: "\f073"; /* Font Awesome calendar icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f073"; /* Font Awesome calendar icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #updated-date::before {
-  content: "\f021"; /* Font Awesome refresh icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f021"; /* Font Awesome refresh icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 .tag-link {
-  color: #0077b6;
-  text-decoration: none;
+    color: #0077b6;
+    text-decoration: none;
 }
 
 /* * Similar posts, Footer, Comments */
@@ -286,14 +361,13 @@ footer > p > span {
     float: right;
 }
 
-
 #post-information,
 #comments,
 #similar-posts,
 #footnotes {
-  padding: 10px;
-  background-color: #f5f5f5; /* Light grey background */
-  border-radius: 8px; /* Rounded corners */
+    padding: 10px;
+    background-color: #f5f5f5; /* Light grey background */
+    border-radius: 8px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     margin-bottom: 10px;
 }
@@ -301,23 +375,23 @@ footer > p > span {
 #comments h2,
 #similar-posts h2,
 #footnotes h2 {
-  margin-bottom: 10px;
-  border-bottom: 2px solid #e2e2e2;
-  padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e2e2e2;
+    padding-bottom: 5px;
 }
 
 .footnum {
-  font-weight: bold;
-  color: #0077b6;
-  text-decoration: none;
+    font-weight: bold;
+    color: #0077b6;
+    text-decoration: none;
 }
 
 .footpara {
-  display: inline-block;
+    display: inline-block;
 }
 
 .footpara p {
-  margin: 0;
+    margin: 0;
 }
 
 /* * Utility */
@@ -337,22 +411,26 @@ footer > p > span {
 /* * HLJS */
 
 .hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: var(--src-block-bg-color); /* Light blue-gray for code background */
-  color: var(--font-color); /* Main font color for better readability */
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: var(
+        --src-block-bg-color
+    ); /* Light blue-gray for code background */
+    color: var(--font-color); /* Main font color for better readability */
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: var(--muted-color); /* Muted gray for secondary, less prominent code elements */
+    color: var(
+        --muted-color
+    ); /* Muted gray for secondary, less prominent code elements */
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-addition {
-  color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
+    color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
 }
 
 .hljs-number,
@@ -361,7 +439,7 @@ footer > p > span {
 .hljs-literal,
 .hljs-doctag,
 .hljs-regexp {
-  color: #6c757d; /* A medium gray to highlight data and strings gracefully */
+    color: #6c757d; /* A medium gray to highlight data and strings gracefully */
 }
 
 .hljs-title,
@@ -369,7 +447,7 @@ footer > p > span {
 .hljs-name,
 .hljs-selector-id,
 .hljs-selector-class {
-  color: #23395d; /* A modern navy, aligning with your header color */
+    color: #23395d; /* A modern navy, aligning with your header color */
 }
 
 .hljs-attribute,
@@ -378,7 +456,7 @@ footer > p > span {
 .hljs-template-variable,
 .hljs-class .hljs-title,
 .hljs-type {
-  color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
+    color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
 }
 
 .hljs-symbol,
@@ -389,22 +467,22 @@ footer > p > span {
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-link {
-  color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
+    color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
 }
 
 .hljs-built_in,
 .hljs-deletion {
-  color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
+    color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
 }
 
 .hljs-formula {
-  background: #e2e8f0; /* Highlight formulas with a slightly darker background */
+    background: #e2e8f0; /* Highlight formulas with a slightly darker background */
 }
 
 .hljs-emphasis {
-  font-style: italic;
+    font-style: italic;
 }
 
 .hljs-strong {
-  font-weight: bold;
+    font-weight: bold;
 }

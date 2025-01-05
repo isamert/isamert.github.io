@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,32 +17,31 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Median cut algorithm in C++/Qt</h1>
+        <h1 id="post-title">Median cut algorithm in C++/Qt</h1>
 
-        <div class="post-information">
+        <div id="post-information">
           <ul>
-            <li>Author: isamert</li>
-            <li>Tags: <a href="/tags/cpp.html" class="tag-link">cpp</a>, <a href="/tags/qt.html" class="tag-link">qt</a></li>
-          </ul>
-
-          <ul>
-            <li>Published at <em>2016-07-13</em></li>
-            <li>Last updated at <em>2016-07-13</em></li>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/cpp.html" class="tag-link">cpp</a>, <a href="/tags/qt.html" class="tag-link">qt</a></li>
+            <li id="publish-date">2016-07-13</li>
+            <li id="updated-date">2016-07-13</li>
           </ul>
         </div>
 
-        <hr />
-
-        <p>
+        <div id="post">
+          <p>
 I needed a simple color quantization algorithm for my project. I didn't want to use any other program/library for this simple job. So I implemented <i>median cut</i> with <i>Qt</i>. I just used the explanation of the algorithm in <a href="https://en.wikipedia.org/wiki/Median_cut">Wikipedia</a>, I didn't make any other research, so the code is not well optimized but it just works. I'll try to explain step by step:
 </p>
 
@@ -215,14 +212,17 @@ static inline int closestMatch(QRgb pixel, const QVector&lt;QRgb&gt; &amp;clut) 
 </pre>
 </div>
 
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2018/03/01/functional-programming-in-cpp.html">Functional programming in C++</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html">Killing (copying) currently selected candidate's content/text in Selectrum</a></li> <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2018/03/01/functional-programming-in-cpp.html">Functional programming in C++</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html">Killing (copying) currently selected candidate's content/text in Selectrum</a></li> <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -231,6 +231,7 @@ static inline int closestMatch(QRgb pixel, const QVector&lt;QRgb&gt; &amp;clut) 
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

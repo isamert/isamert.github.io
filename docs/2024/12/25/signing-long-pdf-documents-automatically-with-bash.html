@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -20,18 +18,18 @@
 </head>
   <body>
     <header>
-        <h1>isamert's stuff</h1>
+        <h1>isamert's webpage</h1>
         <nav>
-            <a href="#about">home</a> |
-            <a href="#about">about</a> |
-            <a href="#rss">rss</a> |
-            <a href="#watchlist">watchlist</a> |
-            <a href="#hackings">hackings</a>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
         </nav>
     </header>
 
       <section>
-        <h1>Signing long PDF documents automatically with Bash</h1>
+        <h1 id="post-title">Signing long PDF documents automatically with Bash</h1>
 
         <div id="post-information">
           <ul>
@@ -124,14 +122,17 @@ and you successfully signed your PDF without really signing it. You let your com
 
 </div>
 </div>
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2019/02/21/bash-scripting-guide.html">Bash scripting guide</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2019/02/21/bash-scripting-guide.html">Bash scripting guide</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -140,6 +141,7 @@ and you successfully signed your PDF without really signing it. You let your com
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

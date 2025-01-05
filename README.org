@@ -157,75 +157,75 @@ Just setting the port and binding it into an org-variable. I'll utilize this lat
 This is the file that contains all the dynamic logic for my website. I'm trying to keep it minimal as possible.
 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
-  document.addEventListener('DOMContentLoaded', () => {
-    addLinksToHeaders()
-    highlightCodeBlocks()
-  })
+document.addEventListener('DOMContentLoaded', () => {
+  addLinksToHeaders()
+  highlightCodeBlocks()
+})
 
-  function addLinksToHeaders() {
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-      if (!h.hasAttribute('id')) {
-        return
-      }
-
-      wrap(h, elem('a', {
-        class: 'clear',
-        href: '#' + h.id,
-      }))
-    })
-  }
-
-  function highlightCodeBlocks(_event) {
-    // Disable auto-lang detection
-    hljs.configure({languages: []})
-
-    let pageLang
-
-    // Higlight all code blocks
-    document.querySelectorAll('pre.src').forEach(block => {
-      const lang = [...block.classList].find(x => x.startsWith('src-'))
-      if (lang) {
-        const currLang = lang.split('-')[1]
-        if (currLang) {
-          pageLang = currLang.replace(/elisp/g, 'lisp')
-          block.classList.add(pageLang)
-        }
-      }
-      hljs.highlightBlock(block)
-    })
-
-    // Highlight all inline code blocks
-    document.querySelectorAll('code').forEach(block => {
-      if (pageLang) {
-        block.classList.add(pageLang)
-      }
-      hljs.highlightBlock(block)
-    })
-  }
-
-  //
-  // Utils
-  //
-
-  function wrap(elem, wrapper) {
-    elem.parentNode.replaceChild(wrapper, elem)
-    wrapper.appendChild(elem)
-  }
-
-  function elem(type, attrs) {
-    const e = document.createElement(type)
-    Object.keys(attrs).forEach(attr => {
-      if (attr !== 'children') {
-        e.setAttribute(attr, attrs[attr])
-      }
-    })
-
-    if (attrs.children) {
-      attrs.children.forEach(child => e.appendChild(child))
+function addLinksToHeaders() {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+    if (!h.hasAttribute('id')) {
+      return
     }
 
-    return e
+    wrap(h, elem('a', {
+      class: 'clear',
+      href: '#' + h.id,
+    }))
+  })
+}
+
+function highlightCodeBlocks(_event) {
+  // Disable auto-lang detection
+  hljs.configure({languages: []})
+
+  let pageLang
+
+  // Higlight all code blocks
+  document.querySelectorAll('pre.src').forEach(block => {
+    const lang = [...block.classList].find(x => x.startsWith('src-'))
+    if (lang) {
+      const currLang = lang.split('-')[1]
+      if (currLang) {
+        pageLang = currLang.replace(/elisp/g, 'lisp')
+        block.classList.add(pageLang)
+      }
+    }
+    hljs.highlightBlock(block)
+  })
+
+  // Highlight all inline code blocks
+  document.querySelectorAll('code').forEach(block => {
+    if (pageLang) {
+      block.classList.add(pageLang)
+    }
+    hljs.highlightBlock(block)
+  })
+}
+
+//
+// Utils
+//
+
+function wrap(elem, wrapper) {
+  elem.parentNode.replaceChild(wrapper, elem)
+  wrapper.appendChild(elem)
+}
+
+function elem(type, attrs) {
+  const e = document.createElement(type)
+  Object.keys(attrs).forEach(attr => {
+    if (attr !== 'children') {
+      e.setAttribute(attr, attrs[attr])
+    }
+  })
+
+  if (attrs.children) {
+    attrs.children.forEach(child => e.appendChild(child))
   }
+
+  return e
+}
 #+end_src
 
 *** main.css
@@ -234,19 +234,19 @@ The one and only css file that I use for my blog. Also trying to keep it minimal
 #+begin_src css :tangle docs/assets/main.css
 /* Fonts */
 /* TODO: Maybe I should serve these, instead of using a cdn */
-@import url('https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap');
-@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url("https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700&display=swap");
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
 :root {
-    --font: 'Noto Serif', serif;
-    --monospace-font: 'TypoPRO Iosevka Term', monospace;
+    --font: "Noto Serif", serif;
+    --monospace-font: "TypoPRO Iosevka Term", monospace;
 
-    --header-font: 'Roboto Slab', serif;
+    --header-font: "Roboto Slab", serif;
     --post-title-font-size: 1.5em;
     --post-first-header-font-size: 1.35em;
-    --post-second-header-font-size: 1.20em;
+    --post-second-header-font-size: 1.2em;
     --post-third-header-font-size: 1.15em;
     --post-fourth-header-font-size: 1em;
 
@@ -320,8 +320,8 @@ header nav a {
     text-align: left;
 }
 
-
-#table-of-contents h1, h2 {
+#table-of-contents h1,
+h2 {
     font-size: 1em !important;
 }
 
@@ -340,7 +340,71 @@ header nav a {
     margin-left: 0.7rem; /* Further indentation for nested items */
 }
 
+/* * Main page */
+
+#main-post-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#main-post-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#main-post-list li:last-child {
+    border-bottom: none;
+}
+
+.main-post-date {
+    font-size: 14px;
+    color: #666;
+    margin-left: 20px;
+}
+
+.main-post-icon {
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.main-post-title {
+    font-size: 16px;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.main-post-title::before {
+    content: "\f007"; /* Font Awesome user icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
+}
+
+.main-post-tags {
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust as needed */
+}
+
+.main-post-tags span {
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    padding: 2px 5px;
+    margin-right: 5px;
+}
+
 /* * Body & Post */
+
+#post-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 body {
     font-family: var(--font);
@@ -359,7 +423,12 @@ section {
     padding: 0 10px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--header-font);
     color: var(--header-color);
     line-height: 1.4; /* Slightly increased for better readability */
@@ -385,11 +454,16 @@ h3 {
     padding-bottom: 0.2rem;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
     font-weight: 400; /* Consistent weight for smaller headers */
 }
 
-h1:hover, h2:hover, h3:hover, h4:hover {
+h1:hover,
+h2:hover,
+h3:hover,
+h4:hover {
     color: var(--link-color); /* Lively color change on hover */
     cursor: pointer;
     text-decoration: underline; /* Modern underlined effect */
@@ -442,11 +516,12 @@ hr {
 }
 
 /* Code blocks */
-.src, .example {
+.src,
+.example {
     /* font-size: 0.85em; */
     font-family: var(--monospace-font);
     background: var(--src-block-bg-color);
-    padding: .4rem .7rem !important;
+    padding: 0.4rem 0.7rem !important;
     border-radius: 0.3rem !important;
     display: block !important;
 }
@@ -454,54 +529,54 @@ hr {
 /* * Post information */
 
 #post-information {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Centers items horizontally */
-  gap: 20px;
-  font-size: 0.9em;
-  color: #2e3a46;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers items horizontally */
+    gap: 20px;
+    font-size: 0.9em;
+    color: #2e3a46;
 }
 
 #post-information ul {
-  display: flex;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  gap: 15px;
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
 }
 
 #post-information li {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 #author::before {
-  content: "\f007"; /* Font Awesome user icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f007"; /* Font Awesome user icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #tags::before {
-  content: "\f02b"; /* Font Awesome tags icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f02b"; /* Font Awesome tags icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #publish-date::before {
-  content: "\f073"; /* Font Awesome calendar icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f073"; /* Font Awesome calendar icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 #updated-date::before {
-  content: "\f021"; /* Font Awesome refresh icon */
-  font-family: FontAwesome;
-  margin-right: 5px;
+    content: "\f021"; /* Font Awesome refresh icon */
+    font-family: FontAwesome;
+    margin-right: 5px;
 }
 
 .tag-link {
-  color: #0077b6;
-  text-decoration: none;
+    color: #0077b6;
+    text-decoration: none;
 }
 
 /* * Similar posts, Footer, Comments */
@@ -520,14 +595,13 @@ footer > p > span {
     float: right;
 }
 
-
 #post-information,
 #comments,
 #similar-posts,
 #footnotes {
-  padding: 10px;
-  background-color: #f5f5f5; /* Light grey background */
-  border-radius: 8px; /* Rounded corners */
+    padding: 10px;
+    background-color: #f5f5f5; /* Light grey background */
+    border-radius: 8px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     margin-bottom: 10px;
 }
@@ -535,23 +609,23 @@ footer > p > span {
 #comments h2,
 #similar-posts h2,
 #footnotes h2 {
-  margin-bottom: 10px;
-  border-bottom: 2px solid #e2e2e2;
-  padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e2e2e2;
+    padding-bottom: 5px;
 }
 
 .footnum {
-  font-weight: bold;
-  color: #0077b6;
-  text-decoration: none;
+    font-weight: bold;
+    color: #0077b6;
+    text-decoration: none;
 }
 
 .footpara {
-  display: inline-block;
+    display: inline-block;
 }
 
 .footpara p {
-  margin: 0;
+    margin: 0;
 }
 
 /* * Utility */
@@ -571,22 +645,26 @@ footer > p > span {
 /* * HLJS */
 
 .hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: var(--src-block-bg-color); /* Light blue-gray for code background */
-  color: var(--font-color); /* Main font color for better readability */
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: var(
+        --src-block-bg-color
+    ); /* Light blue-gray for code background */
+    color: var(--font-color); /* Main font color for better readability */
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: var(--muted-color); /* Muted gray for secondary, less prominent code elements */
+    color: var(
+        --muted-color
+    ); /* Muted gray for secondary, less prominent code elements */
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-addition {
-  color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
+    color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
 }
 
 .hljs-number,
@@ -595,7 +673,7 @@ footer > p > span {
 .hljs-literal,
 .hljs-doctag,
 .hljs-regexp {
-  color: #6c757d; /* A medium gray to highlight data and strings gracefully */
+    color: #6c757d; /* A medium gray to highlight data and strings gracefully */
 }
 
 .hljs-title,
@@ -603,7 +681,7 @@ footer > p > span {
 .hljs-name,
 .hljs-selector-id,
 .hljs-selector-class {
-  color: #23395d; /* A modern navy, aligning with your header color */
+    color: #23395d; /* A modern navy, aligning with your header color */
 }
 
 .hljs-attribute,
@@ -612,7 +690,7 @@ footer > p > span {
 .hljs-template-variable,
 .hljs-class .hljs-title,
 .hljs-type {
-  color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
+    color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
 }
 
 .hljs-symbol,
@@ -623,24 +701,24 @@ footer > p > span {
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-link {
-  color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
+    color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
 }
 
 .hljs-built_in,
 .hljs-deletion {
-  color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
+    color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
 }
 
 .hljs-formula {
-  background: #e2e8f0; /* Highlight formulas with a slightly darker background */
+    background: #e2e8f0; /* Highlight formulas with a slightly darker background */
 }
 
 .hljs-emphasis {
-  font-style: italic;
+    font-style: italic;
 }
 
 .hljs-strong {
-  font-weight: bold;
+    font-weight: bold;
 }
 #+end_src
 
@@ -656,7 +734,7 @@ This is the post template, post pages will be generated based on this.
     <<html-header>>
 
       <section>
-        <h1>${title}</h1>
+        <h1 id="post-title">${title}</h1>
 
         <div id="post-information">
           <ul>
@@ -705,7 +783,7 @@ Headers tagged with =page= tag will be generated based on this template.
       <<html-header>>
 
         <section>
-          <h1>${title}</h1>
+          <h1 id="post-title">${title}</h1>
           ${body}
         </section>
 
@@ -793,54 +871,50 @@ Generic head portion that I use in every template.
 :PROPERTIES:
 :EXPORT_AS: index
 :OPTIONS: toc:nil
+:BLOG_OPTIONS: title:nil
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu 00:00] Europe/Istanbul
 :END:
-#+begin_comment
-Currently all the sections are curated by hand, hopefully I'll automatize this in the future.
-#+end_comment
 
-#+HTML: <div id="posts">
+#+begin_src elisp :exports none :eval yes
+(defun isamert/blog-draw-main-posts-list (posts)
+  (shr-dom-to-xml
+   `(ul ((id . "main-post-list"))
+        ,@(--map
+           (let-plist it
+             `(li ()
+                  (i ((class . "fa fa-pen-nib main-post-icon")))
+                  (a ((class . "main-post-title")
+                      (href . ,.path))
+                     ,.title)
+                  (span ((class . "main-post-tags"))
+                        ,@(--map (list 'span '() it) (im-tap .tags)))
+                  (span ((class . "main-post-date"))
+                        ,.publish-date-iso)))
+           posts))))
+#+end_src
 
-- [[./2024/12/25/signing-long-pdf-documents-automatically-with-bash.html][Signing long PDF documents automatically with Bash]]
-- [[./2024/08/20/corg-el-announcement.html][Announcement: corg.el -- Seamless auto completion for org-mode block headers]]
-- [[./2024/05/17/running-invidious-on-sub-folder-with-nginx.html][Hosting Invidious on sub-folder with Nginx]]
-- [[./2024/05/14/announcement-upver-el-interactively-update-your-project-dependencies.html][Announcement: upver.el -- Interactively update your project dependencies]]
-- [[./2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html][Announcement: swagg.el -- Swagger UI, inside Emacs]]
-- [[./elisp-tips.html][Elisp editing/development tips]]
-- [[./2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html][A simple new tab page (that works with TreeStyleTab)]]
-- [[./2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html][Typing (unicode) characters programmatically on Linux and macOS]]
-- [[./2022/03/16/global-interactive-emacs-functions.html][Global interactive Emacs functions]]
-- [[./2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html][Dealing with APIs, JSONs and databases in org-mode]]
-- [[./2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html][Migrating my IMDb ratings list and watch list into org-mode]]
-- [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]]
-- [[./2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html][Killing (copying) currently selected candidate's content/text in Selectrum]]
-- [[./2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html][A (relatively) deep dive into (zsh) shell login process (without a display manager)]]
-- [[./2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html][How I do keep my days organized with org-mode and Emacs]]
-- [[./2020/05/30/better-keyboard-experience-in-linux.html][Better keyboard experience in Linux]]
-- [[./2019/11/14/running-sql-on-org-mode-tables.html][Running SQL on org-mode tables]]
-- [[./2019/02/21/bash-scripting-guide.html][Bash scripting guide]]
-- [[./2018/06/06/emacs-run-flycheck-on-all-buffers-after-save.html][Emacs - Run flycheck on all buffers after save]]
-- [[./2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html][Automatize your logins with gnome-keyring]]
-- [[./2018/03/24/nice-little-curl-commands.html][Nice little curl commands]]
-- [[./2018/03/01/functional-programming-in-cpp.html][Functional programming in C++]]
-- [[./2017/12/22/programming-avr-microcontrollers-in-linux.html][Programming AVR microcontrollers in Linux]]
-- [[./2017/08/15/kotlin-function-application.html][Kotlin function application]]
-- [[./2016/07/13/median-cut-algorithm-in-cpp-qt.html][Median cut algorithm in Qt/C++]]
-
-#+HTML: </div>
-
-*Misc stuff*
-
-- My [[https://github.com/isamert/dotfiles][dotfiles]].
-- My [[./watchlist.html][movie ratings and watchlist]].
-- My [[https://libre.fm/user/isamert][libre.fm]] page.
+#+begin_src elisp :exports results :results value html
+(isamert/blog-draw-main-posts-list
+ (->>
+  (map-values isamert/blog-all-posts)
+  (--filter (not (plist-get it :page?)))
+  (--filter (not (-contains? (plist-get it :tags) "turkish")))
+  (--sort (string> (plist-get it :publish-date-iso)
+                   (plist-get other :publish-date-iso)))))
+#+end_src
 
 *Turkish posts*
 
-- [[./2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html][Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması]]
-- [[./2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html][Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs]]
-- [[./2021/01/31/emacs-te-turkce-imla-denetimi.html][Emacs'te Türkçe imla denetimi]]
+#+begin_src elisp :exports results :results value html
+(isamert/blog-draw-main-posts-list
+ (->>
+  (map-values isamert/blog-all-posts)
+  (--filter (not (plist-get it :page?)))
+  (--filter (-contains? (plist-get it :tags) "turkish"))
+  (--sort (string> (plist-get it :publish-date-iso)
+                   (plist-get other :publish-date-iso)))))
+#+end_src
 
 * Feeds :page:
 :PROPERTIES:
@@ -857,27 +931,25 @@ Every category has it's own RSS feed, you can subscribe them separately or you c
 ** Feeds for tags
 :PROPERTIES:
 :CUSTOM_ID: feeds-for-tags
+:PUBLISH_DATE: [2025-01-05 Sun 17:24] CET
 :END:
 
 In no specific order:
 
 #+begin_src elisp :exports results :results value html
-  (->> (isamert/blog-all-tags)
-     (--reduce-from
-      (format
-       "%s<li><b>%s</b> :: <a href=\"%s/%s.xml\">rss</a>, <a href=\"%s/%s.html\">html</a></li>"
-       acc it
-       isamert/blog-rss-per-tag it
-       isamert/blog-tags-dir it)
-      "")
-     (format "<ul>%s</ul>"))
+(shr-dom-to-xml
+ `(ul ()
+      ,@(--map
+        `(li () ,it " :: "
+             (a ((href . ,(concat isamert/blog-rss-per-tag "/" it ".xml"))) "rss") ", "
+             (a ((href . ,(concat isamert/blog-tags-dir "/" it ".html"))) "html"))
+        (isamert/blog-all-tags))))
 #+end_src
 
 * About :page:
 :PROPERTIES:
 :CUSTOM_ID: about
 :EXPORT_AS: about
-:OPTIONS: toc:nil
 :PUBLISH_DATE: [2021-04-07 Wed 00:00] Europe/Istanbul
 :END:
 ** About me
@@ -1619,7 +1691,7 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 
 #+begin_export html
   <div id="movie-list" style="margin-top: 2rem;">Loading...</div>
-  <script src="/assets/watchlist.js"></script>
+  <script src="/assets/watchlist.js" defer></script>
 #+end_export
 
 * Median cut algorithm in C++/Qt :cpp:qt:
@@ -2558,7 +2630,6 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 * Emacs - Run flycheck on all buffers after save :emacs:
 :PROPERTIES:
 :PUBLISH_DATE: [2018-06-06 Wed 00:00] Europe/Istanbul
-:OPTIONS: toc:nil
 :CUSTOM_ID: emacs-run-flycheck-on-all-buffers-after-save
 :END:
 /To just see the working solution, scroll down to [[#the-result][The Result]]./
@@ -3621,7 +3692,6 @@ Well, that's it. I have other org files that I use along with =bullet.org= and I
 * Emacs'te Türkçe imla denetimi :turkish:micro:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-01-31 Sun 00:00] Europe/Istanbul
-:OPTIONS: toc:nil
 :CUSTOM_ID: emacs-te-turkce-imla-denetimi
 :END:
 - Öncelikle sisteminize =hunspell= kurulumu yapın.
@@ -3658,7 +3728,6 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda =görüntüleyiciyle=
 :PROPERTIES:
 :PUBLISH_DATE: [2021-03-02 Tue 00:00] Europe/Istanbul
 :UPDATE_DATE: [2024-07-25 Thu]
-:OPTIONS: toc:nil
 :CUSTOM_ID: a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-
 :END:
 Recently, I have uninstalled my [[https://en.wikipedia.org/wiki/X_display_manager][display manager]] for various reasons. One of the reasons for that was to have a better understanding of my login process. Display managers generally do arbitrary stuff, they have their own way/order of sourcing files, sometimes they skip important files and sometimes they source unnecessary stuff etc. So I thought, using no display manager would result in a simpler login model. Oh boy, I was wrong.
@@ -3769,7 +3838,6 @@ That's it. This was just some kind of a braindump. From now on, I'll just try to
 :PROPERTIES:
 :PUBLISH_DATE: [2021-03-27 Sat 00:00] Europe/Istanbul
 :UPDATE_DATE: [2021-03-31 Wed]
-:OPTIONS: toc:nil
 :CUSTOM_ID: killing-copying-currently-selected-candidates-content-text-in-selectrum
 :END:
 I use [[https://github.com/raxod502/selectrum][Selectrum]] as my incremental narrowing framework in Emacs with [[https://github.com/minad/consult][Consult]]. Consult has some nice commands, like =consult-grep= (or better yet, =consult-ripgrep=). I always find myself doing a project wide search to find a line to copy and paste it into my current buffer. This became quite repetitious and I automated this with the following function:
@@ -3816,7 +3884,6 @@ I found out that [[https://github.com/oantolin/embark][embark]] already provides
 :PROPERTIES:
 :PUBLISH_DATE: [2021-04-21 Wed 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-01-29 Sat]
-:OPTIONS: toc:nil
 :CUSTOM_ID: managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-
 :END:
 I store my contacts in an org file called =people.org=. The file has the following structure:
@@ -4129,7 +4196,6 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 :PROPERTIES:
 :PUBLISH_DATE: [2022-01-04 Tue 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-01-04 Tue]
-:OPTIONS: toc:nil
 :CUSTOM_ID: dealing-with-apis-jsons-and-databases-in-org-mode
 :COOL_URI: orgmode-executors-and-apis.html
 :END:
@@ -4548,7 +4614,6 @@ Unfortunately, ~pynput~ does not work on a pure Wayland session at the moment bu
 :PUBLISH_DATE: [2022-09-17 Sat 00:00] Europe/Istanbul
 :UPDATE_DATE: [2022-09-17 Sat]
 :CUSTOM_ID: a-simple-new-tab-page-that-works-with-treestyletab
-:OPTIONS: toc:nil
 :END:
 
 I use [[https://github.com/piroor/treestyletab][TreeStyleTab]] to manage my tabs. It's quite powerful, it has quite a lot of extensions to expand it's functionality even more, but it's missing one little piece: named tab groups. You can group tabs under another tab but you can't create dummy tabs with a specific name. One workaround is that using a blank tab to group tabs under that and rename tabs title by using ~document.title = "THE TITLE YOU WANT"~. This is well but if you accidentally refresh this tab or restart your Firefox session, your tab name will be gone.
@@ -5091,6 +5156,15 @@ id's to their info, which is a plist.")
   (isamert/blog-export-meta)
   (isamert/blog-export-all-posts-pages))
 
+
+(defun isamert/blog-export-all-pages ()
+  "Export all HTML pages (tag pages, posts, normal pages etc., except xml stuff).
+Useful when styling or templating has changed."
+  (interactive)
+  (isamert/blog-refresh-templates)
+  (isamert/blog-generate-tag-pages)
+  (isamert/blog-export-all-posts-pages))
+
 (defun isamert/blog-export-all-posts-pages ()
   (interactive)
   (let ((extras (isamert/blog-prepare-post-extras)))
@@ -5110,18 +5184,35 @@ id's to their info, which is a plist.")
      (lambda ()
        (let ((tags (s-split ":" (or (org-entry-get nil "TAGS") "") t)))
          (when (isamert/blog-can-export-current)
-           (let* ((id (or (org-entry-get nil "CUSTOM_ID")
-                          (org-entry-get nil "ID")))
-                  (title (org-entry-get nil "ITEM"))
+           (let* ((title (org-entry-get nil "ITEM"))
                   (path (isamert/blog-mk-path))
-                  (words (s-split " " title t)))
+                  (custom-id (org-entry-get nil "CUSTOM_ID"))
+                  (id (or custom-id (org-entry-get nil "ID")))
+                  (cool-uri (org-entry-get nil "COOL_URI"))
+                  (publish-date (org-entry-get nil "PUBLISH_DATE"))
+                  (update-date (org-entry-get nil "UPDATE_DATE"))
+                  (export-path (org-entry-get nil "EXPORT_AS"))
+                  (options (org-entry-get nil "OPTIONS"))
+                  (author (isamert/org-get-keyword "AUTHOR"))
+                  (words (s-split " " title t)) )
              (puthash
               id
               (list
+               :id id
                :title title
                :path path
                :file-path (isamert/blog-with-publish-dir path)
+               :page? (-contains? tags "page")
+               :cool-uri cool-uri
+               :publish-date publish-date
+               :update-date update-date
+               :publish-date-iso (s-chop-left 1 (car (s-split " " (or publish-date ""))))
+               :update-date-iso (s-chop-left 1 (car (s-split " " (or update-date ""))))
+               :update-date update-date
                :tags tags
+               :author author
+               :options options
+               :export-path export-path
                :words words)
               posts)
              (--each tags
@@ -5185,6 +5276,8 @@ id's to their info, which is a plist.")
         (org-narrow-to-subtree)
         (isamert/blog-pre-process)
 
+        ;; TODO: Get all these info from the extras variable, do not
+        ;; parse it the second time here
         (let* ((custom-id (org-entry-get nil "CUSTOM_ID"))
                ;; ^ ...
                (id (or custom-id (org-entry-get nil "ID")))
@@ -5310,7 +5403,8 @@ This does some changes on the original document like:
   (-when-let (opts (org-entry-get nil "OPTIONS"))
     (org-end-of-meta-data)
     (insert (format "#+OPTIONS: %s\n" opts)))
-  ;; Kill the post header, becuase user may have explicitly put post header somewhere else in the template
+  ;; Kill the post header, because user may have explicitly put post
+  ;; header somewhere else in the template
   (goto-char (point-min))
   (kill-whole-line))
 

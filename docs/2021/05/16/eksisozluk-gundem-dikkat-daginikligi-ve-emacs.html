@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,32 +17,31 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</h1>
+        <h1 id="post-title">Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</h1>
 
-        <div class="post-information">
+        <div id="post-information">
           <ul>
-            <li>Author: isamert</li>
-            <li>Tags: <a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
-          </ul>
-
-          <ul>
-            <li>Published at <em>2021-05-16</em></li>
-            <li>Last updated at <em>2021-05-16</em></li>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
+            <li id="publish-date">2021-05-16</li>
+            <li id="updated-date">2021-05-16</li>
           </ul>
         </div>
 
-        <hr />
-
-        <p>
+        <div id="post">
+          <p>
 Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek mümkün olmuyor. Nihayetinde ekşi'ye girişimin temel sebebinin <i>gündem</i>'e bakmak olduğunun farkına vardım. Gündem içerisinde de en çok merak ettiğim şey genel itibarıyla en çok entry girilen başlıkların neler olduğunu görmek. Fakat ekşi'de gündem tam olarak entry sayısına göre sıralanmıyor ve bu durum benim için sinir bozucu. Gündemi oluşturan 3-5 başlığa bakıp çıkmak isterken dikkatim diğer başlıklarla dağılıyor veya en çok entry girilen başlıkları bulayım derken zaman kaybediyorum. Zaten çoğu zaman entry'leri de merak etmiyorum, sadece bi başlıkları gözden geçirmek istiyorum. Bunun için çözümüm şu oldu:
 </p>
 
@@ -106,14 +103,17 @@ O da böyle gözüküyor:
 Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
 </p>
 
+        </div>
 
-        <h2>Similar posts</h2>
-        <ul>
-          <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li> <li><a href="/2021/01/31/emacs-te-turkce-imla-denetimi.html">Emacs'te Türkçe imla denetimi</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li>
-        </ul>
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li> <li><a href="/2021/01/31/emacs-te-turkce-imla-denetimi.html">Emacs'te Türkçe imla denetimi</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li>
+          </ul>
+        </div>
 
-        <hr />
-
+       <div id="comments">
+        <h2>Comments</h2>
         <script src="https://utteranc.es/client.js"
                 repo="isamert/isamert.github.io"
                 issue-term="pathname"
@@ -122,6 +122,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
                 crossorigin="anonymous"
                 defer>
         </script>
+      </div>
       </section>
 
       <footer>

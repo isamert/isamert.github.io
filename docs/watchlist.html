@@ -4,8 +4,6 @@
 
   <script src="/assets/index.js"></script>
   <link rel="stylesheet" href="/assets/main.css">
-
-  <link rel="stylesheet" href="/assets/hljs/solarized-light.css">
   <script src="/assets/hljs/highlight.pack.js"></script>
   <script>
     if (location.port != 3000) {
@@ -19,16 +17,19 @@
   <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
 </head>
   <body>
-      <header>
-        <a href="/index.html" class="site-title">isamert.net</a>
-        <div>
-          <a href="/about.html"><i class="fa fa-user"></i> About</a>
-          <a href="/feeds.html"><i class="fa fa-rss"></i> Feeds</a>
-        </div>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
     </header>
 
       <section>
-        <h1>Watchlist</h1>
+        <h1 id="post-title">Watchlist</h1>
         <ul class="org-ul">
 <li>This page showcases my watchlist and ratings for films that I have already watched. It is a work in progress, but it encompasses the majority of its intended features.</li>
 <li>By clicking on any actor, director, genre, etc., you can filter the displayed movies or series accordingly. To eliminate the filter, simply click on the same item again.</li>
@@ -36,7 +37,7 @@
 </ul>
 
 <div id="movie-list" style="margin-top: 2rem;">Loading...</div>
-<script src="/assets/watchlist.js"></script>
+<script src="/assets/watchlist.js" defer></script>
 
       </section>
 

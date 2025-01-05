@@ -6,123 +6,177 @@
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 :root {
-  --font: 'Noto Serif', serif;
-  --font-color: #545759;
-  --light-font-color: #808486;
-  --muted-color: #c7c7c7;
+    --font: 'Noto Serif', serif;
+    --monospace-font: 'TypoPRO Iosevka Term', monospace;
 
-  --monospace-font: 'TypoPRO Iosevka Term', monospace;
-  --src-block-bg-color: #f3f2ee;
-  --inline-src-block-bg-color: #f8f7f3;
+    --header-font: 'Roboto Slab', serif;
+    --post-title-font-size: 1.5em;
+    --post-first-header-font-size: 1.35em;
+    --post-second-header-font-size: 1.20em;
+    --post-third-header-font-size: 1.15em;
+    --post-fourth-header-font-size: 1em;
 
-  --header-font: 'Roboto Slab', serif;
-  --header-color: #2b2e30;
-  --post-title-font-size: 2em;
-  --post-first-header-font-size: 1.7em;
-  --post-second-header-font-size: 1.5em;
-  --post-third-header-font-size: 1.3em;
-  --post-fourth-header-font-size: 1.2em;
-
-  --link-color: #5f9b65;
-  --link-hover-color: #808486;
+    --body-bg-color: #fafafa;
+    --font-color: #2e3a46; /* A softer, dark gray for main text */
+    --header-bg-color: #ffffff; /* Clean white for a fresh header */
+    --header-shadow-color: rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    --light-font-color: #6b6b6b; /* Medium gray for lighter text */
+    --muted-color: #9e9e9e; /* Muted gray for secondary elements */
+    --src-block-bg-color: #eef3f8; /* Light blue-gray for code background */
+    --inline-src-block-bg-color: #e2e8f0; /* Slightly darker blue-gray for inline code */
+    --header-color: #23395d; /* A modern navy for headers */
+    --link-color: #0077b6; /* Bright blue for links */
+    --link-hover-color: #0096c7; /* Lighter blue for link hover */
 }
 
-body {
-  font-family: var(--font);
-  color: var(--font-color);
-  margin: 0;
-  padding: 0;
-}
+/* * Header */
 
 header {
-  position: fixed;
-  width: 100%;
-  top: 0;
-  background-color: #f8f7f3;
-  padding: 1rem 3.5rem;
-  display: block;
-  box-shadow: 3px 3px 2px #aaaaaa;
-  display: flex;
-  justify-content: space-around;
+    text-align: center;
+    margin: 2rem auto;
+    padding: 10px;
+    max-width: 46rem;
+
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-header > .site-title {
-    font-weight: bold;
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: normal;
+}
+
+header h1:hover {
+    cursor: default;
+    text-decoration: none;
+    color: unset;
+}
+
+header nav {
+    margin-top: 0.5em;
+    font-family: "Monaco", "Courier New", monospace;
+}
+
+header nav a {
+    text-decoration: none;
+    margin: 0 1em;
+}
+
+/* * Table of contents */
+
+@media (max-width: 1280px) {
+    #table-of-contents {
+        display: none;
+    }
+}
+
+#table-of-contents {
+    position: fixed;
+    top: 2rem;
+    right: 0;
+    z-index: 100;
+    overflow-y: auto;
+    margin-top: 1rem;
+    margin-right: 1rem;
+    padding: 1rem;
+    max-width: 15em;
+    max-height: calc(95vh - 10rem);
+    text-align: left;
+}
+
+
+#table-of-contents h1, h2 {
+    font-size: 1em !important;
+}
+
+#table-of-contents ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#table-of-contents li {
+    font-size: 0.9em;
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
+}
+
+#table-of-contents li li {
+    margin-left: 0.7rem; /* Further indentation for nested items */
+}
+
+/* * Body & Post */
+
+body {
+    font-family: var(--font);
+    color: var(--font-color);
+    background-color: var(--body-bg-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 section {
-  margin-top: 3.5rem !important;
-  margin: 3rem auto;
-  max-width: 46rem;
-  line-height: 1.5;
-  padding: 0 10px;
+    margin: 0.5rem auto;
+    max-width: 46rem;
+    line-height: 1.5;
+    padding: 0 10px;
 }
 
-footer {
-  max-width: 46rem;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-footer > p {
-  text-align: left;
-}
-
-footer > p > span {
-   float: right;
-}
-
-h1, h2, h3, h4, h5, h6, h7 {
-  font-family: var(--header-font);
-  line-height: 1.35;
-  color: var(--header-color);
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--header-font);
+    color: var(--header-color);
+    line-height: 1.4; /* Slightly increased for better readability */
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 h1 {
-  font-size: var(--post-title-font-size);
-  border-bottom: 1.7px dashed var(--light-font-color);
-  margin-bottom: 1rem;
+    font-size: var(--post-title-font-size);
+    font-weight: 700;
+    padding-bottom: 0.2rem;
 }
 
 h2 {
-  font-size: var(--post-first-header-font-size);
-  border-bottom: 1.5px dashed var(--light-font-color);
+    font-size: var(--post-first-header-font-size);
+    font-weight: 600;
+    padding-bottom: 0.25rem;
 }
 
 h3 {
-  font-size: var(--post-second-header-font-size);
-  border-bottom: 1px dashed var(--light-font-color);
+    font-size: var(--post-second-header-font-size);
+    font-weight: 500;
+    padding-bottom: 0.2rem;
 }
 
-h4 {
-  font-size: var(--post-third-header-font-size);
-}
-
-h5 {
-  font-size: var(--post-fourth-header-font-size);
+h4, h5, h6 {
+    font-weight: 400; /* Consistent weight for smaller headers */
 }
 
 h1:hover, h2:hover, h3:hover, h4:hover {
-  color: var(--light-font-color);
-  cursor: pointer;
+    color: var(--link-color); /* Lively color change on hover */
+    cursor: pointer;
+    text-decoration: underline; /* Modern underlined effect */
 }
 
 blockquote {
-  border-left: 1.4px solid var(--light-font-color);
-  margin: 0;
-  margin-left: 1rem;
-  padding: 0 0 0 20px;
-  font-style: italic;
+    border-left: 1.4px solid var(--light-font-color);
+    margin: 0;
+    margin-left: 1rem;
+    padding: 0 0 0 20px;
+    font-style: italic;
 }
 
 a {
-  color: var(--link-color);
-  text-decoration: none;
+    color: var(--link-color);
+    text-decoration: none;
 }
 
 a:hover {
-  color: var(--link-hover-color);
-  text-decoration-color: var(--link-hover-color);
+    color: var(--link-hover-color);
+    text-decoration-color: var(--link-hover-color);
 }
 
 .org-dl dt {
@@ -132,11 +186,11 @@ a:hover {
 
 /* Inline codes */
 code {
-  font-family: var(--monospace-font);
-  /* font-size: 0.7em; */
-  background: var(--inline-src-block-bg-color) !important;
-  border-radius: 0.4rem !important;
-  padding: 0.24rem !important;
+    font-family: var(--monospace-font);
+    /* font-size: 0.7em; */
+    background: var(--inline-src-block-bg-color) !important;
+    border-radius: 0.4rem !important;
+    padding: 0.24rem !important;
 }
 
 /*
@@ -144,52 +198,213 @@ code {
  * hljs turns them into a fully-fledged code block. We don't want that.
  */
 code {
-  display: inline !important;
+    display: inline !important;
 }
 
 hr {
-  border: 0;
-  background: var(--muted-color);
-  height: 1px;
+    border: 0;
+    background: var(--muted-color);
+    height: 1px;
 }
 
 /* Code blocks */
 .src, .example {
-  /* font-size: 0.85em; */
-  font-family: var(--monospace-font);
-  background: var(--src-block-bg-color);
-  padding: .4rem .7rem !important;
-  border-radius: 0.3rem !important;
-  display: block !important;
+    /* font-size: 0.85em; */
+    font-family: var(--monospace-font);
+    background: var(--src-block-bg-color);
+    padding: .4rem .7rem !important;
+    border-radius: 0.3rem !important;
+    display: block !important;
 }
 
-.post-information {
+/* * Post information */
+
+#post-information {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center; /* Centers items horizontally */
+  gap: 20px;
+  font-size: 0.9em;
+  color: #2e3a46;
 }
 
-.post-information ul {
+#post-information ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
   padding: 0;
+  gap: 15px;
+}
+
+#post-information li {
+  display: flex;
+  align-items: center;
+}
+
+#author::before {
+  content: "\f007"; /* Font Awesome user icon */
+  font-family: FontAwesome;
+  margin-right: 5px;
+}
+
+#tags::before {
+  content: "\f02b"; /* Font Awesome tags icon */
+  font-family: FontAwesome;
+  margin-right: 5px;
+}
+
+#publish-date::before {
+  content: "\f073"; /* Font Awesome calendar icon */
+  font-family: FontAwesome;
+  margin-right: 5px;
+}
+
+#updated-date::before {
+  content: "\f021"; /* Font Awesome refresh icon */
+  font-family: FontAwesome;
+  margin-right: 5px;
+}
+
+.tag-link {
+  color: #0077b6;
+  text-decoration: none;
+}
+
+/* * Similar posts, Footer, Comments */
+
+footer {
+    max-width: 46rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+footer > p {
+    text-align: left;
+}
+
+footer > p > span {
+    float: right;
+}
+
+
+#post-information,
+#comments,
+#similar-posts,
+#footnotes {
+  padding: 10px;
+  background-color: #f5f5f5; /* Light grey background */
+  border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-bottom: 10px;
+}
+
+#comments h2,
+#similar-posts h2,
+#footnotes h2 {
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e2e2e2;
+  padding-bottom: 5px;
+}
+
+.footnum {
+  font-weight: bold;
+  color: #0077b6;
+  text-decoration: none;
+}
+
+.footpara {
+  display: inline-block;
+}
+
+.footpara p {
   margin: 0;
 }
 
-.post-information ul:nth-child(2) {
-  text-align: right;
-}
-
-.post-information li {
-  list-style-type: none;
-  position: relative;
-}
+/* * Utility */
 
 /* Center images and fit into the page */
 .centered {
-  margin: 20px auto 20px;
-  display: block;
-  max-width: 100%;
+    margin: 20px auto 20px;
+    display: block;
+    max-width: 100%;
 }
 
 .clear {
-  color: inherit;
-  text-decoration: inherit;
+    color: inherit;
+    text-decoration: inherit;
+}
+
+/* * HLJS */
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: var(--src-block-bg-color); /* Light blue-gray for code background */
+  color: var(--font-color); /* Main font color for better readability */
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--muted-color); /* Muted gray for secondary, less prominent code elements */
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: #0077b6; /* Bright blue, aligning with the link color for important keywords */
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  color: #6c757d; /* A medium gray to highlight data and strings gracefully */
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #23395d; /* A modern navy, aligning with your header color */
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #0096c7; /* Lighter blue for attributes and types, aligned with link hover color */
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  color: #2e3a46; /* Softer gray for elements like meta and less emphasized text */
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  color: #dc322f; /* Retaining the red for deletions and built-ins for striking contrast */
+}
+
+.hljs-formula {
+  background: #e2e8f0; /* Highlight formulas with a slightly darker background */
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
 }

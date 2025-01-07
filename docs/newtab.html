@@ -60,6 +60,32 @@
         position: absolute;
         font-weight: 600;
       }
+
+      .button-container {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          display: flex;
+      }
+
+      .icon-button {
+          font-size: 24px;
+          margin: 0 10px;
+          padding: 10px;
+          border: none;
+          background-color: transparent;
+          color: #fff;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.3s ease;
+      }
+
+      .icon-button:hover {
+          color: #000;
+      }
     </style>
   </head>
 
@@ -75,6 +101,9 @@
     <div id="clock"></div>
     <div id="notes-container">
       <textarea id="notes" oninput="onNoteChanged(this.value)"> </textarea>
+    </div>
+    <div class="button-container">
+        <button id="refresh-button" on-clic class="icon-button">&#x21bb;</button>
     </div>
     <script>
       // Get this from Unsplash. See the following link
@@ -113,10 +142,11 @@
       const note = localStorage.getItem(`noteFor${title}`);
       document.getElementById("notes").value = note;
 
+     // https://unsplash.com/documentation#get-a-random-photo
       const xhr = new XMLHttpRequest();
       xhr.open(
         "GET",
-        "https://api.unsplash.com/photos/random?orientation=landscape"
+        "https://api.unsplash.com/photos/random?orientation=landscape&content_filter=high&collections=1263731,E6tFOlBYe_A,Y3gkWecTTuw,9627829,NsaclzP02JI"
       );
       xhr.setRequestHeader("Authorization", `Client-ID ${UNSPLASH_API_KEY}`);
 
@@ -224,6 +254,11 @@
           timeout = setTimeout(later, wait);
         };
       }
+
+      document.getElementById('refresh-button').onclick = function() {
+          localStorage.removeItem('lastImage');
+          location.reload();
+      };
 
       window.newtab = {};
       window.newtab.export = () => {

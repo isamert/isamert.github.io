@@ -813,6 +813,350 @@ Pages that list posts belonging to a particular tag will be generated based on t
         <<html-footer>>
     </body>
 #+end_src
+*** Emacs Frame Template
+Emacs-like frame. I use this to show my Emacs configuration.
+
+You need to set the following properties so that template picks them up:
+- TEMPLATE_VAR_FILENAME
+- TEMPLATE_VAR_FILEPATH
+- TEMPLATE_VAR_BRANCH
+- TEMPLATE_VAR_DATE
+
+#+name: emacs-frame-template
+#+begin_src html
+<!doctype html>
+<html lang="en">
+  <head>
+      <style>
+       @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+       #toc {
+           position: fixed;
+           right: 20px;
+           top: 50px;
+           width: 300px;
+           font-size: 0.7em;
+       }
+
+       #toc-header {
+           position: sticky;
+           top: 0;
+           z-index: 1;
+           padding: 10px;
+           border-bottom: 1px solid #ddd;
+       }
+
+       #toggle-btn {
+           float: right;
+           cursor: pointer;
+           font-size: 0.9em;
+           color: #3498db;
+       }
+
+       #toc ul {
+           list-style: none;
+           padding-left: 0;
+           margin-left: 0;
+           overflow-y: auto;
+           max-height: 70vh;
+       }
+
+       #toc li {
+           margin: 5px 0;
+           cursor: pointer;
+       }
+
+       /* Indentation based on the level */
+       .toc-level-1 { margin-left: 0; }
+       .toc-level-2 { margin-left: 20px !important; }
+       .toc-level-3 { margin-left: 40px !important; }
+       .toc-level-4 { margin-left: 60px !important; }
+       .toc-level-5 { margin-left: 80px !important; }
+       .toc-level-6 { margin-left: 100px !important; }
+
+       body {
+           margin: 0;
+           font-family: "Monaco", "Courier New", monospace;
+           background-color: #1b1d1e;
+           color: #839496;
+           overflow: hidden;
+       }
+
+       .emacs-window {
+           display: flex;
+           flex-direction: column;
+           height: 100vh;
+           border: 1px solid #073642;
+       }
+
+       .tab-bar {
+           display: flex;
+           justify-content: space-between;
+           background-color: #262829;
+           padding: 5px;
+           color: #839496;
+           max-height: 1rem;
+           font-size: 1rem;
+       }
+
+       .tabs {
+           display: flex;
+       }
+
+       .tab {
+           margin-right: 10px;
+       }
+
+       .content {
+           flex: 1;
+           background-color: #1b1d1e;
+           color: #839496;
+           overflow-y: auto;
+           padding: 0px 10px;
+       }
+
+       .content pre {
+           margin: 1px 0px;
+           padding: 0px 0px;
+           white-space: pre-wrap;
+       }
+
+       .content:focus {
+           outline: none;
+       }
+
+       .mode-line {
+           display: flex;
+           justify-content: space-between;
+           background-color: #00629d;
+           padding: 5px;
+           color: #ffffff;
+       }
+
+       #echo-area {
+           background-color: #1b1d1e;
+           padding: 5px;
+           color: #586e75;
+           min-height: 1rem;
+       }
+
+       .mode-line .left {
+           white-space: pre-wrap;
+       }
+
+       #buffer-git-address {
+           text-decoration: underline;
+           cursor: pointer;
+           color: inherit;
+           background: none;
+           border: none;
+           box-shadow: none;
+           padding: 0;
+           margin: 0;
+       }
+      </style>
+  </head>
+  <body spellcheck="false">
+    <div class="emacs-window">
+      <div class="tab-bar">
+        <div class="tabs">
+            <a href="/" style="text-decoration: none; color: #007bff;"> <i class="fas fa-arrow-left"></i> isamert.net</a>
+        </div>
+        <div class="date"><i class="fa fa-calendar"></i> ${date}</div>
+      </div>
+      <div class="content" contenteditable>
+        ${body}
+      </div>
+      <div class="mode-line">
+        <div class="left">U:%%-    .emacs.d/init.el           <span id="buffer-percent">Top</span>   <span id="buffer-line-number">Top</span>    <a id="buffer-git-address" href="${filepath}">Git:${branch}</a>   (Elisp/l ElDoc)</div>
+        <div class="right"></div>
+      </div>
+      <div id="echo-area"></div>
+    </div>
+    <div id="toc">
+        <div id="toc-header">
+            <strong>Table of Contents</strong>
+            <span id="toggle-btn">[-]</span>
+        </div>
+      <ul id="toc-list"></ul>
+    </div>
+   <script src="/assets/emacs-frame.js"></script>
+  </body>
+</html>
+#+end_src
+
+
+It is a good idea to keep JS separate because the HTML templates are resolved with ~s-format~ which uses the ~${var}~ format. It might cause issues with string JS interpolations.
+
+#+begin_src javascript :tangle docs/assets/emacs-frame.js
+// * Update buffer scroll percentage
+
+document.querySelector(".content").addEventListener("scroll", function () {
+    var scrollTop = this.scrollTop;
+    var scrollHeight = this.scrollHeight - this.clientHeight;
+    var scrollPercent = (scrollTop / scrollHeight) * 100;
+    document.getElementById("buffer-percent").textContent =
+        scrollPercent === 0 ? "Top" : scrollPercent.toFixed(0) + "%";
+});
+
+// * Update buffer line number
+
+const editor = document.querySelector(".content");
+const lineNumberDisplay = document.getElementById("buffer-line-number");
+
+editor.addEventListener("keyup", updateLineNumber);
+editor.addEventListener("click", updateLineNumber);
+function updateLineNumber() {
+    const selection = window.getSelection();
+    if (selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const preCaretRange = range.cloneRange();
+
+    preCaretRange.selectNodeContents(editor);
+    preCaretRange.setEnd(range.endContainer, range.endOffset);
+
+    const content = preCaretRange.toString();
+    const lines = content.split("\n");
+
+    const lineNumber = lines.length;
+    lineNumberDisplay.textContent = lineNumber + "L";
+}
+
+// * Table of Contents
+
+// Select all elements with classes starting with 'outline-'
+const outlineElements = document.querySelectorAll('[class^="outline-"]');
+const tocList = document.getElementById("toc-list");
+const toc = document.getElementById("toc");
+const toggleBtn = document.getElementById("toggle-btn");
+
+outlineElements.forEach((element) => {
+    // Extract the level from the class
+    const className = Array.from(element.classList).find((cls) =>
+        cls.startsWith("outline-"),
+    );
+    const levelMatch = className.match(/outline-(\d+)-/);
+
+    if (levelMatch) {
+        const level = levelMatch[1];
+        const listItem = document.createElement("li");
+        listItem.className = `toc-level-${level}`;
+        listItem.textContent = element.textContent;
+
+        // Add click event to scroll to the target element
+        listItem.addEventListener("click", () => {
+            element.scrollIntoView({ behavior: "smooth" });
+        });
+
+        tocList.appendChild(listItem);
+    }
+});
+
+toggleBtn.addEventListener("click", () => {
+    if (tocList.style.display === "none") {
+        tocList.style.display = "block";
+    } else {
+        tocList.style.display = "none";
+    }
+});
+
+// * HTMLFONTIFY JS
+
+// This is simply taken from htmlfontify.el
+
+function hasClass(obj) {
+    var result = false;
+    if (obj.getAttributeNode("class") != null) {
+        result = obj.getAttributeNode("class").value;
+    }
+    return result;
+}
+
+function stripe(id) {
+    // the flag we'll use to keep track of
+    // whether the current row is odd or even
+    var even = false;
+
+    // if arguments are provided to specify the colors
+    // of the even & odd rows, then use them;
+    // otherwise use the following defaults:
+    var evenColor = arguments[1] ? arguments[1] : "#fff";
+    var oddColor = arguments[2] ? arguments[2] : "#ddd";
+
+    // obtain a reference to the desired table
+    // if no such table exists, abort
+    var table = document.getElementById(id);
+    if (!table) {
+        return;
+    }
+
+    // by definition, tables can have more than one tbody
+    // element, so we'll have to get the list of child
+    // &lt;tbody&gt;s
+    var tbodies = table.getElementsByTagName("tbody");
+
+    // and iterate through them...
+    for (var h = 0; h < tbodies.length; h++) {
+        // find all the &lt;tr&gt; elements...
+        var trs = tbodies[h].getElementsByTagName("tr");
+
+        // ... and iterate through them
+        for (var i = 0; i < trs.length; i++) {
+            // avoid rows that have a class attribute
+            // or backgroundColor style
+            if (!hasClass(trs[i]) && !trs[i].style.backgroundColor) {
+                // get all the cells in this row...
+                var tds = trs[i].getElementsByTagName("td");
+
+                // and iterate through them...
+                for (var j = 0; j < tds.length; j++) {
+                    var mytd = tds[j];
+
+                    // avoid cells that have a class attribute
+                    // or backgroundColor style
+                    if (!hasClass(mytd) && !mytd.style.backgroundColor) {
+                        mytd.style.backgroundColor = even
+                            ? evenColor
+                            : oddColor;
+                    }
+                }
+            }
+            // flip from odd to even, or vice-versa
+            even = !even;
+        }
+    }
+}
+
+function toggle_invis(name) {
+    var filter = {
+        acceptNode: function (node) {
+            var classname = node.id;
+            if (classname) {
+                var classbase = classname.substr(0, name.length);
+                if (classbase == name) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+            return NodeFilter.FILTER_SKIP;
+        },
+    };
+    var walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ELEMENT,
+        filter,
+        false,
+    );
+    while (walker.nextNode()) {
+        var e = walker.currentNode;
+        if (e.style.display == "none") {
+            e.style.display = "inline";
+        } else {
+            e.style.display = "none";
+        }
+    }
+}
+#+end_src
 ** Components
 Components that I use in my templates.
 
@@ -1028,6 +1372,25 @@ If you are interested with my projects and want to contribute/maintain, please d
 
 isamertgurbuz at gmail dot com
 
+* .emacs.d/.init.el :page:
+:PROPERTIES:
+:TEMPLATE: emacs-frame-template
+:TEMPLATE_VAR_FILENAME: .emacs.d/init.el
+:TEMPLATE_VAR_FILENAME: README.org
+:TEMPLATE_VAR_FILEPATH: https://github.com/isamert/dotfiles
+:TEMPLATE_VAR_BRANCH: master
+:TEMPLATE_VAR_DATE: [2025-01-12 Sun]
+:EXPORT_AS: .emacs.d/init.el
+:PUBLISH_DATE: [2025-01-11 Sat 00:50] CET
+:CUSTOM_ID: emacs-d-init-el
+:END:
+#+begin_comment
+This page shows the contents of my init.el in an Emacs-styled window. Not perfect but fun.
+#+end_comment
+
+#+begin_src elisp :exports results :results value html
+(isamert/blog-htmlify-buffer (find-file-noselect "~/.emacs.d/init.el"))
+#+end_src
 * Watchlist :page:
 :PROPERTIES:
 :CUSTOM_ID: watchlist
@@ -5301,10 +5664,10 @@ Useful when styling or templating has changed."
                (author (isamert/org-get-keyword "AUTHOR"))
                ;; ^ AUTHOR of the current header OR the global #+AUTHOR
                (file-path (plist-get info :file-path)))
-
           (let ((contents
                  (let ((isamert/blog-all-posts extras))
-                   (isamert/template
+                   (apply
+                    #'isamert/template
                     template
                     :title title
                     :body (isamert/body-html)
@@ -5312,7 +5675,15 @@ Useful when styling or templating has changed."
                     :update-date update-date
                     :author author
                     :tags tags
-                    :similar (map-elt info :similar)))))
+                    :similar (map-elt info :similar)
+                    ;; Also get all properties starting with
+                    ;; TEMPLATE_VAR and pass those as values too
+                    (im-alist-to-plist
+                     (map-apply
+                      (lambda (key val) (cons (s-chop-prefix "TEMPLATE_VAR_" key) val))
+                      (map-filter
+                       (lambda (key _val) (s-prefix? "TEMPLATE_VAR" key))
+                       (org-entry-properties nil nil))))))))
             (isamert/write-string-to-file file-path contents)
             (when cool-uri
               (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
@@ -5449,7 +5820,7 @@ This does some changes on the original document like:
   (org-fold-save-outline-visibility nil
     (save-excursion
       (-as-> (org-property-values "TEMPLATE") templates
-             (append '("post-template" "page-template" "tag-template"))
+             (append templates '("post-template" "page-template" "tag-template"))
              (--keep it templates)
              (--map `(,it . ,(org-babel-find-named-block it)) templates)
              (--filter (cdr it) templates)
@@ -5673,6 +6044,26 @@ They can be overridden in header properties."
   (save-restriction
     (widen)
     (--remove (-contains? '("noexport" "page") it) (-flatten (org-get-buffer-tags)))))
+
+(defun isamert/blog-htmlify-buffer (buffer)
+  (with-current-buffer (with-current-buffer buffer
+                         (save-excursion
+                           (save-restriction
+                             (widen)
+                             (when (derived-mode-p 'org-mode)
+                               (org-cycle '(64)))
+                             (when (bound-and-true-p outline-minor-mode)
+                               (outline-show-all))
+                             ;; (htmlize-buffer (current-buffer) t)
+                             (let ((hfy-optimizations (list 'keep-overlays 'merge-adjacent-tags))
+                                   (hfy-meta-tags "")
+                                   (hfy-page-header (lambda (_file style)
+                                                      style))
+                                   (hfy-page-footer (lambda (_file)
+                                                      (concat ""))))
+                               (htmlfontify-buffer)))))
+    (prog1 (buffer-substring-no-properties (point-min) (point-max))
+      (kill-buffer))))
 #+end_src
 
 * Load blog code :noexport:

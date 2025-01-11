@@ -408,23 +408,25 @@ footer > p > span {
     text-decoration: inherit;
 }
 
+/* * Org-mode export stuff */
+
+.org-center {
+    text-align: center;
+}
+
 /* * HLJS */
 
 .hljs {
     display: block;
     overflow-x: auto;
     padding: 0.5em;
-    background: var(
-        --src-block-bg-color
-    );
+    background: var(--src-block-bg-color);
     color: var(--font-color);
 }
 
 .hljs-comment,
 .hljs-quote {
-    color: var(
-        --muted-color
-    );
+    color: var(--muted-color);
 }
 
 .hljs-keyword,

@@ -642,23 +642,25 @@ footer > p > span {
     text-decoration: inherit;
 }
 
+/* * Org-mode export stuff */
+
+.org-center {
+    text-align: center;
+}
+
 /* * HLJS */
 
 .hljs {
     display: block;
     overflow-x: auto;
     padding: 0.5em;
-    background: var(
-        --src-block-bg-color
-    );
+    background: var(--src-block-bg-color);
     color: var(--font-color);
 }
 
 .hljs-comment,
 .hljs-quote {
-    color: var(
-        --muted-color
-    );
+    color: var(--muted-color);
 }
 
 .hljs-keyword,
@@ -1244,6 +1246,13 @@ Umami is a privacy friendly analytics app. I self-host it so the data is not in 
                         ,.publish-date-iso)))
            posts))))
 #+end_src
+
+*Fun Stuff*
+
+- Check out @@html:<i class="fa fa-cog"></i>@@ [[https://github.com/isamert/isamert.github.io][source org file]] for this blog.
+- Check out my @@html:<i class="fa fa-file-text"></i>@@  [[./.emacs.d/init.el.html][init.el]] in an Emacs frame.
+
+*Posts*
 
 #+begin_src elisp :exports results :results value html
 (isamert/blog-draw-main-posts-list

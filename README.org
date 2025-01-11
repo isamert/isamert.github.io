@@ -5921,11 +5921,10 @@ They can be overridden in header properties."
       (-lambda ((tags . item))
         (--each tags (push item (gethash it taggeds '())))))
 
-    (isamert/write-string-to-file
-     (format "%s/%s/main.xml"
-             isamert/blog-publish-path
-             isamert/blog-rss-per-tag)
-     (isamert/blog-make-rss-doc (-map 'cdr items)))
+    ;; Write main rss file to two paths: /feed.xml and /feed/main.xml
+    (let ((main-rss (isamert/blog-make-rss-doc (-map 'cdr items))))
+      (isamert/write-string-to-file (format "%s/%s/main.xml" isamert/blog-publish-path isamert/blog-rss-per-tag) main-rss)
+      (isamert/write-string-to-file (format "%s/feed.xml" isamert/blog-publish-path) main-rss))
 
     (--each (hash-table-keys taggeds)
       (isamert/write-string-to-file

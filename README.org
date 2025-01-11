@@ -823,7 +823,7 @@ You need to set the following properties so that template picks them up:
 - TEMPLATE_VAR_DATE
 
 #+name: emacs-frame-template
-#+begin_src html
+#+begin_src html :noweb yes
 <!doctype html>
 <html lang="en">
   <head>
@@ -955,6 +955,7 @@ You need to set the following properties so that template picks them up:
            margin: 0;
        }
       </style>
+      <<umami-script>>
   </head>
   <body spellcheck="false">
     <div class="emacs-window">
@@ -1171,15 +1172,7 @@ Generic head portion that I use in every template.
     <script src="/assets/index.js"></script>
     <link rel="stylesheet" href="/assets/main.css">
     <script src="/assets/hljs/highlight.pack.js"></script>
-    <script>
-      if (location.port != <<blog-local-port()>>) {
-        let script = document.createElement('script');
-        script.src = 'https://u.isamert.net/u.js';
-        script.setAttribute("defer", "true");
-        script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-        document.head.appendChild(script);
-      }
-    </script>
+    <<umami-script>>
     <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
   </head>
 #+end_src
@@ -1210,6 +1203,21 @@ Generic head portion that I use in every template.
       </span>
     </p>
   </footer>
+#+end_src
+*** umami
+Umami is a privacy friendly analytics app. I self-host it so the data is not in the hands of greater evils.
+
+#+name: umami-script
+#+begin_src html :noweb yes
+<script>
+  if (location.port != <<blog-local-port()>>) {
+    let script = document.createElement('script');
+    script.src = 'https://u.isamert.net/u.js';
+    script.setAttribute("defer", "true");
+    script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+    document.head.appendChild(script);
+  }
+</script>
 #+end_src
 * Main :page:
 :PROPERTIES:
@@ -1386,6 +1394,8 @@ isamertgurbuz at gmail dot com
 :END:
 #+begin_comment
 This page shows the contents of my init.el in an Emacs-styled window. Not perfect but fun.
+
+I need to switch to the doom-Iosvkem theme before generating this page so that colors are compatible with the CSS I use.
 #+end_comment
 
 #+begin_src elisp :exports results :results value html

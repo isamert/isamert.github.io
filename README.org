@@ -4589,6 +4589,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 - Edit (2025-06-29) :: Ülkeden taşındım ama hala şu lanet siteye giriyorum, kalite her zamankinden daha kötü. Bunun dışında:
   - Elisp kodunu sıralamayı bozmayacak şekilde güncelledim, önceki hali sadece ~selectrum~ kullanıyorsanız sıralamayı koruyordu, şimdi bütün completing-read wrapperları ile çalışmalı.
   - Bash kodunu Eksi tarafından bloklanmamak adına bir ~User-Agent~ içerecek şekilde güncelledim.
+  - Önceki hali ile farkını [[https://github.com/isamert/isamert.github.io/commit/7c71f02][buradan ]]görebilirsiniz.
 
 * Dealing with APIs, JSONs and databases in org-mode :emacs:org:
 :PROPERTIES:

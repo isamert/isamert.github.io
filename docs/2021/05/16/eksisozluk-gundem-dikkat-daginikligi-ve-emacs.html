@@ -36,7 +36,7 @@
             <li id="author">isamert</li>
             <li id="tags"><a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
             <li id="publish-date">2021-05-16</li>
-            <li id="updated-date">2021-05-16</li>
+            <li id="updated-date">2025-06-29</li>
           </ul>
         </div>
 
@@ -46,7 +46,7 @@ Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)"&gt;(.*) &lt;small&gt;(.*)&lt;\/small&gt;(.*)/(\3) \2/' | sort -V -r | uniq
+<pre class="src src-sh">curl --silent --header "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq
 </pre>
 </div>
 
@@ -75,17 +75,28 @@ Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu inte
 <pre class="src src-elisp">(defun isamert/eksi-gundem-sirali ()
   "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
   (interactive)
-  (let* ((selectrum-should-sort nil)
-         (results (-&gt;&gt; (shell-command-to-string "curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq")
-                    (s-split "\n")
-                    (--map (s-split "|||" it))
-                    (--map `(,(car it) . ,(cadr it))))))
-    (-&gt;&gt; results
-      (completing-read "Baslik: ")
-      (funcall (-flip 'assoc-string) results)
-      (cdr)
-      (format "https://eksisozluk.com/%s")
-      (browse-url))))
+  (let* ((results (-&gt;&gt;
+                   (with-temp-buffer
+                     (insert
+                      (shell-command-to-string "curl --silent --header \"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0\" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq"))
+                     (goto-char (point-min))
+                     (xml-parse-string)) ; Turkce karakterleri duzgun handle etmek icin
+                   (s-trim)
+                   (s-split "\n")
+                   (--map (s-split "|||" it))
+                   (--map `(,(car it) . ,(cadr it))))))
+    (-&gt;&gt;
+     (completing-read "Baslik: "
+                      (lambda (string predicate action)
+                        (if (eq action 'metadata)
+                            '(metadata
+                              (display-sort-function . identity)
+                              (cycle-sort-function . identity))
+                          (complete-with-action action results string predicate))))
+     (funcall (-flip 'assoc-string) results)
+     (cdr)
+     (format "https://eksisozluk.com/%s")
+     (browse-url))))
 </pre>
 </div>
 
@@ -102,6 +113,16 @@ O da böyle gözüküyor:
 <p>
 Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
 </p>
+
+<hr>
+
+<dl class="org-dl">
+<dt>Edit (2025-06-29)</dt><dd>Ülkeden taşındım ama hala şu lanet siteye giriyorum, kalite her zamankinden daha kötü. Bunun dışında:
+<ul class="org-ul">
+<li>Elisp kodunu sıralamayı bozmayacak şekilde güncelledim, önceki hali sadece <code>selectrum</code> kullanıyorsanız sıralamayı koruyordu, şimdi bütün completing-read wrapperları ile çalışmalı.</li>
+<li>Bash kodunu Eksi tarafından bloklanmamak adına bir <code>User-Agent</code> içerecek şekilde güncelledim.</li>
+</ul></dd>
+</dl>
 
         </div>
 

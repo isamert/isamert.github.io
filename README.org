@@ -4524,13 +4524,13 @@ Nice.
 * Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs :turkish:micro:
 :PROPERTIES:
 :PUBLISH_DATE: [2021-05-16 Sun 00:00] +0300
-:UPDATE_DATE: [2021-05-16 Sun]
+:UPDATE_DATE: [2025-06-29 Sun 10:27] +0300
 :CUSTOM_ID: eksisozluk-gundem-dikkat-daginikligi-ve-emacs
 :END:
 Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek mümkün olmuyor. Nihayetinde ekşi'ye girişimin temel sebebinin /gündem/'e bakmak olduğunun farkına vardım. Gündem içerisinde de en çok merak ettiğim şey genel itibarıyla en çok entry girilen başlıkların neler olduğunu görmek. Fakat ekşi'de gündem tam olarak entry sayısına göre sıralanmıyor ve bu durum benim için sinir bozucu. Gündemi oluşturan 3-5 başlığa bakıp çıkmak isterken dikkatim diğer başlıklarla dağılıyor veya en çok entry girilen başlıkları bulayım derken zaman kaybediyorum. Zaten çoğu zaman entry'leri de merak etmiyorum, sadece bi başlıkları gözden geçirmek istiyorum. Bunun için çözümüm şu oldu:
 
 #+begin_src sh
-  curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)">(.*) <small>(.*)<\/small>(.*)/(\3) \2/' | sort -V -r | uniq
+curl --silent --header "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)">(.*) <small>(.*)<\\/small>(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq
 #+end_src
 
 2021-05-16 23:28 itibarıyla bu komutun çıktısı şöyle:
@@ -4550,20 +4550,31 @@ Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek
 Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu interaktif bir Emacs fonksiyonuna sardım, o da şöyle:
 
 #+begin_src elisp
-  (defun isamert/eksi-gundem-sirali ()
-    "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
-    (interactive)
-    (let* ((selectrum-should-sort nil)
-           (results (->> (shell-command-to-string "curl --silent https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\">(.*) <small>(.*)<\\/small>(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq")
-                      (s-split "\n")
-                      (--map (s-split "|||" it))
-                      (--map `(,(car it) . ,(cadr it))))))
-      (->> results
-        (completing-read "Baslik: ")
-        (funcall (-flip 'assoc-string) results)
-        (cdr)
-        (format "https://eksisozluk.com/%s")
-        (browse-url))))
+(defun isamert/eksi-gundem-sirali ()
+  "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
+  (interactive)
+  (let* ((results (->>
+                   (with-temp-buffer
+                     (insert
+                      (shell-command-to-string "curl --silent --header \"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0\" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href=\"(.*)\">(.*) <small>(.*)<\\/small>(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq"))
+                     (goto-char (point-min))
+                     (xml-parse-string)) ; Turkce karakterleri duzgun handle etmek icin
+                   (s-trim)
+                   (s-split "\n")
+                   (--map (s-split "|||" it))
+                   (--map `(,(car it) . ,(cadr it))))))
+    (->>
+     (completing-read "Baslik: "
+                      (lambda (string predicate action)
+                        (if (eq action 'metadata)
+                            '(metadata
+                              (display-sort-function . identity)
+                              (cycle-sort-function . identity))
+                          (complete-with-action action results string predicate))))
+     (funcall (-flip 'assoc-string) results)
+     (cdr)
+     (format "https://eksisozluk.com/%s")
+     (browse-url))))
 #+end_src
 
 O da böyle gözüküyor:
@@ -4572,6 +4583,12 @@ O da böyle gözüküyor:
 [[file:./docs/images/eksi_emacs.png]]
 
 Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
+
+-----
+
+- Edit (2025-06-29) :: Ülkeden taşındım ama hala şu lanet siteye giriyorum, kalite her zamankinden daha kötü. Bunun dışında:
+  - Elisp kodunu sıralamayı bozmayacak şekilde güncelledim, önceki hali sadece ~selectrum~ kullanıyorsanız sıralamayı koruyordu, şimdi bütün completing-read wrapperları ile çalışmalı.
+  - Bash kodunu Eksi tarafından bloklanmamak adına bir ~User-Agent~ içerecek şekilde güncelledim.
 
 * Dealing with APIs, JSONs and databases in org-mode :emacs:org:
 :PROPERTIES:

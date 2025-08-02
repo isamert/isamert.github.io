@@ -5511,6 +5511,7 @@ and you successfully signed your PDF without really signing it. You let your com
 (require 'dash)
 (require 's)
 (require 'elnode)
+(require 'ox-html)
 
 ;;;; Variables
 

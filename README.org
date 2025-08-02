@@ -4594,7 +4594,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 * Dealing with APIs, JSONs and databases in org-mode :emacs:org:
 :PROPERTIES:
 :PUBLISH_DATE: [2022-01-04 Tue 00:00] +0300
-:UPDATE_DATE: [2022-01-04 Tue]
+:UPDATE_DATE: [2025-08-02 Sat]
 :CUSTOM_ID: dealing-with-apis-jsons-and-databases-in-org-mode
 :COOL_URI: orgmode-executors-and-apis.html
 :END:
@@ -4620,32 +4620,32 @@ Hitting ~C-c C-c~ on the first block will make a get request to the given URL an
 An improvement that you can apply to this is wrapping the result into an JSON block so that you can get JSON highlighting and other goodies. Let's see how we can do that:
 
 #+begin_src org
-  ,#+begin_src http :pretty :wrap src json
-  GET https://jsonplaceholder.typicode.com/todos/1
-  ,#+end_src
+,#+begin_src http :pretty :wrap src js-json
+GET https://jsonplaceholder.typicode.com/todos/1
+,#+end_src
 
-  ,#+RESULTS:
-  ,#+begin_src json
-  {
-    "userId": 1,
-    "id": 1,
-    "title": "delectus aut autem",
-    "completed": false
-  }
-  ,#+end_src
+,#+RESULTS:
+,#+begin_src js-json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+,#+end_src
 #+end_src
 
-Now we have nice syntax highlighting, thanks to the ~:wrap src json~ parameter on the first line.
+Now we have nice syntax highlighting, thanks to the ~:wrap src js-json~ parameter on the first line.
 
 Another good thing you can do is manipulating the result. ~ob-http~ offers a very convenient way to do this:
 
 #+begin_src org
-  ,#+begin_src http :pretty :select .title
-  GET https://jsonplaceholder.typicode.com/todos/1
-  ,#+end_src
+,#+begin_src http :pretty :select .title
+GET https://jsonplaceholder.typicode.com/todos/1
+,#+end_src
 
-  ,#+RESULTS:
-  : delectus aut autem
+,#+RESULTS:
+: delectus aut autem
 #+end_src
 
 It simply pipes the result of the request into [[https://stedolan.github.io/jq/][jq]] with the value you provided to ~:select~ in the header of the code block. This is especially good if you want to pipe this result into another code block. You can give a name to this code block by putting ~#+name: todo-title~ right above the code block and pass the result of this code block into other code blocks by adding ~:var TODO-TITLE=todo-title~ into their block headers etc. Quite convenient! You can also utilize [[https://orgmode.org/manual/Noweb-Reference-Syntax.html][noweb syntax]] if you want to get fancy.
@@ -4653,69 +4653,75 @@ It simply pipes the result of the request into [[https://stedolan.github.io/jq/]
 There is one little problem with the ~:select~ approach though: If you are dealing with big JSONs and you want to explore the JSON or try things out by changing the ~:select~ parameter, you send the same request over and over again. This is not cool for many reasons. So how do we fix this? We can implement an executer function for ~JSON~ blocks. See how it works in action:
 
 #+begin_src org
-  ,#+begin_src http :pretty :wrap src json
-  GET https://jsonplaceholder.typicode.com/todos/1
-  ,#+end_src
+,#+begin_src http :pretty :wrap src js-json
+GET https://jsonplaceholder.typicode.com/todos/1
+,#+end_src
 
-  ,#+RESULTS:
-  ,#+begin_src json :jq .title
-  {
-    "userId": 1,
-    "id": 1,
-    "title": "delectus aut autem",
-    "completed": false
-  }
-  ,#+end_src
+,#+RESULTS:
+,#+begin_src js-json :jq .title
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+,#+end_src
 
-  ,#+RESULTS:
-  : delectus aut autem
+,#+RESULTS:
+: delectus aut autem
 #+end_src
 
 First I hit ~C-c C-c~ on the ~http~ block and it outputs the JSON response. Then I add the ~:jq .title~ part to the resulting JSON block and hit ~C-c C-c~ on it and it outputs the result of my /jq/ expression. Like the ~:select~ parameter of ~ob-http~, the ~:jq~ parameter for the JSON block simply pipes the JSON into ~jq~ with given jq expression. I used ~:jq~ instead of ~:select~ as the parameter name because my custom executer also supports manipulating the JSON using ~node~. See this:
 
 #+begin_src org
-  ,#+begin_src json :node it.title.toUpperCase()
-  {
-    "userId": 1,
-    "id": 1,
-    "title": "delectus aut autem",
-    "completed": false
-  }
-  ,#+end_src
+,#+begin_src js-json :node it.title.toUpperCase()
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+,#+end_src
 
-  ,#+RESULTS:
-  : DELECTUS AUT AUTEM
+,#+RESULTS:
+: DELECTUS AUT AUTEM
 #+end_src
 
 The ~:node~ parameter takes arbitrary JavaScript code and runs it using the ~node~ binary. The variable ~it~ represents the whole JSON. And here is the implementation for this executer:
 
 #+begin_src elisp
-  (defun org-babel-execute:json (body params)
-    (let ((jq (cdr (assoc :jq params)))
-          (node (cdr (assoc :node params))))
-      (cond
-       (jq
-        (with-temp-buffer
-          ;; Insert the JSON into the temp buffer
-          (insert body)
-          ;; Run jq command on the whole buffer, and replace the buffer
-          ;; contents with the result returned from jq
-          (shell-command-on-region (point-min) (point-max) (format "jq -r \"%s\"" jq) nil 't)
-          ;; Return the contents of the temp buffer as the result
-          (buffer-string)))
-       (node
-        (with-temp-buffer
-          (insert (format "const it = %s;" body))
-          (insert node)
-          (shell-command-on-region (point-min) (point-max) "node -p" nil 't)
-          (buffer-string))))))
+(defun org-babel-execute:js-json (body params)
+  (let ((jq (cdr (assoc :jq params)))
+        (node (cdr (assoc :node params))))
+    (cond
+     (jq
+      (with-temp-buffer
+        ;; Insert the JSON into the temp buffer
+        (insert body)
+        ;; Run jq command on the whole buffer, and replace the buffer
+        ;; contents with the result returned from jq
+        (call-process-region (point-min) (point-max) "jq" t t nil "-r" jq)
+        ;; Return the contents of the temp buffer as the result
+        (buffer-string)))
+     (node
+      (with-temp-buffer
+        (insert (format "const it = %s;" body))
+        (insert node)
+        (call-process-region (point-min) (point-max) "node" t t nil "-p")
+        (buffer-string))))))
+
+;; js-json-mode comes with Emacs by default. You can also install
+;; json-mode from MELPA if you prefer. This alias ensures
+;; compatibility with both.
+
+(defalias 'org-babel-execute:js-json 'org-babel-execute:json)
 #+end_src
 
 Simple, isn't it? Just to summarize, here is what is going on:
 - If you want to implement a custom executer for an arbitrary source code block, you need to create a function named ~org-babel-execute:$SRC_BLOCK_LANG_NAME~.
   - This function takes two parameters, the body of the block and an alist of parameters passed to the header of the source block.
   - You need to return the result body from the function.
-- For piping some arbitrary text into a binary, use ~shell-command-on-region~ in combination with ~with-temp-buffer~. It'll save you from a lot of trouble, like escaping quotes and all the other shell quirks.
+- For piping some arbitrary text into a binary, use ~call-process-region~ in combination with ~with-temp-buffer~. It'll save you from a lot of trouble, like escaping quotes and all the other shell quirks.
 
 Note that you can fold a source block by hitting ~TAB~. With that in mind, you can use this executer as a live JSON playground, change your expression, fold the codeblock to hide the clutter, hit ~C-c C-c~, see the result, and repeat.
 
@@ -4727,51 +4733,55 @@ Our executer function example is for ~json-mode~, an already-existing major mode
 
 - First I created a derived major mode named ~n1ql-mode~. N1QL is just like SQL, so I simply extended it. This way we get syntax highlighting and bunch of other stuff for free.
 #+begin_src elisp
-  (define-derived-mode n1ql-mode sql-mode "n1ql-mode")
+(define-derived-mode n1ql-mode sql-mode "n1ql-mode")
 #+end_src
 
 - Then I created a function that executes given N1QL query using the [[https://docs.couchbase.com/server/current/tools/cbq-shell.html][cbq]] command line tool that Couchbase provides:
 #+begin_src elisp
-  (cl-defun isamert/cbq (query &key host username password (select "."))
+(cl-defun isamert/cbq (query &key host username password (select "."))
   "Run a couchbase query and return the result."
   (with-temp-buffer
     (insert query)
-    (shell-command-on-region
+    (call-process-region
      (point-min)
      (point-max)
-     (format "cbq -quiet -engine %s -credentials '%s'"
-             host
-             (format "%s:%s" username password))
-     nil t)
+     "cbq"
+     t t nil
+     "-quiet"
+     "-engine" host
+     "-credentials" (format "%s:%s" username password))
     ;; Do some cleaning up
     (replace-regexp-in-region "^cbq> " "" (point-min) (point-max))
     ;; N1QL returns a JSON response, so it might be a good idea to
     ;; provide a way to filter the result with jq, like what ob-http
     ;; does with it :select parameter
-    (shell-command-on-region (point-min) (point-max) (format "jq -r %s" select) nil t)
+    (call-process-region (point-min) (point-max) "jq" t t nil "-r" select)
     (buffer-string)))
 #+end_src
 
 - And finally, an executer function for N1QL mode, so that we can run our queries right inside org-mode:
 #+begin_src elisp
-  (defun org-babel-execute:n1ql (body params)
-    (isamert/cbq
-     body
-     :host (alist-get :host params)
-     :username (alist-get :username params)
-     :password (alist-get :password params)
-     :select (alist-get :select params)))
+(defun org-babel-execute:n1ql (body params)
+  (isamert/cbq
+   body
+   :host (alist-get :host params)
+   :username (alist-get :username params)
+   :password (alist-get :password params)
+   :select (alist-get :select params)))
 #+end_src
 
 ...and this is how you would use it:
 #+begin_src org
-  ,#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
-    SELECT * FROM SomeTable LIMIT 10;
-  ,#+end_src
+,#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
+SELECT * FROM SomeTable LIMIT 10;
+,#+end_src
 #+end_src
 
 You can turn any REPL/CLI tool into a language that can be executed right inside an org-mode document. This brings you the benefit of having interactive notes. Your learning environment and testing environment would be same and this let's you progress quicker. I even do production troubleshooting inside org-mode documents, so that at the end of the day I have a clear document that shows exact runnable steps to solve a problem.
 
+-----
+
+- [2025-08-02 Sat] :: Updated code snippets with ~@karthink~'s suggestions. See comments down below.
 * Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması :turkish:micro:
 :PROPERTIES:
 :PUBLISH_DATE: [2022-03-02 Wed 00:00] +0300

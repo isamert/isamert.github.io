@@ -36,7 +36,7 @@
             <li id="author">isamert</li>
             <li id="tags"><a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a></li>
             <li id="publish-date">2022-01-04</li>
-            <li id="updated-date">2022-01-04</li>
+            <li id="updated-date">2025-08-02</li>
           </ul>
         </div>
 
@@ -77,12 +77,12 @@ An improvement that you can apply to this is wrapping the result into an JSON bl
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty :wrap src json
+<pre class="src src-org">#+begin_src http :pretty :wrap src js-json
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
 #+RESULTS:
-#+begin_src json
+#+begin_src js-json
 {
   "userId": 1,
   "id": 1,
@@ -94,7 +94,7 @@ GET https://jsonplaceholder.typicode.com/todos/1
 </div>
 
 <p>
-Now we have nice syntax highlighting, thanks to the <code>:wrap src json</code> parameter on the first line.
+Now we have nice syntax highlighting, thanks to the <code>:wrap src js-json</code> parameter on the first line.
 </p>
 
 <p>
@@ -120,12 +120,12 @@ There is one little problem with the <code>:select</code> approach though: If yo
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty :wrap src json
+<pre class="src src-org">#+begin_src http :pretty :wrap src js-json
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
 #+RESULTS:
-#+begin_src json :jq .title
+#+begin_src js-json :jq .title
 {
   "userId": 1,
   "id": 1,
@@ -144,7 +144,7 @@ First I hit <code>C-c C-c</code> on the <code>http</code> block and it outputs t
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src json :node it.title.toUpperCase()
+<pre class="src src-org">#+begin_src js-json :node it.title.toUpperCase()
 {
   "userId": 1,
   "id": 1,
@@ -163,7 +163,7 @@ The <code>:node</code> parameter takes arbitrary JavaScript code and runs it usi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun org-babel-execute:json (body params)
+<pre class="src src-elisp">(defun org-babel-execute:js-json (body params)
   (let ((jq (cdr (assoc :jq params)))
         (node (cdr (assoc :node params))))
     (cond
@@ -173,15 +173,21 @@ The <code>:node</code> parameter takes arbitrary JavaScript code and runs it usi
         (insert body)
         ;; Run jq command on the whole buffer, and replace the buffer
         ;; contents with the result returned from jq
-        (shell-command-on-region (point-min) (point-max) (format "jq -r \"%s\"" jq) nil 't)
+        (call-process-region (point-min) (point-max) "jq" t t nil "-r" jq)
         ;; Return the contents of the temp buffer as the result
         (buffer-string)))
      (node
       (with-temp-buffer
         (insert (format "const it = %s;" body))
         (insert node)
-        (shell-command-on-region (point-min) (point-max) "node -p" nil 't)
+        (call-process-region (point-min) (point-max) "node" t t nil "-p")
         (buffer-string))))))
+
+;; js-json-mode comes with Emacs by default. You can also install
+;; json-mode from MELPA if you prefer. This alias ensures
+;; compatibility with both.
+
+(defalias 'org-babel-execute:js-json 'org-babel-execute:json)
 </pre>
 </div>
 
@@ -194,7 +200,7 @@ Simple, isn't it? Just to summarize, here is what is going on:
 <li>This function takes two parameters, the body of the block and an alist of parameters passed to the header of the source block.</li>
 <li>You need to return the result body from the function.</li>
 </ul></li>
-<li>For piping some arbitrary text into a binary, use <code>shell-command-on-region</code> in combination with <code>with-temp-buffer</code>. It'll save you from a lot of trouble, like escaping quotes and all the other shell quirks.</li>
+<li>For piping some arbitrary text into a binary, use <code>call-process-region</code> in combination with <code>with-temp-buffer</code>. It'll save you from a lot of trouble, like escaping quotes and all the other shell quirks.</li>
 </ul>
 
 <p>
@@ -220,23 +226,24 @@ Our executer function example is for <code>json-mode</code>, an already-existing
 </ul>
 <div class="org-src-container">
 <pre class="src src-elisp">(cl-defun isamert/cbq (query &amp;key host username password (select "."))
-"Run a couchbase query and return the result."
-(with-temp-buffer
-  (insert query)
-  (shell-command-on-region
-   (point-min)
-   (point-max)
-   (format "cbq -quiet -engine %s -credentials '%s'"
-           host
-           (format "%s:%s" username password))
-   nil t)
-  ;; Do some cleaning up
-  (replace-regexp-in-region "^cbq&gt; " "" (point-min) (point-max))
-  ;; N1QL returns a JSON response, so it might be a good idea to
-  ;; provide a way to filter the result with jq, like what ob-http
-  ;; does with it :select parameter
-  (shell-command-on-region (point-min) (point-max) (format "jq -r %s" select) nil t)
-  (buffer-string)))
+  "Run a couchbase query and return the result."
+  (with-temp-buffer
+    (insert query)
+    (call-process-region
+     (point-min)
+     (point-max)
+     "cbq"
+     t t nil
+     "-quiet"
+     "-engine" host
+     "-credentials" (format "%s:%s" username password))
+    ;; Do some cleaning up
+    (replace-regexp-in-region "^cbq&gt; " "" (point-min) (point-max))
+    ;; N1QL returns a JSON response, so it might be a good idea to
+    ;; provide a way to filter the result with jq, like what ob-http
+    ;; does with it :select parameter
+    (call-process-region (point-min) (point-max) "jq" t t nil "-r" select)
+    (buffer-string)))
 </pre>
 </div>
 
@@ -259,7 +266,7 @@ Our executer function example is for <code>json-mode</code>, an already-existing
 </p>
 <div class="org-src-container">
 <pre class="src src-org">#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
-  SELECT * FROM SomeTable LIMIT 10;
+SELECT * FROM SomeTable LIMIT 10;
 #+end_src
 </pre>
 </div>
@@ -267,6 +274,12 @@ Our executer function example is for <code>json-mode</code>, an already-existing
 <p>
 You can turn any REPL/CLI tool into a language that can be executed right inside an org-mode document. This brings you the benefit of having interactive notes. Your learning environment and testing environment would be same and this let's you progress quicker. I even do production troubleshooting inside org-mode documents, so that at the end of the day I have a clear document that shows exact runnable steps to solve a problem.
 </p>
+
+<hr>
+
+<dl class="org-dl">
+<dt><span class="timestamp-wrapper"><span class="timestamp">[2025-08-02 Sat]</span></span></dt><dd>Updated code snippets with <code>@karthink</code>'s suggestions. See comments down below.</dd>
+</dl>
 </div>
 </div>
 

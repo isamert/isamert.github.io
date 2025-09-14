@@ -1419,25 +1419,21 @@ I need to switch to the doom-Iosvkem theme before generating this page so that c
 :END:
 
 #+begin_comment
-Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-ratings-list-and-watch-list-into-org-mode][Migrating my IMDb ratings list and watch list into org-mode]] to learn more about my watchlist.org file format.
+Following code exports my watchlist.org file as JSON. See [[#migrating-my-imdb-ratings-list-and-watch-list-into-org-mode][Migrating my IMDb ratings list and watch list into org-mode]] to learn more about my watchlist.org file format. This gets to run by a systemd timer.
 #+end_comment
 
 #+begin_src emacs-lisp :exports none :tangle ~/.emacs.d/load/isamert-blog.el
 ;; -*- lexical-binding: t; -*-
 
-;; To automatically update watchlist.
-(add-hook 'midnight-hook #'im-update-remote-watchlist)
-
 (defun im-update-remote-watchlist ()
   "Update my watchlist on my website."
   (interactive)
-  (when (im-personal-pc?)
-    (im-git-temp-clone
-     "git@github.com:isamert/isamert.github.io.git"
-     :on-success
-     (lambda ()
-       (im-git-use/apply-my/personal-config)
-       (isamert/blog-generate-watchlist-json t)))))
+  (im-git-temp-clone
+   "git@github.com:isamert/isamert.github.io.git"
+   :on-success
+   (lambda ()
+     (im-git-use/apply-my/personal-config)
+     (isamert/blog-generate-watchlist-json t))))
 
 (defun isamert/blog-generate-watchlist-json (push?)
   "Generate the watchlist.json file.

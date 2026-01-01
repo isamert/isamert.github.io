@@ -6,6 +6,12 @@
     <description>My notes and ideas.</description>
     
     <item>
+      <title>Split tunneling & port forwarding qBittorrent with WireGuard VPN</title>
+      <link>https://isamert.net/2026/01/01/split-tunneling-and-port-forwarding-qbittorrent-with-wireguard-vpn.html</link>
+      <pubDate>Thu, 01 Jan 2026 20:46:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
       <title>Signing long PDF documents automatically with Bash</title>
       <link>https://isamert.net/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html</link>
       <pubDate>Wed, 25 Dec 2024 20:49:00 +0100</pubDate>

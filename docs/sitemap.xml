@@ -16,6 +16,11 @@
       <changefreq>monthly</changefreq>
    </url>
    <url>
+      <loc>https://isamert.net/.emacs.d/init.el.html</loc>
+      <lastmod>2025-01-11</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
       <loc>https://isamert.net/watchlist.html</loc>
       <lastmod>2023-08-30</lastmod>
       <changefreq>monthly</changefreq>
@@ -158,6 +163,11 @@
    <url>
       <loc>https://isamert.net/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html</loc>
       <lastmod>2024-12-25</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://isamert.net/2026/01/01/split-tunneling-and-port-forwarding-qbittorrent-with-wireguard-vpn.html</loc>
+      <lastmod>2026-01-01</lastmod>
       <changefreq>monthly</changefreq>
    </url>
 </urlset>

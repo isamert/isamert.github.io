@@ -5496,6 +5496,259 @@ Save this file and run it like:
 #+end_src
 
 and you successfully signed your PDF without really signing it. You let your computer do the work for you.
+* Split tunneling & port forwarding qBittorrent with WireGuard VPN :bash:systemd:torrent:network:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-01-01 Thu 20:46] +0100
+:CUSTOM_ID: split-tunneling-and-port-forwarding-qbittorrent-with-wireguard-vpn
+:END:
+
+Recently I bought Proton VPN with a seemingly good deal for my torrenting needs. It's not illegal to torrent where I live but from what I've heard, seeding is not considered /safe/. I am a person who likes to share—especially if it's zero effort, like seeding—so a good deal on a VPN account seemed pretty nice.
+
+This is what I had:
+
+- A computer (my homeserver), running Arch Linux
+- qBittorrent, running with it's own user, managed by Systemd. No fancy Docker stuff.
+
+...and this is what I wanted:
+
+- qBittorrent uses the VPN (and maybe other applications of my choosing), rest of the system uses my standard network.
+- Enabling port forwarding on qBittorrent through VPN.
+
+Well it turns out, keeping your system simple (i.e. no Docker, managing everything with Systemd) has some invisible cost. In hindsight, this was not the hardest thing to achieve but the fact that I've never dabbled with VPNs (other than simply turning them on/off via a GUI) and having little knowledge of the Linux network stack made this quite challenging.
+
+If you are okay with using Docker and you are managing your application (i.e. qBittorrent) via Docker, then see [[https://github.com/qdm12/gluetun][gluetun]]. It's a container that supports multiple VPN providers that you can route your qBittorrent through, and it should work. Never tried it.
+
+** Requirements
+:PROPERTIES:
+:CUSTOM_ID: requirements
+:END:
+
+- Make sure you have the following packages:
+  - ~wireguard-tools~ (for ~wg-quick~)
+  - ~libnatpmp~ (for the ~natpmpc~ command to request ports)
+  - ~curl~ (for verification)
+  - ~qbittorrent-nox~ (or the desktop version, but this guide assumes a service-based setup)
+
+** Setting up WireGuard and split tunneling
+:PROPERTIES:
+:CUSTOM_ID: setting-up-wireguard-and-split-tunneling
+:END:
+
+- Go to your VPN provider (e.g., Proton VPN) and download a WireGuard configuration. See [[https://protonvpn.com/support/port-forwarding-manual-setup][this tutorial for Proton VPN]]. (Ensure "NAT-PMP" or "Port Forwarding" is enabled in the generation settings.)
+- Save it to ~/etc/wireguard/qbproto.conf~. (File name can change, I'll just use this for the rest of this post.) Make the following changes in the file:
+  #+begin_src conf
+  [Interface]
+  PrivateKey = <YOUR_PRIVATE_KEY>
+  Address = 10.2.0.2/32
+
+  # 1. Comment the DNS line
+  #   Otherwise WireGuard sets your system DNS to this and it may break
+  #   your default network.
+
+  # DNS = 10.2.0.1
+
+  # 2. Disable default routing (to be able to do split tunneling)
+  #   This tells WireGuard not to overwrite your default system
+  #   gateway. Your system will still use your normal home internet.
+
+  Table = off
+
+  # 3. Add manual route to the VPN Gateway
+  #   These commands direct traffic destined to 10.2.0.1 over the
+  #   WireGuard VPN, and clean up the route when the VPN is stopped.
+  #
+  #   Without this, 'natpmpc' cannot contact the gateway (10.2.0.1)
+  #   because 'Table = off' prevents the creation of VPN routes.
+
+  PostUp = ip route add 10.2.0.1/32 dev %i
+  PreDown = ip route del 10.2.0.1/32 dev %i
+
+  # ... rest of the file stays the same ...
+  #+end_src
+
+- Now, enable and start the interface:
+  #+begin_src sh
+  sudo systemctl enable --now wg-quick@qbproto
+                                     # ^ or whatever you named your WireGuard conf file
+
+  # or, if you are not using Systemd, do this:
+  sudo wg-quick up qbproto
+
+  # to stop it:
+  sudo wg-quick down qbproto
+  #+end_src
+
+- Verify that split tunneling works:
+  #+begin_src sh
+  # Check your normal IP (should be your ISP IP)
+  curl ip.me
+
+  # Check the VPN interface IP (should be the VPN IP)
+  curl --interface qbproto ip.me
+
+  # You can also check with WireGuard, which show how much data sent/received:
+  sudo wg show
+  #+end_src
+
+** Force qBittorrent to use the VPN
+:PROPERTIES:
+:CUSTOM_ID: force-qbittorrent-to-use-the-vpn
+:END:
+
+Now that the split tunneling works, we must force qBittorrent to use *only* the VPN interface. Just like ~curl~'s ~--interface~ option, qBittorrent also has a setting for it.
+
+- Open qBittorrent settings, go to /Advanced/ and then set:
+  - *Network Interface* ⇒ ~qbproto~.
+  - *Optional IP address to bind to* ⇒ Set to your VPN internal IP (e.g., ~10.2.0.2~ found in your config).
+
+This effectively acts as a kill-switch, if your VPN drops then qBittorrent will not be able to transmit anything which is what we want.
+
+** Enable port-forwarding for qBittorrent
+:PROPERTIES:
+:CUSTOM_ID: enable-port-forwarding-for-qbittorrent
+:END:
+
+To request a port, you need to run something like this:
+
+#+begin_src sh
+# for udp
+natpmpc -a 1 0 udp 60 -g 10.2.0.1
+# for tcp
+natpmpc -a 1 0 tcp 60 -g 10.2.0.1
+#+end_src
+
+which will output something containing the following:
+
+#+begin_src
+...
+Mapped public port 44925 protocol UDP to local port 0 lifetime 60
+...
+Mapped public port 44925 protocol TCP to local port 0 lifetime 60
+...
+#+end_src
+
+Now you can open qBittorrent, go to /Settings/ → /Connection/ → /Listening Port/ → /Port used for incoming connections/ and set it to the port you got from ~natpmpc~ outputs, ~44925~ in this case.
+
+The unfortunate thing is that this port will be kept open for 60 seconds (for Proton VPN, other providers may have different configurations) and then it will be no longer valid. You can run these commands on a loop to keep the port open:
+
+#+begin_src sh
+while true; do
+  natpmpc -a 1 0 udp 60 -g 10.2.0.1 && natpmpc -a 1 0 tcp 60 -g 10.2.0.1 || { echo -e "ERROR with natpmpc command \a"; break; }
+  sleep 45
+done
+#+end_src
+
+Of course, this script does not update qBittorrent configurations on port changes. The port is less likely to get changed but if your server/computer gets restarted or if your network stops working for more than 60 seconds, you'll definitely get a new port. Here is another bash script that runs these commands on a loop and updates qBittorrent port configuration when needed. It restarts qBittorrent after port changes via Systemd:
+
+#+begin_src bash
+#!/bin/bash
+
+GATEWAY=10.2.0.1
+LIFETIME=60
+RETRY_LIMIT=3
+QBT_USER="qbittorrent"
+QBT_HOME="/home/$QBT_USER"
+QBT_SERVICE_NAME="qbittorrent-nox@$QBT_USER"
+CONFIG="$QBT_HOME/.config/qBittorrent/qBittorrent.conf"
+PORT_KEY='Session\\Port'
+
+get_last_port() {
+    if [[ -f "$CONFIG" ]]; then
+        awk -F= -v key="$PORT_KEY" '$1 == key {print $2}' "$CONFIG" | tail -n 1
+    else
+        echo ""
+    fi
+}
+
+update_config_port() {
+    if grep -q "^$PORT_KEY=" "$CONFIG"; then
+        sed -i "/^$PORT_KEY=/c\\$PORT_KEY=$1" "$CONFIG"
+    else
+        echo "$PORT_KEY=$1" >> "$CONFIG"
+    fi
+    chown $QBT_USER:$QBT_USER "$CONFIG"
+    echo ">> (qBittorrent) Config file updated..."
+}
+
+fail_count=0
+last_port=$(get_last_port)
+
+while true; do
+    got_port=""
+    for ((i=1; i<=RETRY_LIMIT; ++i)); do
+        OUT=$(natpmpc -a 1 0 udp $LIFETIME -g "$GATEWAY"; natpmpc -a 1 0 tcp $LIFETIME -g "$GATEWAY")
+        got_port=$(echo "$OUT" | awk '/Mapped public port/ {print $4}' | tail -n 1)
+        if [[ -n "$got_port" ]]; then
+            break
+        fi
+        sleep 1
+    done
+
+    if [[ -z "$got_port" ]]; then
+        ((fail_count++))
+        echo "[$(date)] Failed to get port from natpmpc (#$fail_count)"
+        if [[ $fail_count -ge $RETRY_LIMIT ]]; then
+            echo "Port could not be determined after $RETRY_LIMIT tries. Exiting."
+            exit 1
+        fi
+        sleep 5
+        continue
+    else
+        fail_count=0
+    fi
+
+    if [[ "$got_port" != "$last_port" ]]; then
+        echo "[$(date)] Updating qbittorrent port: $last_port -> $got_port"
+        echo ">> (systemctl) Restarting qbittorrent service..."
+
+        # qBittorrent saves config on exit. We must stop the service, modify
+        # the file, and then restart to prevent overwrite.
+        systemctl stop $QBT_SERVICE_NAME.service
+        update_config_port "$got_port"
+        systemctl start $QBT_SERVICE_NAME.service
+        echo ">> (systemctl) Done..."
+
+        last_port="$got_port"
+    else
+        echo "[$(date)] Port $got_port unchanged, not restarting qbittorrent."
+    fi
+
+    sleep $((LIFETIME - 10))
+done
+#+end_src
+
+Save this script into a file like ~/usr/local/bin/qbittorrent-port-forwarder.sh~. To run it as a Systemd service, you can add this to ~/etc/systemd/system/qbittorrent-port-forwarder.service~:
+
+#+begin_src conf
+[Unit]
+Description=qBittorrent VPN port forwarder
+After=qbittorrent-nox@qbittorrent.service
+Wants=qbittorrent-nox@qbittorrent.service
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/qbittorrent-port-forwarder.sh
+
+[Install]
+WantedBy=multi-user.target
+#+end_src
+
+Now do:
+
+#+begin_src
+sudo systemctl daemon-reload
+sudo systemctl enable --now qbittorrent-port-forwarder
+#+end_src
+
+Now that you got your new port, and it's applied to your qBittorrent configuration, you should be seeing this green little icon that indicates everything is working properly:
+
+#+ATTR_HTML: :src /images/qbittorrent_port_forwarding_enabled.png :class centered
+[[file:./docs/images/qbittorrent_port_forwarding_enabled.png]]
+
+You can also go to [[https://ipleak.net/][ipleak.net]] and use /Torrent Address Detection/ to ensure that you are using your VPN and your port is correct.
+
+-----
+
+This was a deeper rabbit hole than I expected for just "turning on a VPN". However, now that the initial configuration is done, the system is rock solid. It has been running flawlessly for weeks, automatically handling port refreshes and IP changes in the background. Since everything is managed via Systemd, I get all the standard reliability guarantees like automatic restarts, plus my custom enhancements—like crash notifications to my phone—via drop-ins.
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp

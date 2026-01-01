@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<head>
+  <title>Split tunneling & port forwarding qBittorrent with WireGuard VPN | isamert.net</title>
+
+  <script src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/main.css">
+  <script src="/assets/hljs/highlight.pack.js"></script>
+  <script>
+    if (location.port != 3000) {
+      let script = document.createElement('script');
+      script.src = 'https://u.isamert.net/u.js';
+      script.setAttribute("defer", "true");
+      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+      document.head.appendChild(script);
+    }
+  </script>
+  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+</head>
+  <body>
+    <header>
+        <h1>isamert's webpage</h1>
+        <nav>
+            <a href="/">home</a> |
+            <a href="/about.html">about</a> |
+            <a href="/feeds.html">rss</a> |
+            <a href="/watchlist.html">watchlist</a> |
+            <a href="https://github.com/isamert">hackings</a>
+        </nav>
+    </header>
+
+      <section>
+        <h1 id="post-title">Split tunneling & port forwarding qBittorrent with WireGuard VPN</h1>
+
+        <div id="post-information">
+          <ul>
+            <li id="author">isamert</li>
+            <li id="tags"><a href="/tags/bash.html" class="tag-link">bash</a>, <a href="/tags/systemd.html" class="tag-link">systemd</a>, <a href="/tags/torrent.html" class="tag-link">torrent</a>, <a href="/tags/network.html" class="tag-link">network</a></li>
+            <li id="publish-date">2026-01-01</li>
+            <li id="updated-date">2026-01-01</li>
+          </ul>
+        </div>
+
+        <div id="post">
+          <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#setting-up-wireguard-and-split-tunneling">Setting up WireGuard and split tunneling</a></li>
+<li><a href="#force-qbittorrent-to-use-the-vpn">Force qBittorrent to use the VPN</a></li>
+<li><a href="#enable-port-forwarding-for-qbittorrent">Enable port-forwarding for qBittorrent</a></li>
+</ul>
+</div>
+</nav>
+<p>
+Recently I bought Proton VPN with a seemingly good deal for my torrenting needs. It's not illegal to torrent where I live but from what I've heard, seeding is not considered <i>safe</i>. I am a person who likes to share—especially if it's zero effort, like seeding—so a good deal on a VPN account seemed pretty nice.
+</p>
+
+<p>
+This is what I had:
+</p>
+
+<ul class="org-ul">
+<li>A computer (my homeserver), running Arch Linux</li>
+<li>qBittorrent, running with it's own user, managed by Systemd. No fancy Docker stuff.</li>
+</ul>
+
+<p>
+&hellip;and this is what I wanted:
+</p>
+
+<ul class="org-ul">
+<li>qBittorrent uses the VPN (and maybe other applications of my choosing), rest of the system uses my standard network.</li>
+<li>Enabling port forwarding on qBittorrent through VPN.</li>
+</ul>
+
+<p>
+Well it turns out, keeping your system simple (i.e. no Docker, managing everything with Systemd) has some invisible cost. In hindsight, this was not the hardest thing to achieve but the fact that I've never dabbled with VPNs (other than simply turning them on/off via a GUI) and having little knowledge of the Linux network stack made this quite challenging.
+</p>
+
+<p>
+If you are okay with using Docker and you are managing your application (i.e. qBittorrent) via Docker, then see <a href="https://github.com/qdm12/gluetun">gluetun</a>. It's a container that supports multiple VPN providers that you can route your qBittorrent through, and it should work. Never tried it.
+</p>
+<div id="outline-container-requirements" class="outline-2">
+<h2 id="requirements">Requirements</h2>
+<div class="outline-text-2" id="text-requirements">
+<ul class="org-ul">
+<li>Make sure you have the following packages:
+<ul class="org-ul">
+<li><code>wireguard-tools</code> (for <code>wg-quick</code>)</li>
+<li><code>libnatpmp</code> (for the <code>natpmpc</code> command to request ports)</li>
+<li><code>curl</code> (for verification)</li>
+<li><code>qbittorrent-nox</code> (or the desktop version, but this guide assumes a service-based setup)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-setting-up-wireguard-and-split-tunneling" class="outline-2">
+<h2 id="setting-up-wireguard-and-split-tunneling">Setting up WireGuard and split tunneling</h2>
+<div class="outline-text-2" id="text-setting-up-wireguard-and-split-tunneling">
+<ul class="org-ul">
+<li>Go to your VPN provider (e.g., Proton VPN) and download a WireGuard configuration. See <a href="https://protonvpn.com/support/port-forwarding-manual-setup">this tutorial for Proton VPN</a>. (Ensure "NAT-PMP" or "Port Forwarding" is enabled in the generation settings.)</li>
+<li><p>
+Save it to <code>/etc/wireguard/qbproto.conf</code>. (File name can change, I'll just use this for the rest of this post.) Make the following changes in the file:
+</p>
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Interface]
+PrivateKey = &lt;YOUR_PRIVATE_KEY&gt;
+Address = 10.2.0.2/32
+
+# 1. Comment the DNS line
+#   Otherwise WireGuard sets your system DNS to this and it may break
+#   your default network.
+
+# DNS = 10.2.0.1
+
+# 2. Disable default routing (to be able to do split tunneling)
+#   This tells WireGuard not to overwrite your default system
+#   gateway. Your system will still use your normal home internet.
+
+Table = off
+
+# 3. Add manual route to the VPN Gateway
+#   These commands direct traffic destined to 10.2.0.1 over the
+#   WireGuard VPN, and clean up the route when the VPN is stopped.
+#
+#   Without this, 'natpmpc' cannot contact the gateway (10.2.0.1)
+#   because 'Table = off' prevents the creation of VPN routes.
+
+PostUp = ip route add 10.2.0.1/32 dev %i
+PreDown = ip route del 10.2.0.1/32 dev %i
+
+# ... rest of the file stays the same ...
+</code></pre>
+</div></li>
+
+<li><p>
+Now, enable and start the interface:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>sudo systemctl enable --now wg-quick@qbproto
+                                   # ^ or whatever you named your WireGuard conf file
+
+# or, if you are not using Systemd, do this:
+sudo wg-quick up qbproto
+
+# to stop it:
+sudo wg-quick down qbproto
+</code></pre>
+</div></li>
+
+<li><p>
+Verify that split tunneling works:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code># Check your normal IP (should be your ISP IP)
+curl ip.me
+
+# Check the VPN interface IP (should be the VPN IP)
+curl --interface qbproto ip.me
+
+# You can also check with WireGuard, which show how much data sent/received:
+sudo wg show
+</code></pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-force-qbittorrent-to-use-the-vpn" class="outline-2">
+<h2 id="force-qbittorrent-to-use-the-vpn">Force qBittorrent to use the VPN</h2>
+<div class="outline-text-2" id="text-force-qbittorrent-to-use-the-vpn">
+<p>
+Now that the split tunneling works, we must force qBittorrent to use <b>only</b> the VPN interface. Just like <code>curl</code>'s <code>--interface</code> option, qBittorrent also has a setting for it.
+</p>
+
+<ul class="org-ul">
+<li>Open qBittorrent settings, go to <i>Advanced</i> and then set:
+<ul class="org-ul">
+<li><b>Network Interface</b> ⇒ <code>qbproto</code>.</li>
+<li><b>Optional IP address to bind to</b> ⇒ Set to your VPN internal IP (e.g., <code>10.2.0.2</code> found in your config).</li>
+</ul></li>
+</ul>
+
+<p>
+This effectively acts as a kill-switch, if your VPN drops then qBittorrent will not be able to transmit anything which is what we want.
+</p>
+</div>
+</div>
+<div id="outline-container-enable-port-forwarding-for-qbittorrent" class="outline-2">
+<h2 id="enable-port-forwarding-for-qbittorrent">Enable port-forwarding for qBittorrent</h2>
+<div class="outline-text-2" id="text-enable-port-forwarding-for-qbittorrent">
+<p>
+To request a port, you need to run something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code># for udp
+natpmpc -a 1 0 udp 60 -g 10.2.0.1
+# for tcp
+natpmpc -a 1 0 tcp 60 -g 10.2.0.1
+</code></pre>
+</div>
+
+<p>
+which will output something containing the following:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nil"><code>...
+Mapped public port 44925 protocol UDP to local port 0 lifetime 60
+...
+Mapped public port 44925 protocol TCP to local port 0 lifetime 60
+...
+</code></pre>
+</div>
+
+<p>
+Now you can open qBittorrent, go to <i>Settings</i> → <i>Connection</i> → <i>Listening Port</i> → <i>Port used for incoming connections</i> and set it to the port you got from <code>natpmpc</code> outputs, <code>44925</code> in this case.
+</p>
+
+<p>
+The unfortunate thing is that this port will be kept open for 60 seconds (for Proton VPN, other providers may have different configurations) and then it will be no longer valid. You can run these commands on a loop to keep the port open:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>while true; do
+  natpmpc -a 1 0 udp 60 -g 10.2.0.1 &amp;&amp; natpmpc -a 1 0 tcp 60 -g 10.2.0.1 || { echo -e "ERROR with natpmpc command \a"; break; }
+  sleep 45
+done
+</code></pre>
+</div>
+
+<p>
+Of course, this script does not update qBittorrent configurations on port changes. The port is less likely to get changed but if your server/computer gets restarted or if your network stops working for more than 60 seconds, you'll definitely get a new port. Here is another bash script that runs these commands on a loop and updates qBittorrent port configuration when needed. It restarts qBittorrent after port changes via Systemd:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+GATEWAY=10.2.0.1
+LIFETIME=60
+RETRY_LIMIT=3
+QBT_USER="qbittorrent"
+QBT_HOME="/home/$QBT_USER"
+QBT_SERVICE_NAME="qbittorrent-nox@$QBT_USER"
+CONFIG="$QBT_HOME/.config/qBittorrent/qBittorrent.conf"
+PORT_KEY='Session\\Port'
+
+get_last_port() {
+    if [[ -f "$CONFIG" ]]; then
+        awk -F= -v key="$PORT_KEY" '$1 == key {print $2}' "$CONFIG" | tail -n 1
+    else
+        echo ""
+    fi
+}
+
+update_config_port() {
+    if grep -q "^$PORT_KEY=" "$CONFIG"; then
+        sed -i "/^$PORT_KEY=/c\\$PORT_KEY=$1" "$CONFIG"
+    else
+        echo "$PORT_KEY=$1" &gt;&gt; "$CONFIG"
+    fi
+    chown $QBT_USER:$QBT_USER "$CONFIG"
+    echo "&gt;&gt; (qBittorrent) Config file updated..."
+}
+
+fail_count=0
+last_port=$(get_last_port)
+
+while true; do
+    got_port=""
+    for ((i=1; i&lt;=RETRY_LIMIT; ++i)); do
+        OUT=$(natpmpc -a 1 0 udp $LIFETIME -g "$GATEWAY"; natpmpc -a 1 0 tcp $LIFETIME -g "$GATEWAY")
+        got_port=$(echo "$OUT" | awk '/Mapped public port/ {print $4}' | tail -n 1)
+        if [[ -n "$got_port" ]]; then
+            break
+        fi
+        sleep 1
+    done
+
+    if [[ -z "$got_port" ]]; then
+        ((fail_count++))
+        echo "[$(date)] Failed to get port from natpmpc (#$fail_count)"
+        if [[ $fail_count -ge $RETRY_LIMIT ]]; then
+            echo "Port could not be determined after $RETRY_LIMIT tries. Exiting."
+            exit 1
+        fi
+        sleep 5
+        continue
+    else
+        fail_count=0
+    fi
+
+    if [[ "$got_port" != "$last_port" ]]; then
+        echo "[$(date)] Updating qbittorrent port: $last_port -&gt; $got_port"
+        echo "&gt;&gt; (systemctl) Restarting qbittorrent service..."
+
+        # qBittorrent saves config on exit. We must stop the service, modify
+        # the file, and then restart to prevent overwrite.
+        systemctl stop $QBT_SERVICE_NAME.service
+        update_config_port "$got_port"
+        systemctl start $QBT_SERVICE_NAME.service
+        echo "&gt;&gt; (systemctl) Done..."
+
+        last_port="$got_port"
+    else
+        echo "[$(date)] Port $got_port unchanged, not restarting qbittorrent."
+    fi
+
+    sleep $((LIFETIME - 10))
+done
+</code></pre>
+</div>
+
+<p>
+Save this script into a file like <code>/usr/local/bin/qbittorrent-port-forwarder.sh</code>. To run it as a Systemd service, you can add this to <code>/etc/systemd/system/qbittorrent-port-forwarder.service</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Unit]
+Description=qBittorrent VPN port forwarder
+After=qbittorrent-nox@qbittorrent.service
+Wants=qbittorrent-nox@qbittorrent.service
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/qbittorrent-port-forwarder.sh
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+</div>
+
+<p>
+Now do:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nil"><code>sudo systemctl daemon-reload
+sudo systemctl enable --now qbittorrent-port-forwarder
+</code></pre>
+</div>
+
+<p>
+Now that you got your new port, and it's applied to your qBittorrent configuration, you should be seeing this green little icon that indicates everything is working properly:
+</p>
+
+
+<figure>
+<img src="/images/qbittorrent_port_forwarding_enabled.png" alt="qbittorrent_port_forwarding_enabled.png" class="centered">
+
+</figure>
+
+<p>
+You can also go to <a href="https://ipleak.net/">ipleak.net</a> and use <i>Torrent Address Detection</i> to ensure that you are using your VPN and your port is correct.
+</p>
+
+<hr>
+
+<p>
+This was a deeper rabbit hole than I expected for just "turning on a VPN". However, now that the initial configuration is done, the system is rock solid. It has been running flawlessly for weeks, automatically handling port refreshes and IP changes in the background. Since everything is managed via Systemd, I get all the standard reliability guarantees like automatic restarts, plus my custom enhancements—like crash notifications to my phone—via drop-ins.</p>
+</div>
+</div>
+
+        </div>
+
+        <div id="similar-posts">
+          <h2>Similar posts</h2>
+          <ul>
+            <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2019/02/21/bash-scripting-guide.html">Bash scripting guide</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li>
+          </ul>
+        </div>
+
+       <div id="comments">
+        <h2>Comments</h2>
+        <script src="https://utteranc.es/client.js"
+                repo="isamert/isamert.github.io"
+                issue-term="pathname"
+                label="> 💬"
+                theme="github-light"
+                crossorigin="anonymous"
+                defer>
+        </script>
+      </div>
+      </section>
+
+      <footer>
+        <hr />
+        <p>
+          Isa Mert Gurbuz © 2022-2024
+      
+          <span>
+            <a href="https://github.com/isamert/isamert.github.io">Source</a>
+          </span>
+        </p>
+      </footer>
+  </body>

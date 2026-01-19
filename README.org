@@ -6225,7 +6225,7 @@ They can be overridden in header properties."
       <pubDate>%s</pubDate>
       <description><![CDATA[ %s ]]></description>
     </item>"
-        (org-entry-get nil "ITEM")
+        (xml-escape-string (org-entry-get nil "ITEM"))
         isamert/blog-url
         (isamert/blog-mk-path)
         (-let (((time zone) (s-split "] " (org-entry-get nil "PUBLISH_DATE"))))

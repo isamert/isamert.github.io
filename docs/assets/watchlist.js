@@ -20,7 +20,7 @@ const FILTER_TYPES = [
   ["Genre", "genres"],
   ["Director", "directors"],
   ["Actor", "actors"],
-  ["Status", "to"],
+  ["Status", "todo"],
   ["Country", "countries"],
   ["Tag", "tags"],
 ];

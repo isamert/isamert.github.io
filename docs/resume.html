@@ -26,7 +26,11 @@
 
      .group h1 {
        font-size: 1.7em;
-       border-bottom: 1.7px solid #808486;
+       border-bottom: 1.7px solid #d0cde8;
+       letter-spacing: 0.04em;
+       padding-left: 0.4em;
+       border-left: 3.5px solid #7c6bb5;
+       color: #2e2a40;
      }
 
      .group-instance h2 {
@@ -53,6 +57,18 @@
      .quick-info {
        text-align: center;
        margin: 1rem 0;
+       background: linear-gradient(to right, transparent, rgba(124, 107, 181, 0.07), transparent);
+       border-top: 1px solid #e0ddf0;
+       border-bottom: 1px solid #e0ddf0;
+       padding: 0.45rem 0;
+     }
+
+     .info-item + .info-item::before {
+       content: '·';
+       color: #b0a8d0;
+       padding-right: 0.15rem;
+       font-size: 1.1em;
+       vertical-align: middle;
      }
 
      .quick-info i {
@@ -68,8 +84,13 @@
      }
 
      .info-item {
-       padding-right: 0.3rem;
+       padding-right: 0.15rem;
        display: inline;
+       font-size: 0.85em;
+     }
+
+     .quick-info i {
+       font-size: 1.1rem;
      }
      .projects li a {
        font-family: 'Acme', sans-serif;
@@ -85,6 +106,8 @@
      .sheet > h1 {
        text-align: center;
        font-size: 2.3em;
+       letter-spacing: 0.08em;
+       color: #2e2a40;
      }
 
      projects ul {
@@ -92,21 +115,68 @@
      }
 
      ul {
-       /* list-style: inside; */
        padding-left: 1.7em;
+       list-style: none;
+     }
+
+     ul li::before {
+       content: '▪';
+       color: #7c6bb5;
+       font-size: 0.65em;
+       vertical-align: middle;
+       margin-right: 0.4em;
+       margin-left: -1.2em;
      }
 
      h2 > a {
        text-decoration: none;
      }
 
+     b {
+       background-color: rgba(124, 107, 181, 0.08);
+       border-radius: 2px;
+       padding: 0 0.18em;
+     }
+
      a {
-       color: #512da8;
+       color: #4a3f8f;
      }
 
      .duration {
-       color: #8559da;
+       color: #7c6bb5;
        font-weight: bold;
+     }
+
+     .role-progression {
+       margin-top: 0.6em;
+       padding-left: 1.7em;
+       border-left: 2px solid #e0ddf0;
+     }
+
+     .role-progression .header {
+       margin-bottom: 0.3em;
+     }
+
+     .role-progression .role-title {
+       font-size: 0.85em;
+       color: #555;
+     }
+
+     .role-progression .duration {
+       font-size: 0.85em;
+       color: #aaa;
+     }
+
+     .tagline {
+       text-align: center;
+       font-family: 'IBM Plex Sans Condensed', sans-serif;
+       font-style: italic;
+       font-size: 0.88em;
+       color: #6a5fa8;
+       margin: 0.3em auto 0.1em;
+       max-width: 80%;
+       line-height: 1.5;
+       letter-spacing: 0.01em;
      }
 
      .skills strong {
@@ -126,6 +196,12 @@
 
       <h1>Isa Mert Gurbuz</h1>
 
+      <p class="tagline">
+        Staff Software Engineer with 7+ years of experience building and scaling high-impact systems across adtech, healthcare, and enterprise platforms.
+        Passionate about functional programming, free software, and crafting elegant tooling that amplifies developer productivity.
+        Equally at home deep in system architecture as mentoring teams and shaping engineering culture.
+      </p>
+
       <section class="quick-info">
         <div class="info-item">
           <i class="info-item fa fa-github"></i>
@@ -139,43 +215,90 @@
 
         <div class="info-item">
           <i class="info-item fa fa-envelope"></i>
-          <a href="mailto:isamert@protonmail.com">isamert@protonmail.com</a>
+          <a href="mailto:isamertgurbuz@gmail.com">isamertgurbuz@gmail.com</a>
         </div>
 
         <div class="info-item">
           <i class="info-item fa fa-phone"></i>
-          <a href="tel:+905386064374">+90 538 606 43 74</a>
+          <a href="tel:+31627598816">+31 627598816</a>
         </div>
 
-        <!--
-            <div class="info-item">
-              <i class="info-item fa fa-stack-overflow"></i>
-              <a href="https://stackoverflow.com/users/3716130/isamert">isamert</a>
-            </div>
-            -->
+        <div class="info-item">
+          <i class="info-item fa fa-map-marker"></i>
+          <span>Amsterdam, Netherlands</span>
+        </div>
+
       </section>
 
       <section class="experience group">
         <h1>Experience <i class="fa fa-gear"></i></h1>
 
+        <!-- TRENDYOL -->
+
         <div class="group-instance">
           <div class="header">
-            <h2>Senior Software Engineer &#8226; <a href="http://soostone.com">Trendyol</a> &#8226; <i>remote</i></h2>
+            <h2>Staff Software Engineer &#8226; <a href="https://trendyol.com">Trendyol</a> &#8226; <i>hybrid</i></h2>
             <span class="duration">July 2021 - <i>ongoing</i></span>
           </div>
 
-          <p>
+          <div class="role-progression">
+            <div class="header">
+              <span class="role-title">Staff Software Engineer &#8226; <i>hybrid</i> </span>
+              <span class="duration">Jan 2024 - <i>ongoing</i></span>
+            </div>
             <ul>
               <li>
-                Working as a fullstack developer using <b>React.js</b> on the frontend and working with several microservices written in <b>node.js</b> (using <b>NestJS</b>) and <b>Kotlin</b>/<b>Java</b> (using <b>Quarkus</b>/<b>Spring</b>) on the backend. Databases involved are <b>Couchbase</b>, <b>PostgreSQL</b> and <b>Cassandra</b>.
+                Ran workshops and presentations on <b>AI</b> adoption and practical usage across engineering teams.
+              </li>
+              <li>
+                Closely paired with and mentored engineers across Ads teams.
+              </li>
+              <li>
+                Designed and led L/XL scale projects spanning all Ads teams end-to-end.
+              </li>
+              <li>
+                Formed cross-organizational workgroups (e.g. fraud prevention), actively contributing to their design and supporting other teams throughout.
+              </li>
+              <li>
+                Participated in the staff eng community, shaped organizational decisions and pushed back on misdirections in architectural and process discussions.
               </li>
             </ul>
+
+            <div class="header">
+              <span class="role-title">Senior Software Engineer  &#8226; <i>remote/hybrid</i></span>
+              <span class="duration">June 2022 - Jan 2024</span>
+            </div>
             <ul>
               <li>
-                Working on real-time, high-throughput event processing systems using <b>Kafka Streams</b>. Designing and implementing resilient, self-healing, anti-fragile systems from ground-up.
+                Overhauled pipeline structures across all Ads teams — defined a unified architecture, contributing guidelines, and improved both performance and maintainability.
+              </li>
+              <li>
+                Built an internal deployment utility in <b>Deno</b>/<b>TypeScript</b> that unified alerts, dashboards and deployments. Still actively used across all Ads teams and parts of the wider organization.
+              </li>
+              <li>
+                Reshaped how teams handle documentation using open-source tools (<b>HackMD</b>) and a custom wrapper, enabling real-time collaborative docs. Adopted across Ads teams and beyond.
+              </li>
+              <li>
+                Designed and built multiple <b>BigQuery</b>-backed data systems for ads reporting and analytics, owning the architecture end-to-end from ingestion pipelines to query optimization.
+              </li>
+              <li>
+                Built an end-to-end testing framework leveraging the <b>BigQuery emulator</b>, enabling fast, reliable local testing of data pipelines — significantly streamlining the development workflow around <b>BigQuery</b>-dependent processes.
               </li>
             </ul>
-          </p>
+
+            <div class="header">
+              <span class="role-title">Software Engineer &#8226; <i>remote</i> </span>
+              <span class="duration">July 2021 - June 2022</span>
+            </div>
+            <ul>
+              <li>
+                Transitioned the entire ads consumption subsystem from scheduled jobs (~30 min latency) to near-real-time <b>Kafka Streams</b>, reducing overspend from 10–15% to sub 1%.
+              </li>
+              <li>
+                Designed and delivered multiple projects end-to-end using <b>React.js</b>, <b>node.js</b> (<b>NestJS</b>), <b>Kotlin</b>/<b>Java</b> (<b>Quarkus</b>/<b>Spring</b>) and databases including <b>Couchbase</b>, <b>PostgreSQL</b> and <b>Cassandra</b>. Services deployed and operated on <b>Kubernetes</b> with <b>Docker</b>.
+              </li>
+            </ul>
+          </div>
         </div>
 
 
@@ -188,16 +311,16 @@
           <p>
             <ul>
               <li>
-                I worked as fullstack developer on a health-care project in a multi-cultural work environment with multiple time-zones.
+                Worked as a fullstack developer on a healthcare project in a multicultural, multi-timezone environment.
               </li>
               <li>
-                I mainly worked on <b>node.js</b> microservices that is using <b>AWS</b> technologies, such as <b>Lambda</b>, <b>DynamoDB</b>, <b>Cognito</b>.
+                Built and maintained <b>node.js</b> microservices on <b>AWS</b>, using <b>Lambda</b>, <b>DynamoDB</b> and <b>Cognito</b>.
               </li>
               <li>
-                I was also contributing to a <b>Haskell</b> monolith backend project and other <b>React.js</b> frontend projects.
+                Contributed to a <b>Haskell</b> monolith backend and several <b>React.js</b> frontend projects.
               </li>
               <li>
-                Along with these I developed several internal tools, for automating and validating some internal workflows that led to at least ~70% increase in productivity on their specific related task. Mainly used <b>Haskell</b> and <b>TypeScript</b>.
+                Developed internal tools in <b>Haskell</b> and <b>TypeScript</b> for automating and validating internal workflows, resulting in at least ~70% productivity improvement on targeted tasks.
               </li>
             </ul>
           </p>
@@ -213,87 +336,65 @@
           <p>
             <ul>
               <li>
-                Worked on the development of a CMS project as a backend developer.
-                <ul>
-                  <li>
-                    The system is used by maintainers for managing applications published to the <a href="https://appgallery.huawei.com/">AppGallery</a> application market.
-                  </li>
-                  <li>
-                    The system was written in <b>Java</b> and consisted several microservices.
-                  </li>
-                  <li>
-                    I designed and developed new endpoints, did refactoring and bunch of improvements.
-                  </li>
-                  <li>
-                    I was <em>also</em> responsible for building, maintaining and improving the <b>DevOps</b> process.
-                  </li>
-                </ul>
+                Developed a <b>Java</b>-based CMS backend consisting of several microservices, used by maintainers to manage applications on the <a href="https://appgallery.huawei.com/">AppGallery</a> market. Designed new endpoints, performed refactoring, and was responsible for building and maintaining the <b>DevOps</b> pipeline.
               </li>
               <li>
-                Worked on adapting <a href="https://huaweimobileservices.com">Huawei Mobile Services</a> to third party frameworks.
-                <ul>
-                  <li>
-                    I led a newly formed team of ~ten <b>Cordova</b> developers and developed Cordova libraries.
-                  </li>
-                  <li>
-                    Worked closely with <b>React-Native</b> team and developed cross-framework libraries.
-                  </li>
-                  <li>
-                    I also automated lots of internal workflows, mostly using <b>Bash</b> scripts.
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </p>
-        </div>
-
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>Software Engineer &#8226; <a href="https://akadumi.com">Akadumi.com</a> &#8226; <i>freelance</i></h2>
-            <span class="duration">June - Aug 2019</span>
-          </div>
-
-          <p>
-            <ul>
-              <li>
-                Developed an e-commerce website for selling courses using <b>MongoDB</b>, <b>Node.js</b> with <b>Express.js</b> for the backed and <b>React.js</b> with <b>Next.js</b> for the frontend and published using <b>GCP</b>.
-              </li>
-            </ul>
-          </p>
-        </div>
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>Software Engineer &#8226; Civil Aviation Research and Application Center &#8226; <i>Eskisehir, Turkey</i></h2>
-            <span class="duration">Apr - Aug 2017</span>
-          </div>
-
-          <p>
-            <ul>
-              <li>
-                Designed and developed a tool for managing/archiving/automating some aviation-related test results using <b>Kotlin</b> and <b>Java</b>. The program also lets users work on those test results collaboratively in a secured environment.
-              </li>
-            </ul>
-          </p>
-        </div>
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>Software Engineer Intern &#8226; <a href="http://www.savronik.com.tr/en/home/">Savronik</a> &#8226; <i>Eskisehir, Turkey</i></h2>
-            <span class="duration">June - Sept 2016</span>
-          </div>
-
-          <p>
-            <ul>
-              <li>
-                Designed and developed an extensive IDE/GUI designer for <b>D4D</b> library using <b>C++</b> and <b>Qt</b> toolkit. The IDE has a fully-featured GUI designer that outputs pure C code, basic code editing tools, translation manager and other helpful tools for developing applications for <b>embedded devices</b>.
+                Worked on adapting <a href="https://huaweimobileservices.com">Huawei Mobile Services</a> to third-party frameworks — led a newly formed team of ~10 <b>Cordova</b> developers, built cross-framework libraries alongside the <b>React Native</b> team, and automated internal workflows using <b>Bash</b>.
               </li>
             </ul>
           </p>
         </div>
 
       </section>
+    </section>
+
+    <section class="sheet padding-10mm">
+
+      <div class="group-instance">
+        <div class="header">
+          <h2>Software Engineer &#8226; <a href="https://akadumi.com">Akadumi.com</a> &#8226; <i>freelance</i></h2>
+          <span class="duration">June - Aug 2019</span>
+        </div>
+
+        <p>
+          <ul>
+            <li>
+              Built an e-commerce platform for selling courses using <b>MongoDB</b>, <b>Node.js</b> and <b>Express.js</b> on the backend, <b>React.js</b> and <b>Next.js</b> on the frontend, deployed on <b>GCP</b>.
+            </li>
+          </ul>
+        </p>
+      </div>
+
+
+      <div class="group-instance">
+        <div class="header">
+          <h2>Software Engineer &#8226; Civil Aviation Research and Application Center &#8226; <i>Eskisehir, Turkey</i></h2>
+          <span class="duration">Apr - Aug 2017</span>
+        </div>
+
+        <p>
+          <ul>
+            <li>
+              Designed and developed a tool in <b>Kotlin</b> and <b>Java</b> for managing, archiving and automating aviation-related test results, with support for secure collaborative workflows.
+            </li>
+          </ul>
+        </p>
+      </div>
+
+      <div class="group-instance">
+        <div class="header">
+          <h2>Software Engineer Intern &#8226; <a href="http://www.savronik.com.tr/en/home/">Savronik</a> &#8226; <i>Eskisehir, Turkey</i></h2>
+          <span class="duration">June - Sept 2016</span>
+        </div>
+
+        <p>
+          <ul>
+            <li>
+              Designed and developed a full-featured IDE and GUI designer for the <b>D4D</b> library using <b>C++</b> and <b>Qt</b>. The IDE generates pure C code, includes basic code editing, a translation manager, and other utilities for <b>embedded device</b> development.
+            </li>
+          </ul>
+        </p>
+      </div>
 
       <section class="projects group">
         <h1>Personal Projects <i class="fa fa-tags"></i></h1>
@@ -320,22 +421,22 @@
             <li>
               <a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a> <b> ∷ </b> An <a href="https://www.omdbapi.com/">OMDb</a> API client and a watchlist manager for <em>Emacs</em> and <em>org-mode</em>. Written in <b>Emacs Lisp</b>.
             </li>
-          </ul>
-        </p>
-      </section>
-
-    </section>
-
-    <section class="sheet padding-10mm">
-
-      <section class="projects group">
-        <p>
-          <ul>
             <li>
-              <a href="https://github.com/isamert/isamert.github.io">isamert.net</a> <b> ∷ </b> A static website generator and my website itself. One interesting thing is that the blog is generated from one file and the code that generates the blog and the documentation of the code is inside that one file itself. Written in <b>Emacs Lisp</b>.
+              <a href="https://github.com/isamert/swagg.el">swagg.el</a> <b> ∷ </b> An <b>Emacs</b> client for exploring and querying <b>Swagger/OpenAPI</b> definitions interactively. Written in <b>Emacs Lisp</b>.
             </li>
             <li>
-              <a href="https://github.com/isamert/empv.el">empv.el</a> <b> ∷ </b> A very comprehensive Emacs interface for MPV media player and an Emacs Youtube client. Written in <b>Emacs Lisp</b>.
+              <a href="https://github.com/isamert/tabgo.el">tabgo.el</a> <b> ∷ </b> An <b>Emacs</b> package for quick keyboard-driven navigation between tab bar tabs. Written in <b>Emacs Lisp</b>.
+            </li>
+            <li>
+              <a href="https://github.com/isamert/egnuplot">egnuplot</a> <b> ∷ </b> A composable <b>Emacs</b> macro for <b>gnuplot</b>, enabling creation of plots in Elisp syntax. Written in <b>Emacs Lisp</b>.
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <a href="https://github.com/isamert/isamert.github.io">isamert.net</a> <b> ∷ </b> A static website generator and my personal website. The blog is generated from a single file that also contains the generator code and its own documentation — a form of literate programming. Written in <b>Emacs Lisp</b>.
+            </li>
+            <li>
+              <a href="https://github.com/isamert/empv.el">empv.el</a> <b> ∷ </b> A comprehensive <b>Emacs</b> interface for the <b>MPV</b> media player, including a YouTube client. Written in <b>Emacs Lisp</b>.
             </li>
             <li>
               <a href="https://github.com/isamert/dotfiles">dotfiles</a> <b> ∷ </b> My very detailed system configuration written in style of literate programming.
@@ -345,7 +446,7 @@
             </li>
           </ul>
         </p>
-        <p>You can see other projects that I did not mention (they might be inactive or insignificant to be mentioned) here in my <a href="https://github.com/isamert">GitHub page</a>.</p>
+        <p>Other projects — some inactive or smaller in scope — are available on my <a href="https://github.com/isamert">GitHub page</a>.</p>
       </section>
 
       <section class="education group">
@@ -364,7 +465,7 @@
 
           <div class="header">
             <h2>&#8226; Anadolu University, Open Education Faculty &#8226; Philosophy  &#8226; <i>Undergrad</i></h2>
-            <span class="duration">2017 - ongoing</span>
+            <span class="duration">2017 - dropped</span>
           </div>
         </div>
       </section>
@@ -376,13 +477,13 @@
           <p>
             <ul>
               <li>
-                <strong>Languages ∷</strong> JavaScript and TypeScript (browswer and node.js/deno), Haskell, Rust, Kotlin, Java, Emacs Lisp, Python, Bash, C++, Guile Scheme, C, PHP, R, Clojure, C#
+                <strong>Languages ∷</strong> JavaScript and TypeScript (browser and node.js/deno), Haskell, Rust, Kotlin, Java, Emacs Lisp, Python, Bash, C++, Guile Scheme, C, PHP, R, Clojure, C#
               </li>
               <li>
                 <strong>Frameworks ∷</strong> Javascript {React.js, Express.js, Next.js}, Java/Kotlin {Spring, JavaFX}, C++/Python {Qt}
               </li>
               <li>
-                <strong>Tooling ∷</strong> Emacs, Basic UNIX tools {sed, grep, find, vi(m), ssh}, git, Bash/ZSH, Nix, AWS, serverless, GCP
+                <strong>Tooling ∷</strong> Emacs, Basic UNIX tools {sed, grep, find, vi(m), ssh}, git, Bash/ZSH, Nix, AWS, serverless, GCP, Docker, Kubernetes, Kafka
               </li>
               <li>
                 <strong>Concepts ∷</strong> functional programming, object-oriented programming, API design, automation, workflow optimization, literate programming
@@ -394,55 +495,49 @@
 
       </section>
 
-      <section class="additional-work group">
-        <h1>Additional/Voluntary work <i class="fa fa-users"></i></h1>
+      <!-- <section class="additional-work group">
+           <h1>Additional/Voluntary work <i class="fa fa-users"></i></h1>
 
-        <div class="group-instance">
-          <p>
-            <ul>
-              <li>
-                I gave introductory courses on <b>Python</b> at <em>Anadolu University Computer Club</em> on fall 2016.
-              </li>
-              <li>
-                I gave introductory courses on <b>GNU/Linux</b> at <em>Anadolu University Computer Club</em> on fall 2015.
-              </li>
-            </ul>
-          </p>
+           <div class="group-instance">
+           <p>
+           <ul>
+           <li>
+           Gave an introductory course on <b>Python</b> at <em>Anadolu University Computer Club</em>, fall 2016.
+           </li>
+           <li>
+           Gave an introductory course on <b>GNU/Linux</b> at <em>Anadolu University Computer Club</em>, fall 2015.
+           </li>
+           </ul>
+           </p>
 
-        </div>
+           </div>
 
-      </section>
+           </section>
+      -->
+      <!-- <section class="additional-work group">
+           <h1>Interests and Activities <i class="fa fa-podcast"></i></h1>
 
-      <section class="additional-work group">
-        <h1>Interests and Activities <i class="fa fa-podcast"></i></h1>
+           <div class="group-instance">
+           <p>
+           <ul>
+           <li>
+           Strong advocate of the <em>free software movement</em> — publish all personal work as free software and actively contribute to FOSS projects. Contributions are visible on my GitHub page.
+           </li>
+           <li>
+           Enjoy reading philosophy in my free time, particularly the German idealists and more contemporary currents like post-modernism and post-structuralism.
+           </li>
+           <li>
+           Publish short movie, show and album reviews in Turkish <a href="https://eksisozluk.com/biri/yasli-ateist">here</a>. Watchlist available <a href="https://isamert.net/watchlist.html">here</a>.
+           </li>
+           <li>
+           More content available on <a href="https://isamert.net">my website</a>.
+           </li>
+           </ul>
+           </p>
 
-        <div class="group-instance">
-          <p>
-            <ul>
-              <li>
-                I'm a huge advocate of <em>free software movement</em>. I try to publish all of my works as free software. I try to contribute FOSS projects. You can see a glimpse of my contributions to other free software projects through my GitHub page.
-              </li>
-              <li>
-                In my free time I generally read books of philosophy. I really like the works of German idealists. I also do enjoy reading about newer philosophical thoughts like post-modernism/post-structuralism.
+           </div>
 
-              </li>
-              <li>
-                I publish short movie/show/album critics/reviews (in Turkish) <a href="https://eksisozluk.com/biri/yasli-ateist">here</a>, you can also check out my <a href="https://www.imdb.com/user/ur51538143/ratings">IMDb ratings</a>.
-              </li>
-              <li>
-                I try to scrobble what I listen <a href="https://libre.fm/user/isamert">here</a>.
-              </li>
-              <li>
-                Be sure to check out <a href="https://isamert.net">my website</a> to see more content.
-              </li>
-            </ul>
-          </p>
-          <p>
-          </p>
-
-        </div>
-
-      </section>
-
+           </section>
+      -->
   </body>
 </html>

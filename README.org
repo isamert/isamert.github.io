@@ -492,20 +492,22 @@ a:hover {
     font-style: italic;
 }
 
-/* Inline codes */
-code {
+/* Inline codes
+ ,*
+ ,*  "not(pre code)" because org started wrapping code blocks with <code>
+ ,*  (rightfully so, but this was not the earlier behavior), which left no
+ ,*  indicator to distinguish between inline code (like ~this~) and code
+ ,*  blocks other than code blocks are also being wrapped with <pre>.
+,*/
+code:not(pre code) {
     font-family: var(--monospace-font);
-    /* font-size: 0.7em; */
     background: var(--inline-src-block-bg-color) !important;
     border-radius: 0.4rem !important;
     padding: 0.24rem !important;
-}
-
-/*
- ,* Make code blocks in paragraphs inline.
- ,* hljs turns them into a fully-fledged code block. We don't want that.
- ,*/
-code {
+    /*
+     ,* Make code blocks in paragraphs inline.
+     ,* hljs turns them into a fully-fledged code block. We don't want that.
+     ,*/
     display: inline !important;
 }
 

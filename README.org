@@ -5768,6 +5768,8 @@ Akin to ~cider-inspect-last-last-result~, we have ~eros-inspect-last-result~ (se
 :END:
 IELM is just a REPL for elisp and I don't really use it that much, given that you can evaluate code anywhere in Emacs. The nice thing about is that, it's good for experimentation sessions where you have a history of the trials you made during the session. Other than this, I have no use for it.
 
+- [2026-06-21 Sun] Update :: I found about ~ielm-change-working-buffer~ which let's you select a buffer in which all sexps entered at the IELM prompt are evaluated. This completely replaced the interactive ~eval-expression~ (~M-:~) usage for me. For simple things, sure, I still use it but if you are developing a feature where you are testing out operations on a buffer, simply open ~ielm~ and then change the working buffer to the buffer you want to test against and voila, it's like every expression is wrapped with ~(with-current-buffer "<your-buffer>" ...)~ and you get all the goodies of ~ielm~. I even created a small helper that opens ~ielm~ in a popup with current buffer as the working buffer for ielm. So instead of hitting ~M-:~, I use this new function. Easier editing and much easy to interact with the results.
+
 ** Refactoring & faster editing
 :PROPERTIES:
 :CUSTOM_ID: refactoring-faster-editing
@@ -5935,6 +5937,13 @@ Automatic indentation works fairly well but it fails on quoted lists. I use [[ht
 #+end_src
 
 Especially useful if you are a user of /aggressive-indent-mode/ that I've talked about above.
+
+** Appendix: Updates
+:PROPERTIES:
+:CUSTOM_ID: appendix-updates
+:END:
+
+- [2026-06-21 Sun 18:21] Extended the ~M-x ielm~ section with ~ielm-change-working-buffer~ usage.
 * Announcement: swagg.el -- Swagger UI, inside Emacs :announcement:emacs:
 :PROPERTIES:
 :PUBLISH_DATE: [2023-09-04 Mon 00:00] +0200

@@ -63,6 +63,7 @@
 </li>
 <li><a href="#other-helpful-packages">Other helpful packages</a></li>
 <li><a href="#automatic-indentation-fix">Automatic indentation fix</a></li>
+<li><a href="#appendix-updates">Appendix: Updates</a></li>
 </ul>
 </div>
 </nav>
@@ -77,7 +78,7 @@ These are the basic evaluation functions that you can use. Having a different bi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun im-eval-dwim (lastf regionf defunf)
+<pre class="src src-elisp"><code>(defun im-eval-dwim (lastf regionf defunf)
   "Generate an interactive function that you can bind to a key for evaluating.
 The returned function will call LASTF, REGIONF or DEFUNF
 depending on the context when called.  If you have an active
@@ -94,7 +95,7 @@ closing parenthesis, LASTF will be called."
       (call-interactively lastf))
      (t
       (call-interactively defunf)))))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -102,8 +103,8 @@ So that I can do:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eval-last-sexp #'eval-region #'eval-defun))
-</pre>
+<pre class="src src-elisp"><code>(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eval-last-sexp #'eval-region #'eval-defun))
+</code></pre>
 </div>
 
 <p>
@@ -123,8 +124,8 @@ Now you can use <code>eros-eval-{last-sexp,defun}</code> functions to evaluate y
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eros-eval-last-sexp #'eval-region #'eros-eval-defun))
-</pre>
+<pre class="src src-elisp"><code>(bind-key "&lt;key-of-your-choice&gt;" (im-eval-dwim #'eros-eval-last-sexp #'eval-region #'eros-eval-defun))
+</code></pre>
 </div>
 
 <p>
@@ -138,6 +139,10 @@ Akin to <code>cider-inspect-last-last-result</code>, we have <code>eros-inspect-
 <p>
 IELM is just a REPL for elisp and I don't really use it that much, given that you can evaluate code anywhere in Emacs. The nice thing about is that, it's good for experimentation sessions where you have a history of the trials you made during the session. Other than this, I have no use for it.
 </p>
+
+<dl class="org-dl">
+<dt><span class="timestamp-wrapper"><time class="timestamp" datetime="2026-06-21">[2026-06-21 Sun]</time></span> Update</dt><dd>I found about <code>ielm-change-working-buffer</code> which let's you select a buffer in which all sexps entered at the IELM prompt are evaluated. This completely replaced the interactive <code>eval-expression</code> (<code>M-:</code>) usage for me. For simple things, sure, I still use it but if you are developing a feature where you are testing out operations on a buffer, simply open <code>ielm</code> and then change the working buffer to the buffer you want to test against and voila, it's like every expression is wrapped with <code>(with-current-buffer "&lt;your-buffer&gt;" ...)</code> and you get all the goodies of <code>ielm</code>. I even created a small helper that opens <code>ielm</code> in a popup with current buffer as the working buffer for ielm. So instead of hitting <code>M-:</code>, I use this new function. Easier editing and much easy to interact with the results.</dd>
+</dl>
 </div>
 </div>
 <div id="outline-container-refactoring-faster-editing" class="outline-2">
@@ -165,10 +170,10 @@ This package is aimed at Common Lisp users but some of the functions it offers w
 Saves you from typing <code>(lambda (x) ...)</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-elisp">(mapcar (* 2 it|) '(1 2 3 4))
+<pre class="src src-elisp"><code>(mapcar (* 2 it|) '(1 2 3 4))
 ;; M-x redshank-enclose-form-with-lambda RET RET
 (mapcar (lambda (it) (* 2 it)) '(1 2 3 4))
-</pre>
+</code></pre>
 </div></dd>
 </dl>
 </div>
@@ -185,8 +190,8 @@ Converts your expression into a threaded expression. Assume that you have writte
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(s-chop-suffix "]" (s-chop-prefix "[" (substring-no-properties (car (s-match "\\[.*?\\]" (org-get-heading))))))
-</pre>
+<pre class="src src-elisp"><code>(s-chop-suffix "]" (s-chop-prefix "[" (substring-no-properties (car (s-match "\\[.*?\\]" (org-get-heading))))))
+</code></pre>
 </div>
 
 <p>
@@ -194,14 +199,14 @@ Calling <code>clojure-thread-last-all</code> at the beginning this expression wi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(-&gt;&gt;
+<pre class="src src-elisp"><code>(-&gt;&gt;
  (org-get-heading)
  (s-match "\\[.*?\\]")
  car
  substring-no-properties
  (s-chop-prefix "[")
  (s-chop-suffix "]"))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -229,7 +234,7 @@ Here are some functions I frequently use while doing elisp development:
 <h3 id="im-tap">im-tap</h3>
 <div class="outline-text-3" id="text-im-tap">
 <div class="org-src-container">
-<pre class="src src-elisp">(defmacro im-tap (form)
+<pre class="src src-elisp"><code>(defmacro im-tap (form)
   "Evaluate FORM and return its result.
 Additionally, print a message to the *Messages* buffer showing
 the form and its result.
@@ -241,7 +246,7 @@ it's output without introducing an intermediate let-form."
   `(let ((result ,form))
      (message "[im-tap :: %s] → %s" ,(prin1-to-string form) result)
      result))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -249,7 +254,7 @@ See the following for it's usefulness:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">;; I want to print-debug those input values
+<pre class="src src-elisp"><code>;; I want to print-debug those input values
 
 (defun test ()
   (final-func (func-a 1 2) (func-b 3 4)))
@@ -278,7 +283,7 @@ See the following for it's usefulness:
  im-tap ;; → Print the result so far
  (s-chop-prefix "[")
  (s-chop-suffix "]"))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -290,12 +295,12 @@ It also prints the form itself with the value the form returns, so that you can 
 <h3 id="im-debug">im-debug</h3>
 <div class="outline-text-3" id="text-im-debug">
 <div class="org-src-container">
-<pre class="src src-elisp">(defun im-debug (thing)
+<pre class="src src-elisp"><code>(defun im-debug (thing)
   "Like `im-tap' but uses `pp-display-expression' to display the
 result instead of `message'."
   (pp-display-expression thing "*im-debug*")
   thing)
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -318,18 +323,18 @@ Also useful inside an interactive <code>eval-expression</code> call. Does the sa
 Built-in mode for folding. It works fairly well with elisp code. Evil mode is also automatically integrates itself with it, so that you can use folding bindings (<code>za zm zr</code> etc.)
 </p>
 <div class="org-src-container">
-<pre class="src src-elisp">(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
+<pre class="src src-elisp"><code>(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 (add-hook 'lisp-interaction-mode-hook #'hs-minor-mode)
-</pre>
+</code></pre>
 </div></dd>
 <dt><a href="https://github.com/Malabarba/aggressive-indent-mode">aggressive-indent-mode</a></dt><dd><p>
 Aggressively indents your code. I found it to be less useful for other languages (which I generally use an auto-formatter on save kinda solution) but for lisp, it works fairly well and I can't do without it.
 </p>
 <div class="org-src-container">
-<pre class="src src-elisp">(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+<pre class="src src-elisp"><code>(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
 ;; If you are an evil user, this might be useful:
 (add-to-list 'aggressive-indent-protected-commands 'evil-undo)
-</pre>
+</code></pre>
 </div></dd>
 <dt><a href="https://github.com/Wilfred/helpful">helpful</a></dt><dd>Better help pages.</dd>
 <dt><a href="https://github.com/xuchunyang/elisp-demos">elisp-demos</a></dt><dd>Code example for elisp functions in help pages. Integrates with <i>helpful</i>.</dd>
@@ -344,17 +349,26 @@ Automatic indentation works fairly well but it fails on quoted lists. I use <a h
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">;; before
+<pre class="src src-elisp"><code>;; before
 ;;   (:foo bar
 ;;         :baz qux)
 ;; after
 ;;   (:foo bar
 ;;    :baz qux)
-</pre>
+</code></pre>
 </div>
 
 <p>
-Especially useful if you are a user of <i>aggressive-indent-mode</i> that I've talked about above.</p>
+Especially useful if you are a user of <i>aggressive-indent-mode</i> that I've talked about above.
+</p>
+</div>
+</div>
+<div id="outline-container-appendix-updates" class="outline-2">
+<h2 id="appendix-updates">Appendix: Updates</h2>
+<div class="outline-text-2" id="text-appendix-updates">
+<ul class="org-ul">
+<li><span class="timestamp-wrapper"><time class="timestamp" datetime="2026-06-21T18:21:00">[2026-06-21 Sun 18:21]</time></span> Extended the <code>M-x ielm</code> section with <code>ielm-change-working-buffer</code> usage.</li>
+</ul>
 </div>
 </div>
 

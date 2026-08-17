@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>How do I keep my days organized with org-mode and Emacs | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>How do I keep my days organized with org-mode and Emacs</h1>
+
+      <div class="meta">
+        <time datetime="2021-01-25" class="publish-time"
+              aria-label="Published Jan 25, 2021">
+          <span class="date-day">25</span>
+          <span class="date-month">Jan</span>
+          <span class="date-year">2021</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2021-05-07">
+            07 May 2021
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/org.html">org</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">How do I keep my days organized with org-mode and Emacs</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a></li>
-            <li id="publish-date">2021-01-25</li>
-            <li id="updated-date">2021-05-07</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -65,7 +70,7 @@
 </div>
 </nav>
 <div id="outline-container-preamble" class="outline-2">
-<h2 id="preamble">Preamble</h2>
+<h2 id="preamble"><a href="#preamble">Preamble</a></h2>
 <div class="outline-text-2" id="text-preamble">
 <p>
 I've been using org-mode to organize my life for quite a long time; all the deadlines, recurring events, any kind of plans, projects etc. lives in several org files. Most beneficial part of this approach is that, <i>things grow</i>. When you write something down and have an easy way to access that piece, you'll start expanding it. You also start to notice patterns which eventually leads you to do some optimization with that particular thing. Also there some other minor benefits like not forgetting important stuff and seeing your life in a more structured manner. These are all great but you need to find a balance between planning/note-taking and doing actual stuff, otherwise it'll just overwhelm you and impact everything negatively. I'm not saying that I figured it out all but at least for this particular piece, <i>organizing your day in an org file</i>, I have some nice ideas.
@@ -73,18 +78,18 @@ I've been using org-mode to organize my life for quite a long time; all the dead
 </div>
 </div>
 <div id="outline-container-general-structure" class="outline-2">
-<h2 id="general-structure">General structure</h2>
+<h2 id="general-structure"><a href="#general-structure">General structure</a></h2>
 <div class="outline-text-2" id="text-general-structure">
 <p>
-I have a file called <code>bullet.org</code> where I keep all these day management stuff<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>. The name comes from <code>bullet journaling</code> thing and I'm not sure if this can be called as <i>bullet journaling</i> but the name gives a little bit more personality to the file and I like that.
+I have a file called <code>bullet.org</code> where I keep all these day management stuff.<sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do <code>org-narrow-to-subtree</code> and that's it, it's like an individual file now.</span> The name comes from <code>bullet journaling</code> thing and I'm not sure if this can be called as <i>bullet journaling</i> but the name gives a little bit more personality to the file and I like that.
 </p>
 </div>
 </div>
 <div id="outline-container-starting-the-day" class="outline-2">
-<h2 id="starting-the-day">Starting the day</h2>
+<h2 id="starting-the-day"><a href="#starting-the-day">Starting the day</a></h2>
 <div class="outline-text-2" id="text-starting-the-day">
 <p>
-Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called <code>daily</code>, that expands to a big checklist of my daily routines<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup>. So far I got this:
+Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called <code>daily</code>, that expands to a big checklist of my daily routines.<sup class="fn-ref" aria-describedby="2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.</span> So far I got this:
 </p>
 
 
@@ -147,54 +152,54 @@ I tend to schedule things to specific hours, so that I can see them on my agenda
 </div>
 </div>
 <div id="outline-container-little-conveniences" class="outline-2">
-<h2 id="little-conveniences">Little conveniences</h2>
+<h2 id="little-conveniences"><a href="#little-conveniences">Little conveniences</a></h2>
 <div class="outline-text-2" id="text-little-conveniences">
 <p>
 There some little things that I sprinkled through my Emacs configuration that makes this file a bit more accessible and pretty.
 </p>
 </div>
 <div id="outline-container-[[https:--github.com-sabof-org-bullets][org-bullets]]" class="outline-3">
-<h3 id="[[https:--github.com-sabof-org-bullets][org-bullets]]"><a href="https://github.com/sabof/org-bullets">org-bullets</a></h3>
+<h3 id="[[https:--github.com-sabof-org-bullets][org-bullets]]"><a href="#[[https:--github.com-sabof-org-bullets][org-bullets]]"><a href="https://github.com/sabof/org-bullets">org-bullets</a></a></h3>
 <div class="outline-text-3" id="text-[[https:--github.com-sabof-org-bullets][org-bullets]]">
 <p>
 Pretty famous package that brings some fanciness to org documents.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(use-package org-bullets
+<pre class="src src-elisp"><code>(use-package org-bullets
   :ensure t
   :hook (org-mode . org-bullets-mode))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-[[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]" class="outline-3">
-<h3 id="[[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]"><a href="https://github.com/harrybournis/org-fancy-priorities">org-fancy-priorities</a></h3>
+<h3 id="[[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]"><a href="#[[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]"><a href="https://github.com/harrybournis/org-fancy-priorities">org-fancy-priorities</a></a></h3>
 <div class="outline-text-3" id="text-[[https:--github.com-harrybournis-org-fancy-priorities][org-fancy-priorities]]">
 <p>
 This brings some fanciness to priority indicators.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(use-package org-fancy-priorities
+<pre class="src src-elisp"><code>(use-package org-fancy-priorities
   :diminish
   :ensure t
   :hook (org-mode . org-fancy-priorities-mode)
   :config
   (setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴")))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-[[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]" class="outline-3">
-<h3 id="[[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]"><a href="https://gitlab.com/marcowahl/org-pretty-tags">org-pretty-tags</a></h3>
+<h3 id="[[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]"><a href="#[[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]"><a href="https://gitlab.com/marcowahl/org-pretty-tags">org-pretty-tags</a></a></h3>
 <div class="outline-text-3" id="text-[[https:--gitlab.com-marcowahl-org-pretty-tags][org-pretty-tags]]">
 <p>
 Well, I don't make use of tags much but here you go, it replaces your tags with nice little UTF8 icons of your choice.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(use-package org-pretty-tags
+<pre class="src src-elisp"><code>(use-package org-pretty-tags
   :diminish org-pretty-tags-mode
   :ensure t
   :config
@@ -202,19 +207,19 @@ Well, I don't make use of tags much but here you go, it replaces your tags with 
         '(("work"  . "⚒")))
 
   (org-pretty-tags-global-mode))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-fancy-checkboxes" class="outline-3">
-<h3 id="fancy-checkboxes">Fancy checkboxes</h3>
+<h3 id="fancy-checkboxes"><a href="#fancy-checkboxes">Fancy checkboxes</a></h3>
 <div class="outline-text-3" id="text-fancy-checkboxes">
 <p>
 This does not need any external dependency, it's possible to do it with <code>prettify-symbols-mode</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(isamert/prettify-mode 'org-mode-hook
+<pre class="src src-elisp"><code>(isamert/prettify-mode 'org-mode-hook
                        '(("[ ]" . "☐")
                          ("[X]" . "☑" )
                          ("[-]" . "❍" )))
@@ -229,12 +234,12 @@ This does not need any external dependency, it's possible to do it with <code>pr
                              (push pair prettify-symbols-alist))
                            ,pairs)
                      (prettify-symbols-mode))))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-quickly-accessing-the-file" class="outline-3">
-<h3 id="quickly-accessing-the-file">Quickly accessing the file</h3>
+<h3 id="quickly-accessing-the-file"><a href="#quickly-accessing-the-file">Quickly accessing the file</a></h3>
 <div class="outline-text-3" id="text-quickly-accessing-the-file">
 <p>
 It's quite important to be able to easily open and take notes into this file. Thus, I created a shortcut that toggles this file on right side of Emacs. See the following:
@@ -250,7 +255,7 @@ The code is a bit long but the important function is <code>isamert/toggle-side-b
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun isamert/toggle-side-bullet-org-buffer ()
+<pre class="src src-elisp"><code>(defun isamert/toggle-side-bullet-org-buffer ()
   "Toggle `bullet.org` in a side buffer for quick note taking.  The buffer is opened in side window so it can't be accidentaly removed."
   (interactive)
   (isamert/toggle-side-buffer-with-file "~/Documents/notes/bullet.org"))
@@ -287,13 +292,13 @@ The code is a bit long but the important function is <code>isamert/toggle-side-b
      (save-window-excursion
        (find-file file-path)
        (current-buffer))))))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div id="outline-container-throughout-the-day" class="outline-2">
-<h2 id="throughout-the-day">Throughout the day</h2>
+<h2 id="throughout-the-day"><a href="#throughout-the-day">Throughout the day</a></h2>
 <div class="outline-text-2" id="text-throughout-the-day">
 <p>
 Throughout the day, I just clock the work I'm doing. For work days, I take small notes about the thing I'm working on that moment. If that thing seems to be going to take more than 1-2 days I'll just create a header for <i>that thing</i> in my <code>projects.org</code> and take my notes there, <code>bullet.org</code> is only responsible for clocking and having a link to that header in <code>projects.org</code> for these kind of specific stuff. I also take my meeting notes here in <code>bullet.org</code>.
@@ -314,7 +319,7 @@ Having this header there and seeing it time to time also forces you to come up w
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">  (defun isamert/org-attach-image-from-clipboard (file-path)
+<pre class="src src-elisp"><code>  (defun isamert/org-attach-image-from-clipboard (file-path)
     "Save the image from clipboard to FILE-PATH and attach it into the document.
 If FILE-PATH is empty or nil, then image is created under ~/.cache with a random name.
 FILE-PATH is relative to the current documents directory."
@@ -328,20 +333,20 @@ FILE-PATH is relative to the current documents directory."
        (t (message "Either install xclip (for linux) or pngpaste (for mac) to get this functionality.")))
       (insert (format "#+ATTR_ORG: :width 400\n[[file:%s]]" file))
       (org-display-inline-images)))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-finishing-the-day" class="outline-2">
-<h2 id="finishing-the-day">Finishing the day</h2>
+<h2 id="finishing-the-day"><a href="#finishing-the-day">Finishing the day</a></h2>
 <div class="outline-text-2" id="text-finishing-the-day">
 <p>
 If you've seen in the above screenshots, there was another header called <code>Summary</code>. When the day ends, that is to say, before going to bed I open <code>bullet.org</code> and create a <code>Summary</code> header. First thing I do is to get an overall view of what I've been doing the whole day. I do this by creating a <code>clocktable</code> with the following settings:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">#+BEGIN: clocktable :scope tree1 :maxlevel 3 :block untilnow
-</pre>
+<pre class="src src-nil"><code>#+BEGIN: clocktable :scope tree1 :maxlevel 3 :block untilnow
+</code></pre>
 </div>
 
 <dl class="org-dl">
@@ -362,7 +367,7 @@ After this, if I'm feeling well I just add a few observations about the day or m
 </div>
 </div>
 <div id="outline-container-conclusion" class="outline-2">
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2>
 <div class="outline-text-2" id="text-conclusion">
 <p>
 Well, that's it. I have other org files that I use along with <code>bullet.org</code> and I utilize <a href="https://github.com/alphapapa/org-ql">org-ql</a> to connect things together or to find/filter them instead of relying on agenda but I guess that's an another post. I've been using this exact methodology more than one year (earlier I had similar methods but they were quite different in terms of organization etc.) and I can say that it's <i>somewhat</i> effective against my procrastination. I'm not saying that I don't need willpower anymore but it's easier to do things when you're more organized and this file keeps me sane during the day.
@@ -370,54 +375,28 @@ Well, that's it. I have other org files that I use along with <code>bullet.org</
 </div>
 </div>
 <div id="outline-container-appendix" class="outline-2">
-<h2 id="appendix">Appendix</h2>
+<h2 id="appendix"><a href="#appendix">Appendix</a></h2>
 <div class="outline-text-2" id="text-appendix">
 <ul class="org-ul">
 <li><a href="https://www.reddit.com/r/orgmode/comments/n5b1zg/how_do_i_keep_my_days_organized_with_orgmode/">Reddit discussion</a></li>
 </ul>
 </div>
 </div>
-<div id="footnotes">
-<h2 class="footnotes">Footnotes: </h2>
-<div id="text-footnotes">
 
-<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do <code>org-narrow-to-subtree</code> and that's it, it's like an individual file now.</p></div></div>
-
-<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.</p></div></div>
+  </article>
 
 
-</div>
-</div>
-        </div>
-
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">Migrating my IMDb ratings list and watch list into org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2019/11/14/running-sql-on-org-mode-tables.html">Running SQL on org-mode tables</a></li> <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li>
-          </ul>
-        </div>
-
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

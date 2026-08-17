@@ -158,22 +158,8 @@ This is the file that contains all the dynamic logic for my website. I'm trying 
 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
 document.addEventListener('DOMContentLoaded', () => {
-  addLinksToHeaders()
   highlightCodeBlocks()
 })
-
-function addLinksToHeaders() {
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-    if (!h.hasAttribute('id')) {
-      return
-    }
-
-    wrap(h, elem('a', {
-      class: 'clear',
-      href: '#' + h.id,
-    }))
-  })
-}
 
 function highlightCodeBlocks(_event) {
   // Disable auto-lang detection
@@ -202,107 +188,184 @@ function highlightCodeBlocks(_event) {
     hljs.highlightBlock(block)
   })
 }
+#+end_src
 
-//
-// Utils
-//
+*** fonts.css
+Serving fonts through here. I guess a bit more traffic but better than pinging Google, less surveillance! Having said that, this website is hosted on GitHub Pages, so, I don't know.
 
-function wrap(elem, wrapper) {
-  elem.parentNode.replaceChild(wrapper, elem)
-  wrapper.appendChild(elem)
+#+begin_src css :tangle docs/assets/fonts.css
+/* Bricolage Grotesque — variable font, weights 400–600 */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("/assets/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+    U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-function elem(type, attrs) {
-  const e = document.createElement(type)
-  Object.keys(attrs).forEach(attr => {
-    if (attr !== 'children') {
-      e.setAttribute(attr, attrs[attr])
-    }
-  })
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("/assets/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
 
-  if (attrs.children) {
-    attrs.children.forEach(child => e.appendChild(child))
-  }
+/* Cascadia Code — variable font, weights 400–600 */
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/cascadia-code-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+    U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-  return e
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/assets/fonts/cascadia-code-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Damion — only weight 400 exists */
+@font-face {
+  font-family: "Damion";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/damion-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+    U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Damion";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/damion-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
 }
 #+end_src
 
 *** main.css
-The one and only css file that I use for my blog. Also trying to keep it minimal.
-
 #+begin_src css :tangle docs/assets/main.css
-/* * General */
 :root {
-  /* Palette */
-  --paper: #08080e;
+  /* Colors */
+  --bg: #08080e;
   --rule: #4c3143;
   --accent: #e56182;
-  --cyan: #62f4ed;
+  --accent-rgb: 229 97 130;
+  --coral: #ff9b7a;
+  --coral-rgb: 255 155 122;
+
   --white: #fff;
-  --logo-text: #fff7fc;
+  --bright: #f2edf2;
+  --text: #c6c4cc;
+  --subtle: #aaa6b1;
+  --muted: #777481;
+
+  --link: #eb7e9f;
+  --link-hover: #ffa4c2;
+  --pink: #ff6bab;
+
   --logo-glow-soft: #ffb8df;
   --logo-glow-medium: #ff69bc;
   --logo-glow-hot: #ff258c;
-  --text-home: #bbbac1;
-  --muted-home: #6d6b79;
-  --text-post: #c6c4cc;
-  --muted-post: #777481;
-  --text-bright: #f2edf2;
-  --text-soft: #cfccd4;
-  --text-nav: #ded8e0;
-  --text-nav-hover: #f3dce5;
-  --text-post-hover: #f0a2bd;
-  --text-meta: #b8b5bf;
-  --text-meta-strong: #d0ccd4;
-  --text-subtle: #aaa6b1;
-  --text-toc: #c5c1ca;
-  --text-code: #c5c2ca;
-  --text-code-inline: #e8a9c0;
-  --text-link: #eb7e9f;
-  --text-link-hover: #ffa4c2;
-  --pink-soft: #f08eae;
-  --pink-bright: #ff6bab;
-  --pink-dark: #b85b79;
-  --accent-rgb: 229 97 130;
   --logo-rgb: 242 0 104;
-  --cyan-rgb: 98 244 237;
-  --white-rgb: 255 255 255;
-  --code-rgb: 197 194 202;
-  --link-rgb: 235 126 159;
-  --nebula-violet: rgba(77, 39, 105, 0.16);
-  --nebula-magenta: rgba(94, 24, 67, 0.13);
+
+  /* Syntax highlighting */
+  --code-text: #d7d4dd;
+
+  --syntax-comment: #aaa6b8;
+  --syntax-keyword: #ff7fa5;
+  --syntax-string: #8ee6c3;
+  --syntax-number: #d6a6ff;
+  --syntax-function: #8bc9c5;
+  --syntax-class: #b8a7d9;
+  --syntax-section: #62f4ed;
+  --syntax-variable: #f2c27b;
+  --syntax-attribute: #9ad7ff;
+  --syntax-meta: #b5b8ff;
+  --syntax-built-in: #ff9f7a;
+  --syntax-regexp: #ff91cf;
+
+  --syntax-addition: #8ee6c3;
+  --syntax-addition-bg: rgb(98 244 237 / 0.1);
+  --syntax-deletion: #ff7085;
+  --syntax-deletion-bg: rgb(229 97 130 / 0.12);
 
   /* Typography */
   --body: "Bricolage Grotesque", system-ui, sans-serif;
   --mono: "Cascadia Code", "Cascadia Mono", monospace;
 
-  /* Content */
-  --content-width: 760px;
-  --page-padding: 2.5rem 0 3rem;
+  /* Layout */
+  --content-width: 720px;
+  --line-height: 1.68;
 }
 
 ,* {
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
+  width: min(100% - 2rem, var(--content-width));
   min-height: 100vh;
+  margin: 0 auto;
+  padding: 2.5rem 0 3rem;
   overflow-x: clip;
-  color: var(--ink);
-  background-color: var(--paper);
-  font: 18px / var(--line-height, 1.6) var(--body);
+  color: var(--text);
+  background: var(--bg);
+  font: 18px / var(--line-height) var(--body);
 }
 
-.page {
-  width: min(100% - 3rem, var(--content-width));
-  margin: 0 auto;
-  padding: var(--page-padding);
+.hidden {
+  display: none !important;
 }
+
+.org-center {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  text-decoration: none;
+  color: var(--link);
+  text-decoration-color: rgb(var(--accent-rgb) / 0.4);
+  text-underline-offset: 0.16em;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-shadow: 0 0 0.55rem rgb(var(--accent-rgb) / 0.3);
+}
+
+/* Header */
 
 .site-header {
   position: relative;
@@ -310,14 +373,12 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3.5rem;
 }
 
 .site-title {
-  color: var(--logo-text);
-  font:
-    400 clamp(1.5rem, 7vw, 3.0rem) / 1 "Damion",
-    cursive;
+  color: var(--bright) !important;
+  font: 400 clamp(1.5rem, 7vw, 3rem) / 1 "Damion", cursive;
   text-decoration: none;
   transform: translateX(0.3em) rotate(-8deg);
   text-shadow:
@@ -325,22 +386,23 @@ body {
     0 0 0.22em var(--logo-glow-soft),
     0 0 0.55em var(--logo-glow-medium),
     0 0 1.25em var(--logo-glow-hot),
-    0 0 2.2em rgb(var(--logo-rgb) / 0.75);
+    0 0 2.2em rgb(var(--logo-rgb) / 0.75) !important;
 }
 
 .site-title:hover {
-  animation: neon-flicker 1.1s ease-in-out;
+  animation: neon-flicker 1.4s ease-in-out;
 }
 
 @keyframes neon-flicker {
   0%,
-  18%,
-  41%,
-  59%,
-  74%,
+  2%,
+  40%,
+  60%,
+  75%,
   100% {
     opacity: 1;
   }
+
   20%,
   61%,
   76% {
@@ -349,28 +411,52 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .site-title:hover {
-    animation: none;
-  }
+.home-links {
+  display: flex;
+  gap: 1rem;
+  text-align: center;
 }
 
-/* * Code blocks */
+.home-links a {
+  padding: 0.35rem 0.2rem;
+  color: var(--text);
+  font: 600 1.02rem var(--mono);
+  letter-spacing: 0.035em;
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    text-shadow 0.2s,
+    transform 0.2s;
+}
+
+.home-links a:hover {
+  color: var(--bright);
+  text-shadow: 0 0 0.6rem rgb(var(--accent-rgb) / 0.3);
+  transform: translateY(-2px);
+}
+
+footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Code */
 
 code {
-  padding: 0 0.15em;
-  color: var(--text-code-inline);
+  padding: 0.3em 0.2em;
+  color: var(--link-hover);
   background: rgb(var(--accent-rgb) / 0.055);
-  font: 0.83em var(--mono);
+  font: var(--mono);
   font-variant-ligatures: contextual;
 }
+
 .org-src-container {
   position: relative;
   margin: 1.7rem 0 2rem;
 }
+
 .org-src-container::before,
 .org-src-container::after {
   content: "";
@@ -379,85 +465,190 @@ code {
   left: -8rem;
   height: 2px;
 }
+
 .org-src-container::before {
   top: 0;
-  background: rgb(var(--accent-rgb) / 0.22);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--accent-rgb) / 0.28),
+    transparent
+  );
 }
+
 .org-src-container::after {
   bottom: 0;
-  background: rgb(var(--cyan-rgb) / 0.14);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--coral-rgb) / 0.28),
+    transparent
+  );
 }
+
 pre {
-  width: 100%;
   max-width: 100%;
   margin: 0;
   padding: 1.15rem 0;
   overflow-x: auto;
-  border: 0;
-  border-radius: 0;
   background: transparent;
   line-height: 1.55;
   tab-size: 2;
   scrollbar-color: var(--rule) transparent;
 }
+
 pre code {
   padding: 0;
-  color: var(--text-code);
+  color: var(--text);
   background: none;
   font-size: 0.9rem;
-  text-shadow: 0 0 0.5rem rgb(var(--code-rgb) / 0.04);
+  text-shadow: 0 0 0.5rem rgb(197 194 202 / 0.04);
 }
 
-@media (max-width: 560px) {
-  .org-src-container::before,
-  .org-src-container::after {
-    right: -0.5rem;
-    left: -0.5rem;
-  }
-  pre {
-    width: 100%;
-    padding: 1rem 0;
-  }
+/* RSS button */
+
+.rss-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #e9934a;
+  background: rgba(180, 90, 20, 0.08);
+  border: 1px solid #c96b2c;
+  box-shadow: 0 0 5px rgba(220, 110, 35, 0.14);
+  border-radius: .35rem;
 }
 
-/* * Home */
-
-.home-page {
-  --ink: var(--text-home);
-  --muted: var(--muted-home);
-  --line-height: 1.55;
+.rss-icon {
+  width: 17px;
+  height: 17px;
 }
 
-.home-links {
-  display: flex;
-  /* flex: 1; */
-  gap: 1rem;
-  text-align: center;
+.rss-link:hover {
+  color: #ffc27a;
+  background: rgba(220, 115, 35, 0.16);
+  border-color: #ef9145;
+  box-shadow: 0 0 7px rgba(235, 125, 45, 0.22);
 }
 
-.home-links a {
-  padding: 0.35rem 0.2rem;
-  color: var(--text-nav);
+.rss-link:focus-visible {
+  outline: 2px solid #ef9145;
+  outline-offset: 3px;
+}
+
+/* Table of contents */
+
+#table-of-contents {
+  position: fixed;
+  top: 1rem;
+  right: 1.5rem;
+  left: auto;
+  width: 17rem;
+  z-index: 10;
+
   font-family: var(--mono);
-  font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: 0.035em;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+#table-of-contents h2 {
+  margin: 0;
+  color: var(--bright) !important;
+  font: 400 1.5rem "Damion", cursive;
+  text-transform: lowercase;
+  transform: translateX(-0.5em) rotate(2deg);
+  text-decoration: none;
+  text-shadow:
+    0 0 0.08em var(--white),
+    0 0 0.22em var(--logo-glow-soft),
+    0 0 0.55em var(--logo-glow-medium),
+    0 0 1.25em var(--logo-glow-hot),
+    0 0 2.2em rgb(var(--logo-rgb) / 0.75) !important;
+}
+
+#table-of-contents h2:hover {
+  animation: neon-flicker 1.4s ease-in-out;
+}
+
+#table-of-contents h2::before {
+    content: "";
+}
+
+#text-table-of-contents ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#text-table-of-contents li {
+  margin: 0.5rem 0;
+}
+
+#text-table-of-contents li::before {
+  content: "";
+}
+
+/* Nested levels */
+
+#text-table-of-contents ul ul {
+  margin: 0.4rem 0 0.2rem 0.35rem;
+  padding-left: 0.8rem;
+  border-left: 1px solid rgb(var(--accent-rgb) / 0.18);
+}
+
+#text-table-of-contents ul ul li {
+  margin: 0.35rem 0;
+}
+
+#text-table-of-contents ul ul ul {
+  border-left-color: rgb(var(--coral-rgb) / 0.14);
+}
+
+/* Links */
+
+#text-table-of-contents a {
+  display: block;
+  color: var(--subtle);
   text-decoration: none;
   transition:
-    color 0.2s ease,
-    text-shadow 0.2s ease,
-    transform 0.2s ease;
+    color 0.2s,
+    text-shadow 0.2s,
+    transform 0.2s;
 }
 
-.home-links a:hover {
-  color: var(--text-nav-hover);
-  text-shadow: 0 0 0.6rem rgb(var(--accent-rgb) / 0.3);
-  transform: translateY(-2px);
+/* Top-level entries */
+
+#text-table-of-contents > ul > li > a {
+  color: var(--text);
+  font-weight: 600;
 }
+
+/* Second level */
+
+#text-table-of-contents > ul > li > ul > li > a {
+  font-size: 0.72rem;
+}
+
+/* Third level and deeper */
+
+#text-table-of-contents ul ul ul a {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+#text-table-of-contents a:hover {
+  color: var(--link-hover);
+  text-shadow: 0 0 0.5rem rgb(var(--accent-rgb) / 0.25);
+  transform: translateX(0.2rem);
+}
+
+/* Archive */
 
 .year {
   margin-bottom: 1rem;
-  padding: 1.25rem 0;
+  padding: 0.8rem 0;
 }
 
 .year h2 {
@@ -466,18 +657,19 @@ pre code {
   gap: 0.65rem;
   margin: 0 0 0.65rem;
   color: var(--accent);
-  font-family: var(--body);
   font-size: 1.4rem;
+  font-family: var(--mono);
   font-weight: 500;
   letter-spacing: -0.035em;
   text-shadow: 0 0 0.8rem rgb(var(--accent-rgb) / 0.18);
 }
 
 .post-list {
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
+
 .post-list li {
   display: grid;
   grid-template-columns: 3.4rem minmax(0, 1fr);
@@ -487,9 +679,14 @@ pre code {
   padding: 0.3rem 0.5rem;
   border-radius: 0.25rem;
   transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
+    background-color 0.2s,
+    transform 0.2s;
 }
+
+.post-list li + li {
+  margin-top: 0.2rem;
+}
+
 .post-list li:hover {
   background: linear-gradient(
     90deg,
@@ -497,9 +694,6 @@ pre code {
     transparent 72%
   );
   transform: translateX(0.2rem);
-}
-.post-list li + li {
-  margin-top: 0.2rem;
 }
 
 .post-list time {
@@ -510,125 +704,162 @@ pre code {
   text-transform: uppercase;
 }
 
-.post-list a {
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
+.post-list li:hover time {
+  color: var(--coral);
 }
+
+.post-list a {
+  color: var(--text);
+  text-decoration: none;
+}
+
 .post-list a:hover {
-  color: var(--text-post-hover);
-  border-color: transparent;
+  color: var(--link-hover);
   text-shadow: 0 0 0.65rem rgb(var(--accent-rgb) / 0.24);
 }
 
-.post-list li:hover time {
-  color: var(--cyan);
+/* Posts */
+
+article hr {
+  border: 0;
+  height: 1px;
+  position: relative;
+  overflow: visible;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--accent-rgb) / 0.10) 15%,
+    rgb(var(--accent-rgb) / 0.28) 50%,
+    rgb(var(--accent-rgb) / 0.10) 85%,
+    transparent 100%
+  );
 }
 
-.home-page footer {
-  margin-top: 3rem;
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: 0.75rem;
-  text-align: center;
+article hr::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 0.7em;
+
+  color: rgb(var(--accent-rgb) / 0.5);
+  background: var(--bg);
 }
 
-@media (max-width: 520px) {
-  .home-page .page {
-    width: min(100% - 2rem, 720px);
-    padding-top: 3rem;
-  }
-  .home-links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-  .year h2 {
-    margin-top: 0;
-  }
+article h1 a,
+article h2 a,
+article h3 a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* * Posts */
-.post-page {
-  --ink: var(--text-post);
-  --bright: var(--text-bright);
-  --muted: var(--muted-post);
-  --line-height: 1.68;
-}
-.post-page h1 {
+article h1 {
   margin: 0 0 1.2rem;
   color: var(--bright);
   font-size: clamp(2.1rem, 7vw, 3.45rem);
   line-height: 1.08;
   letter-spacing: -0.055em;
 }
+
 .meta {
   display: flex;
-  text-align: center;
   align-items: center;
   gap: 0.8rem 1.25rem;
   width: 100%;
-  color: var(--muted);
   margin-bottom: 2rem;
+  color: var(--muted);
+  text-align: center;
 }
-.meta time {
+
+.meta .publish-time {
   display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: 1fr 1fr;
+  grid-template: 1fr 1fr / auto auto;
   column-gap: 0.3rem;
   align-items: center;
   justify-self: start;
-  color: var(--text-meta);
+  color: var(--subtle);
   line-height: 1;
 }
+
 .date-day {
   grid-row: 1 / 3;
-  color: var(--pink-soft);
+  color: var(--link-hover);
   font-size: 2.2rem;
   font-weight: 500;
   letter-spacing: -0.06em;
   text-shadow: 0 0 0.7rem rgb(var(--accent-rgb) / 0.18);
 }
+
 .date-month {
   align-self: end;
-  color: var(--text-meta-strong);
+  color: var(--text);
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
 .date-year {
   align-self: start;
   color: var(--muted);
   font-size: 0.85rem;
   letter-spacing: 0.07em;
 }
+
+.meta .updated {
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1;
+}
+
+.meta .updated--label {
+  color: var(--link-hover);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.meta .updated--time {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 0.65rem;
   align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem 0.65rem;
 }
 
 .tags a {
-  color: var(--text-subtle);
-  font: var(--mono);
+  color: var(--subtle);
+  font-family: var(--mono);
   text-decoration: none;
   transition:
-    color 0.2s ease,
-    text-shadow 0.2s ease;
+    color 0.2s,
+    text-shadow 0.2s;
 }
+
 .tags a:hover {
   color: var(--accent);
   text-shadow: 0 0 0.5rem rgb(var(--accent-rgb) / 0.3);
 }
-.tags a::before {
-  color: var(--accent);
-  font: 500 1.05rem var(--mono);
-  text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.25);
-}
+
 .tags a::before {
   content: "#";
   margin-right: 0.3rem;
+  color: var(--accent);
+  font: 500 1.05rem var(--mono);
+  text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.25);
 }
 
 article p {
@@ -655,23 +886,82 @@ article p {
 .sidenote .note-number {
   margin-right: 0.4em;
   color: var(--accent);
-  font-family: var(--mono);
-  font-size: 0.85em;
+  font: 0.85em var(--mono);
 }
+
+article h2 {
+  position: relative;
+  margin: 3.4rem 0 1rem;
+  color: var(--bright);
+  font: 1.65rem / 1.2 var(--mono);
+  letter-spacing: -0.035em;
+}
+
+article h2::before {
+  content: "✶";
+  position: absolute;
+  right: calc(100% + 0.55rem);
+  top: -0.23rem;
+  color: var(--pink);
+  font: 500 1.08em var(--mono);
+  letter-spacing: -0.12em;
+  text-shadow: 0 0 0.7rem rgb(var(--logo-rgb) / 0.48);
+}
+
+article ul {
+  margin: 0.45rem 0;
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+article ul ul {
+  padding-inline-start: 1.4rem;
+}
+
+article li {
+  position: relative;
+  margin: 0.45rem 0;
+}
+
+article li::before {
+  content: "✱";
+  position: absolute;
+  inset-inline-start: -1rem;
+  top: 0.45rem;
+  color: var(--accent);
+  font-size: 0.7em;
+  font-weight: 500;
+  line-height: 1.3;
+  text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.3);
+}
+
+article figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+}
+
+/* Responsive */
 
 @media (min-width: 1180px) {
   .sidenote {
     width: 12.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.8rem;
+    margin-block: 0.25rem 0.8rem;
     padding: 0;
   }
+
   .sidenote.right {
     float: right;
     clear: right;
     margin-right: -14.5rem;
     margin-left: 1.5rem;
   }
+
   .sidenote.left {
     float: left;
     clear: left;
@@ -681,224 +971,307 @@ article p {
   }
 }
 
-article a {
-  color: var(--text-link);
-  text-decoration-color: rgb(var(--link-rgb) / 0.4);
-  text-underline-offset: 0.16em;
-}
-article a:hover {
-  color: var(--text-link-hover);
-  text-shadow: 0 0 0.55rem rgb(var(--accent-rgb) / 0.3);
-}
-article h2 {
-  position: relative;
-  margin: 3.4rem 0 1rem;
-  color: var(--bright);
-  font-size: 1.65rem;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
-}
-article h2::before {
-  content: ";;";
-  position: absolute;
-  right: calc(100% + 0.55rem);
-  margin-right: 0;
-  color: var(--pink-bright);
-  font-family: var(--mono);
-  font-size: 1.08em;
-  font-weight: 500;
-  letter-spacing: -0.12em;
-  opacity: 1;
-  text-shadow: 0 0 0.7rem rgb(var(--logo-rgb) / 0.48);
-}
-article ul {
-  padding-left: 1.15rem;
-  list-style: none;
-}
-article li {
-  position: relative;
-  margin: 0.45rem 0;
-  padding-left: 0;
-}
-article li::before {
-  content: "·";
-  position: absolute;
-  right: calc(100% + 0.48rem);
-  color: var(--accent);
-  font-size: 1.25em;
-  font-weight: 500;
-  line-height: 1.3;
-  text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.3);
-}
-#table-of-contents {
-  margin: 0 0 2.6rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  line-height: 1.7;
-  text-align: center;
-  text-wrap: balance;
-}
-#text-table-of-contents,
-#table-of-contents ul,
-#table-of-contents li {
-  display: inline;
-}
-#table-of-contents ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-#table-of-contents li {
-  position: static;
-  margin: 0;
-  padding: 0;
-}
-#table-of-contents li::before {
-  content: none;
-}
-#table-of-contents li + li::before {
-  content: "  //  ";
-  position: static;
-  color: var(--pink-dark);
-  font: 600 0.9rem var(--mono);
-  white-space: pre;
-  text-shadow: 0 0 0.4rem rgb(var(--accent-rgb) / 0.18);
-}
-#table-of-contents a {
-  color: var(--text-toc);
-  font-size: 0.92rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: rgb(var(--accent-rgb) / 0.24);
-  text-underline-offset: 0.18em;
-}
-#table-of-contents a:hover {
-  color: var(--accent);
-}
-.post-page figure {
-  margin: 2rem 0;
-  text-align: center;
-}
-.post-page img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.25rem;
-}
-.post-page hr {
-  height: 0;
-  margin: 3rem 0;
-  border: 0;
-  text-align: center;
-}
-.post-page hr::after {
-  content: "⌁  ⌁  ⌁";
-  color: var(--accent);
-  letter-spacing: 0.2em;
-}
-.post-footer {
-  margin-top: 4rem;
-  color: var(--muted);
-  font-size: 0.78rem;
-  text-align: center;
-}
-.post-footer a {
-  color: var(--accent);
-  text-decoration: none;
-}
-@media (max-width: 560px) {
-  .post-page .page {
-    width: min(100% - 2rem, 760px);
-    padding-top: 2.5rem;
+@media (max-width: 1180px) {
+  #table-of-contents {
+    display: none;
   }
-  .post-page .site-header {
-    margin-bottom: 3.5rem;
-  }
-  .post-page h1 {
-    font-size: 2.25rem;
-  }
-  .post-page .meta {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-  .post-page .tags {
-    justify-content: center;
-  }
+}
+
+@media (max-width: 800px) {
   article h2::before {
     content: none;
   }
+
+  article ul {
+    padding-inline-start: 1rem;
+  }
+
+  article li::before {
+    content: "*";
+    top: 0.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .org-src-container::before,
+  .org-src-container::after {
+    right: -0.5rem;
+    left: -0.5rem;
+  }
+
+  pre {
+    padding-block: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .site-title:hover {
+    animation: none;
+  }
+}
+
+/* * HLJS */
+
+
+.hljs {
+  color: var(--code-text);
+  font-family: var(--mono);
+}
+
+/* Comments */
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+/* Keywords and language structure */
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag {
+  color: var(--syntax-keyword);
+  font-weight: 600;
+}
+
+/* Strings and regular expressions */
+
+.hljs-string,
+.hljs-template-tag {
+  color: var(--syntax-string);
+}
+
+.hljs-regexp {
+  color: var(--syntax-regexp);
+}
+
+/* Constants and numeric values */
+
+.hljs-number,
+.hljs-literal {
+  color: var(--syntax-number);
+}
+
+/* Functions, classes, sections, and selectors */
+
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-title.function_.invoke__ {
+  color: var(--syntax-function);
+  font-weight: 500;
+}
+
+.hljs-title.function_,
+.hljs-title.function_.invoke__ {
+  color: var(--syntax-function);
+  font-weight: 500;
+}
+
+.hljs-title.class_ {
+  color: var(--syntax-class);
+  font-weight: 600;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: var(--syntax-section);
+  font-weight: 600;
+}
+
+/* Variables and parameters */
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params,
+.hljs-property {
+  color: var(--syntax-variable);
+}
+
+/* Attributes and types */
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-type,
+.hljs-selector-attr {
+  color: var(--syntax-attribute);
+}
+
+/* Built-ins and symbols */
+
+.hljs-built_in,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--syntax-built-in);
+}
+
+/* Metadata and pseudo-selectors */
+
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-pseudo {
+  color: var(--syntax-meta);
+}
+
+.hljs-meta .hljs-string {
+  color: var(--syntax-string);
+}
+
+/* Substitutions inside strings */
+
+.hljs-subst {
+  color: var(--code-text);
+}
+
+/* Links */
+
+.hljs-link {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--accent-rgb) / 0.5);
+  text-underline-offset: 0.15em;
+}
+
+/* Diffs */
+
+.hljs-addition {
+  color: var(--syntax-addition);
+  background: var(--syntax-addition-bg);
+}
+
+.hljs-deletion {
+  color: var(--syntax-deletion);
+  background: var(--syntax-deletion-bg);
+}
+
+/* Formula output */
+
+.hljs-formula {
+  color: var(--coral);
+  background: rgb(var(--coral-rgb) / 0.08);
+}
+
+/* Emphasis */
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  color: var(--bright);
+  font-weight: 700;
 }
 #+end_src
-
 ** Templates
+*** Placeholder
+#+NAME: template-header
+#+begin_src html :noweb yes :var class=""
+<!doctype html>
+<html lang="${language}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+#+end_src
+
+#+NAME: template-footer
+#+begin_src html
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>
+#+end_src
+
 *** Page template
 Headers tagged with =page= tag will be generated based on this template.
 
 #+NAME: page-template
 #+begin_src html :noweb yes
-<!doctype html>
-<html lang="en,tr">
-<<html-head>>
-<body class="home-page">
-  <main class="page">
-    <<header>>
+<<template-header>>
+  ${body}
+<<template-footer>>
+#+end_src
+*** Content template
+Almost same as page but wraps the content with ~article~ only.
 
+#+NAME: content-template
+#+begin_src html :noweb yes
+<<template-header>>
+  <article>
     ${body}
-
-    <<html-footer>>
-  </main>
-</body>
-</html>
+  </article>
+<<template-footer>>
 #+end_src
 *** Post template
 This is the post template, post pages will be generated based on this.
 
 #+NAME: post-template
 #+begin_src html :noweb yes
-<!doctype html>
-<html lang="en,tr">
-<<html-head>>
-<body class="post-page">
-  <main class="page">
-    <<header>>
+<<template-header>>
+  <article>
+    <header class="post-header">
+      <h1>${title}</h1>
 
-    <article>
-      <header class="post-header">
-        <h1>${title}</h1>
-
-        <div class="meta">
-          <time datetime="${(isamert/org-date-to-iso publish-date)}"
-                aria-label="Published ${publish-month} ${publish-day}, ${publish-year}">
-            <span class="date-day">${publish-day}</span>
-            <span class="date-month">${publish-month}</span>
-            <span class="date-year">${publish-year}</span>
+      <div class="meta">
+        <time datetime="${publish-date-iso}" class="publish-time"
+              aria-label="Published ${publish-month} ${publish-day}, ${publish-year}">
+          <span class="date-day">${publish-day}</span>
+          <span class="date-month">${publish-month}</span>
+          <span class="date-year">${publish-year}</span>
+        </time>
+        <div class="updated ${(if updated? "" "hidden")}">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="${update-date-iso}">
+            ${update-date-formatted}
           </time>
-          <span class="tags">
-            ${(isamert/create-tag-list tags)}
-          </span>
         </div>
+        <span class="tags">
+          ${(isamert/create-tag-list tags)}
+        </span>
+      </div>
 
-      </header>
+    </header>
 
-      ${body}
-    </article>
+    ${body}
+  </article>
 
-    <div id="comments">
-      <script src="https://utteranc.es/client.js"
-              repo="isamert/isamert.github.io"
-              issue-term="pathname"
-              label="> 💬"
-              theme="github-dark"
-              crossorigin="anonymous"
-              defer>
-      </script>
-    </div>
 
-  <<html-footer>>
-  </main>
-</body>
-</html>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+<<template-footer>>
 #+end_src
 *** Tag template
 :PROPERTIES:
@@ -907,89 +1280,36 @@ This is the post template, post pages will be generated based on this.
 :END:
 Pages that list posts belonging to a particular tag will be generated based on this template.
 
+#+NAME: rss-svg
+#+begin_src html
+<svg class="rss-icon" viewBox="0 0 24 24"
+     aria-hidden="true" fill="none" stroke="currentColor"
+     stroke-width="2.5" stroke-linecap="round">
+  <circle cx="5" cy="19" r="1.5" fill="currentColor" stroke="none"/>
+  <path d="M4 11a9 9 0 0 1 9 9"/>
+  <path d="M4 4a16 16 0 0 1 16 16"/>
+</svg>
+#+end_src
+
 #+NAME: tag-template
 #+begin_src html
-<!doctype html>
-<html lang="en,tr">
-<<html-head>>
-<body class="post-page">
-  <main class="page">
-    <<header>>
+<<template-header>>
+ <section>
+   <h1>
+    <code>${tag-name}</code> posts
+    <a href="${(format "/%s/%s.xml" isamert/blog-rss-per-tag tag-name)}" aria-label="RSS feed" class="rss-link">
+      <<rss-svg>>
+    </a>
+  </h1>
 
-  <main class="page">
-    <section>
-      <h1>Posts tagged with <code>${tag-name}</code></h1>
-
-      <a href="${(format "/%s/%s.xml" isamert/blog-rss-per-tag tag-name)}">
-        RSS feed for this tag
-      </a>
-
-        ${(->> posts
-           (--group-by (plist-get it :publish-year))
-           (--map (isamert/blog-draw-main-posts-list (car it) (cdr it)))
-           (-concat `(section ((class . "archive")
-                               (aria-labelledby . "archive"))))
-           (shr-dom-to-xml))}
-    </section>
-    <<html-footer>>
-  </main>
-</body>
-</html>
-#+end_src
-** Components
-Components that I use in my templates.
-*** Head
-Generic head portion that I use in every template.
-
-#+NAME: html-head
-#+begin_src html :noweb yes
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>((isamert))</title>
-  <!-- font stuff -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&family=Cascadia+Code:wght@400;500&family=Damion&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@500;600&display=swap" rel="stylesheet">
-  <!-- umami (it's self hosted, privacy respecting. just logging how many people visits my website and nothing more) -->
-   <<umami-script>>
-   <!--  TODO: Re-enable this -->
-   <!-- <script src="/assets/index.js"></script> -->
-   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
-</head>
-#+end_src
-*** Header
-#+NAME: header
-#+begin_src html
-<header class="site-header">
-  <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
-  <nav class="home-links">
-    <a href="/about/">about</a>
-    <a href="/projects/">projects</a>
-    <a href="/watchlist/">watchlist</a>
-  </nav>
-</header>
-#+end_src
-*** Footer
-#+NAME: html-footer
-#+begin_src html
-<footer>made slowly, with plain HTML &nbsp;•&nbsp; © 199x–now</footer>
-#+end_src
-*** umami
-Umami is a privacy friendly analytics app. I self-host it so the data is not in the hands of greater evils.
-
-#+name: umami-script
-#+begin_src html :noweb yes
-<script>
-  if (location.port != <<blog-local-port()>>) {
-    let script = document.createElement('script');
-    script.src = 'https://u.isamert.net/u.js';
-    script.setAttribute("defer", "true");
-    script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-    document.head.appendChild(script);
-  }
-</script>
+   ${(->> posts
+      (--group-by (plist-get it :publish-year))
+      (--map (isamert/blog-draw-main-posts-list (car it) (cdr it)))
+      (-concat `(section ((class . "archive")
+                          (aria-labelledby . "archive"))))
+      (shr-dom-to-xml))}
+ </section>
+<<template-footer>>
 #+end_src
 * Main :page:
 :PROPERTIES:
@@ -1003,24 +1323,27 @@ Umami is a privacy friendly analytics app. I self-host it so the data is not in 
 (defun isamert/blog-draw-main-posts-list (year posts)
   `(section ((class . "year")
              (aria-labelledby . ,(concat "year-" year)))
-            (h2 ((id . ,(concat "year-" year))) ,year) ;; TODO fix year
+            (h2 ((id . ,(concat "year-" year))) ,year)
             (ul ((class . "post-list"))
                 ,@(--map
                    (let-plist it
                      `(li ()
                           (time ((datetime . ,.publish-date-iso))
                                 ,.publish-month)
-                          (a ((href . ,(concat "/" .path)))
+                          (a ((href . ,(concat "/" .path))
+                              ,@(when (equal .language "tr")
+                                  '((lang . "tr"))))
                              ,.title)))
                    posts))))
 #+end_src
 
 #+begin_src elisp :exports results :results value html
-(->> (map-values isamert/blog-all-posts)
+(->> (map-values (im-inspect isamert/blog-all-posts))
      (--filter (not (plist-get it :page?)))
      (--sort (string> (plist-get it :publish-date-iso)
                       (plist-get other :publish-date-iso)))
      (--group-by (plist-get it :publish-year))
+     (--filter (and (car it) (not (s-blank? (car it)))))
      (--map (isamert/blog-draw-main-posts-list (car it) (cdr it)))
      (-concat `(section ((class . "archive")
                          (aria-labelledby . "archive"))))
@@ -1033,19 +1356,16 @@ Umami is a privacy friendly analytics app. I self-host it so the data is not in 
 :EXPORT_AS: feeds
 :OPTIONS: toc:nil
 :PUBLISH_DATE: [2021-04-07 Wed 00:00] +0300
+:TEMPLATE: content-template
 :END:
 
 Every category has it's own RSS feed, you can subscribe them separately or you can just subscribe for all posts using the main feed.
 
-- [[./feed/main.xml][Main feed (feed for all posts)]]
+#+begin_center
+[[./feed/main.xml][Main feed (feed for all posts)]]
+#+end_center
 
-** Feeds for tags
-:PROPERTIES:
-:CUSTOM_ID: feeds-for-tags
-:PUBLISH_DATE: [2025-01-05 Sun 17:24] CET
-:END:
-
-In no specific order:
+-----
 
 #+begin_src elisp :exports results :results value html
 (shr-dom-to-xml
@@ -1062,48 +1382,32 @@ In no specific order:
 :CUSTOM_ID: about
 :EXPORT_AS: about
 :PUBLISH_DATE: [2021-04-07 Wed 00:00] +0300
+:TEMPLATE: content-template
 :END:
-** About me
-:PROPERTIES:
-:CUSTOM_ID: about-me
-:END:
-I am a software developer, living in Istanbul. I write and publish all of my work as free/libre software. Here are a few links for you to get me know better:
+I am a software developer, living in Amsterdam. I write and publish all of my work as free/libre software. See [[./resume.html][my resume]] if you are interested in that kind of thing. Also, here is my [[https://github.com/isamert][my Github profile]].
 
-- [[./resume.html][My resume]]
-- [[https://github.com/isamert][My GitHub profile]]
+I suppose it's absolutely important to point out these days that everything in this website is written by me, not by an LLM.[fn:: Well, to be honest I used it for one specific post and the results were downright dogshit. I am not saying that I am a great writer and I can write much better than LLM's but the tone of the LLM generated sentences now disgust me. I removed those generated sentences from that post now.]
 
-** About this web site
-:PROPERTIES:
-:CUSTOM_ID: about-this-web-site
-:END:
-I generally write on technical topics like programming languages, algorithms and mostly on workflow automatization, [[https://isamert.net/tags/cli.html][command line applications]], [[https://isamert.net/tags/linux.html][GNU/Linux]], [[https://isamert.net/tags/emacs.html][Emacs]] and [[https://isamert.net/tags/org.html][org-mode]]. I try to publish /somewhat longer/ posts with some /substance/ but lately I've been trying to get in the habit of posting occasional tidbits, snippets, small tips and tricks which I appreciate when I see these kinds of posts in other blogs. I also want to curate other blogs or links that I find useful somewhere here, someday soon.
+This website itself is just [[https://github.com/isamert/isamert.github.io][one single Org file]] and all the code is generated from it, even the code that generates the website is within that file.[fn:: I am kind of questioning if it's really worth it after my last re-design but I still think it's a good trick and shows the power of Org mode.]
 
-I have other planned things for this web site, like the one I just mentioned above. Other than that I'm planning to add some pages containing stuff like:
-- Interactive list of movies/books/articles I have read and rated. Maybe along with some commentary.
-- Computer programs that I use, my use cases links to my configurations (I already have a [[https://github.com/isamert/dotfiles][dotfiles]] repo but I want to move the contents here)
-- Constantly updated everyday life tips, rule of thumbs etc.
-- List of low tech (or high tech too) gadgets that I use and find helpful.
+You can contact me at ~isamertgurbuz at gmail dot com~ if you are interested in discussing any of the posts/topics you've encountered here.
 
-I have been gathering information on these topics but I need to find a way to represent them in my website and also need to go over my notes and rephrase them for public consumption.
+-----
 
-** My projects
-:PROPERTIES:
-:CUSTOM_ID: my-projects
-:END:
+I watch a lot of stuff through my self hosted Jellyfin instance[fn:: I also write about self hosting here. Hopefully more in the future.] and keep my notes/ratings in an Org file,[fn:: Did I mention how much I do in Org? Like, a lot. See [[/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html][this]] and [[/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html][this]] if you are interested in my Org flows, or just see all of my posts about [[/tags/org.html][org]].] [[/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html][like this]] and I export that data into this [[/watchlist.html][watchlist page]] where you can find my ratings for movies/shows/documentaries. Unfortunately I haven't been able to re-design the page after my last design iteration on this website but it's at least functional but looking completely out of place.
+
+-----
+
 I maintain a few projects and occasionally contribute to other free software projects. Following list may be incomplete (please take a look at my  [[https://github.com/isamert][my GitHub profile]] if you want to see my dead/half-baked projects) but here are the projects that I've been working on:
 
-*** Command line applications
-:PROPERTIES:
-:CUSTOM_ID: command-line-applications
-:END:
-- [[gh:scli][scli]] :: A TUI application that let's you use [[https://signal.org/][Signal]] from command line. Now it is mostly (99% percent) maintained by [[https://github.com/exquo][@exquo]].
+*Command line applications*
+
+- [[gh:scli][scli]] :: A TUI application that let's you use [[https://signal.org/][Signal]] from command line. Now it is mostly (99.9%) maintained by [[https://github.com/exquo][@exquo]].
 - [[gh:jaro][jaro]] :: A resource opener with a DSL, alternative to ~xdg-open~. It let's you specify highly complex use-cases in a very simple form for opening your resources exactly as you want.
 - [[gh:marks][marks]] :: A grep-like tool (or more like a search engine) for Markdown and Org mode documents. Development is slow but I will return to this project whenever I have a bit more spare time.
 
-*** Emacs related projects
-:PROPERTIES:
-:CUSTOM_ID: emacs-related-projects
-:END:
+*Emacs related projects*
+
 - [[gh:empv.el][empv.el]] :: An Emacs media player, media library manager, radio player and YouTube frontend.
 - [[gh:orgmdb.el][orgmdb.el]] :: An Emacs/org-mode watchlist manager and OMDb API client.
 - [[gh:lab.el][lab.el]] :: A package that integrates GitLab with Emacs, provides you simple interfaces for interacting with GiLab, right inside Emacs!
@@ -1112,33 +1416,19 @@ I maintain a few projects and occasionally contribute to other free software pro
 - [[gh:couchbase-query.el][couchbase-query.el]] :: Inferior mode for ~cbq~
 - [[gh:sozluk.el][sozluk.el]] :: Online Turkish dictionary. Shows the results in a nicely formatted org mode buffer.
 
-*** Experimental projects
-:PROPERTIES:
-:CUSTOM_ID: experimental-projects
-:END:
-- [[gh:scheme.rs][scheme.rs]] :: An experimental scheme interpreter written in Rust. This project came into life in an attempt to learn Rust and a bit about interpreters. There is also an online WebAssembly version published by [[https://parkellipsen.de/][Niklas Reppel]], check it out [[https://parkellipsen.de/scheme/][here]].
-- [[gh:techne][techne]] :: Another attempt at learning compilers/interpreters. This time I went ahead and designed my language. It has a mix of ML-style and C-style syntax. It has couple of interesting +and novel ideas+ (it turns out those ideas are already implemented by Scala, Clojure and D lang but I guess it is first language that brings them together.) I still plan to work on this and make it at least usable for real-life scripting.
+*Experimental projects*
 
-*** Other projects
-:PROPERTIES:
-:CUSTOM_ID: other-projects
-:END:
+- [[gh:scheme.rs][scheme.rs]] :: An experimental scheme interpreter written in Rust. This project came into life in an attempt to learn Rust and a bit about interpreters. There is also an online WebAssembly version published by [[https://parkellipsen.de/][Niklas Reppel]], check it out [[https://parkellipsen.de/scheme/][here]].
+- [[gh:techne][techne]] :: Another attempt at learning compilers/interpreters. This time I went ahead and designed my language. It has a mix of ML-style and C-style syntax. It has couple of interesting +and novel ideas+.[fn:: It turns out those ideas are already implemented by Scala, Clojure and D lang but I guess it is first language that brings them together.] I still plan to work on this and make it at least usable for real-life scripting.
+
+*Other projects*
+
 - [[https://github.com/isamert/isamert.github.io][isamert.net]] :: This web site itself. It's simply one file that contains the all website contents, the code that generates the static file based on the contents and the documentation of the generator. It can be abstracted away in a sense that it can be an Emacs web site generator package but you can also copy the file into an org-mode buffer and start using it.
 - [[https://github.com/isamert/dotfiles][dotfiles]] :: All of the configurations for the programs that I use and lot's of automation code. There are some modules that I want to turn into separate Emacs packages, like:
   - A ~completing-read~ based GitLab interface for creating/listing/acting upon merge requests, cloning/managing projects.
   - A ~completing-read~ based Jira interface for creating/listing/managing tickets.
   - A contact manager based on org-mode. I have a blog post about this here: [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]].
   - Other smaller stuff.
-
-** Contact
-:PROPERTIES:
-:CUSTOM_ID: contact
-:END:
-Please do :). I'm a little bit slow in terms of responding but I always do. You can email me regarding any subject that you think I'll be interested and I'll get back to you.
-
-If you are interested with my projects and want to contribute/maintain, please don't hesitate to contact as I am pretty willing to accept contributions or even share/defer the maintenance.
-
-isamertgurbuz at gmail dot com
 
 * Watchlist :page:
 :PROPERTIES:
@@ -4192,13 +4482,13 @@ I've been using org-mode to organize my life for quite a long time; all the dead
 :CUSTOM_ID: general-structure
 :PUBLISH_DATE: [2026-08-16 Sun 01:59] +0200
 :END:
-I have a file called =bullet.org= where I keep all these day management stuff[fn:: All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do =org-narrow-to-subtree= and that's it, it's like an individual file now.]. The name comes from =bullet journaling= thing and I'm not sure if this can be called as /bullet journaling/ but the name gives a little bit more personality to the file and I like that.
+I have a file called =bullet.org= where I keep all these day management stuff.[fn:: All of my daily notes are in this file, I don't like creating a new file for each day for various reasons. Moving tasks between them becomes problematic, jumping to an earlier day is problematic and if I want to, I can always do =org-narrow-to-subtree= and that's it, it's like an individual file now.] The name comes from =bullet journaling= thing and I'm not sure if this can be called as /bullet journaling/ but the name gives a little bit more personality to the file and I like that.
 
 ** Starting the day
 :PROPERTIES:
 :CUSTOM_ID: starting-the-day
 :END:
-Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.]. So far I got this:
+Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines.[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.] So far I got this:
 
 #+ATTR_HTML: :src /images/bullet_routines.png :class centered
 [[file:./docs/images/bullet_routines.png]]
@@ -4940,6 +5230,7 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 :UPDATE_DATE: [2025-08-02 Sat]
 :CUSTOM_ID: dealing-with-apis-jsons-and-databases-in-org-mode
 :COOL_URI: orgmode-executors-and-apis.html
+:OPTIONS: toc:nil
 :END:
 
 I deal with web API's quite a lot in my daily job. I use org-mode and [[https://github.com/zweifisch/ob-http][ob-http]] to make requests and display their results. See this:
@@ -5793,11 +6084,9 @@ Also see the [[https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_f
 :PUBLISH_DATE: [2024-12-25 Wed 20:49] +0100
 :CUSTOM_ID: signing-long-pdf-documents-automatically-with-bash
 :END:
-Have you ever needed to sign a long PDF document? You fire up a colossal PDF editor that guzzles RAM like leaving your 16-year-old laptop gasping for breath, like an asthmatic chihuahua attempting a marathon[fn::What a strange joke you say, and, I agree. This joke is brought to you by ChatGPT.].
+Have you ever needed to sign a long PDF document? This has probably happened to you on /multiple/ occasions, prompting you to think, /I'm going to automate this./ Well, that hasn't happened to me either. Once, I had to sign a lengthy PDF document, and I immediately automated the process, thinking I will be able to use it again.
 
-This has probably happened to you on multiple occasions, prompting you to think, /I'm going to automate this./ Well, that hasn't happened to me either. Once, I had to sign a lengthy PDF document, and I immediately automated the process, thinking I will be able to use it again.
-
-A couple of weeks ago, I had another thrilling opportunity to use that script! But yeah, you've guessed it, I forgot about the script and used Xournal++ instead (It's a good app though, not like the one I mentioned above). Then, I remembered my creation. So instead of experiencing the joy of seeing my premature automation bear fruit, I find myself writing this blog post to amuse you and perhaps save the next "Mr. Automation" ten minutes of effort.
+A couple of weeks ago, I had another thrilling opportunity to use that script! But yeah, you've guessed it, I forgot about the script and used Xournal++ instead (It's a good app though). Then, I remembered my creation. So instead of experiencing the joy of seeing my premature automation bear fruit, I find myself writing this blog post to amuse you.
 
 Here it is, in all it's glory:
 
@@ -6202,7 +6491,9 @@ Useful when styling or templating has changed."
              (update-date (org-entry-get nil "UPDATE_DATE"))
              (publish-date-iso (s-chop-left 1 (car (s-split " " (or publish-date "")))))
              (update-date-iso (s-chop-left 1 (car (s-split " " (or update-date "")))))
+             (updated? (and update-date (not (equal publish-date-iso update-date-iso))))
              (publish-time (date-to-time publish-date-iso))
+             (update-time (when updated? (date-to-time update-date-iso)))
              (export-path (org-entry-get nil "EXPORT_AS"))
              (options (org-entry-get nil "OPTIONS"))
              (author (isamert/org-get-keyword "AUTHOR"))
@@ -6214,6 +6505,7 @@ Useful when styling or templating has changed."
          :path path
          :file-path (isamert/blog-with-publish-dir path)
          :page? (-contains? tags "page")
+         :language (if (-contains? tags "turkish") "tr" "en")
          :cool-uri cool-uri
          :publish-date publish-date
          :publish-year (format-time-string "%Y" publish-time)
@@ -6222,7 +6514,8 @@ Useful when styling or templating has changed."
          :update-date update-date
          :publish-date-iso publish-date-iso
          :update-date-iso update-date-iso
-         :update-date update-date
+         :update-date-formatted (if updated? (format-time-string "%d %b %Y" update-time) "")
+         :updated? updated?
          :abstract abstract
          :tags tags
          :author author
@@ -6237,19 +6530,20 @@ Useful when styling or templating has changed."
     ;; Prepare post infos
     (org-map-entries
      (lambda ()
-       (let* ((info (isamert/get-current-post-info))
-              (id (plist-get info :id)))
-         (puthash id info posts)
-         (--each (plist-get info :tags)
-           (puthash
-            it
-            (append (list id) (gethash it all-tags '()))
-            all-tags))
-         (--each (plist-get info :words)
-           (puthash
-            it
-            (append (list id) (gethash it all-words '()))
-            all-words))))
+       (when (isamert/blog-can-export-current)
+         (let* ((info (isamert/get-current-post-info))
+                (id (plist-get info :id)))
+           (puthash id info posts)
+           (--each (plist-get info :tags)
+             (puthash
+              it
+              (append (list id) (gethash it all-tags '()))
+              all-tags))
+           (--each (plist-get info :words)
+             (puthash
+              it
+              (append (list id) (gethash it all-words '()))
+              all-words)))))
      "LEVEL=1")
     ;; Calculate similar posts
     (map-do
@@ -6306,7 +6600,6 @@ Useful when styling or templating has changed."
                (title (plist-get info :title))
                (cool-uri (plist-get info :cool-uri))
                (publish-date (plist-get info :publish-date))
-               (update-date (plist-get info :update-date))
                (tags (plist-get info :tags))
                (is-page (-contains? tags "page"))
                (template (or (org-entry-get nil "TEMPLATE")
@@ -6452,8 +6745,10 @@ This does some changes on the original document like:
                     (match-string 1 output)
                   match)))))
          (replace-regexp-in-string "#FOOTNOTES_START#\\(?:.\\|\n\\)*?#FOOTNOTES_END#" "")
-         ;; Remove Table of Contents
-         (replace-regexp-in-string "<h[0-5]>Table of Contents</h[0-5]>" ""))))))
+         ;; Rewrite headers with links
+         (replace-regexp-in-string
+          "<h\\([2-5]\\) id=\"\\(.*?\\)\">\\(.*?\\)</h[2-5]>"
+          "<h\\1 id=\"\\2\"><a href=\"#\\2\">\\3</a></h\\1>"))))))
 
 ;; TODO: fix document
 (defun isamert/blog-refresh-templates ()
@@ -6472,7 +6767,7 @@ This does some changes on the original document like:
   exported with the \"about-template\".:
   ,* A post or page
   :PROPERTIES:
-  :TEMPLATE: about
+  :TEMPLATE: about-template
   :END:
 
   ,* My templates :noexport:
@@ -6623,7 +6918,7 @@ They can be overridden in header properties."
   (interactive)
   (let* ((taggeds (make-hash-table :test 'equal))
          (items (->> (org-map-entries 'isamert/blog-generate-tag-info-current "LEVEL=1")
-                   (--keep it))))
+                     (--keep it))))
     (-each items
       (-lambda ((tags . item))
         (--each tags (push item (gethash it taggeds '())))))
@@ -6634,6 +6929,7 @@ They can be overridden in header properties."
        (isamert/template "tag-template"
                          :title (format "Posts tagged with %s" it)
                          :tag-name it
+                         :language (if (equal it "turkish") "tr" "en")
                          :posts (gethash it taggeds))))))
 
 ;;;; Sitemap

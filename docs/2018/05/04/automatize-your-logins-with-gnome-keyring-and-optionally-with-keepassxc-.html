@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Automatize your logins with gnome-keyring (and optionally with KeePassXC) | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</h1>
+
+      <div class="meta">
+        <time datetime="2018-05-04" class="publish-time"
+              aria-label="Published May 04, 2018">
+          <span class="date-day">04</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2018</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/cli.html">cli</a><a href="/tags/linux.html">linux</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/cli.html" class="tag-link">cli</a>, <a href="/tags/linux.html" class="tag-link">linux</a></li>
-            <li id="publish-date">2018-05-04</li>
-            <li id="updated-date">2018-05-04</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -66,7 +71,7 @@ Storing passwords in plain-text is not an encouraged act but typing your passwor
 But there is a problem in this particular solution, at least for me. I'm using <i>KeePassXC</i> to manage my passwords, so copying all those passwords-or just the required ones, still a lot- to <code>gnome-keyring</code> is not feasible. So I need to do something about that too.
 </p>
 <div id="outline-container-installing-configuring--gnome-keyring-" class="outline-2">
-<h2 id="installing-configuring--gnome-keyring-">Installing/configuring <code>gnome-keyring</code></h2>
+<h2 id="installing-configuring--gnome-keyring-"><a href="#installing-configuring--gnome-keyring-">Installing/configuring <code>gnome-keyring</code></a></h2>
 <div class="outline-text-2" id="text-installing-configuring--gnome-keyring-">
 <p>
 Skip this step if you already have a running <code>gnome-keyring</code>.
@@ -79,15 +84,15 @@ Skip this step if you already have a running <code>gnome-keyring</code>.
 </div>
 </div>
 <div id="outline-container-adding-passwords-to--gnome-keyring-" class="outline-2">
-<h2 id="adding-passwords-to--gnome-keyring-">Adding passwords to <code>gnome-keyring</code></h2>
+<h2 id="adding-passwords-to--gnome-keyring-"><a href="#adding-passwords-to--gnome-keyring-">Adding passwords to <code>gnome-keyring</code></a></h2>
 <div class="outline-text-2" id="text-adding-passwords-to--gnome-keyring-">
 <p>
 We need to create a <i>Stored Password</i> in <i>login</i> keyring that we've just created. But the problem is it is not possible to create <i>Stored Passwords</i> with attributes in <code>seahorse</code>, we need to attach attributes to passwords because the command-line tool <code>secret-tool</code> requires them while querying for a password. So what you need to do is, simply create your <i>Stored Password</i> using <code>secret-tool</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">secret-tool store --label=Mail name mail_password
-</pre>
+<pre class="src src-sh"><code>secret-tool store --label=Mail name mail_password
+</code></pre>
 </div>
 
 <p>
@@ -100,15 +105,15 @@ If you are using KeePassXC like me, my advise would be instead of duplicating yo
 </div>
 </div>
 <div id="outline-container-querying-for-a-password" class="outline-2">
-<h2 id="querying-for-a-password">Querying for a password</h2>
+<h2 id="querying-for-a-password"><a href="#querying-for-a-password">Querying for a password</a></h2>
 <div class="outline-text-2" id="text-querying-for-a-password">
 <p>
 So you have your passwords in <code>gnome-keyring</code> and you want to supply that passwords to some program. Of course every program has different method for storing/getting your password. I'm going to use <code>mutt</code> as an example (it's a command-line mail client). But first, lets see how do we get our password:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">secret-tool lookup name mail_password
-</pre>
+<pre class="src src-sh"><code>secret-tool lookup name mail_password
+</code></pre>
 </div>
 
 <p>
@@ -116,21 +121,21 @@ This command will print your password. To configure mutt to use <code>gnome-keyr
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">set imap_pass=`secret-tool lookup name mail_password`
-</pre>
+<pre class="src src-sh"><code>set imap_pass=`secret-tool lookup name mail_password`
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-keepassxc" class="outline-2">
-<h2 id="keepassxc">KeePassXC</h2>
+<h2 id="keepassxc"><a href="#keepassxc">KeePassXC</a></h2>
 <div class="outline-text-2" id="text-keepassxc">
 <p>
 To get a password from KeePassXC, use this command:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry"
-</pre>
+<pre class="src src-sh"><code>secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry"
+</code></pre>
 </div>
 
 <p>
@@ -138,8 +143,8 @@ But this prints a lot of information. To just get the value of <i>Password</i> e
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-
-</pre>
+<pre class="src src-sh"><code>secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-
+</code></pre>
 </div>
 
 <p>
@@ -147,8 +152,8 @@ To see your database structure, use this command:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">secret-tool lookup name keepass | keepassxc-cli ls /path/to/keepass/db/file
-</pre>
+<pre class="src src-sh"><code>secret-tool lookup name keepass | keepassxc-cli ls /path/to/keepass/db/file
+</code></pre>
 </div>
 
 <p>
@@ -160,13 +165,13 @@ For your muttrc, you need to add this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">set imap_pass=`secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-`
-</pre>
+<pre class="src src-sh"><code>set imap_pass=`secret-tool lookup name keepass | keepassxc-cli show /path/to/keepass/db/file "/path/to/password/entry" | grep "Password: " | head -n 1 | cut -c 11-`
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-security-concerns" class="outline-2">
-<h2 id="security-concerns">Security concerns</h2>
+<h2 id="security-concerns"><a href="#security-concerns">Security concerns</a></h2>
 <div class="outline-text-2" id="text-security-concerns">
 <p>
 You may say that this kind of approach exposes all of our passwords to all user-level programs. Actually this is kind of behavior I'm trying to achieve here, so that I don't need to type my passwords for each program. If you have a malicious program in your system, it will eventually get your passwords anyway. But <code>gnome-keyring</code> gives you a lot of flexibility. You can lock your keyring after your programs logged in or you can keep your keyring locked all the time(in that case, every time a program tries to use your password, <code>gnome-keyring</code> will ask for your user password. So you will just use one password for your every login which is also better than typing different passwords to different programs every time) etc. This is a much better solution than keeping your passwords as plain-text in your configuration files or typing them manually every time.
@@ -178,36 +183,20 @@ Also you can probably do the same things with kwallet if you are using KDE. Just
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

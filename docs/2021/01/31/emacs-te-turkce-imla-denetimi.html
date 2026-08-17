@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="tr">
 <head>
-  <title>Emacs'te Türkçe imla denetimi | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Emacs'te Türkçe imla denetimi</h1>
+
+      <div class="meta">
+        <time datetime="2021-01-31" class="publish-time"
+              aria-label="Published Jan 31, 2021">
+          <span class="date-day">31</span>
+          <span class="date-month">Jan</span>
+          <span class="date-year">2021</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/turkish.html">turkish</a><a href="/tags/micro.html">micro</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Emacs'te Türkçe imla denetimi</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
-            <li id="publish-date">2021-01-31</li>
-            <li id="updated-date">2021-01-31</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -64,7 +69,7 @@ Gerekli Emacs konfigürasyonu ise şöyle:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(setq ispell-program-name "hunspell"
+<pre class="src src-elisp"><code>(setq ispell-program-name "hunspell"
       ispell-local-dictionary "en_US"
       ispell-local-dictionary-alist
       '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
@@ -73,7 +78,7 @@ Gerekli Emacs konfigürasyonu ise şöyle:
 ;; org-mode ve markdown-mode içerisinde flyspell'i aktive et
 (add-hook 'org-mode-hook 'flyspell-mode)
 (add-hook 'markdown-mode-hook 'flyspell-mode)
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -82,7 +87,7 @@ Gerekli Emacs konfigürasyonu ise şöyle:
 <li>Yanlış bir kelimenin üzerinde <code>M-x ispell-word</code> yaparak önerileri görebilirsiniz. (<i>evil</i> kullanıcıları <code>z=</code> yapabilirler.)</li>
 </ul>
 <div id="outline-container-i̇zlenimler" class="outline-2">
-<h2 id="i̇zlenimler">İzlenimler</h2>
+<h2 id="i̇zlenimler"><a href="#i̇zlenimler">İzlenimler</a></h2>
 <div class="outline-text-2" id="text-i̇zlenimler">
 <p>
 Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda <code>görüntüleyiciyle</code> kelimesinin altını çiziyor yanlış diye. Aynı zamanda yanlış kelimeler için yapılan öneriler de oldukça vasat. Fakat elbette birçok hatanın gözden kaçmaması için oldukça yardımcı oluyor.
@@ -90,36 +95,20 @@ Mükemmel mi? Hayır. Mesela şu an yazdığım bu yazıda <code>görüntüleyic
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li> <li><a href="/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html">Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

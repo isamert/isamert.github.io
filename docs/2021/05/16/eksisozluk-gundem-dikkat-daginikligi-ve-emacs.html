@@ -1,53 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="tr">
 <head>
-  <title>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</h1>
+
+      <div class="meta">
+        <time datetime="2021-05-16" class="publish-time"
+              aria-label="Published May 16, 2021">
+          <span class="date-day">16</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2021</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2025-06-29">
+            29 Jun 2025
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/turkish.html">turkish</a><a href="/tags/micro.html">micro</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
-            <li id="publish-date">2021-05-16</li>
-            <li id="updated-date">2025-06-29</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek mümkün olmuyor. Nihayetinde ekşi'ye girişimin temel sebebinin <i>gündem</i>'e bakmak olduğunun farkına vardım. Gündem içerisinde de en çok merak ettiğim şey genel itibarıyla en çok entry girilen başlıkların neler olduğunu görmek. Fakat ekşi'de gündem tam olarak entry sayısına göre sıralanmıyor ve bu durum benim için sinir bozucu. Gündemi oluşturan 3-5 başlığa bakıp çıkmak isterken dikkatim diğer başlıklarla dağılıyor veya en çok entry girilen başlıkları bulayım derken zaman kaybediyorum. Zaten çoğu zaman entry'leri de merak etmiyorum, sadece bi başlıkları gözden geçirmek istiyorum. Bunun için çözümüm şu oldu:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">curl --silent --header "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq
-</pre>
+<pre class="src src-sh"><code>curl --silent --header "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" https://eksisozluk.com/basliklar/gundem | grep '?a=popular' | sed -E 's/[ ]*href="(.*)"&gt;(.*) &lt;small&gt;(.*)&lt;\\/small&gt;(.*)/(\\3) \\2|||\\1/' | sort -V -r | uniq
+</code></pre>
 </div>
 
 <p>
@@ -55,7 +60,7 @@ Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">(696) 16 mayıs 2021 sedat peker açıklamaları
+<pre class="src src-nil"><code>(696) 16 mayıs 2021 sedat peker açıklamaları
 (675) 2020-2021 sezonu şampiyonu beşiktaş
 (567) 16 mayıs 2021 içişleri bakanlığı genelgesi
 (553) beşiktaş jean-claude billong skandalı
@@ -64,7 +69,7 @@ Ekşi kullanımımı azaltmaya çalışıyorum-hatta hiç girmemeye-fakat bu pek
 (339) aynı anda 24 kızla sevgili olan öğretmen
 (332) hafta sonu sokağa çıkma yasağı
 ...
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -72,7 +77,7 @@ Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu inte
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun isamert/eksi-gundem-sirali ()
+<pre class="src src-elisp"><code>(defun isamert/eksi-gundem-sirali ()
   "Eksi gundemini entry sayisina gore sirala ve `completing-read' yap."
   (interactive)
   (let* ((results (-&gt;&gt;
@@ -97,7 +102,7 @@ Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu inte
      (cdr)
      (format "https://eksisozluk.com/%s")
      (browse-url))))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -125,36 +130,20 @@ Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracıl
 </ul></dd>
 </dl>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li> <li><a href="/2021/01/31/emacs-te-turkce-imla-denetimi.html">Emacs'te Türkçe imla denetimi</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

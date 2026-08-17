@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="tr">
 <head>
-  <title>Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</h1>
+
+      <div class="meta">
+        <time datetime="2022-03-02" class="publish-time"
+              aria-label="Published Mar 02, 2022">
+          <span class="date-day">02</span>
+          <span class="date-month">Mar</span>
+          <span class="date-year">2022</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2022-03-02">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/turkish.html">turkish</a><a href="/tags/micro.html">micro</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/turkish.html" class="tag-link">turkish</a>, <a href="/tags/micro.html" class="tag-link">micro</a></li>
-            <li id="publish-date">2022-03-02</li>
-            <li id="updated-date">2022-03-02</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 Görünüşe göre az da olsa RSS takipçilerim var ve belki aralarından bazıları Türkçe okuyabiliyordur:
 </p>
 
@@ -59,36 +64,20 @@ Her şeyi Emacs'e taşıma hastalığımın sonucu olarak bir akşamüstü yazd�
 API'ların kullanım hakları ile alakalı bahsi geçen sitelerde herhangi bir bilgilendirme bulunmuyor. Sadece 3-5 kişinin kullanacağı bu paketten ötürü de üzerime geleceklerini sanmıyorum fakat herhangi bir uyarı almam neticesinde muhtemelen yayından kaldıracağım bir paket olacak.
 </p>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html">Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</a></li> <li><a href="/2021/01/31/emacs-te-turkce-imla-denetimi.html">Emacs'te Türkçe imla denetimi</a></li> <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

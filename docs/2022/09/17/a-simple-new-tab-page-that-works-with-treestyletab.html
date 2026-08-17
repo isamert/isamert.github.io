@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>A simple new tab page (that works with TreeStyleTab) | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>A simple new tab page (that works with TreeStyleTab)</h1>
+
+      <div class="meta">
+        <time datetime="2022-09-17" class="publish-time"
+              aria-label="Published Sep 17, 2022">
+          <span class="date-day">17</span>
+          <span class="date-month">Sep</span>
+          <span class="date-year">2022</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2022-09-17">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/micro.html">micro</a><a href="/tags/browsers.html">browsers</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">A simple new tab page (that works with TreeStyleTab)</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/browsers.html" class="tag-link">browsers</a></li>
-            <li id="publish-date">2022-09-17</li>
-            <li id="updated-date">2022-09-17</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -104,15 +109,15 @@ Couple thins to note about the file:
 
 </figure>
 <div id="outline-container-[[https---isamert-net-newtab-html][isamert-net-newtab-html]]" class="outline-2">
-<h2 id="[[https---isamert-net-newtab-html][isamert-net-newtab-html]]"><a href="https://isamert.net/newtab.html">isamert.net/newtab.html</a></h2>
+<h2 id="[[https---isamert-net-newtab-html][isamert-net-newtab-html]]"><a href="#[[https---isamert-net-newtab-html][isamert-net-newtab-html]]"><a href="https://isamert.net/newtab.html">isamert.net/newtab.html</a></a></h2>
 <div class="outline-text-2" id="text-[[https---isamert-net-newtab-html][isamert-net-newtab-html]]">
 <p>
 I also uploaded <a href="https://isamert.net/newtab.html">this page to my website</a>, you can use it if you don't want to deal with downloading etc.. It does not do any network calls (except for the Unsplash of course). You still need to get an Unsplash API key. After getting the API key, open the console (F12) and execute the following:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">localStorage.setItem("unsplashApiKey", "YOUR_API_KEY_HERE")
-</pre>
+<pre class="src src-js"><code>localStorage.setItem("unsplashApiKey", "YOUR_API_KEY_HERE")
+</code></pre>
 </div>
 
 <p>
@@ -120,7 +125,7 @@ You can also manage other settings like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">// Change true with false if you don't want to see them, these are the defaults:
+<pre class="src src-js"><code>// Change true with false if you don't want to see them, these are the defaults:
 localStorage.setItem("showClock", true)
 localStorage.setItem("showTitle", true)
 localStorage.setItem("showNotes", true)
@@ -128,7 +133,7 @@ localStorage.setItem("showNotes", true)
 // How many seconds before fetching a new image? (Following sets to 5 minutes)
 // Setting it to false causes every refresh to fetch a new random image.
 localStorage.setItem("newImageInterval", 5 * 60);
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -136,48 +141,32 @@ There are also two other functions that you can use:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">// This exports your configuration and notes into a JSON file.
+<pre class="src src-js"><code>// This exports your configuration and notes into a JSON file.
 newtab.export()
 
 // Import an already exported configuration and notes. (You may need
 // to click the page first and then run this quickly, otherwise it may
 // give you an error complaining about user interaction)
 newtab.import()
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

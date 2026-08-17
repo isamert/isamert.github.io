@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Migrating my IMDb ratings list and watch list into org-mode | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Migrating my IMDb ratings list and watch list into org-mode</h1>
+
+      <div class="meta">
+        <time datetime="2021-05-09" class="publish-time"
+              aria-label="Published May 09, 2021">
+          <span class="date-day">09</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2021</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2021-05-09">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/org.html">org</a><a href="/tags/cli.html">cli</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Migrating my IMDb ratings list and watch list into org-mode</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a>, <a href="/tags/cli.html" class="tag-link">cli</a></li>
-            <li id="publish-date">2021-05-09</li>
-            <li id="updated-date">2021-05-09</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -54,7 +59,7 @@
 </div>
 </nav>
 <div id="outline-container-preamble" class="outline-2">
-<h2 id="preamble">Preamble</h2>
+<h2 id="preamble"><a href="#preamble">Preamble</a></h2>
 <div class="outline-text-2" id="text-preamble">
 <p>
 I have been using org-mode to keep track of my movie ratings and critiques. Org-mode, combined with <a href="https://github.com/alphapapa/org-ql/">org-ql</a>, gives me quite a lot flexibility. I'm also utilizing <a href="https://en.wikipedia.org/wiki/Zettelkasten">Zettelkasten</a>-like backlinking and references, so keeping these rating information on org-mode makes sense for me. First, let me show you how it looks like:
@@ -82,7 +87,7 @@ I mainly automated the needed information-retrieval using the <a href="https://g
 </div>
 </div>
 <div id="outline-container-exporting-the-data-from-imdb" class="outline-2">
-<h2 id="exporting-the-data-from-imdb">Exporting the data from IMDb</h2>
+<h2 id="exporting-the-data-from-imdb"><a href="#exporting-the-data-from-imdb">Exporting the data from IMDb</a></h2>
 <div class="outline-text-2" id="text-exporting-the-data-from-imdb">
 <p>
 Log in to IMDb and open <a href="https://www.imdb.com/list/ratings">this link</a>. Hit the 3-dot icon on top-right and click <code>Export</code>.
@@ -100,16 +105,16 @@ This will give you a file named <code>ratings.csv</code>.
 </div>
 </div>
 <div id="outline-container-parsing-the-data" class="outline-2">
-<h2 id="parsing-the-data">Parsing the data</h2>
+<h2 id="parsing-the-data"><a href="#parsing-the-data">Parsing the data</a></h2>
 <div class="outline-text-2" id="text-parsing-the-data">
 <p>
 I just searched for <code>elisp csv</code> and used the first package that came across. I did not want to split lines with "," because there are some quoted texts in the csv and that might contain commas itself. Using a library that handles these cases are just better.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(use-package parse-csv
+<pre class="src src-elisp"><code>(use-package parse-csv
   :ensure t)
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -117,26 +122,26 @@ With the following we can parse the data into <code>'((movie1 properties ...) (m
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(setq
+<pre class="src src-elisp"><code>(setq
  my-movie-data
  (parse-csv-string-rows
   (with-temp-buffer
     (insert-file-contents "~/Downloads/ratings.csv")
     (buffer-string))
   ?\, ?\" "\n"))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-generating-the-org-mode-rating-list" class="outline-2">
-<h2 id="generating-the-org-mode-rating-list">Generating the org-mode rating list</h2>
+<h2 id="generating-the-org-mode-rating-list"><a href="#generating-the-org-mode-rating-list">Generating the org-mode rating list</a></h2>
 <div class="outline-text-2" id="text-generating-the-org-mode-rating-list">
 <p>
 I like using <a href="https://github.com/magnars/dash.el">dash.el</a> functionality for these kind of one-off scripts, it's very convenient and easy to write. With the following, we can convert the data in the <code>ratings.csv</code> into our custom org mode format.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(-&gt;&gt; my-movie-data
+<pre class="src src-elisp"><code>(-&gt;&gt; my-movie-data
   ;; Skip the CSV header
   (-drop 1)
   ;; Skip empty lines etc.
@@ -157,7 +162,7 @@ I like using <a href="https://github.com/magnars/dash.el">dash.el</a> functional
   (--reduce (format "%s\n%s" acc it))
   ;; Copy the string
   (kill-new))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -166,7 +171,7 @@ This will format all movies into the format I just showed you above and copy the
 </div>
 </div>
 <div id="outline-container-appendix:-getting-the-movie-country-data" class="outline-2">
-<h2 id="appendix:-getting-the-movie-country-data">Appendix: Getting the movie country data</h2>
+<h2 id="appendix:-getting-the-movie-country-data"><a href="#appendix:-getting-the-movie-country-data">Appendix: Getting the movie country data</a></h2>
 <div class="outline-text-2" id="text-appendix:-getting-the-movie-country-data">
 <p>
 I was not satisfied with the above result, because I also like to have a <code>:COUNTRY:</code> field in movies property list so that I can filter based on country etc. As <code>ratings.csv</code> does not provide this information, I had to use the <code>orgmdb</code> package I mentioned earlier.
@@ -177,22 +182,22 @@ First, I needed to format the data in the <code>ratings.csv</code> into somethin
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(setq
+<pre class="src src-elisp"><code>(setq
  isamert/movie-rating-list
  '(("tt1010048" . (7 2016-08-30))
    ("tt0101540" . (6 2017-03-13))
    ("tt1019452" . (8 2019-11-29))
    ...))
-</pre>
+</code></pre>
 </div>
 
 <p>
-&#x2026;using this command and then doing a bit of manual work:
+&hellip;using this command and then doing a bit of manual work:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">cat ratings.csv | awk -F, '{print "(\"" $1 "\" . (" $2, "\""$3 "\"))"}'
-</pre>
+<pre class="src src-sh"><code>cat ratings.csv | awk -F, '{print "(\"" $1 "\" . (" $2, "\""$3 "\"))"}'
+</code></pre>
 </div>
 
 <p>
@@ -200,11 +205,11 @@ Because I only need the rating I gave to the movie and the date I gave it from t
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(setq isamert/movies
+<pre class="src src-elisp"><code>(setq isamert/movies
       (--map
        (orgmdb :imdb (symbol-name (car it)))
        isamert/movie-rating-list))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -212,7 +217,7 @@ This may take a few minutes depending on how much movies you have in your list. 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(-&gt;&gt; isamert/movies
+<pre class="src src-elisp"><code>(-&gt;&gt; isamert/movies
   (--map (let* ((info (cdr (assoc-string (alist-get 'imdbID it) isamert/movie-rating-list))))
            `(,@it (MyRating . ,(car info)) (MyRatingDate . ,(cdr info)))))
   (--map (format "** DONE %s (%s) :%s:\n:PROPERTIES:\n:GENRE:    %s\n:RUNTIME:  %s\n:DIRECTOR: %s\n:COUNTRY:  %s\n:RATING:   %s\n:WATCHED:  %s\n:IMDB-ID:  %s\n:END:"
@@ -228,7 +233,7 @@ This may take a few minutes depending on how much movies you have in your list. 
                  (alist-get 'imdbID it)))
   (--reduce (format "%s\n%s" acc it))
   (kill-new))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -237,36 +242,20 @@ Nice.
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2019/11/14/running-sql-on-org-mode-tables.html">Running SQL on org-mode tables</a></li> <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

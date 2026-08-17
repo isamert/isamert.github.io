@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Hosting Invidious on sub-folder with Nginx | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Hosting Invidious on sub-folder with Nginx</h1>
+
+      <div class="meta">
+        <time datetime="2024-05-17" class="publish-time"
+              aria-label="Published May 17, 2024">
+          <span class="date-day">17</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2024</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2024-05-21">
+            21 May 2024
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/micro.html">micro</a><a href="/tags/selfhosting.html">selfhosting</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Hosting Invidious on sub-folder with Nginx</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/selfhosting.html" class="tag-link">selfhosting</a></li>
-            <li id="publish-date">2024-05-17</li>
-            <li id="updated-date">2024-05-21</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 If you intend to self-host <a href="https://github.com/iv-org/invidious">Invidious</a> within a sub-folder, like <code>your-website.com/invidious/</code>, this is not officially supported and is <a href="https://github.com/iv-org/invidious/issues/2441">unlikely to be in the future</a>. I understand their viewpoint, yet I believe this is a legitimate scenario. For an individual self-hoster, getting an additional domain solely for Invidious may not be that easy. While a subdomain remains an option, there are scenarios where it may not be viable.
 </p>
 
@@ -50,7 +55,7 @@ Continuing with the example above, let's assume that you want to serve Invidious
 </p>
 
 <div class="org-src-container">
-<pre class="src src-yaml"># If your nginx serves through https, then change this to 443:
+<pre class="src src-yaml"><code># If your nginx serves through https, then change this to 443:
 external_port: 443
 
 # Again, if your nginx serves through https, then this needs to be true:
@@ -58,7 +63,7 @@ https_only: true
 
 # Your domain
 domain: your-website.com
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -66,7 +71,7 @@ And here is the relevant nginx configuration:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nginx"># Change each instance of the text "/invidious/" with the subfolder
+<pre class="src src-nginx"><code># Change each instance of the text "/invidious/" with the subfolder
 # path that you want in the following configuration:
 
 location /invidious/ {
@@ -102,7 +107,7 @@ location /invidious/ {
   sub_filter 'href="/' 'href="/invidious/';
   sub_filter 'action="/' 'action="/invidious/';
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -112,36 +117,20 @@ Also see <a href="https://docs.invidious.io/nginx/">the official nginx configura
 <p>
 Of course this is not a very sound way to do things, each update to Invidious has a chance to cause some breakage but it works for now. I'll try to keep this updated.</p>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html">Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

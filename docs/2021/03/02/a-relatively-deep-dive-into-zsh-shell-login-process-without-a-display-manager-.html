@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>A (relatively) deep dive into (zsh) shell login process (without a display manager) | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>A (relatively) deep dive into (zsh) shell login process (without a display manager)</h1>
+
+      <div class="meta">
+        <time datetime="2021-03-02" class="publish-time"
+              aria-label="Published Mar 02, 2021">
+          <span class="date-day">02</span>
+          <span class="date-month">Mar</span>
+          <span class="date-year">2021</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2024-07-25">
+            25 Jul 2024
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/linux.html">linux</a><a href="/tags/shell.html">shell</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">A (relatively) deep dive into (zsh) shell login process (without a display manager)</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/linux.html" class="tag-link">linux</a>, <a href="/tags/shell.html" class="tag-link">shell</a></li>
-            <li id="publish-date">2021-03-02</li>
-            <li id="updated-date">2024-07-25</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -95,8 +100,8 @@ I use <code>zsh</code> as my main shell and I also set it to be my login shell. 
 Most of the distributions have the following line inside the <code>/etc/zprofile</code> file:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">emulate sh -c 'source /etc/profile'
-</pre>
+<pre class="src src-sh"><code>emulate sh -c 'source /etc/profile'
+</code></pre>
 </div>
 <ul class="org-ul">
 <li>This file sources <code>/etc/profile</code> file (which automatically gets sourced if you are using <code>sh</code> or <code>bash</code> as your login shell.), which in turn sources files under <code>/etc/profile.d</code>. These files are generally gets installed when you install a program into your system. For example, if you install <code>nix</code> package manager, it also installs <code>/etc/profile.d/nix{,-daemon}.sh</code> files and this files needs to be sourced for <code>nix</code> to work properly. So if your <code>/etc/zprofile</code> or <code>/etc/zsh/zprofile</code> does not contain this line, add it to your <code>~/.zprofile</code> file.</li>
@@ -110,19 +115,19 @@ Most of the distributions have the following line inside the <code>/etc/zprofile
 Also this is the file that you want to run <code>startx</code>, if you are not using a display manager like me. Here is how I do it:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh"># Following automatically calls "startx" when you login on tty1:
+<pre class="src src-sh"><code># Following automatically calls "startx" when you login on tty1:
 if [[ -z ${DISPLAY} &amp;&amp; ${XDG_VTNR} -eq 1 ]]; then
     # Logs can be found in ~/.xorg.log
     exec startx -- -keeptty -nolisten tcp &gt; ~/.xorg.log 2&gt;&amp;1
 fi
-</pre>
+</code></pre>
 </div>
 <ul class="org-ul">
 <li><p>
 After running <code>startx</code>, it loads <code>~/.xinitrc</code> file. This is the file that you want to start your window manager and all the other programs that you want to see at startup. An example file might be:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">#!/bin/sh
+<pre class="src src-sh"><code>#!/bin/sh
 
 # The following is essential, you need to source
 # every file under `/etc/X11/xinit/xinitrc.d`.
@@ -152,7 +157,7 @@ unclutter &amp;
 redshift &amp;
 # Run your WM, as an example I run bspwm
 exec bspwm
-</pre>
+</code></pre>
 </div></li>
 </ul></li>
 </ul></li>
@@ -169,7 +174,7 @@ exec bspwm
 </ul></li>
 </ul>
 <div id="outline-container-a-use-case" class="outline-2">
-<h2 id="a-use-case">A use case</h2>
+<h2 id="a-use-case"><a href="#a-use-case">A use case</a></h2>
 <div class="outline-text-2" id="text-a-use-case">
 <p>
 A problem I was having was related to <a href="https://www.cis.upenn.edu/~bcpierce/unison/">unison</a>. It's a simple and powerful file synchronization program that I use. One problem with that is, it's quite picky about it's version. It requires absolute same version on both client and server, and not only that, it also wants both binaries to be compiled with same version of the OCaml compiler. To solve this kind of version issue between my rigs, (among other reasons) I use <a href="https://nixos.org">nix package manager</a>. This gets me same binary on every computer I have. But there is one problem, when I install <code>unison</code> through <code>nix</code>, it installs it under <code>~/.nix-profile/bin/unison</code>, and when I run <code>unison</code> to synchronize my files, it fails to find <code>unison</code> on the other computer. But I can <code>ssh</code> into other computer and run <code>unison</code> without a problem. Hmm, what is going on here?
@@ -192,7 +197,7 @@ So what's the solution? You know it, only <code>~/.zshenv</code> gets sourced wh
 </div>
 </div>
 <div id="outline-container-additional-resources" class="outline-2">
-<h2 id="additional-resources">Additional resources</h2>
+<h2 id="additional-resources"><a href="#additional-resources">Additional resources</a></h2>
 <div class="outline-text-2" id="text-additional-resources">
 <dl class="org-dl">
 <dt><a href="https://blog.flowblok.id.au/2013-02/shell-startup-scripts.html">Shell startup scripts</a></dt><dd>I found this great article that summarizes what is going on at startup for different shells with beautiful graphics. It proves me right about using zsh instead of bash.</dd>
@@ -200,7 +205,7 @@ So what's the solution? You know it, only <code>~/.zshenv</code> gets sourced wh
 </div>
 </div>
 <div id="outline-container-conclusion" class="outline-2">
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2>
 <div class="outline-text-2" id="text-conclusion">
 <p>
 That's it. This was just some kind of a braindump. From now on, I'll just try to drop my notes as blog posts like this.
@@ -208,36 +213,20 @@ That's it. This was just some kind of a braindump. From now on, I'll just try to
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2017/12/22/programming-avr-microcontrollers-in-linux.html">Programming AVR microcontrollers in Linux</a></li> <li><a href="/2019/02/21/bash-scripting-guide.html">Bash scripting guide</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

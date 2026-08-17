@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Typing (unicode) characters programmatically on Linux and macOS | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Typing (unicode) characters programmatically on Linux and macOS</h1>
+
+      <div class="meta">
+        <time datetime="2022-08-12" class="publish-time"
+              aria-label="Published Aug 12, 2022">
+          <span class="date-day">12</span>
+          <span class="date-month">Aug</span>
+          <span class="date-year">2022</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2022-09-23">
+            23 Sep 2022
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/linux.html">linux</a><a href="/tags/keyboards.html">keyboards</a><a href="/tags/micro.html">micro</a><a href="/tags/macos.html">macos</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Typing (unicode) characters programmatically on Linux and macOS</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/linux.html" class="tag-link">linux</a>, <a href="/tags/keyboards.html" class="tag-link">keyboards</a>, <a href="/tags/micro.html" class="tag-link">micro</a>, <a href="/tags/macos.html" class="tag-link">macos</a></li>
-            <li id="publish-date">2022-08-12</li>
-            <li id="updated-date">2022-09-23</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 I've been using <a href="https://github.com/kmonad/kmonad">KMonad</a> on my Linux boxes and on my Mac machine which I do use for work. KMonad is currently the best solution to have a consistent keyboard remapping across different operating systems and different keyboard types/layouts. It's not very well explained, but you can check out <a href="https://github.com/isamert/dotfiles/blob/master/index.org#kmonad">my KMonad configuration</a> here.
 </p>
 
@@ -60,8 +65,8 @@ My solution is to use an external program to type for me. For example on X11 sys
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">xdotool type "qwe"
-</pre>
+<pre class="src src-sh"><code>xdotool type "qwe"
+</code></pre>
 </div>
 
 <p>
@@ -69,13 +74,13 @@ When you run this, it literally behaves like you hit <code>q</code>, <code>w</co
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">#!/usr/bin/env python
+<pre class="src src-python"><code>#!/usr/bin/env python
 
 import sys
 from pynput.keyboard import Controller
 
 Controller().type(' '.join(sys.argv[1:]))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -83,16 +88,16 @@ Save it into a file named <code>xtype</code> and you can do the following:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">xtype "λ"
-</pre>
+<pre class="src src-sh"><code>xtype "λ"
+</code></pre>
 </div>
 
 <p>
-&#x2026;and it will properly type "λ". It also works quite fine on Mac but I found it a bit slower. So here is a faster solution for Mac (which I simply copied from <a href="https://apple.stackexchange.com/questions/288536/is-it-possible-to-keystroke-special-characters-in-applescript/289046#289046">here</a> but simplified the compiling process a bit for you):
+&hellip;and it will properly type "λ". It also works quite fine on Mac but I found it a bit slower. So here is a faster solution for Mac (which I simply copied from <a href="https://apple.stackexchange.com/questions/288536/is-it-possible-to-keystroke-special-characters-in-applescript/289046#289046">here</a> but simplified the compiling process a bit for you):
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c">#import &lt;Foundation/Foundation.h&gt;
+<pre class="src src-c"><code>#import &lt;Foundation/Foundation.h&gt;
 // Following import may or may not be needed. It does not build on M1
 // Pro without this but it was building on 2019 Pro.
 #import &lt;CoreGraphics/CoreGraphics.h&gt;
@@ -122,7 +127,7 @@ int main(int argc, const char * argv[]) {
   }
   return 0;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -130,8 +135,8 @@ Save this into a file named <code>xtype.m</code> and compile it with the followi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">clang -framework Foundation -framework ApplicationServices xtype.m -l objc -o xtype
-</pre>
+<pre class="src src-sh"><code>clang -framework Foundation -framework ApplicationServices xtype.m -l objc -o xtype
+</code></pre>
 </div>
 
 <p>
@@ -139,12 +144,12 @@ Now, again, you can do:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-sh">xtype "λ"
-</pre>
+<pre class="src src-sh"><code>xtype "λ"
+</code></pre>
 </div>
 
 <p>
-&#x2026;and it will properly type "λ", but a bit faster this time. This might be a bit overkill, you can still make use of <code>pynput</code> on Mac and call it a day.
+&hellip;and it will properly type "λ", but a bit faster this time. This might be a bit overkill, you can still make use of <code>pynput</code> on Mac and call it a day.
 </p>
 
 <p>
@@ -155,36 +160,20 @@ Now you can use this <code>xtype</code> command on KMonad (see the <a href="http
 Unfortunately, <code>pynput</code> does not work on a pure Wayland session at the moment but there is an <a href="https://github.com/moses-palmer/pynput/issues/331">issue</a> about it that you can track. Meanwhile, you can try <a href="https://github.com/atx/wtype">wtype</a> instead. It works with unicode characters, as stated in the README but this tool does not work on GNOME or KDE Wayland sessions. I haven't been able to find a good solution for Wayland but that is the situation for quite a lot of things in Wayland, at least for now.
 </p>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li> <li><a href="/2017/12/22/programming-avr-microcontrollers-in-linux.html">Programming AVR microcontrollers in Linux</a></li> <li><a href="/2024/05/17/running-invidious-on-sub-folder-with-nginx.html">Hosting Invidious on sub-folder with Nginx</a></li> <li><a href="/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html">A (relatively) deep dive into (zsh) shell login process (without a display manager)</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

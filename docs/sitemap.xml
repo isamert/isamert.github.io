@@ -16,11 +16,6 @@
       <changefreq>monthly</changefreq>
    </url>
    <url>
-      <loc>https://isamert.net/.emacs.d/init.el.html</loc>
-      <lastmod>2025-01-11</lastmod>
-      <changefreq>monthly</changefreq>
-   </url>
-   <url>
       <loc>https://isamert.net/watchlist.html</loc>
       <lastmod>2023-08-30</lastmod>
       <changefreq>monthly</changefreq>

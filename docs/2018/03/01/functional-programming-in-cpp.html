@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Functional programming in C++ | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Functional programming in C++</h1>
+
+      <div class="meta">
+        <time datetime="2018-03-01" class="publish-time"
+              aria-label="Published Mar 01, 2018">
+          <span class="date-day">01</span>
+          <span class="date-month">Mar</span>
+          <span class="date-year">2018</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/fp.html">fp</a><a href="/tags/cpp.html">cpp</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Functional programming in C++</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/fp.html" class="tag-link">fp</a>, <a href="/tags/cpp.html" class="tag-link">cpp</a></li>
-            <li id="publish-date">2018-03-01</li>
-            <li id="updated-date">2018-03-01</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -94,23 +99,23 @@ So trying to use C++ as a purely functional programming language is probably pos
 There are a lot of tutorials on this subject but they sometimes go too extreme or they are too specific. I'll try to give you a general idea about how functional programming can be done using C++. These things generally dependent on new C++ features so I'll put an indicator to everything that shows which feature aims which version of C++. Of course it's probably possible to implement some of those features for earlier versions but I'll just stick with the easiest and most recent implementations. And if some feature takes too much to implement, I'm not even going to mention it. Also, I'm not advocating usage of persistent (immutable) data structures because it's either cumbersome to use them or they are inefficient. At the end of the day we are using C++ and lets keep it multi-paradigm. Think this tutorial as "zero-cost paradigm changes that you can apply to your daily C++ programming".
 </p>
 <div id="outline-container-first-things" class="outline-2">
-<h2 id="first-things">First things</h2>
+<h2 id="first-things"><a href="#first-things">First things</a></h2>
 <div class="outline-text-2" id="text-first-things">
 </div>
 <div id="outline-container-use-auto-at-all-costs-cpp11-" class="outline-3">
-<h3 id="use-auto-at-all-costs-cpp11-">Use auto at all costs (C++11)</h3>
+<h3 id="use-auto-at-all-costs-cpp11-"><a href="#use-auto-at-all-costs-cpp11-">Use auto at all costs (C++11)</a></h3>
 <div class="outline-text-3" id="text-use-auto-at-all-costs-cpp11-">
 <p>
 <code>auto</code> is just great. It makes your code faster and shorter. Consider this example (I took this example from Effective Modern C++ by Scott Meyers):
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::unordered_map&lt;std::string, int&gt; m;
+<pre class="src src-cpp"><code>std::unordered_map&lt;std::string, int&gt; m;
 // ...
 for (const std::pair&lt;std::string, int&gt;&amp; p : m) {
    // ...
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -118,12 +123,12 @@ The problem with this code is that <code>std::pair&lt;std::string, int&gt;</code
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::unordered_map&lt;std::string, int&gt; m;
+<pre class="src src-cpp"><code>std::unordered_map&lt;std::string, int&gt; m;
 // ...
 for (const auto&amp; p : m) {
    // ...
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -132,7 +137,7 @@ Not only we get rid of the overhead, we also have a shorter code. And considerin
 </div>
 </div>
 <div id="outline-container-try-not-to-deal-with-manual-memory-management-cpp11-" class="outline-3">
-<h3 id="try-not-to-deal-with-manual-memory-management-cpp11-">Try not to deal with manual memory management (C++11)</h3>
+<h3 id="try-not-to-deal-with-manual-memory-management-cpp11-"><a href="#try-not-to-deal-with-manual-memory-management-cpp11-">Try not to deal with manual memory management (C++11)</a></h3>
 <div class="outline-text-3" id="text-try-not-to-deal-with-manual-memory-management-cpp11-">
 <p>
 Another core thing about functional programming is that you just tell computer what to do, not how to do it. So do not deal with the memory management manually, try to leave this job to compiler.
@@ -147,18 +152,18 @@ Another core thing about functional programming is that you just tell computer w
 </div>
 </div>
 <div id="outline-container-concepts-patterns" class="outline-2">
-<h2 id="concepts-patterns">Concepts/Patterns</h2>
+<h2 id="concepts-patterns"><a href="#concepts-patterns">Concepts/Patterns</a></h2>
 <div class="outline-text-2" id="text-concepts-patterns">
 </div>
 <div id="outline-container-higher-order-functions" class="outline-3">
-<h3 id="higher-order-functions">Higher order functions</h3>
+<h3 id="higher-order-functions"><a href="#higher-order-functions">Higher order functions</a></h3>
 <div class="outline-text-3" id="text-higher-order-functions">
 <p>
 This is the fundamental idea of functional programming, passing functions as arguments to other functions, returning functions from functions. Before C++11 you could achieve such things by using function pointers or maybe using call operator(function objects). But now we have <code>std::function</code> and lambdas. Consider this code that shouts a given string:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">#include &lt;iostream&gt;
+<pre class="src src-cpp"><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
 int main() {
@@ -173,7 +178,7 @@ int main() {
 
     std::cout &lt;&lt; str &lt;&lt; std::endl;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -181,7 +186,7 @@ Lets make this shouting a function so we can reuse it.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">#include &lt;iostream&gt;
+<pre class="src src-cpp"><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
 std::string shout(std::string str) {
@@ -198,7 +203,7 @@ int main() {
     // Now we can shout as much as we want.
     std::cout &lt;&lt; shout("you are tearing me apart Lisa") &lt;&lt; std::endl;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -206,7 +211,7 @@ Now think that we are going to use that <code>shout</code> function only in our 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">#include &lt;iostream&gt;
+<pre class="src src-cpp"><code>#include &lt;iostream&gt;
 #include &lt;string&gt;
 
 int main() {
@@ -219,7 +224,7 @@ int main() {
     std::cout &lt;&lt; shout("oh, hi mark") &lt;&lt; std::endl;
     std::cout &lt;&lt; shout("you are tearing me apart Lisa") &lt;&lt; std::endl;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -227,12 +232,12 @@ Problem solved. Lambdas are much more complex than this. They have a lot feature
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">auto genericAdd = [](auto x, auto y){ return x+y; };
+<pre class="src src-cpp"><code>auto genericAdd = [](auto x, auto y){ return x+y; };
 std::cout &lt;&lt; "4+12=" &lt;&lt; genericAdd(4, 7) &lt;&lt; std::endl;
 std::cout &lt;&lt; "4.0+12=" &lt;&lt; genericAdd(4.0, 7) &lt;&lt; std::endl;
 std::cout &lt;&lt; "\"Hello \"+\"world!\"=" &lt;&lt;
          genericAdd(std::string("Hello "), std::string("world!")) &lt;&lt; std::endl;
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -240,7 +245,7 @@ One other benefit of using lambdas is that you can send them as parameters to <c
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">#include &lt;algorithm&gt;
+<pre class="src src-cpp"><code>#include &lt;algorithm&gt;
 
 //...
 
@@ -266,7 +271,7 @@ std::copy_if(v.begin(), v.end(), std::back_inserter(vec2), [](int x){ return x &
 std::vector&lt;int&gt; vec3;
 std::copy_if(vec.begin(), vec.end(), std::back_inserter(vec3),
           std::bind(std::greater&lt;int&gt;(), std::placeholders::_1, 20));
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -275,19 +280,19 @@ I'll talk about <code>std::bind</code> and placeholders in a bit. But <a href="h
 </div>
 </div>
 <div id="outline-container-partial-application-and-currying" class="outline-3">
-<h3 id="partial-application-and-currying">Partial Application and Currying</h3>
+<h3 id="partial-application-and-currying"><a href="#partial-application-and-currying">Partial Application and Currying</a></h3>
 <div class="outline-text-3" id="text-partial-application-and-currying">
 <p>
 There is a function called <code>std::less(x,y)</code> which compares two comparable and returns true if <code>x&lt;y</code> or false otherwise. You can use this function as your comparator function for sorting algorithms for example.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::vector&lt;int&gt; vec = {42, 4, 15, 8, 23, 16};
+<pre class="src src-cpp"><code>std::vector&lt;int&gt; vec = {42, 4, 15, 8, 23, 16};
 std::sort (vec.begin(), vec.end(), std::less&lt;int&gt;());
 for(auto i: vec)
     std::cout &lt;&lt; i &lt;&lt; ", ";
 // Prints 4, 8, 15, 16, 23, 42
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -295,8 +300,8 @@ What if you want to use <code>std::less</code> as comparison function for <code>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">[](int x) {return x &lt; 22;}
-</pre>
+<pre class="src src-cpp"><code>[](int x) {return x &lt; 22;}
+</code></pre>
 </div>
 
 <p>
@@ -304,12 +309,12 @@ But instead of writing our function, we want to use <code>std::less</code>. If w
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">using namespace std::placeholders;
+<pre class="src src-cpp"><code>using namespace std::placeholders;
 //...
 auto lowerThan22 = std::bind(std::less&lt;int&gt;(), _1, 22); // Partial application using std::bind
 std::vector&lt;int&gt; vec = {4, 8, 15, 16, 23, 42};
 vec.erase(std::remove_if(vec.begin(), vec.end(), lowerThan22), vec.end());
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -322,14 +327,14 @@ However there is no out of the box support for currying and implementing it is n
 </div>
 </div>
 <div id="outline-container-folding" class="outline-3">
-<h3 id="folding">Folding</h3>
+<h3 id="folding"><a href="#folding">Folding</a></h3>
 <div class="outline-text-3" id="text-folding">
 <p>
 Folding is reducing a some data structure to a single variable with a given operator. For more information, take a look at <a href="https://en.m.wikipedia.org/wiki/Fold_(higher-order_function)">here</a>. I'm going to inspect folding in 2 categories:
 </p>
 </div>
 <div id="outline-container-1.-folding-stl-containers" class="outline-4">
-<h4 id="1.-folding-stl-containers">1. Folding STL containers</h4>
+<h4 id="1.-folding-stl-containers"><a href="#1.-folding-stl-containers">1. Folding STL containers</a></h4>
 <div class="outline-text-4" id="text-1.-folding-stl-containers">
 <p>
 <code>std::accumulate</code> is the way. There are 2 definitions of <code>std::accumulate</code> which are:
@@ -345,7 +350,7 @@ First one uses <code>+</code> operator as default <code>binary_operator</code>. 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::vector&lt;int&gt; v = {1,2,3,4,5};
+<pre class="src src-cpp"><code>std::vector&lt;int&gt; v = {1,2,3,4,5};
 
 // Get sum of the vector:
 int sum1 = std::accumulate(v.begin(), v.end(), 0); // 0 as initial value
@@ -368,19 +373,19 @@ bool anyTrue = std::accumulate(bs.begin(), bs.end(), false, std::logical_or);
 // These does short-circutting
 bool allTrue = std::all_of(bs.begin(), vec.end(), [](bool x) { return x; } );
 bool anyTrue = std::any_of(bs.begin(), vec.end(), [](bool x) { return x; } );
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-2.-folding-arbitrary-number-of-arguments" class="outline-4">
-<h4 id="2.-folding-arbitrary-number-of-arguments">2. Folding arbitrary number of arguments</h4>
+<h4 id="2.-folding-arbitrary-number-of-arguments"><a href="#2.-folding-arbitrary-number-of-arguments">2. Folding arbitrary number of arguments</a></h4>
 <div class="outline-text-4" id="text-2.-folding-arbitrary-number-of-arguments">
 <p>
 C++11 has a thing called <i>variadic templates</i> which enables you to do write such functions that can take arbitrary number of template parameters.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">// The `auto` usage here is a C++14 feature.
+<pre class="src src-cpp"><code>// The `auto` usage here is a C++14 feature.
 // You can define a template and make this base case for only one element
 // and get the return type from template for making this function C++11 compatible.
 auto sum() {
@@ -397,7 +402,7 @@ auto sum(First first, Rest... rest){
 sum(1,2,3,4);
 sum(42,13,26,38,11);
 //...
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -405,11 +410,11 @@ So you can create functions that can take arbitrary number of arguments and fold
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">template&lt;typename ...Args&gt;
+<pre class="src src-cpp"><code>template&lt;typename ...Args&gt;
 auto sum(Args ...args) {
     return (args + ... + 0);
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -419,14 +424,14 @@ auto sum(Args ...args) {
 </div>
 </div>
 <div id="outline-container-sum-types-std::variant-cpp17-" class="outline-3">
-<h3 id="sum-types-std::variant-cpp17-">Sum types (std::variant) (C++17)</h3>
+<h3 id="sum-types-std::variant-cpp17-"><a href="#sum-types-std::variant-cpp17-">Sum types (std::variant) (C++17)</a></h3>
 <div class="outline-text-3" id="text-sum-types-std::variant-cpp17-">
 <p>
 Sum types are very cool and useful. Basically a sum type is just only one type out of a set of possible types. To be more concrete, I'll give an example: Let's say you have SoundFile, ImageFile and VideoFile. So a file object can be SoundFile <b>or</b> ImageFile <b>or</b> VideoFile. Defining your file object as a sum type of these types gives you a lot of flexibility and type safety. See this example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">struct File { std::string path; };
+<pre class="src src-cpp"><code>struct File { std::string path; };
 struct SoundFile : File { };
 struct ImageFile : File { };
 struct VideoFile : File { };
@@ -441,7 +446,7 @@ int main() {
     ImageFile f2 = std::get&lt;ImageFile&gt;(file);
     SoundFile f2 = std::get&lt;SoundFile&gt;(file); // This line throws std::bad_variant_access, because file object contains ImageFile, not SoundFile
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -449,7 +454,7 @@ In practice, we don't blindly try to get content of the variant. Better way to g
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">struct FileVisitor {
+<pre class="src src-cpp"><code>struct FileVisitor {
     void operator()(const SoundFile&amp; if) const { std::cout &lt;&lt; "A sound file!" &lt;&lt; std::endl; }
     void operator()(const ImageFile&amp; if) const { std::cout &lt;&lt; "An image file!" &lt;&lt; std::endl; }
     void operator()(const VideoFile&amp; vf) const { std::cout &lt;&lt; "A video file!" &lt;&lt; std::endl; }
@@ -467,7 +472,7 @@ In practice, we don't blindly try to get content of the variant. Better way to g
 
 // Now you can use std::visit
 std::visit(FileVisitor(), file);
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -475,14 +480,14 @@ The problem with this approach is that it cannot capture state. The better way i
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">template&lt;class... Ts&gt; struct overloaded : Ts... { using Ts::operator()...; }:
+<pre class="src src-cpp"><code>template&lt;class... Ts&gt; struct overloaded : Ts... { using Ts::operator()...; }:
 template&lt;class... Ts&gt; overloaded(Ts...) -&gt; overloaded&lt;Ts...&gt;;
 
 std::visit(overloaded {
     [](const SoundFile&amp; sf) { std::cout &lt;&lt; "Playing the sound..." &lt;&lt; ' '; },
     [](const auto&amp; other) { std::cout &lt;&lt; other.path &lt;&lt; ;},
 }, file);
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -491,7 +496,7 @@ Still a bit verbose but at least its in-place and more useful thanks to lambdas.
 </div>
 </div>
 <div id="outline-container-functors" class="outline-3">
-<h3 id="functors">Functors</h3>
+<h3 id="functors"><a href="#functors">Functors</a></h3>
 <div class="outline-text-3" id="text-functors">
 <p>
 Here I'm not talking about <code>function objects</code>, I'm talking about <code>Functors</code> as described <a href="https://en.wikipedia.org/wiki/Functor">here</a>. There are several libraries that provides some kind of Functor/Monad types but again I'll just talk about the built-in functors that you can start using immediately.
@@ -506,19 +511,19 @@ For example, everytime you need to apply some function to a vector, you need to 
 </p>
 </div>
 <div id="outline-container-stl-containers-as-functors" class="outline-4">
-<h4 id="stl-containers-as-functors">STL Containers as Functors</h4>
+<h4 id="stl-containers-as-functors"><a href="#stl-containers-as-functors">STL Containers as Functors</a></h4>
 <div class="outline-text-4" id="text-stl-containers-as-functors">
 <p>
 Functors needs a some kind of a helper function to apply the transformation function to the structure. For STL containers, this helper function is <code>std::transform</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::vector&lt;int&gt; xs = {1, 2, 3, 4};
+<pre class="src src-cpp"><code>std::vector&lt;int&gt; xs = {1, 2, 3, 4};
 
 std::vector&lt;int&gt; squared_xs;
 std::transform(xs.begin(), xs.end(), std::back_inserter(squared_xs), [](int x){ return x^2; });
 // squared_xs is now {1, 4, 9, 16}
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -527,7 +532,7 @@ We applied the lambda function to xs without exposing the inner data structure.
 </div>
 </div>
 <div id="outline-container-std::optional-as-functor-cpp17-" class="outline-4">
-<h4 id="std::optional-as-functor-cpp17-">std::optional as Functor (C++17)</h4>
+<h4 id="std::optional-as-functor-cpp17-"><a href="#std::optional-as-functor-cpp17-">std::optional as Functor (C++17)</a></h4>
 <div class="outline-text-4" id="text-std::optional-as-functor-cpp17-">
 <p>
 <code>std::optional</code> is a type for representing situations that there can be a value or not. For example <code>std::optional&lt;int&gt; x</code> means that <i>x</i> can contain an integer or it may contain nothing at all. Of course one can use pointers for such situations but you don't want to deal with memory allocation and other bad stuff that comes with pointers for this trivial problem. Check these links out to learn more use cases about <code>std::optional</code>: <a href="http://en.cppreference.com/w/cpp/utility/optional">link1</a>, <a href="https://stackoverflow.com/questions/16860960/how-should-one-use-stdoptional">link2</a>.
@@ -538,7 +543,7 @@ We applied the lambda function to xs without exposing the inner data structure.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">// We have an optional that wraps type T.
+<pre class="src src-cpp"><code>// We have an optional that wraps type T.
 // We also have a function that takes a T and returns R.
 // So what we want to do is somehow apply this function to optional&lt;T&gt;.
 // To do that, we just extract the value from optinal and supply that
@@ -550,7 +555,7 @@ optional&lt;R&gt; transform(optional&lt;T&gt; opt, (T -&gt; R) func) {
     else
     return optional_empty;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -558,12 +563,12 @@ The C++ version with some simplifications:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">template &lt;typename T, typename F&gt;
+<pre class="src src-cpp"><code>template &lt;typename T, typename F&gt;
 auto transform(const std::optional&lt;T&gt;&amp; opt, F&amp;&amp; f) -&gt; std::optional&lt;decltype(f(*opt))&gt; {
     using ResultType = std::optional&lt;decltype(f(*opt))&gt;;
     return (opt) ? ResultType(f(*opt)) : std::nullopt;
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -571,12 +576,12 @@ Now we can take any function that has a type of <code>T -&gt; R</code> and apply
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::optional&lt;int&gt; x = 3;
+<pre class="src src-cpp"><code>std::optional&lt;int&gt; x = 3;
 auto plus_3 = [](int x){ return x + 3; };
 
 auto y = transform(x, plus_3); // y is an optional&lt;int&gt; and has value of 6
 auto z = transform(transform(y, plus_3), plus_3); // z is an optional&lt;int&gt; and has value of 12
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -585,19 +590,19 @@ So this is great, we can use functions with <code>std::optional</code> even thou
 </div>
 </div>
 <div id="outline-container-pointers-as-functors" class="outline-4">
-<h4 id="pointers-as-functors">Pointers as Functors</h4>
+<h4 id="pointers-as-functors"><a href="#pointers-as-functors">Pointers as Functors</a></h4>
 <div class="outline-text-4" id="text-pointers-as-functors">
 <p>
 Let's say given a <code>std::unique_pointer&lt;int&gt;</code> you want to get <code>std::unique_pointer&lt;std::string&gt;</code> which represents the text version of that <code>int</code>. Assume that your conversion function has this signature: <code>std::string convert(int number)</code>. So again, you need the unpack the integer from <code>unique_pointer</code> and apply this function and wrap it into <code>unique_pointer</code> back. But as you know we can use functors to solve this unpacking problem. See this code:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">template&lt;class T, class F&gt;
+<pre class="src src-cpp"><code>template&lt;class T, class F&gt;
 auto transform(std::unique_ptr&lt;T&gt; opt, F&amp;&amp; f) -&gt; std::unique_pointer&lt;decltype(f(*opt))&gt; {
     using ResultType = std::unique_ptr&lt;decltype(f(*opt))&gt;;
     return ResultType(f(*opt));
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -605,15 +610,15 @@ This is the transformation function for pointers. Notice the similarity with the
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">std::unique_pointer&lt;int&gt; number;
+<pre class="src src-cpp"><code>std::unique_pointer&lt;int&gt; number;
 ...
 std:unique_pointer&lt;std::string&gt; result = transform(number, convert);
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-taking-functors-a-bit-further" class="outline-4">
-<h4 id="taking-functors-a-bit-further">Taking functors a bit further</h4>
+<h4 id="taking-functors-a-bit-further"><a href="#taking-functors-a-bit-further">Taking functors a bit further</a></h4>
 <div class="outline-text-4" id="text-taking-functors-a-bit-further">
 <p>
 As you may have noticed, functors does this: You have a variable of type <code>B&lt;A&gt;</code> and a function of type <code>C function(A)</code> (a function that takes <code>A</code> as argument and returns <code>C</code>) and you want to get <code>B&lt;C&gt;</code>. What functors does is handling all the unwrapping and wrapping for you.
@@ -627,36 +632,20 @@ But what if you have a variable of type <code>B&lt;A&gt;</code> and a function o
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2016/07/13/median-cut-algorithm-in-cpp-qt.html">Median cut algorithm in C++/Qt</a></li> <li><a href="/2017/08/15/kotlin-function-application.html">Kotlin function application</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html">Killing (copying) currently selected candidate's content/text in Selectrum</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

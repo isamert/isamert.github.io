@@ -1,60 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Dealing with APIs, JSONs and databases in org-mode | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Dealing with APIs, JSONs and databases in org-mode</h1>
+
+      <div class="meta">
+        <time datetime="2022-01-04" class="publish-time"
+              aria-label="Published Jan 04, 2022">
+          <span class="date-day">04</span>
+          <span class="date-month">Jan</span>
+          <span class="date-year">2022</span>
+        </time>
+        <div class="updated ">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="2025-08-02">
+            02 Aug 2025
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/org.html">org</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Dealing with APIs, JSONs and databases in org-mode</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/emacs.html" class="tag-link">emacs</a>, <a href="/tags/org.html" class="tag-link">org</a></li>
-            <li id="publish-date">2022-01-04</li>
-            <li id="updated-date">2025-08-02</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#custom-executers-for-custom-modes">Custom executers for custom modes</a></li>
-</ul>
-</div>
-</nav>
-<p>
+    <p>
 I deal with web API's quite a lot in my daily job. I use org-mode and <a href="https://github.com/zweifisch/ob-http">ob-http</a> to make requests and display their results. See this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty
+<pre class="src src-org"><code>#+begin_src http :pretty
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
@@ -65,7 +62,7 @@ GET https://jsonplaceholder.typicode.com/todos/1
 :   "title": "delectus aut autem",
 :   "completed": false
 : }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -77,7 +74,7 @@ An improvement that you can apply to this is wrapping the result into an JSON bl
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty :wrap src js-json
+<pre class="src src-org"><code>#+begin_src http :pretty :wrap src js-json
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
@@ -90,7 +87,7 @@ GET https://jsonplaceholder.typicode.com/todos/1
   "completed": false
 }
 #+end_src
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -102,13 +99,13 @@ Another good thing you can do is manipulating the result. <code>ob-http</code> o
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty :select .title
+<pre class="src src-org"><code>#+begin_src http :pretty :select .title
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
 #+RESULTS:
 : delectus aut autem
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -120,7 +117,7 @@ There is one little problem with the <code>:select</code> approach though: If yo
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src http :pretty :wrap src js-json
+<pre class="src src-org"><code>#+begin_src http :pretty :wrap src js-json
 GET https://jsonplaceholder.typicode.com/todos/1
 #+end_src
 
@@ -136,7 +133,7 @@ GET https://jsonplaceholder.typicode.com/todos/1
 
 #+RESULTS:
 : delectus aut autem
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -144,7 +141,7 @@ First I hit <code>C-c C-c</code> on the <code>http</code> block and it outputs t
 </p>
 
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src js-json :node it.title.toUpperCase()
+<pre class="src src-org"><code>#+begin_src js-json :node it.title.toUpperCase()
 {
   "userId": 1,
   "id": 1,
@@ -155,7 +152,7 @@ First I hit <code>C-c C-c</code> on the <code>http</code> block and it outputs t
 
 #+RESULTS:
 : DELECTUS AUT AUTEM
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -163,7 +160,7 @@ The <code>:node</code> parameter takes arbitrary JavaScript code and runs it usi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun org-babel-execute:js-json (body params)
+<pre class="src src-elisp"><code>(defun org-babel-execute:js-json (body params)
   (let ((jq (cdr (assoc :jq params)))
         (node (cdr (assoc :node params))))
     (cond
@@ -188,7 +185,7 @@ The <code>:node</code> parameter takes arbitrary JavaScript code and runs it usi
 ;; compatibility with both.
 
 (defalias 'org-babel-execute:js-json 'org-babel-execute:json)
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -207,7 +204,7 @@ Simple, isn't it? Just to summarize, here is what is going on:
 Note that you can fold a source block by hitting <code>TAB</code>. With that in mind, you can use this executer as a live JSON playground, change your expression, fold the codeblock to hide the clutter, hit <code>C-c C-c</code>, see the result, and repeat.
 </p>
 <div id="outline-container-custom-executers-for-custom-modes" class="outline-2">
-<h2 id="custom-executers-for-custom-modes">Custom executers for custom modes</h2>
+<h2 id="custom-executers-for-custom-modes"><a href="#custom-executers-for-custom-modes">Custom executers for custom modes</a></h2>
 <div class="outline-text-2" id="text-custom-executers-for-custom-modes">
 <p>
 Our executer function example is for <code>json-mode</code>, an already-existing major mode. You can also create arbitrary major modes, create executers for them and you can start using them in your org-mode documents right away. Here is another example case: We use Couchbase quite a lot at work and I have bunch of queries saved in org-mode documents. It would be good to have an <code>ob-n1ql</code> package (<a href="https://www.couchbase.com/products/n1ql">N1QL</a> is Couchbase's SQL-like language) that let's me run <a href="https://www.couchbase.com/">Couchbase</a> queries right inside org-mode. I looked it up found no N1QL mode for Emacs, let alone a package like <code>ob-n1ql</code> for org-mode. But it was quite easy to roll my own, see this:
@@ -217,15 +214,15 @@ Our executer function example is for <code>json-mode</code>, an already-existing
 <li>First I created a derived major mode named <code>n1ql-mode</code>. N1QL is just like SQL, so I simply extended it. This way we get syntax highlighting and bunch of other stuff for free.</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-elisp">(define-derived-mode n1ql-mode sql-mode "n1ql-mode")
-</pre>
+<pre class="src src-elisp"><code>(define-derived-mode n1ql-mode sql-mode "n1ql-mode")
+</code></pre>
 </div>
 
 <ul class="org-ul">
 <li>Then I created a function that executes given N1QL query using the <a href="https://docs.couchbase.com/server/current/tools/cbq-shell.html">cbq</a> command line tool that Couchbase provides:</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-elisp">(cl-defun isamert/cbq (query &amp;key host username password (select "."))
+<pre class="src src-elisp"><code>(cl-defun isamert/cbq (query &amp;key host username password (select "."))
   "Run a couchbase query and return the result."
   (with-temp-buffer
     (insert query)
@@ -244,31 +241,31 @@ Our executer function example is for <code>json-mode</code>, an already-existing
     ;; does with it :select parameter
     (call-process-region (point-min) (point-max) "jq" t t nil "-r" select)
     (buffer-string)))
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
 <li>And finally, an executer function for N1QL mode, so that we can run our queries right inside org-mode:</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-elisp">(defun org-babel-execute:n1ql (body params)
+<pre class="src src-elisp"><code>(defun org-babel-execute:n1ql (body params)
   (isamert/cbq
    body
    :host (alist-get :host params)
    :username (alist-get :username params)
    :password (alist-get :password params)
    :select (alist-get :select params)))
-</pre>
+</code></pre>
 </div>
 
 <p>
-&#x2026;and this is how you would use it:
+&hellip;and this is how you would use it:
 </p>
 <div class="org-src-container">
-<pre class="src src-org">#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
+<pre class="src src-org"><code>#+begin_src n1ql :host DB_HOST :username DB_USERNAME :password DB_PASSWORD
 SELECT * FROM SomeTable LIMIT 10;
 #+end_src
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -278,41 +275,25 @@ You can turn any REPL/CLI tool into a language that can be executed right inside
 <hr>
 
 <dl class="org-dl">
-<dt><span class="timestamp-wrapper"><span class="timestamp">[2025-08-02 Sat]</span></span></dt><dd>Updated code snippets with <code>@karthink</code>'s suggestions. See comments down below.</dd>
+<dt><span class="timestamp-wrapper"><time class="timestamp" datetime="2025-08-02">[2025-08-02 Sat]</time></span></dt><dd>Updated code snippets with <code>@karthink</code>'s suggestions. See comments down below.</dd>
 </dl>
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li> <li><a href="/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">Migrating my IMDb ratings list and watch list into org-mode</a></li> <li><a href="/2019/11/14/running-sql-on-org-mode-tables.html">Running SQL on org-mode tables</a></li> <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

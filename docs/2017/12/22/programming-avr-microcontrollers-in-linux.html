@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Programming AVR microcontrollers in Linux | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Programming AVR microcontrollers in Linux</h1>
+
+      <div class="meta">
+        <time datetime="2017-12-22" class="publish-time"
+              aria-label="Published Dec 22, 2017">
+          <span class="date-day">22</span>
+          <span class="date-month">Dec</span>
+          <span class="date-year">2017</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/linux.html">linux</a><a href="/tags/microcontrollers.html">microcontrollers</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Programming AVR microcontrollers in Linux</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/linux.html" class="tag-link">linux</a>, <a href="/tags/microcontrollers.html" class="tag-link">microcontrollers</a></li>
-            <li id="publish-date">2017-12-22</li>
-            <li id="updated-date">2017-12-22</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -55,7 +60,7 @@
 The <i>Windows way</i> of doing that is just using <i>ATMEL Studio</i> but we don't have it in Linux. As a customization freak, I'll just write the steps of how to compile and flash your program to an AVR microcontroller and leave the rest for you. So integrating this steps into your favorite <i>IDE</i>, if you are using one, is your job.
 </p>
 <div id="outline-container-tools" class="outline-2">
-<h2 id="tools">Tools</h2>
+<h2 id="tools"><a href="#tools">Tools</a></h2>
 <div class="outline-text-2" id="text-tools">
 <p>
 These are the tools that we need to install, just pull them from your package manager (These package names exists in Arch Linux repos, they might differ in other distros repositories): - <b>avr-gcc</b> GNU C compiler for AVR architecture - <b>avr-libc</b> AVR libraries - <b>avr-binutils</b> Some AVR tools, we need it to create hex files from compiled programs, because avrdude needs a hex file instead of a binary to flash. - <b>avrdude</b> A <i>dude</i> that is required to perform flashing
@@ -63,7 +68,7 @@ These are the tools that we need to install, just pull them from your package ma
 </div>
 </div>
 <div id="outline-container-steps" class="outline-2">
-<h2 id="steps">Steps</h2>
+<h2 id="steps"><a href="#steps">Steps</a></h2>
 <div class="outline-text-2" id="text-steps">
 <ol class="org-ol">
 <li>Write your program. Let's say you named it main.c.</li>
@@ -71,8 +76,8 @@ These are the tools that we need to install, just pull them from your package ma
 Compile it.
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">avr-gcc main.c -Os -Wall -mmcu=atmega32 -o main_bin
-</pre>
+<pre class="src src-sh"><code>avr-gcc main.c -Os -Wall -mmcu=atmega32 -o main_bin
+</code></pre>
 </div>
 <ul class="org-ul">
 <li>Change <b>-mmcu</b> from <i>atmega32</i> to your devices name. You can find your devices MCU from <a href="http://www.nongnu.org/avrdude/user-manual/avrdude_4.html">here</a>.</li>
@@ -81,15 +86,15 @@ Compile it.
 Convert your program to hex from binary.
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">avr-objcopy -j .text -j .data -O ihex main_bin "main.hex"
-</pre>
+<pre class="src src-sh"><code>avr-objcopy -j .text -j .data -O ihex main_bin "main.hex"
+</code></pre>
 </div></li>
 <li><p>
 Flash it.
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">avrdude -c usbasp -p m32 -U flash:w:"main.hex"
-</pre>
+<pre class="src src-sh"><code>avrdude -c usbasp -p m32 -U flash:w:"main.hex"
+</code></pre>
 </div>
 <ul class="org-ul">
 <li>Here you can see <b>-p</b> option. You need to specify it according to your device. The list is <a href="http://www.nongnu.org/avrdude/user-manual/avrdude_4.html">here</a>.</li>
@@ -99,7 +104,7 @@ Flash it.
 </div>
 </div>
 <div id="outline-container-the-correct-way-of-using--avrdude-" class="outline-2">
-<h2 id="the-correct-way-of-using--avrdude-">The correct way of using <code>avrdude</code></h2>
+<h2 id="the-correct-way-of-using--avrdude-"><a href="#the-correct-way-of-using--avrdude-">The correct way of using <code>avrdude</code></a></h2>
 <div class="outline-text-2" id="text-the-correct-way-of-using--avrdude-">
 <p>
 When you do the last step, you will get an error that says you don't have permissions. You can just run avrdude with sudo and it will work this time. But of course this is not the preferred way to do it. What you need to do is write an udev rule so we can access programmer without root privileges.
@@ -111,9 +116,9 @@ When you do the last step, you will get an error that says you don't have permis
 Write this into file:
 </p>
 <div class="org-src-container">
-<pre class="src src-nil"># USB-ASPcable
+<pre class="src src-nil"><code># USB-ASPcable
 ATTR{idVendor}=="16c0", ATTR{idProduct}=="05dc", GROUP="plugdev", MODE="0666"~
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -121,11 +126,11 @@ ATTR{idVendor}=="16c0", ATTR{idProduct}=="05dc", GROUP="plugdev", MODE="0666"~
 Again, as you can see this configuration is for my programmer, <code>usbasp</code>. You need to change <code>idVendor</code> and <code>idProduct</code> according to your device. To find these values, just run <code>lsusb</code> (If you are using usb extender cord or something like that, it is possible that lsusb might not display your device. Just connect your programmer directly to your PC if that is the case):
 </p>
 <div class="org-src-container">
-<pre class="src src-nil">&gt; lsusb
+<pre class="src src-nil"><code>&gt; lsusb
 ...
 Bus 003 Device 010: ID 16c0:05dc Van Ooijen Technische Informatica shared ID for use with libu
 ...
-</pre>
+</code></pre>
 </div></li>
 <li>In sixth column, you can see your devices vendor id and product id in this format <code>VENDOR_ID:PRODUCT_ID</code>. So edit your file according to this information.</li>
 </ul></li>
@@ -134,9 +139,9 @@ Bus 003 Device 010: ID 16c0:05dc Van Ooijen Technische Informatica shared ID for
 You may restart your computer or just use these commands to reload udev rules:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh">$ sudo udevadm control --reload-rules
+<pre class="src src-sh"><code>$ sudo udevadm control --reload-rules
 $ sudo udevadm trigger=
-</pre>
+</code></pre>
 </div>
 <ul class="org-ul">
 <li>You may need to unplug your programmer and plug it back. From now on you can use <i>avrdude</i> without needing root privileges.</li>
@@ -145,36 +150,20 @@ $ sudo udevadm trigger=
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li> <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html">A (relatively) deep dive into (zsh) shell login process (without a display manager)</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

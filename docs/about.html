@@ -1,108 +1,70 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>About | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
-    </header>
-
-      <section>
-        <h1 id="post-title">About</h1>
-        <nav id="table-of-contents" role="doc-toc">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#about-me">About me</a></li>
-<li><a href="#about-this-web-site">About this web site</a></li>
-<li><a href="#my-projects">My projects</a>
-<ul>
-<li><a href="#command-line-applications">Command line applications</a></li>
-<li><a href="#emacs-related-projects">Emacs related projects</a></li>
-<li><a href="#experimental-projects">Experimental projects</a></li>
-<li><a href="#other-projects">Other projects</a></li>
-</ul>
-</li>
-<li><a href="#contact">Contact</a></li>
-</ul>
-</div>
-</nav>
-<div id="outline-container-about-me" class="outline-2">
-<h2 id="about-me">About me</h2>
-<div class="outline-text-2" id="text-about-me">
-<p>
-I am a software developer, living in Istanbul. I write and publish all of my work as free/libre software. Here are a few links for you to get me know better:
-</p>
-
-<ul class="org-ul">
-<li><a href="./resume.html">My resume</a></li>
-<li><a href="https://github.com/isamert">My GitHub profile</a></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-about-this-web-site" class="outline-2">
-<h2 id="about-this-web-site">About this web site</h2>
-<div class="outline-text-2" id="text-about-this-web-site">
-<p>
-I generally write on technical topics like programming languages, algorithms and mostly on workflow automatization, <a href="https://isamert.net/tags/cli.html">command line applications</a>, <a href="https://isamert.net/tags/linux.html">GNU/Linux</a>, <a href="https://isamert.net/tags/emacs.html">Emacs</a> and <a href="https://isamert.net/tags/org.html">org-mode</a>. I try to publish <i>somewhat longer</i> posts with some <i>substance</i> but lately I've been trying to get in the habit of posting occasional tidbits, snippets, small tips and tricks which I appreciate when I see these kinds of posts in other blogs. I also want to curate other blogs or links that I find useful somewhere here, someday soon.
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <p>
+I am a software developer, living in Amsterdam. I write and publish all of my work as free/libre software. See <a href="./resume.html">my resume</a> if you are interested in that kind of thing. Also, here is my <a href="https://github.com/isamert">my Github profile</a>.
 </p>
 
 <p>
-I have other planned things for this web site, like the one I just mentioned above. Other than that I'm planning to add some pages containing stuff like:
+I suppose it's absolutely important to point out these days that everything in this website is written by me, not by an LLM.<sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>Well, to be honest I used it for one specific post and the results were downright dogshit. I am not saying that I am a great writer and I can write much better than LLM's but the tone of the LLM generated sentences now disgust me. I removed those generated sentences from that post now.</span>
 </p>
-<ul class="org-ul">
-<li>Interactive list of movies/books/articles I have read and rated. Maybe along with some commentary.</li>
-<li>Computer programs that I use, my use cases links to my configurations (I already have a <a href="https://github.com/isamert/dotfiles">dotfiles</a> repo but I want to move the contents here)</li>
-<li>Constantly updated everyday life tips, rule of thumbs etc.</li>
-<li>List of low tech (or high tech too) gadgets that I use and find helpful.</li>
-</ul>
 
 <p>
-I have been gathering information on these topics but I need to find a way to represent them in my website and also need to go over my notes and rephrase them for public consumption.
+This website itself is just <a href="https://github.com/isamert/isamert.github.io">one single Org file</a> and all the code is generated from it, even the code that generates the website is within that file.<sup class="fn-ref" aria-describedby="2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>I am kind of questioning if it's really worth it after my last re-design but I still think it's a good trick and shows the power of Org mode.</span>
 </p>
-</div>
-</div>
-<div id="outline-container-my-projects" class="outline-2">
-<h2 id="my-projects">My projects</h2>
-<div class="outline-text-2" id="text-my-projects">
+
+<p>
+You can contact me at <code>isamertgurbuz at gmail dot com</code> if you are interested in discussing any of the posts/topics you've encountered here.
+</p>
+
+<hr>
+
+<p>
+I watch a lot of stuff through my self hosted Jellyfin instance<sup class="fn-ref" aria-describedby="3">3</sup><span class="sidenote right" id="note-3"><span class="note-number">3</span>I also write about self hosting here. Hopefully more in the future.</span> and keep my notes/ratings in an Org file,<sup class="fn-ref" aria-describedby="4">4</sup><span class="sidenote left" id="note-4"><span class="note-number">4</span>Did I mention how much I do in Org? Like, a lot. See <a href="file:///2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">this</a> and <a href="file:///2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">this</a> if you are interested in my Org flows, or just see all of my posts about <a href="file:///tags/org.html">org</a>.</span> <a href="file:///2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">like this</a> and I export that data into this <a href="file:///watchlist.html">watchlist page</a> where you can find my ratings for movies/shows/documentaries. Unfortunately I haven't been able to re-design the page after my last design iteration on this website but it's at least functional but looking completely out of place.
+</p>
+
+<hr>
+
 <p>
 I maintain a few projects and occasionally contribute to other free software projects. Following list may be incomplete (please take a look at my  <a href="https://github.com/isamert">my GitHub profile</a> if you want to see my dead/half-baked projects) but here are the projects that I've been working on:
 </p>
-</div>
-<div id="outline-container-command-line-applications" class="outline-3">
-<h3 id="command-line-applications">Command line applications</h3>
-<div class="outline-text-3" id="text-command-line-applications">
+
+<p>
+<b>Command line applications</b>
+</p>
+
 <dl class="org-dl">
-<dt><a href="https://github.com/isamert/scli">scli</a></dt><dd>A TUI application that let's you use <a href="https://signal.org/">Signal</a> from command line. Now it is mostly (99% percent) maintained by <a href="https://github.com/exquo">@exquo</a>.</dd>
+<dt><a href="https://github.com/isamert/scli">scli</a></dt><dd>A TUI application that let's you use <a href="https://signal.org/">Signal</a> from command line. Now it is mostly (99.9%) maintained by <a href="https://github.com/exquo">@exquo</a>.</dd>
 <dt><a href="https://github.com/isamert/jaro">jaro</a></dt><dd>A resource opener with a DSL, alternative to <code>xdg-open</code>. It let's you specify highly complex use-cases in a very simple form for opening your resources exactly as you want.</dd>
 <dt><a href="https://github.com/isamert/marks">marks</a></dt><dd>A grep-like tool (or more like a search engine) for Markdown and Org mode documents. Development is slow but I will return to this project whenever I have a bit more spare time.</dd>
 </dl>
-</div>
-</div>
-<div id="outline-container-emacs-related-projects" class="outline-3">
-<h3 id="emacs-related-projects">Emacs related projects</h3>
-<div class="outline-text-3" id="text-emacs-related-projects">
+
+<p>
+<b>Emacs related projects</b>
+</p>
+
 <dl class="org-dl">
 <dt><a href="https://github.com/isamert/empv.el">empv.el</a></dt><dd>An Emacs media player, media library manager, radio player and YouTube frontend.</dd>
 <dt><a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a></dt><dd>An Emacs/org-mode watchlist manager and OMDb API client.</dd>
@@ -112,20 +74,20 @@ I maintain a few projects and occasionally contribute to other free software pro
 <dt><a href="https://github.com/isamert/couchbase-query.el">couchbase-query.el</a></dt><dd>Inferior mode for <code>cbq</code></dd>
 <dt><a href="https://github.com/isamert/sozluk.el">sozluk.el</a></dt><dd>Online Turkish dictionary. Shows the results in a nicely formatted org mode buffer.</dd>
 </dl>
-</div>
-</div>
-<div id="outline-container-experimental-projects" class="outline-3">
-<h3 id="experimental-projects">Experimental projects</h3>
-<div class="outline-text-3" id="text-experimental-projects">
+
+<p>
+<b>Experimental projects</b>
+</p>
+
 <dl class="org-dl">
 <dt><a href="https://github.com/isamert/scheme.rs">scheme.rs</a></dt><dd>An experimental scheme interpreter written in Rust. This project came into life in an attempt to learn Rust and a bit about interpreters. There is also an online WebAssembly version published by <a href="https://parkellipsen.de/">Niklas Reppel</a>, check it out <a href="https://parkellipsen.de/scheme/">here</a>.</dd>
-<dt><a href="https://github.com/isamert/techne">techne</a></dt><dd>Another attempt at learning compilers/interpreters. This time I went ahead and designed my language. It has a mix of ML-style and C-style syntax. It has couple of interesting <del>and novel ideas</del> (it turns out those ideas are already implemented by Scala, Clojure and D lang but I guess it is first language that brings them together.) I still plan to work on this and make it at least usable for real-life scripting.</dd>
+<dt><a href="https://github.com/isamert/techne">techne</a></dt><dd>Another attempt at learning compilers/interpreters. This time I went ahead and designed my language. It has a mix of ML-style and C-style syntax. It has couple of interesting <del>and novel ideas</del>.<sup class="fn-ref" aria-describedby="5">5</sup><span class="sidenote right" id="note-5"><span class="note-number">5</span>It turns out those ideas are already implemented by Scala, Clojure and D lang but I guess it is first language that brings them together.</span> I still plan to work on this and make it at least usable for real-life scripting.</dd>
 </dl>
-</div>
-</div>
-<div id="outline-container-other-projects" class="outline-3">
-<h3 id="other-projects">Other projects</h3>
-<div class="outline-text-3" id="text-other-projects">
+
+<p>
+<b>Other projects</b>
+</p>
+
 <dl class="org-dl">
 <dt><a href="https://github.com/isamert/isamert.github.io">isamert.net</a></dt><dd>This web site itself. It's simply one file that contains the all website contents, the code that generates the static file based on the contents and the documentation of the generator. It can be abstracted away in a sense that it can be an Emacs web site generator package but you can also copy the file into an org-mode buffer and start using it.</dd>
 <dt><a href="https://github.com/isamert/dotfiles">dotfiles</a></dt><dd>All of the configurations for the programs that I use and lot's of automation code. There are some modules that I want to turn into separate Emacs packages, like:
@@ -136,36 +98,9 @@ I maintain a few projects and occasionally contribute to other free software pro
 <li>Other smaller stuff.</li>
 </ul></dd>
 </dl>
-</div>
-</div>
-</div>
-<div id="outline-container-contact" class="outline-2">
-<h2 id="contact">Contact</h2>
-<div class="outline-text-2" id="text-contact">
-<p>
-Please do :). I'm a little bit slow in terms of responding but I always do. You can email me regarding any subject that you think I'll be interested and I'll get back to you.
-</p>
 
-<p>
-If you are interested with my projects and want to contribute/maintain, please don't hesitate to contact as I am pretty willing to accept contributions or even share/defer the maintenance.
-</p>
-
-<p>
-isamertgurbuz at gmail dot com
-</p>
-</div>
-</div>
-
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  </article>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

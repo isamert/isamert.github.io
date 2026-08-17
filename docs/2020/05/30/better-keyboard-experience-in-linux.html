@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Better keyboard experience in Linux | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Better keyboard experience in Linux</h1>
+
+      <div class="meta">
+        <time datetime="2020-05-30" class="publish-time"
+              aria-label="Published May 30, 2020">
+          <span class="date-day">30</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2020</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/linux.html">linux</a><a href="/tags/keyboards.html">keyboards</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Better keyboard experience in Linux</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/linux.html" class="tag-link">linux</a>, <a href="/tags/keyboards.html" class="tag-link">keyboards</a></li>
-            <li id="publish-date">2020-05-30</li>
-            <li id="updated-date">2020-05-30</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -74,7 +79,7 @@
 In this post, I'll try to describe a more healthy and productive way of using keyboard in GNU/Linux, particularly under X.org. My main goal is not to impose a certain way of using keyboard but to introduce some concepts and some very useful tools that you can build your workflow upon.
 </p>
 <div id="outline-container-the-case-against-the-mouse" class="outline-2">
-<h2 id="the-case-against-the-mouse">The case against the mouse</h2>
+<h2 id="the-case-against-the-mouse"><a href="#the-case-against-the-mouse">The case against the mouse</a></h2>
 <div class="outline-text-2" id="text-the-case-against-the-mouse">
 <p>
 <i>(This part is mostly just me rambling, feel free to skip it)</i>
@@ -90,22 +95,22 @@ There are use cases for mouse too, of course! Mindlessly scrolling down a websit
 </div>
 </div>
 <div id="outline-container-modifying-the-keymap" class="outline-2">
-<h2 id="modifying-the-keymap">Modifying the keymap</h2>
+<h2 id="modifying-the-keymap"><a href="#modifying-the-keymap">Modifying the keymap</a></h2>
 <div class="outline-text-2" id="text-modifying-the-keymap">
 <p>
 To get the most out of your keyboard, we need to create a specialized keymap for ourselves. For doing that I'll be using <code>xmodmap</code>. <code>xmodmap</code> is a simple utility tool for modifying your keymaps. The configuration is generally done through <code>~/.Xmodmap</code> file.
 </p>
 </div>
 <div id="outline-container-selecting-the-proper-base-keymap" class="outline-3">
-<h3 id="selecting-the-proper-base-keymap">Selecting the proper base keymap</h3>
+<h3 id="selecting-the-proper-base-keymap"><a href="#selecting-the-proper-base-keymap">Selecting the proper base keymap</a></h3>
 <div class="outline-text-3" id="text-selecting-the-proper-base-keymap">
 <p>
 I simply recommend using <code>us(intl)</code> keymap as our base keymap. Because this keymap enables us to use <code>AltGr</code> key which will become super beneficial later in this post. To set your keymap to <code>us(intl)</code>, do this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">localectl set-x11-keymap 'us(intl)'
-</pre>
+<pre class="src src-nil"><code>localectl set-x11-keymap 'us(intl)'
+</code></pre>
 </div>
 
 <p>
@@ -113,49 +118,49 @@ You need to restart your X session to get it working or you can simply do this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">setxkbmap 'us(intl)'
-</pre>
+<pre class="src src-nil"><code>setxkbmap 'us(intl)'
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-fixing-some-problems-with-the--us-intl--" class="outline-3">
-<h3 id="fixing-some-problems-with-the--us-intl--">Fixing some problems with the <code>us(intl)</code></h3>
+<h3 id="fixing-some-problems-with-the--us-intl--"><a href="#fixing-some-problems-with-the--us-intl--">Fixing some problems with the <code>us(intl)</code></a></h3>
 <div class="outline-text-3" id="text-fixing-some-problems-with-the--us-intl--">
 <p>
 While it enables <code>AltGr</code> key, it also turns backtick and apostrope keys into modifier keys that creates accented versions of pressed key. I do not want this behavior, to get the normal behavior add these into your <code>~/.Xmodemap</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">keysym dead_grave = grave asciitilde
+<pre class="src src-nil"><code>keysym dead_grave = grave asciitilde
 keysym dead_acute = apostrophe quotedbl
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-empowering-the--[-,--]--keys" class="outline-3">
-<h3 id="empowering-the--[-,--]--keys">Empowering the <code>[</code>, <code>]</code> keys</h3>
+<h3 id="empowering-the--[-,--]--keys"><a href="#empowering-the--[-,--]--keys">Empowering the <code>[</code>, <code>]</code> keys</a></h3>
 <div class="outline-text-3" id="text-empowering-the--[-,--]--keys">
 <p>
 When you press <code>Shift + [</code> you get <code>{</code>. As a natural extension to that, I bind <code>AltGr+[</code> to <code>(</code>. This is simply easier than doing <code>Shift+9</code>, considering parentheses used frequently while coding, this change is a nice touch. Put these into your <code>~/.Xmodmap</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">!! AltGr+[ → (, AltGr+] → )
+<pre class="src src-nil"><code>!! AltGr+[ → (, AltGr+] → )
 keysym bracketleft = bracketleft braceleft bracketleft braceleft parenleft
 keysym bracketright = bracketright braceright bracketright braceright parenright
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-more-utf-8-chars" class="outline-3">
-<h3 id="more-utf-8-chars">More UTF-8 chars</h3>
+<h3 id="more-utf-8-chars"><a href="#more-utf-8-chars">More UTF-8 chars</a></h3>
 <div class="outline-text-3" id="text-more-utf-8-chars">
 <p>
 Most of the modern programming languages supports using UTF-8 glyphs. For example you can use <code>→</code> instead of <code>-&gt;</code> or <code>≥</code> instead of <code>&gt;=</code>. They are more expressive, better-looking and feels right. Also while preparing a document or while having a causal conversation, it's just nicer to utilize these characters. Here is the related part of mine <code>~/.Xmodmap</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">!! Quick access for some unicode chars
+<pre class="src src-nil"><code>!! Quick access for some unicode chars
 !! altgr + b → λ  | altgr + a → →
 !! altgr + n → ¬  | altgr + d → ⇒
 !! altgr + , → ≤  | altgr + . → ≥
@@ -177,26 +182,26 @@ keysym period = period greater period greater U2265
 keysym equal = equal plus equal plus U2260 U2254
 keysym question = slash question slash question division
 keysym semicolon = semicolon colon semicolon colon U2237
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-a-new-modifier-key,-hyper" class="outline-3">
-<h3 id="a-new-modifier-key,-hyper">A new modifier key, Hyper</h3>
+<h3 id="a-new-modifier-key,-hyper"><a href="#a-new-modifier-key,-hyper">A new modifier key, Hyper</a></h3>
 <div class="outline-text-3" id="text-a-new-modifier-key,-hyper">
 <p>
 <code>CapsLock</code>, at least for me, one of the most useless key on the keyboard. Actually it's kinda more useful, when you compare it with the <code>RightCtrl</code>, at least you can press it. But the functionality is not really required, do you really find yourself typing in all caps for long periods of time? Even if so, you can simply write them all in lowercase and convert them to upper case with the help of your favorite text editor. What I like to do is, remap the <code>CapsLock</code> key to a new modifier key, namely <code>Hyper</code>, which enables you to create new shortcuts. You can think <code>Hyper</code> like the <code>Control</code> key but no program uses it and you are free to map anything you want to. Here is the relevant <code>~/.Xmodmap</code> configuration:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">!! Unmap capslock
+<pre class="src src-nil"><code>!! Unmap capslock
 clear Lock
 keycode 66 = Hyper_L
 !! Leave mod4 as windows key _only_
 remove mod4 = Hyper_L
 !! Set mod3 to capslock
 add mod3 = Hyper_L
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -209,31 +214,31 @@ Another thing is that some people like to do is that using <code>CapsLock</code>
 </div>
 </div>
 <div id="outline-container--rightctrl-?" class="outline-3">
-<h3 id="-rightctrl-?"><code>RightCtrl</code>?</h3>
+<h3 id="-rightctrl-?"><a href="#-rightctrl-?"><code>RightCtrl</code>?</a></h3>
 <div class="outline-text-3" id="text--rightctrl-?">
 <p>
 I don't know if anybody uses this key unironically but the only use case I found for it was using it as the <code>ESC</code> key. On my older keyboard I was able to press <code>RightCtrl</code> with my palm and as the <code>ESC</code> key it served me quite well. But it's harder to press <code>RightCtrl</code> with my palm on my new keyboard so I just do not use it anymore. I'm simply using the <code>CapsLock</code> as the <code>ESC</code> as I described above. But here is the configuration for using <code>RightCtrl</code> as the <code>ESC</code> if you want to give it a shot:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">keycode 105 = Escape
-</pre>
+<pre class="src src-nil"><code>keycode 105 = Escape
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-global-directional-keys" class="outline-3">
-<h3 id="global-directional-keys">Global directional keys</h3>
+<h3 id="global-directional-keys"><a href="#global-directional-keys">Global directional keys</a></h3>
 <div class="outline-text-3" id="text-global-directional-keys">
 <p>
 I do not like to leave the home row of my keyboard, it's just hard to reach for the arrow keys for example. Also when you get used to <code>h,j,k,l</code> keys in vim for directional movement, you just want them everywhere. So I simply remapped <code>AltGr + {h,j,k,l}</code> to <code>{Left, Down, Up, Right}</code> keys respectively. When you press <code>AltGr + j</code> it acts like <code>Down</code> key, anywhere in your system. You do not need configuration per program, you just need to have this in your <code>~/.Xmodmap</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">keysym h = h H h H Left Home
+<pre class="src src-nil"><code>keysym h = h H h H Left Home
 keysym j = j J j J Down Prior
 keysym k = k K k K Up Next
 keysym l = l L l L Right End
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -245,23 +250,23 @@ Side note for Emacs users: I generally do not use these bindings in Emacs to mak
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(setq shift-select-mode nil)
-</pre>
+<pre class="src src-elisp"><code>(setq shift-select-mode nil)
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-more-with--altgr-" class="outline-3">
-<h3 id="more-with--altgr-">More with <code>AltGr</code></h3>
+<h3 id="more-with--altgr-"><a href="#more-with--altgr-">More with <code>AltGr</code></a></h3>
 <div class="outline-text-3" id="text-more-with--altgr-">
 <p>
 As you may have inferred, to create a combination involving <code>AltGr</code> you need to change fifth field of the <code>keysym</code> assignment.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">!! AltGr + j → Down
+<pre class="src src-nil"><code>!! AltGr + j → Down
 !! I'm not quite sure what the second j J part does but I accepted that as it is
 keysym j = j J j J Down
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -271,7 +276,7 @@ You can use <code>AltGr</code> to create accented characters, this might be a ni
 </div>
 </div>
 <div id="outline-container-shortcuts,-key-bindings" class="outline-2">
-<h2 id="shortcuts,-key-bindings">Shortcuts, key-bindings</h2>
+<h2 id="shortcuts,-key-bindings"><a href="#shortcuts,-key-bindings">Shortcuts, key-bindings</a></h2>
 <div class="outline-text-2" id="text-shortcuts,-key-bindings">
 <p>
 There are tons of programs that can handle this but my personal favorite is <code>sxhkd</code>. It's DE/WM agnostic, the configuration is pretty simple and intuitive. It also supports key chording, which is just fantastic.
@@ -282,14 +287,14 @@ I use my <code>super</code> (windows) key for the WM related shortcuts; like <co
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil"># Focus the next/previous desktop
+<pre class="src src-nil"><code># Focus the next/previous desktop
 super + {n,p}
     bspc desktop --focus {next,prev}.local
 
 # audio/mic toggle
 XF86Audio{_,Mic}Mute
     amixer set {Master,Capture} toggle
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -297,10 +302,10 @@ I use <code>hyper</code> key to manage all the programs I have, or to run stuff.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil"># Run stuff
+<pre class="src src-nil"><code># Run stuff
 hyper + r; {f, e, r, t, v, k, q}
     {firefox, emacsclient -c, jaro ~, lxtask, vivaldi-stable, keepassxc, qbittorrent}
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -308,9 +313,9 @@ When I do <code>hyper + r</code> followed by <code>f</code>, Firefox opens. Simp
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">hyper + r; p; {s, p, w}
+<pre class="src src-nil"><code>hyper + r; p; {s, p, w}
     sxiv {~/Pictures/screenshots/, ~/Pictures/phone/Camera/, ~/Pictures/wallpapers/}
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -319,19 +324,19 @@ Automating stuff through shortcuts is nice, especially if the program offers a n
 </div>
 </div>
 <div id="outline-container-various-tools-configurations" class="outline-2">
-<h2 id="various-tools-configurations">Various tools/configurations</h2>
+<h2 id="various-tools-configurations"><a href="#various-tools-configurations">Various tools/configurations</a></h2>
 <div class="outline-text-2" id="text-various-tools-configurations">
 </div>
 <div id="outline-container--hyper--as--esc-" class="outline-3">
-<h3 id="-hyper--as--esc-"><code>hyper</code> as <code>ESC</code></h3>
+<h3 id="-hyper--as--esc-"><a href="#-hyper--as--esc-"><code>hyper</code> as <code>ESC</code></a></h3>
 <div class="outline-text-3" id="text--hyper--as--esc-">
 <p>
 As I mentioned above, I use <code>hyper</code> as a modifier key when used in combination with some other key. But when I press it by itself, it acts as <code>ESC</code> key. This is achieved through using a simple program called <code>xcape</code>. I start <code>xcape</code> with the arguments below and it gives me this functionality:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-nil">xcape -e 'Hyper_L=Escape'
-</pre>
+<pre class="src src-nil"><code>xcape -e 'Hyper_L=Escape'
+</code></pre>
 </div>
 
 <p>
@@ -344,7 +349,7 @@ You can also use <code>shift</code> or <code>ctrl</code> (or any modifier) keys 
 </div>
 </div>
 <div id="outline-container--xev-" class="outline-3">
-<h3 id="-xev-"><code>xev</code></h3>
+<h3 id="-xev-"><a href="#-xev-"><code>xev</code></a></h3>
 <div class="outline-text-3" id="text--xev-">
 <p>
 <code>xev</code> is a small utility program that may help you during the configuration phase. It simply shows X events, you can press keys or key combinations to get their key codes, key symbols etc.
@@ -353,7 +358,7 @@ You can also use <code>shift</code> or <code>ctrl</code> (or any modifier) keys 
 </div>
 </div>
 <div id="outline-container-things-to-consider" class="outline-2">
-<h2 id="things-to-consider">Things to consider</h2>
+<h2 id="things-to-consider"><a href="#things-to-consider">Things to consider</a></h2>
 <div class="outline-text-2" id="text-things-to-consider">
 <p>
 I try to create one-key bindings whenever I can. While this is not really possible on system level, it's quite possible in programs like Vim or Emacs. If I'm going to create a new binding that requires at least two keys (one being modifier key), I try to use <code>alt</code> key as the modifier first. I only use <code>ctrl</code> if I absolutely need to do that. Thumbs are very strong while pinkies get stressed pretty easily. One can argue based on this assumption that assigning <code>CapsLock</code> as <code>ESC</code> might be bad for my left pinky. I think this is a non issue because real stress happens when doing a key combination, simply hitting a key with my pinky does not generate much stress.
@@ -361,43 +366,27 @@ I try to create one-key bindings whenever I can. While this is not really possib
 </div>
 </div>
 <div id="outline-container-conclusion" class="outline-2">
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2>
 <div class="outline-text-2" id="text-conclusion">
 <p>
 I am always looking for ways to enhance my keyboard usage. I'm not a very-fast typist, at my best I can write ~70 WPM with high concentration (and for a short period of time). But the things I explained above are not for typing fast, they are for using your computer easier. Especially for programming. If you have more keyboard related tricks or better use cases for the programs I mentioned above, please share them with me!</p>
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li> <li><a href="/2017/12/22/programming-avr-microcontrollers-in-linux.html">Programming AVR microcontrollers in Linux</a></li> <li><a href="/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html">A (relatively) deep dive into (zsh) shell login process (without a display manager)</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Bash scripting guide | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Bash scripting guide</h1>
+
+      <div class="meta">
+        <time datetime="2019-02-21" class="publish-time"
+              aria-label="Published Feb 21, 2019">
+          <span class="date-day">21</span>
+          <span class="date-month">Feb</span>
+          <span class="date-year">2019</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/bash.html">bash</a><a href="/tags/cli.html">cli</a><a href="/tags/shell.html">shell</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Bash scripting guide</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/bash.html" class="tag-link">bash</a>, <a href="/tags/cli.html" class="tag-link">cli</a>, <a href="/tags/shell.html" class="tag-link">shell</a></li>
-            <li id="publish-date">2019-02-21</li>
-            <li id="updated-date">2019-02-21</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -96,7 +101,7 @@ I've been writing some bash scripts lately and I've learned a lot. I must say th
 I'll be talking about <code>bash</code> specifically, but I lot of the features in here are implemented in very similar ways in other shells.
 </p>
 <div id="outline-container-shebangs" class="outline-2">
-<h2 id="shebangs">shebangs</h2>
+<h2 id="shebangs"><a href="#shebangs">shebangs</a></h2>
 <div class="outline-text-2" id="text-shebangs">
 <p>
 The most portable shebang for bash scripting is: <code>#!/usr/local/env bash</code>. It basically asks <code>env</code> to find <code>bash</code> and wherever it may be, run this script with it. Do not use <code>sh</code>, it may be linked to <code>bash</code> but most of the time this is not the case.
@@ -107,15 +112,15 @@ shebangs also let's you do some cool tricks:
 </p>
 </div>
 <div id="outline-container-running-scripts-with-sudo" class="outline-3">
-<h3 id="running-scripts-with-sudo">Running scripts with sudo</h3>
+<h3 id="running-scripts-with-sudo"><a href="#running-scripts-with-sudo">Running scripts with sudo</a></h3>
 <div class="outline-text-3" id="text-running-scripts-with-sudo">
 <p>
 If you need to run some commands with root privileges in your script, it is generally advised to run your script using <code>sudo</code> instead of having a <code>sodo command ...</code> kind of line in the script. So to write such script, you need to check if you have root privileges or not. Instead of that, you can have this kind of shebang:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">#!/bin/sudo /bin/bash
-</pre>
+<pre class="src src-bash"><code>#!/bin/sudo /bin/bash
+</code></pre>
 </div>
 
 <p>
@@ -123,8 +128,8 @@ Now your script is guaranteed to be running with sudo, <i>kind of</i>. As I said
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">#!/usr/bin/env sudo bash
-</pre>
+<pre class="src src-bash"><code>#!/usr/bin/env sudo bash
+</code></pre>
 </div>
 
 <p>
@@ -132,8 +137,8 @@ Which seems reasonable. We ask <code>env</code> to find <code>sudo</code> and we
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">/path/to/sudo bash /path/to/your/script
-</pre>
+<pre class="src src-bash"><code>/path/to/sudo bash /path/to/your/script
+</code></pre>
 </div>
 
 <p>
@@ -141,8 +146,8 @@ But unfortunately, this is not the case. Because <code>env</code> parses all arg
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">#!/usr/bin/env -S sudo bash
-</pre>
+<pre class="src src-bash"><code>#!/usr/bin/env -S sudo bash
+</code></pre>
 </div>
 
 <p>
@@ -151,15 +156,15 @@ I'm not entirely sure about this style of sudo calls. There may be implications 
 </div>
 </div>
 <div id="outline-container-running-other-programs-with-shebangs" class="outline-3">
-<h3 id="running-other-programs-with-shebangs">Running other programs with shebangs</h3>
+<h3 id="running-other-programs-with-shebangs"><a href="#running-other-programs-with-shebangs">Running other programs with shebangs</a></h3>
 <div class="outline-text-3" id="text-running-other-programs-with-shebangs">
 <p>
 This is not entirely related to bash scripting but it's worth mentioning. Check this out:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">#!/usr/bin/env -S cat ${HOME}/.bashrc
-</pre>
+<pre class="src src-bash"><code>#!/usr/bin/env -S cat ${HOME}/.bashrc
+</code></pre>
 </div>
 
 <p>
@@ -169,21 +174,21 @@ This script directly calls <code>cat</code> with <code>${HOME}/.bashrc</code> ar
 </div>
 </div>
 <div id="outline-container-primitives" class="outline-2">
-<h2 id="primitives">Primitives</h2>
+<h2 id="primitives"><a href="#primitives">Primitives</a></h2>
 <div class="outline-text-2" id="text-primitives">
 <p>
 Here are some basic tips that makes your code faster and easy to reason.
 </p>
 </div>
 <div id="outline-container--true--and--false-" class="outline-3">
-<h3 id="-true--and--false-"><code>true</code> and <code>false</code></h3>
+<h3 id="-true--and--false-"><a href="#-true--and--false-"><code>true</code> and <code>false</code></a></h3>
 <div class="outline-text-3" id="text--true--and--false-">
 <ul class="org-ul">
 <li><code>true</code> and <code>false</code> are actual binaries that does nothing and returns <code>0</code> and <code>1</code> respectively as their exit code. If you pass a command to if clause, it checks the exit code of it and depending on that selects the right branch. So <code>0</code> exit code which means successful exit is considered as <code>true</code> and everything else is considered as false.</li>
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-bash">if true; then echo "hey, it's true!"; fi
+<pre class="src src-bash"><code>if true; then echo "hey, it's true!"; fi
 
 # They are also helpful in context of functions:
 function starts_with {
@@ -195,7 +200,7 @@ function starts_with {
 
 # prints yes
 if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -203,14 +208,14 @@ if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-bash">function starts_with {
+<pre class="src src-bash"><code>function starts_with {
     case "$1" in
         "$2"*) return ;;
     esac
 
     false
 }
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -219,7 +224,7 @@ if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
 </div>
 </div>
 <div id="outline-container--[[-]]--and------instead-of--[-]-" class="outline-3">
-<h3 id="-[[-]]--and------instead-of--[-]-"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></h3>
+<h3 id="-[[-]]--and------instead-of--[-]-"><a href="#-[[-]]--and------instead-of--[-]-"><code>[[ ]]</code> and <code>(( ))</code> instead of <code>[ ]</code></a></h3>
 <div class="outline-text-3" id="text--[[-]]--and------instead-of--[-]-">
 <ul class="org-ul">
 <li><code>[</code> is an actual binary. So it costs more to use it. <code>[[</code> is a bash built-in and has a lot of improvements over <code>[</code>.</li>
@@ -227,7 +232,7 @@ if starts_with "something" "some"; then echo "yes!"; else echo "no :("; fi
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-bash">echo "Enter a year:"
+<pre class="src src-bash"><code>echo "Enter a year:"
 read year
 
 if [[ -z $year ]]; then
@@ -237,7 +242,7 @@ elif (( ($year % 400) == 0 )) || (( ($year % 4 == 0) &amp;&amp; ($year % 100 != 
 else
     echo "Not a leap year :("
 fi
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -246,25 +251,25 @@ fi
 </div>
 </div>
 <div id="outline-container--let--instead-of-----" class="outline-3">
-<h3 id="-let--instead-of-----"><code>let</code> instead of <code>(( ))</code></h3>
+<h3 id="-let--instead-of-----"><a href="#-let--instead-of-----"><code>let</code> instead of <code>(( ))</code></a></h3>
 <div class="outline-text-3" id="text--let--instead-of-----">
 <p>
 Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It's not an alternative for using inside if clauses but for assignments it requires less typing:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">let l=33+9
-</pre>
+<pre class="src src-bash"><code>let l=33+9
+</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div id="outline-container-variables" class="outline-2">
-<h2 id="variables">Variables</h2>
+<h2 id="variables"><a href="#variables">Variables</a></h2>
 <div class="outline-text-2" id="text-variables">
 </div>
 <div id="outline-container--declare--and-it's-friends" class="outline-3">
-<h3 id="-declare--and-it's-friends"><code>declare</code> and it's friends</h3>
+<h3 id="-declare--and-it's-friends"><a href="#-declare--and-it's-friends"><code>declare</code> and it's friends</a></h3>
 <div class="outline-text-3" id="text--declare--and-it's-friends">
 <p>
 <code>declare</code> is pretty useful built-in function. I'll go over some of it's capabilities and my take on usage but you can type <code>help declare</code> and see a very informative and short text about it.
@@ -275,7 +280,7 @@ Another somewhat nicer alternative to <code>(( ))</code> is <code>let</code>. It
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-bash">greeting="hey"
+<pre class="src src-bash"><code>greeting="hey"
 
 function greet {
     local greeting="hi"
@@ -290,7 +295,7 @@ function greet {
 greet
 echo "Global greeting:"
 echo "$greeting $name"
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -305,7 +310,7 @@ echo "$greeting $name"
 </div>
 </div>
 <div id="outline-container-string-manipulation" class="outline-3">
-<h3 id="string-manipulation">String manipulation</h3>
+<h3 id="string-manipulation"><a href="#string-manipulation">String manipulation</a></h3>
 <div class="outline-text-3" id="text-string-manipulation">
 <p>
 Here is a quick summary of string manipulation capabilities of bash: (Assume <code>string</code> is a pre-defined variable)
@@ -320,10 +325,10 @@ Here is a quick summary of string manipulation capabilities of bash: (Assume <co
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-bash">string="abcabcdefg"
+<pre class="src src-bash"><code>string="abcabcdefg"
 x=${string#a*c}  # x is abcdefg
 y=${string##a*c} # y is defg
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -354,31 +359,31 @@ Also there is stuff for case manipulation. Given variable <code>EXAMPLE="An ExaM
 </div>
 </div>
 <div id="outline-container-regular-expression-matching" class="outline-3">
-<h3 id="regular-expression-matching">Regular expression matching</h3>
+<h3 id="regular-expression-matching"><a href="#regular-expression-matching">Regular expression matching</a></h3>
 <div class="outline-text-3" id="text-regular-expression-matching">
 <p>
 You can use <code>=~</code> operator to perform a regular expression match instead of simple globing:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"># Check if input is hexadecimal:
+<pre class="src src-bash"><code># Check if input is hexadecimal:
 if [[ $input =~ ^[[:xdigit:]]*$ ]]; then
     # do stuff with it
 fi
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 <div id="outline-container-default-vaules" class="outline-3">
-<h3 id="default-vaules">Default vaules</h3>
+<h3 id="default-vaules"><a href="#default-vaules">Default vaules</a></h3>
 <div class="outline-text-3" id="text-default-vaules">
 <p>
 You can use <code>${VAR:-DEFAULT}</code> or <code>${VAR-DEFAULT}</code> syntax to define default variables. The first one outputs <code>DEFAULT</code> if the <code>$VAR</code> is empty or unset. Latter only outputs <code>DEFAULT</code> when <code>$VAR</code> is unset. A practical example of this would be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">echo "Your config directory is: ${XDG_CONFIG_HOME:-$HOME/.config}"
-</pre>
+<pre class="src src-bash"><code>echo "Your config directory is: ${XDG_CONFIG_HOME:-$HOME/.config}"
+</code></pre>
 </div>
 
 <p>
@@ -388,18 +393,18 @@ There is also a version of this which uses <code>=</code> instead of <code>-</co
 </div>
 </div>
 <div id="outline-container-parameters" class="outline-2">
-<h2 id="parameters">Parameters</h2>
+<h2 id="parameters"><a href="#parameters">Parameters</a></h2>
 <div class="outline-text-2" id="text-parameters">
 </div>
 <div id="outline-container-shift" class="outline-3">
-<h3 id="shift">shift</h3>
+<h3 id="shift"><a href="#shift">shift</a></h3>
 <div class="outline-text-3" id="text-shift">
 <p>
-You can access to parameters using positional parameters: <code>$1, $2 ... $9, ${10}, ${11} ...</code>. <code>shift</code>, as the name suggests, shifts those parameters. So when you call <code>shift</code>, <code>$2</code> becomes <code>$1</code>, <code>$3</code> becomes <code>$2</code>&#x2026; It becomes handy in loops or sometimes you just want to process first <i>N</i> parameters and leave rest as is while passing them to another program.
+You can access to parameters using positional parameters: <code>$1, $2 ... $9, ${10}, ${11} ...</code>. <code>shift</code>, as the name suggests, shifts those parameters. So when you call <code>shift</code>, <code>$2</code> becomes <code>$1</code>, <code>$3</code> becomes <code>$2</code>&hellip; It becomes handy in loops or sometimes you just want to process first <i>N</i> parameters and leave rest as is while passing them to another program.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"># Removes given files if they are empty
+<pre class="src src-bash"><code># Removes given files if they are empty
 
 while (( "$#" )); do
     if [[ -s $1 ]]; then
@@ -410,7 +415,7 @@ while (( "$#" )); do
 
     shift
 done
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -419,20 +424,20 @@ done
 </div>
 </div>
 <div id="outline-container-preserving" class="outline-3">
-<h3 id="preserving">Preserving</h3>
+<h3 id="preserving"><a href="#preserving">Preserving</a></h3>
 <div class="outline-text-3" id="text-preserving">
 <p>
 Say that we have a wrapper script/function that checks if <code>ripgrep</code> (rg) is installed and executes it with given parameters otherwise it calls <code>grep</code> with given parameters:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">rg_path=$(which rg)
+<pre class="src src-bash"><code>rg_path=$(which rg)
  if [ -x "$rg_path" ]; then
     rg "$@"
 else
     grep "$@"
  fi
-</pre>
+</code></pre>
 </div>
 
 <ul class="org-ul">
@@ -443,17 +448,17 @@ else
 </div>
 </div>
 <div id="outline-container-looping-through-arguments" class="outline-3">
-<h3 id="looping-through-arguments">Looping through arguments</h3>
+<h3 id="looping-through-arguments"><a href="#looping-through-arguments">Looping through arguments</a></h3>
 <div class="outline-text-3" id="text-looping-through-arguments">
 <p>
 It's a pretty common task with pretty easy syntax:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">for arg in "$@"; do
+<pre class="src src-bash"><code>for arg in "$@"; do
     echo "$arg"
 done
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -461,24 +466,24 @@ Or better yet:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">for arg; do
+<pre class="src src-bash"><code>for arg; do
     echo "$arg"
 done
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div id="outline-container-subshells" class="outline-2">
-<h2 id="subshells">Subshells</h2>
+<h2 id="subshells"><a href="#subshells">Subshells</a></h2>
 <div class="outline-text-2" id="text-subshells">
 <p>
 The most common problem of using subshells is that subshells can not effect the parent shell's variables. For example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">echo "stuff" | read some_var
-</pre>
+<pre class="src src-shell"><code>echo "stuff" | read some_var
+</code></pre>
 </div>
 
 <p>
@@ -486,11 +491,11 @@ In this example, usage of <code>|</code> introduces a subshell and the <code>som
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">echo "stuff" | {
+<pre class="src src-bash"><code>echo "stuff" | {
     read some_var
     echo "I can use $some_var"
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -498,17 +503,17 @@ Here <code>|</code> still introduces a subshell but we continue to do our stuff 
 </p>
 </div>
 <div id="outline-container-here-strings" class="outline-3">
-<h3 id="here-strings">Here strings</h3>
+<h3 id="here-strings"><a href="#here-strings">Here strings</a></h3>
 <div class="outline-text-3" id="text-here-strings">
 <p>
 Continuing the example above, we can do something like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">read some_var &lt;&lt;&lt; "stuff"
+<pre class="src src-bash"><code>read some_var &lt;&lt;&lt; "stuff"
 # or
 read some_var &lt;&lt;&lt; $(echo "stuff")
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -517,15 +522,15 @@ read some_var &lt;&lt;&lt; $(echo "stuff")
 </div>
 </div>
 <div id="outline-container-process-substitution" class="outline-3">
-<h3 id="process-substitution">Process substitution</h3>
+<h3 id="process-substitution"><a href="#process-substitution">Process substitution</a></h3>
 <div class="outline-text-3" id="text-process-substitution">
 <p>
 A process substitution creates a temporary file with the given output and passes that temporary file to a command. For example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">read some_var &lt; &lt;(echo "stuff")
-</pre>
+<pre class="src src-bash"><code>read some_var &lt; &lt;(echo "stuff")
+</code></pre>
 </div>
 
 <p>
@@ -535,19 +540,19 @@ Here, the effect is same as with <i>here strings</i> but what happens is a lot d
 </div>
 </div>
 <div id="outline-container-functions" class="outline-2">
-<h2 id="functions">Functions</h2>
+<h2 id="functions"><a href="#functions">Functions</a></h2>
 <div class="outline-text-2" id="text-functions">
 </div>
 <div id="outline-container-functions-that-accepts-both-arguments-and-stdin" class="outline-3">
-<h3 id="functions-that-accepts-both-arguments-and-stdin">Functions that accepts both arguments and stdin</h3>
+<h3 id="functions-that-accepts-both-arguments-and-stdin"><a href="#functions-that-accepts-both-arguments-and-stdin">Functions that accepts both arguments and stdin</a></h3>
 <div class="outline-text-3" id="text-functions-that-accepts-both-arguments-and-stdin">
 <p>
 Let's say that you want your function to accept data either as argument or from stdin. You can simply combine <code>${VAR:-DEFAULT}</code> syntax with redirecting operator and you will have this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">str=${*:-$(&lt;/dev/stdin)}
-</pre>
+<pre class="src src-bash"><code>str=${*:-$(&lt;/dev/stdin)}
+</code></pre>
 </div>
 
 <p>
@@ -557,43 +562,27 @@ Now your function will concatenate your arguments and set it to <code>str</code>
 </div>
 </div>
 <div id="outline-container-linting-bash-scripts" class="outline-2">
-<h2 id="linting-bash-scripts">Linting bash scripts</h2>
+<h2 id="linting-bash-scripts"><a href="#linting-bash-scripts">Linting bash scripts</a></h2>
 <div class="outline-text-2" id="text-linting-bash-scripts">
 <p>
 It's really hard to spot errors in your bash scripts because it's dynamic nature and when an error occurs bash doesn't really care about it and gives you as little information as possible. A great tool, called <code>shellcheck</code> addresses this shortcomings of bash. It's a great bash linter, that detects a lot of the common mistakes. It gives you nice advices that makes your code more portable/readable/safe. Just use it. (For Arch Linux users that do not want to install bunch of haskell-* packages as dependencies, there is also shellcheck-static package in aur, I recommend using that. For vim users I recommend using <a href="https://github.com/w0rp/ale">ALE</a> extension, it works out of the box with shellcheck.) For <i>emacs</i> users, <i>Flycheck</i> works out of the box with shellcheck.</p>
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html">Signing long PDF documents automatically with Bash</a></li> <li><a href="/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">Migrating my IMDb ratings list and watch list into org-mode</a></li> <li><a href="/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li> <li><a href="/2018/03/24/nice-little-curl-commands.html">Nice little curl commands</a></li> <li><a href="/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html">A (relatively) deep dive into (zsh) shell login process (without a display manager)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

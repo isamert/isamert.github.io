@@ -1,20 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  addLinksToHeaders()
   highlightCodeBlocks()
 })
-
-function addLinksToHeaders() {
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-    if (!h.hasAttribute('id')) {
-      return
-    }
-
-    wrap(h, elem('a', {
-      class: 'clear',
-      href: '#' + h.id,
-    }))
-  })
-}
 
 function highlightCodeBlocks(_event) {
   // Disable auto-lang detection
@@ -42,28 +28,4 @@ function highlightCodeBlocks(_event) {
     }
     hljs.highlightBlock(block)
   })
-}
-
-//
-// Utils
-//
-
-function wrap(elem, wrapper) {
-  elem.parentNode.replaceChild(wrapper, elem)
-  wrapper.appendChild(elem)
-}
-
-function elem(type, attrs) {
-  const e = document.createElement(type)
-  Object.keys(attrs).forEach(attr => {
-    if (attr !== 'children') {
-      e.setAttribute(attr, attrs[attr])
-    }
-  })
-
-  if (attrs.children) {
-    attrs.children.forEach(child => e.appendChild(child))
-  }
-
-  return e
 }

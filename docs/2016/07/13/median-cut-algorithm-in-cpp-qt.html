@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Median cut algorithm in C++/Qt | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Median cut algorithm in C++/Qt</h1>
+
+      <div class="meta">
+        <time datetime="2016-07-13" class="publish-time"
+              aria-label="Published Jul 13, 2016">
+          <span class="date-day">13</span>
+          <span class="date-month">Jul</span>
+          <span class="date-year">2016</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/cpp.html">cpp</a><a href="/tags/qt.html">qt</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Median cut algorithm in C++/Qt</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/cpp.html" class="tag-link">cpp</a>, <a href="/tags/qt.html" class="tag-link">qt</a></li>
-            <li id="publish-date">2016-07-13</li>
-            <li id="updated-date">2016-07-13</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 I needed a simple color quantization algorithm for my project. I didn't want to use any other program/library for this simple job. So I implemented <i>median cut</i> with <i>Qt</i>. I just used the explanation of the algorithm in <a href="https://en.wikipedia.org/wiki/Median_cut">Wikipedia</a>, I didn't make any other research, so the code is not well optimized but it just works. I'll try to explain step by step:
 </p>
 
@@ -50,7 +55,7 @@ We have an image with an arbitrary number of pixels and want to generate a palet
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">QString filePath = "some_image.png";
+<pre class="src src-cpp"><code>QString filePath = "some_image.png";
 int color_count = 256; // The color count that we want to reduce our image.
 
 QList&lt;QRgb&gt; pixels;
@@ -81,7 +86,7 @@ for (int x = 0; x &lt; img.width(); ++x) {
         }
     }
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -89,11 +94,11 @@ We have upper bounds and lower bounds of the color channels, so just find out th
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">int red = upper_red - lower_red;
+<pre class="src src-cpp"><code>int red = upper_red - lower_red;
 int green = upper_green - lower_green;
 int blue = upper_blue - lower_blue;
 int max = std::max(std::max(red, green), blue);
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -101,7 +106,7 @@ Then we need to short our <i>pixels</i> list according to the channel we just fo
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">qSort(pixels.begin(), pixels.end(), [max,red,green,blue](const QRgb&amp; rgb1, const QRgb&amp; rgb2){
+<pre class="src src-cpp"><code>qSort(pixels.begin(), pixels.end(), [max,red,green,blue](const QRgb&amp; rgb1, const QRgb&amp; rgb2){
     if (max == red)  // if red is our color that has the widest range
         return qRed(rgb1) &lt; qRed(rgb2); // just compare their red channel
     else if (max == green) //...
@@ -112,7 +117,7 @@ Then we need to short our <i>pixels</i> list according to the channel we just fo
 // We just used qSort here.
 // As comparison function, we sent a lambda function
 // that compares two rgb color according to our selected color channel.
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -120,7 +125,7 @@ After sorting our list, we need to move the upper half of the list to another li
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">QList&lt;QList&lt;QRgb&gt;&gt; lists;
+<pre class="src src-cpp"><code>QList&lt;QList&lt;QRgb&gt;&gt; lists;
 int list_size = pixels.size() / color_count;
 
 for (int i = 0; i &lt; color_count; ++i) {
@@ -130,7 +135,7 @@ for (int i = 0; i &lt; color_count; ++i) {
     }
     lists.append(list);
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -138,11 +143,11 @@ We got our lists. After that, we can get the average of each list and we can bui
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">QVector&lt;QRgb&gt; palette;
+<pre class="src src-cpp"><code>QVector&lt;QRgb&gt; palette;
 for (QList&lt;QRgb&gt; list: lists) {
     palette.append(list.at(list.size() / 2));
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -150,7 +155,7 @@ We build up our X color palette. The next thing I am going to do is convert our 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">QVector&lt;QRgb&gt; palette;
+<pre class="src src-cpp"><code>QVector&lt;QRgb&gt; palette;
 for (QList&lt;QRgb&gt; list: lists) {
     palette.append(list.at(list.size() / 2));
 }
@@ -161,7 +166,7 @@ for (int x = 0; x &lt; img.width(); ++x) {
     out.setPixel(x,y, palette[closestMatch(img.pixel(x, y), palette)]);
     }
 }
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -183,7 +188,7 @@ So we can simply use this function to convert any image using our palette. But t
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp">static inline int pixel_distance(QRgb p1, QRgb p2) {
+<pre class="src src-cpp"><code>static inline int pixel_distance(QRgb p1, QRgb p2) {
     int r1 = qRed(p1);
     int g1 = qGreen(p1);
     int b1 = qBlue(p1);
@@ -209,39 +214,23 @@ static inline int closestMatch(QRgb pixel, const QVector&lt;QRgb&gt; &amp;clut) 
     }
     return idx;
 }
-</pre>
+</code></pre>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2018/03/01/functional-programming-in-cpp.html">Functional programming in C++</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html">Killing (copying) currently selected candidate's content/text in Selectrum</a></li> <li><a href="/2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

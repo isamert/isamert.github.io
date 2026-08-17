@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Announcement: corg.el -- Seamless auto completion for org-mode block headers</h1>
+
+      <div class="meta">
+        <time datetime="2024-08-20" class="publish-time"
+              aria-label="Published Aug 20, 2024">
+          <span class="date-day">20</span>
+          <span class="date-month">Aug</span>
+          <span class="date-year">2024</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/announcement.html">announcement</a><a href="/tags/emacs.html">emacs</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Announcement: corg.el -- Seamless auto completion for org-mode block headers</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/announcement.html" class="tag-link">announcement</a>, <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
-            <li id="publish-date">2024-08-20</li>
-            <li id="updated-date">2024-08-20</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 I released a new package called <a href="https://github.com/isamert/corg.el">corg.el</a>. It is an Emacs package that provides completion-at-point for Org-mode source block and dynamic block headers. Check out the GIF below for a quick demonstration:
 </p>
 
@@ -73,36 +78,20 @@ It's a nice quality-of-life package. Give it a try and let me know if it improve
 Also see the <a href="https://reddit.com/r/emacs/comments/1ew3mlq/corgel_autocomplete_for_block_headers_and_their/">Reddit discussion</a>.
 </p>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2024/05/14/upver-el-announchement.html">Announcement: upver.el -- Interactively update your project dependencies</a></li> <li><a href="/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li> <li><a href="/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li> <li><a href="/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">Migrating my IMDb ratings list and watch list into org-mode</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Announcement: upver.el -- Interactively update your project dependencies | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Announcement: upver.el -- Interactively update your project dependencies</h1>
+
+      <div class="meta">
+        <time datetime="2024-05-14" class="publish-time"
+              aria-label="Published May 14, 2024">
+          <span class="date-day">14</span>
+          <span class="date-month">May</span>
+          <span class="date-year">2024</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/announcement.html">announcement</a><a href="/tags/emacs.html">emacs</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Announcement: upver.el -- Interactively update your project dependencies</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/announcement.html" class="tag-link">announcement</a>, <a href="/tags/emacs.html" class="tag-link">emacs</a></li>
-            <li id="publish-date">2024-05-14</li>
-            <li id="updated-date">2024-05-14</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <p>
+    <p>
 I released a new package called <a href="https://github.com/isamert/upver.el">upver.el</a>. It is an Emacs package that lets you interactively update your npm dependencies within a <code>package.json</code> buffer. Inspired by the <a href="https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens">Version Lens</a> package that saw on a colleague's screen.
 </p>
 
@@ -59,36 +64,20 @@ The <a href="https://github.com/isamert/upver.el">README</a> has detailed instru
 Hope you find it useful. Have a nice one!
 </p>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li> <li><a href="/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li> <li><a href="/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li> <li><a href="/2023/08/14/elisp-editing-development-tips.html">Elisp editing/development tips</a></li> <li><a href="/2022/03/16/global-interactive-emacs-functions.html">Global interactive Emacs functions</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

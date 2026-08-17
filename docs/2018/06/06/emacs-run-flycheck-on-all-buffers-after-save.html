@@ -1,47 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Emacs - Run flycheck on all buffers after save | isamert.net</title>
-
-  <script src="/assets/index.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
-  <script src="/assets/hljs/highlight.pack.js"></script>
-  <script>
-    if (location.port != 3000) {
-      let script = document.createElement('script');
-      script.src = 'https://u.isamert.net/u.js';
-      script.setAttribute("defer", "true");
-      script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
-      document.head.appendChild(script);
-    }
-  </script>
-  <link rel="alternate" type="application/rss+xml" href="https://isamert.net/feed.xml" title="isamert.net RSS feed">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
 </head>
-  <body>
-    <header>
-        <h1>isamert's webpage</h1>
-        <nav>
-            <a href="/">home</a> |
-            <a href="/about.html">about</a> |
-            <a href="/feeds.html">rss</a> |
-            <a href="/watchlist.html">watchlist</a> |
-            <a href="https://github.com/isamert">hackings</a>
-        </nav>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Emacs - Run flycheck on all buffers after save</h1>
+
+      <div class="meta">
+        <time datetime="2018-06-06" class="publish-time"
+              aria-label="Published Jun 06, 2018">
+          <span class="date-day">06</span>
+          <span class="date-month">Jun</span>
+          <span class="date-year">2018</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a>
+        </span>
+      </div>
+
     </header>
 
-      <section>
-        <h1 id="post-title">Emacs - Run flycheck on all buffers after save</h1>
-
-        <div id="post-information">
-          <ul>
-            <li id="author">isamert</li>
-            <li id="tags"><a href="/tags/emacs.html" class="tag-link">emacs</a></li>
-            <li id="publish-date">2018-06-06</li>
-            <li id="updated-date">2018-06-06</li>
-          </ul>
-        </div>
-
-        <div id="post">
-          <nav id="table-of-contents" role="doc-toc">
+    <nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
@@ -62,11 +67,11 @@ First, we need a function that runs flycheck on given buffer. There is a functio
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun flycheck-buffer* (buffer)
+<pre class="src src-elisp"><code>(defun flycheck-buffer* (buffer)
   "Runs flycheck on given BUFFER."
   (with-current-buffer buffer
     (flycheck-buffer)))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -74,11 +79,11 @@ Another thing we need is that a function that returns all buffers. It's <code>bu
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun other-file-buffer-list nil
+<pre class="src src-elisp"><code>(defun other-file-buffer-list nil
   "Returns the list of all file buffers except currently open one and temporary buffers and stuff."
   (delq (current-buffer)
     (remove-if-not 'buffer-file-name (buffer-list))))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -86,11 +91,11 @@ And the last function we need is this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun flycheck-all-file-buffers nil
+<pre class="src src-elisp"><code>(defun flycheck-all-file-buffers nil
     "Simply run flycheck on all file buffers."
     (interactive)
     (mapc 'flycheck-buffer* (other-file-buffer-list)))
-</pre>
+</code></pre>
 </div>
 
 <p>
@@ -98,24 +103,24 @@ Lastly, we need to add this function to <code>after-save-hook</code>. But I want
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun enable-flycheck-all-file-buffers-on-save nil
+<pre class="src src-elisp"><code>(defun enable-flycheck-all-file-buffers-on-save nil
   (interactive)
   (add-hook 'after-save-hook 'flycheck-all-file-buffers))
 
 (defun disable-flycheck-all-file-buffers-on-save nil
   (interactive)
   (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
-</pre>
+</code></pre>
 </div>
 <div id="outline-container-the-result" class="outline-2">
-<h2 id="the-result">The Result</h2>
+<h2 id="the-result"><a href="#the-result">The Result</a></h2>
 <div class="outline-text-2" id="text-the-result">
 <p>
 Run <code>M-x</code> then call <code>enable-flycheck-all-file-buffers-on-save</code>. From now on, when you save a file, other files will be flychecked too. To disable it, call <code>disable-flycheck-all-file-buffers-on-save</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">(defun flycheck-buffer* (buffer)
+<pre class="src src-elisp"><code>(defun flycheck-buffer* (buffer)
   "Runs flycheck on given BUFFER."
   (with-current-buffer buffer
     (flycheck-buffer)))
@@ -137,41 +142,25 @@ Run <code>M-x</code> then call <code>enable-flycheck-all-file-buffers-on-save</c
 (defun disable-flycheck-all-file-buffers-on-save nil
   (interactive)
   (remove-hook 'after-save-hook 'flycheck-all-file-buffers))
-</pre>
+</code></pre>
 </div>
 </div>
 </div>
 
-        </div>
+  </article>
 
-        <div id="similar-posts">
-          <h2>Similar posts</h2>
-          <ul>
-            <li><a href="/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li> <li><a href="/2022/03/16/global-interactive-emacs-functions.html">Global interactive Emacs functions</a></li> <li><a href="/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li> <li><a href="/2019/11/14/running-sql-on-org-mode-tables.html">Running SQL on org-mode tables</a></li> <li><a href="/2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li>
-          </ul>
-        </div>
 
-       <div id="comments">
-        <h2>Comments</h2>
-        <script src="https://utteranc.es/client.js"
-                repo="isamert/isamert.github.io"
-                issue-term="pathname"
-                label="> 💬"
-                theme="github-light"
-                crossorigin="anonymous"
-                defer>
-        </script>
-      </div>
-      </section>
-
-      <footer>
-        <hr />
-        <p>
-          Isa Mert Gurbuz © 2022-2024
-      
-          <span>
-            <a href="https://github.com/isamert/isamert.github.io">Source</a>
-          </span>
-        </p>
-      </footer>
-  </body>
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

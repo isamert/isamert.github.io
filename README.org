@@ -1213,7 +1213,7 @@ Headers tagged with =page= tag will be generated based on this template.
 
 #+NAME: page-template
 #+begin_src html-template :noweb yes
-<<template-header>>
+<<template-header(extras="")>>
   ${body}
 <<template-footer>>
 #+end_src
@@ -1222,7 +1222,7 @@ Almost same as page but wraps the content with ~article~ only.
 
 #+NAME: content-template
 #+begin_src html-template :noweb yes
-<<template-header>>
+<<template-header(extras="")>>
   <article>
     ${body}
   </article>
@@ -1306,7 +1306,7 @@ Pages that list posts belonging to a particular tag will be generated based on t
 
 #+NAME: tag-template
 #+begin_src html
-<<template-header>>
+<<template-header(extras="")>>
  <section>
    <h1>
     <code>${tag-name}</code> posts
@@ -6513,13 +6513,13 @@ Useful when styling or templating has changed."
              (export-path (org-entry-get nil "EXPORT_AS"))
              (author (isamert/org-get-keyword "AUTHOR"))
              (words (s-split " " title t))
-             (entry-body (isamert/org-entry-body))
+             (entry-body (s-trim (isamert/org-entry-body)))
              (abstract (or (org-entry-get nil "ABSTRACT") "")))
         (list
          :id id
          :title? title?
          :title title
-         :description (or description (concat (substring (s-trim entry-body) 0 (min (length entry-body) 100)) "..."))
+         :description (or description (concat (substring entry-body 0 (min (length entry-body) 100)) "..."))
          :path path
          :file-path (isamert/blog-with-publish-dir path)
          :page? (-contains? tags "page")
@@ -6952,7 +6952,7 @@ They can be overridden in header properties."
       (isamert/write-string-to-file
        (isamert/blog-with-publish-dir (format "%s/%s.html" isamert/blog-tags-dir it))
        (isamert/template "tag-template"
-                         :title (format "Posts tagged with %s" it)
+                         :title (format "'%s' posts" it)
                          :tag-name it
                          :language (if (equal it "turkish") "tr" "en")
                          :posts (gethash it taggeds))))))

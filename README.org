@@ -1231,9 +1231,21 @@ Almost same as page but wraps the content with ~article~ only.
 *** Post template
 This is the post template, post pages will be generated based on this.
 
+#+NAME: post-meta
+#+begin_src html-template
+<meta property="og:type" content="article">
+<meta property="og:title"
+      content="${title}">
+<meta property="og:description"
+      content="${description}">
+<meta property="og:url"
+      content="https://isamert.net/${path}">
+<meta property="og:site_name" content="((isamert))">
+#+end_src
+
 #+NAME: post-template
-#+begin_src html :noweb yes
-<<template-header>>
+#+begin_src html-template :noweb yes
+<<template-header(extras=post-meta())>>
   <article>
     <header class="post-header">
       <h1>${title}</h1>
@@ -6461,7 +6473,6 @@ id's to their info, which is a plist.")
   (isamert/blog-export-meta)
   (isamert/blog-export-all-posts-pages))
 
-
 (defun isamert/blog-export-all-pages ()
   "Export all HTML pages (tag pages, posts, normal pages etc., except xml stuff).
 Useful when styling or templating has changed."
@@ -6487,6 +6498,7 @@ Useful when styling or templating has changed."
              (title (or (org-entry-get nil "TITLE")
                         (org-entry-get nil "ITEM")))
              (title? (not (s-contains? "title:nil" (or options ""))))
+             (description (org-entry-get nil "DESCRIPTION"))
              (path (isamert/blog-mk-path))
              (custom-id (org-entry-get nil "CUSTOM_ID"))
              (id (or custom-id (org-entry-get nil "ID")))
@@ -6501,11 +6513,13 @@ Useful when styling or templating has changed."
              (export-path (org-entry-get nil "EXPORT_AS"))
              (author (isamert/org-get-keyword "AUTHOR"))
              (words (s-split " " title t))
+             (entry-body (isamert/org-entry-body))
              (abstract (or (org-entry-get nil "ABSTRACT") "")))
         (list
          :id id
          :title? title?
          :title title
+         :description (or description (concat (substring (s-trim entry-body) 0 (min (length entry-body) 100)) "..."))
          :path path
          :file-path (isamert/blog-with-publish-dir path)
          :page? (-contains? tags "page")
@@ -6854,13 +6868,20 @@ They can be overridden in header properties."
       local-val
     (cadr (assoc keyword (org-collect-keywords `(,keyword))))))
 
+(defun isamert/org-entry-body ()
+  (save-excursion
+    (org-back-to-heading t)
+    (let ((end (org-entry-end-position)))
+      (org-end-of-meta-data)
+      (buffer-substring-no-properties (point) end))))
+
 ;;;; RSS
 
 (defun isamert/blog-generate-rss ()
   (interactive)
   (let* ((taggeds (make-hash-table :test 'equal))
          (items (->> (org-map-entries 'isamert/blog-generate-rss-item-current "LEVEL=1")
-                   (--keep it))))
+                     (--keep it))))
     (-each items
       (-lambda ((tags . item))
         (--each tags (push item (gethash it taggeds '())))))

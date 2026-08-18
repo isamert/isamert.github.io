@@ -1172,7 +1172,7 @@ article img {
 ** Templates
 *** Header & Footer
 #+NAME: template-header
-#+begin_src html :noweb yes :var class=""
+#+begin_src html-template :noweb yes :var extras=""
 <!doctype html>
 <html lang="${language}">
 <head>
@@ -1186,6 +1186,7 @@ article img {
         title="isamert.net RSS feed">
   <script defer src="/assets/hljs/highlight.pack.js"></script>
   <script defer src="/assets/index.js"></script>
+  {{extras}}
 </head>
 <body>
   <header class="site-header">
@@ -1200,7 +1201,7 @@ article img {
 #+end_src
 
 #+NAME: template-footer
-#+begin_src html
+#+begin_src html-template
   </main>
   <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
 </body>
@@ -1211,7 +1212,7 @@ article img {
 Headers tagged with =page= tag will be generated based on this template.
 
 #+NAME: page-template
-#+begin_src html :noweb yes
+#+begin_src html-template :noweb yes
 <<template-header>>
   ${body}
 <<template-footer>>
@@ -1220,7 +1221,7 @@ Headers tagged with =page= tag will be generated based on this template.
 Almost same as page but wraps the content with ~article~ only.
 
 #+NAME: content-template
-#+begin_src html :noweb yes
+#+begin_src html-template :noweb yes
 <<template-header>>
   <article>
     ${body}
@@ -7027,6 +7028,55 @@ They can be overridden in header properties."
                                (htmlfontify-buffer)))))
     (prog1 (buffer-substring-no-properties (point-min) (point-max))
       (kill-buffer))))
+
+;;;; org html-template
+
+;; This is for simply having "executable" HTML blocks so that I can
+;; pass parameters to these html blocks, "execute" them and embed them
+;; into another template using noweb syntax.
+
+;; Right now we have a very cursed way of doing this templating:
+;; - html-template blocks can take parameters and expand "{{variable}}" syntax.
+;; - `isamert/template' will expand ${variable} or ${(elisp-code)}
+
+(define-derived-mode html-template-mode html-mode "HTML-template"
+  "HTML mode for Org Babel html-template blocks.")
+
+(add-to-list 'org-src-lang-modes '("html-template" . html-template-mode))
+
+;;;;; Variable lookup
+
+(defun isamert/html-template--value (name params)
+  (let ((binding
+         (cl-find-if
+          (lambda (param)
+            (and (eq (car param) :var)
+                 (equal (format "%s" (nth 1 param)) name)))
+          params)))
+    (unless binding
+      (error "html-template: No :var supplied for {{%s}}" name))
+    (cdr (cdr binding))))
+
+;;;;; Body expansion & execution
+
+(defun org-babel-expand-body:html-template (body params &optional _processed)
+  "Replace {{name}} placeholders in BODY using Babel :var parameters."
+  (replace-regexp-in-string
+   "{{\\([[:alnum:]_-]+\\)}}"
+   (lambda (match)
+     ;; Do not use `match-string' here: other Org expansion steps may
+     ;; overwrite Emacs's regexp match data.
+     (let ((name (substring match 2 -2)))
+       (format "%s" (isamert/html-template--value name params))))
+   body 'fixedcase 'literal))
+
+(defun org-babel-execute:html-template (body params)
+  "Execute BODY as an HTML template and return expanded HTML."
+  (org-babel-expand-body:html-template
+   body
+   (if (assq :result-params params)
+       params
+     (org-babel-process-params params))))
 #+end_src
 
 * Load blog code :noexport:

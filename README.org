@@ -1170,7 +1170,7 @@ article img {
 }
 #+end_src
 ** Templates
-*** Placeholder
+*** Header & Footer
 #+NAME: template-header
 #+begin_src html :noweb yes :var class=""
 <!doctype html>
@@ -1178,7 +1178,7 @@ article img {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>((isamert))</title>
+  <title>${(if title? (concat title " | ((isamert))") "(((isamert)))")}</title>
   <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="alternate" type="application/rss+xml"
@@ -1314,7 +1314,7 @@ Pages that list posts belonging to a particular tag will be generated based on t
 * Main :page:
 :PROPERTIES:
 :EXPORT_AS: index
-:OPTIONS: toc:nil
+:OPTIONS: toc:nil title:nil
 :BLOG_OPTIONS: title:nil
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu 00:00] +0300
@@ -6482,7 +6482,10 @@ Useful when styling or templating has changed."
 (defun isamert/get-current-post-info ()
   (let ((tags (s-split ":" (or (org-entry-get nil "TAGS") "") t)))
     (when (isamert/blog-can-export-current)
-      (let* ((title (org-entry-get nil "ITEM"))
+      (let* ((options (org-entry-get nil "OPTIONS"))
+             (title (or (org-entry-get nil "TITLE")
+                        (org-entry-get nil "ITEM")))
+             (title? (not (s-contains? "title:nil" (or options ""))))
              (path (isamert/blog-mk-path))
              (custom-id (org-entry-get nil "CUSTOM_ID"))
              (id (or custom-id (org-entry-get nil "ID")))
@@ -6495,12 +6498,12 @@ Useful when styling or templating has changed."
              (publish-time (date-to-time publish-date-iso))
              (update-time (when updated? (date-to-time update-date-iso)))
              (export-path (org-entry-get nil "EXPORT_AS"))
-             (options (org-entry-get nil "OPTIONS"))
              (author (isamert/org-get-keyword "AUTHOR"))
              (words (s-split " " title t))
              (abstract (or (org-entry-get nil "ABSTRACT") "")))
         (list
          :id id
+         :title? title?
          :title title
          :path path
          :file-path (isamert/blog-with-publish-dir path)

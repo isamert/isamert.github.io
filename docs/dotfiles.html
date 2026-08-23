@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <p>
+You can find <a href="https://github.com/isamert/dotfiles">all of my dotfiles</a> here in this repository. I also publish them here on my website.<sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>The reason for that is people can find these webpages better than random GitHub repository files, search engines prioritize webpages over code files in GitHub.</span>
+</p>
+
+<p>
+Here you can find <a href="./system.org.html">my whole system configuration</a>, expect my Emacs configuration. It's just an org file and files get tangled to their destinations. I don't use an org file to document what I am doing, instead I am using it like <i><a href="https://www.gnu.org/software/stow/">GNU Stow</a> with occasional comments</i>.
+</p>
+
+<p>
+Here is my <a href="./.emacs.d/init.el.html">init.el</a> file. It's huge, around 12k-13k lines. There is a lot of dead code too, probably. Also some outdated commentary.<sup class="fn-ref" aria-describedby="2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>Now that I am publishing these files on my website, I have a reason to fix them. Hopefully soon, one at a time&hellip;</span>
+</p>
+
+<p>
+Lately I am trying to move the parts into smaller packages to reduce the line count of the <code>init.el</code> itself. I publish some of them as <a href="https://github.com/isamert?tab=repositories&amp;q=&amp;type=&amp;language=emacs+lisp&amp;sort=stargazers">separate packages</a> and some just stays in my dotfiles repository. You can find these packages also in here:
+</p>
+
+<p>
+<i>TODO: packages will be listed here in the future, for now see the</i> <a href="https://github.com/isamert/dotfiles/tree/master/.emacs.d/packages">dotfiles repository</a>.
+</p>
+
+<p>
+I used the following code to export these <code>.el</code> files into HTML:<sup class="fn-ref" aria-describedby="3">3</sup><span class="sidenote right" id="note-3"><span class="note-number">3</span>There are similar packages that does a very similar thing (<a href="https://github.com/tumashu/el2org">el2org</a>, <a href="https://github.com/zevlg/ellit-org.el#commenting-el-files">ellit-org</a>) but I found them after writing this piece of code and they are somewhat different in a sense that they convert whole document to org and then export into HTML. This code directly converts code parts into HTML and commentary parts are converted to org file and then HTML. Makes things much faster.</span>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defun isamert/el2html (el-file)
+  (with-current-buffer (find-file-noselect (expand-file-name el-file))
+    (let* ((forms (isamert/elisp-top-level-forms))
+           (len (length forms))
+           (curr 0))
+      (with-temp-buffer
+        (while (&lt; curr len)
+          (let* ((current (nth curr forms))
+                 (current-type (plist-get current :type))
+                 (currents (list current))
+                 (next (1+ curr)))
+            (while (and (&lt; next len)
+                        (eq current-type
+                            (plist-get (nth next forms) :type))
+                        (or (eq current-type 'comment)
+                            (not (string-match-p "\n[ \t\r]*\n" (plist-get (nth next forms) :before)))))
+              (push (nth next forms) currents)
+              (setq next (1+ next)))
+            (setq currents (nreverse currents)
+                  curr next)
+            (let ((current-texts
+                   (if (eq current-type 'comment)
+                       (mapconcat (lambda (it) (plist-get it :text))
+                                  currents
+                                  "")
+                     (mapconcat (lambda (it) (plist-get it :text))
+                                currents
+                                "\n"))))
+              (pcase current-type
+                ('form
+                 (insert
+                  ;; same as how org exports src containers
+                  "&lt;div class=\"org-src-container\"&gt;&lt;pre class=\"src src-elisp elisp\"&gt;\n"
+                  (org-html-encode-plain-text current-texts)
+                  "\n&lt;/pre&gt;&lt;/div&gt;"))
+                ('comment
+                 (let* ((text current-texts)
+                        (lines (s-lines text)))
+                   (insert
+                    (with-temp-buffer
+                      (let ((section-depth 0))
+                        (dolist (line lines)
+                          (if (s-blank? line)
+                              (insert "\n")
+                            (insert
+                             (-let (((_ depth heading rest)
+                                     (s-match
+                                      ";;\\(;+\\)?\\( \\*+\\)? \\(.*\\)"
+                                      line)))
+                               (cond
+                                (depth
+                                 (setq section-depth (length depth))
+                                 (format "%s %s\n:PROPERTIES:\n:CUSTOM_ID: %s\n:END:"
+                                         (s-repeat section-depth "*")
+                                         rest
+                                         ;; There will be some clashes but better than having random ids
+                                         (isamert/blog-url-case rest)))
+                                (heading
+                                 (format "%s%s %s\n:PROPERTIES:\n:CUSTOM_ID: %s\n:END:"
+                                         (s-repeat section-depth "*")
+                                         (s-trim heading)
+                                         rest
+                                         (isamert/blog-url-case rest)))
+                                ((not rest) "")
+                                (t rest)))
+                             "\n"))))
+                      (delay-mode-hooks
+                        (org-mode)
+                        (let ((org-export-with-broken-links t)
+                              (org-export-use-babel nil)
+                              (org-export-with-toc nil)
+                              (org-export-with-section-numbers nil))
+                          (org-export-as 'html nil nil 'body)))))))))))
+        (buffer-substring-no-properties (point-min) (point-max))))))
+
+(defun isamert/elisp-top-level-forms ()
+  (save-excursion
+    (goto-char (point-min))
+    (let ((read-eval nil)
+          forms)
+      (condition-case nil
+          (while t
+            (let ((ws-beg (point)))
+              (skip-chars-forward " \t\r\n")
+              (let ((before (buffer-substring-no-properties ws-beg (point))))
+                (if (looking-at-p ";")
+                    (let ((beg ws-beg))
+                      (forward-comment (point-max))
+                      (push (list :type 'comment
+                                  :begin beg
+                                  :end (point)
+                                  :text (buffer-substring-no-properties
+                                         beg (point)))
+                            forms))
+                  (let ((beg (point))
+                        (form (read (current-buffer)))
+                        (end (point)))
+                    (push (list :type 'form
+                                :begin beg
+                                :end end
+                                :before before
+                                :form form
+                                :text (buffer-substring-no-properties beg end))
+                          forms))))))
+        (end-of-file
+         (nreverse forms))))))
+</code></pre>
+</div>
+
+  </article>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

@@ -1,0 +1,5354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="https://github.com/isamert">projects</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgf098855">Introduction</a>
+<ul>
+<li><a href="#org9336e65">General information about this file</a></li>
+<li><a href="#org3c447c7">Supplementary functions</a></li>
+</ul>
+</li>
+<li><a href="#org93abf53">Programming languages</a>
+<ul>
+<li><a href="#orgdba4abe">R</a></li>
+<li><a href="#org8d05190">Guile</a></li>
+<li><a href="#org960d02d">Javascript</a></li>
+<li><a href="#orgd03010a">Nix</a></li>
+</ul>
+</li>
+<li><a href="#org6e64394">macOS</a>
+<ul>
+<li><a href="#org72ba31c">General configuration</a></li>
+<li><a href="#org790f019">Start applications at boot</a></li>
+<li><a href="#orgeed3611">Application specific shortcuts</a></li>
+<li><a href="#org63a549e">aerospace</a></li>
+<li><a href="#org7225b4f">skhd</a>
+<ul>
+<li><a href="#org4f40d5f">Application shortcuts</a></li>
+<li><a href="#org3929b46">Firefox specific</a></li>
+</ul>
+</li>
+<li><a href="#orgc0472ee">Rootless sshd</a></li>
+<li><a href="#orgf820259">Start some applications at login</a></li>
+<li><a href="#org8d8e9bd">Clear all notifications with a keypress</a></li>
+<li><a href="#orga453ac5">hammerspoon</a>
+<ul>
+<li><a href="#orged68ea0">Emacs Integration</a></li>
+<li><a href="#orge19c09d">Global bindings and unicode characters</a></li>
+<li><a href="#orgcdcd74e">Other files</a></li>
+</ul>
+</li>
+<li><a href="#org7cd5999">The notch and items in the MacOS menu bar</a></li>
+<li><a href="#org768e40a">Ghostty</a></li>
+<li><a href="#orgbf121ec">Toggle GlobalProtect VPN AppleScript</a></li>
+<li><a href="#org3a56f1f">Check if VPN is Open script</a></li>
+</ul>
+</li>
+<li><a href="#orgde06b38">Linux</a>
+<ul>
+<li><a href="#org0d05996">systemd</a></li>
+<li><a href="#org3c03af5">Pacman configuration</a></li>
+<li><a href="#org9d49873">Fedora (dnf) configuration</a></li>
+<li><a href="#orgbe5ee97">External monitor brightness</a></li>
+<li><a href="#orgea1613c">Switch monitor on keyboard change</a></li>
+<li><a href="#orgbda8376">foot terminal emulator</a></li>
+<li><a href="#org69f3d43">Prefer ipv4 over ipv6 records while resolving DNS</a></li>
+</ul>
+</li>
+<li><a href="#orgb9436e8">X/Wayland related</a>
+<ul>
+<li><a href="#orgb782382">xremap</a></li>
+<li><a href="#orgab134ce">swaywm</a>
+<ul>
+<li><a href="#org5c50cbe">Config</a></li>
+<li><a href="#org7da6b5f">status command for the bar</a></li>
+<li><a href="#org9c44cc6">Startup programs</a></li>
+</ul>
+</li>
+<li><a href="#org0006071">Niri</a>
+<ul>
+<li><a href="#org3476867">Startup programs</a></li>
+</ul>
+</li>
+<li><a href="#org715ebc4">dunst</a></li>
+<li><a href="#org5c798e5">wacom</a></li>
+<li><a href="#org03166de">swayimg</a></li>
+</ul>
+</li>
+<li><a href="#org28c579c">Mail</a>
+<ul>
+<li><a href="#org612515a">Proton/Hydroixde bridge</a></li>
+</ul>
+</li>
+<li><a href="#org5730605">Shell</a>
+<ul>
+<li><a href="#org67f717c">Fish</a></li>
+<li><a href="#org6d44aaf">Starship</a></li>
+<li><a href="#orgbfe526c">Utility functions</a>
+<ul>
+<li><a href="#orgd34171c">Compression/decompression</a></li>
+<li><a href="#org4b5cced">Encryption/Decryption</a></li>
+<li><a href="#org6103f09">Network stuff</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org6f72815">Tmux</a>
+<ul>
+<li><a href="#org8408262">TPM &ndash; Termux Plugin Manager</a></li>
+<li><a href="#orgcc1d511">Configuration</a></li>
+</ul>
+</li>
+<li><a href="#org82d79b5">Utilities</a>
+<ul>
+<li><a href="#orga1874e5">git</a></li>
+<li><a href="#org3cb2529">jaro</a>
+<ul>
+<li><a href="#orga5c3e86">Configuration</a></li>
+<li><a href="#orgd50b094">.mailcap</a></li>
+<li><a href="#org6e76d56">.urlview</a></li>
+</ul>
+</li>
+<li><a href="#org0e1210b">scli</a></li>
+</ul>
+</li>
+<li><a href="#orgfe31b4c">Media</a>
+<ul>
+<li><a href="#orgc8aa9e3">mpv</a>
+<ul>
+<li><a href="#org6f13e5d">Keybindings</a></li>
+<li><a href="#org0473604">Configuration</a></li>
+<li><a href="#org65d84ce">Bindings configuration</a></li>
+<li><a href="#orga148b85">sponsorblock-minimal-plugin&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></li>
+<li><a href="#orgd1ce4ed">uosc&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></li>
+<li><a href="#org8a1cb20">thumbfast&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></li>
+<li><a href="#orgc259bd8">ytdl-preload&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></li>
+<li><a href="#orgff77c90">mpv-mpris&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org8c3f4d0">Editors</a>
+<ul>
+<li><a href="#org622ac10">Neovim</a></li>
+</ul>
+</li>
+<li><a href="#orgeb4450d">Browsers</a>
+<ul>
+<li><a href="#org1a568f0">Firefox</a>
+<ul>
+<li><a href="#orgb30dcbd">userChrome.css</a></li>
+<li><a href="#org00267af">Other configs</a></li>
+<li><a href="#org4531ce1">Sideberry</a></li>
+</ul>
+</li>
+<li><a href="#org98dafd4">uBlock custom filters</a></li>
+<li><a href="#org1cca0ba">QuteBrowser</a></li>
+<li><a href="#org6cf32dd">chawan</a></li>
+</ul>
+</li>
+<li><a href="#orgdcc28af">Some desktop files</a>
+<ul>
+<li><a href="#org01907c2">.local/share/applications/jaro.desktop</a></li>
+</ul>
+</li>
+<li><a href="#orgdfb65e2">Scripts</a>
+<ul>
+<li><a href="#org86dba16">Bash Library</a>
+<ul>
+<li><a href="#orgc59b084">Convert command line arguments to variables automatically</a></li>
+</ul>
+</li>
+<li><a href="#org187e934">shortenurl</a></li>
+<li><a href="#org86835d0">uploadfile</a></li>
+<li><a href="#orga35f59c">mediastuff</a></li>
+<li><a href="#org16638c1">menu</a></li>
+<li><a href="#orgeae4cd1">sub-extract</a></li>
+<li><a href="#org7409855">term</a></li>
+<li><a href="#org433bec5">togif</a></li>
+<li><a href="#org4e33de3">ts<sub>onfinish</sub></a></li>
+<li><a href="#org47b8482">xcopy</a></li>
+<li><a href="#org1237599">media-downloader</a></li>
+<li><a href="#org1be1f46">find-duplicate-images</a></li>
+<li><a href="#org38ede18">mgm</a></li>
+<li><a href="#org04b4631">git-file-history-grep</a></li>
+<li><a href="#org312d614">fissh</a></li>
+<li><a href="#orgd5d9849">set-timezone</a></li>
+</ul>
+</li>
+<li><a href="#orgd0e02c1">Tools</a></li>
+<li><a href="#org703fa8e">Work stuff</a>
+<ul>
+<li><a href="#org16c446a">Barrier</a></li>
+</ul>
+</li>
+<li><a href="#orge951df8">Postamble</a></li>
+</ul>
+</div>
+</nav>
+<div id="outline-container-orgf098855" class="outline-2">
+<h2 id="orgf098855"><a href="#orgf098855">Introduction</a></h2>
+<div class="outline-text-2" id="text-orgf098855">
+<p>
+These are my dotfiles. Please see <a href="../dotfiles/.emacs.d/index.html">../dotfiles/.emacs.d/index.html</a> for my Emacs configuration, this file contains non-Emacs stuff.
+</p>
+</div>
+<div id="outline-container-org9336e65" class="outline-3">
+<h3 id="org9336e65"><a href="#org9336e65">General information about this file</a></h3>
+<div class="outline-text-3" id="text-org9336e65">
+<ul class="org-ul">
+<li><code>org-babel-tangle</code> to tangle all files.</li>
+<li><code>C-u org-babel-tangle</code> to only tangle current file.</li>
+
+<li>This file uses <code>«this»</code> syntax in source code blocks to embed noweb code instead of <code>&lt;&lt;that&gt;&gt;</code> syntax. This allows me to use noweb inside bash blocks without interfering with its syntax highlighter. See <a href="#orge951df8">Postamble</a>.</li>
+<li><p>
+You'll want to make sure some of the files should tangle with executable permission. For that:
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp" id="org8fe9c78"><code>(add-hook 'org-babel-post-tangle-hook 'executable-make-buffer-file-executable-if-script-p)
+</code></pre>
+</div></li>
+
+<li><p>
+Also some configuration files are tangled based on a condition. Here are the convenience condition functions:
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp" id="org8ba6cf9"><code>(defun when-darwin (file-path)
+  (if (eq system-type 'darwin)
+    file-path "no"))
+
+(defun when-linux (file-path)
+  (if (eq system-type 'gnu/linux)
+      file-path "no"))
+
+(cl-defun when-on (&amp;key linux darwin)
+  (pcase system-type
+    ('darwin darwin)
+    ('gnu/linux linux)
+    (_ "no")))
+</code></pre>
+</div></li>
+
+<li><p>
+Here is the code that puts them together, this block is executed during the startup of this file. See <a href="#orge951df8">Postamble</a> (at the end of this file) where this code-block is called for execution.
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp" id="orgd8d6c53"><code>«executable_hook»
+«conditions»
+</code></pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3c447c7" class="outline-3">
+<h3 id="org3c447c7"><a href="#org3c447c7">Supplementary functions</a></h3>
+<div class="outline-text-3" id="text-org3c447c7">
+<p>
+You can run arbitrary shell commands inside a code block like this: <code>«sh("which git")»</code>. This can be useful where an output of a command needs to be statically placed in an exported file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp" id="org847c83d"><code>(let (output status)
+  (with-temp-buffer
+    (setq status (call-process-shell-command code nil (current-buffer)))
+    (setq output (string-trim (buffer-substring-no-properties (point-min) (point-max)))))
+  (if (or (not (eq status 0))
+          (eq (length output) 0))
+      default
+    output))
+</code></pre>
+</div>
+
+<p>
+&hellip;and because I use <code>«sh("which X")»</code> a lot, I also have this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp" id="org56970c8"><code>(string-trim (shell-command-to-string (format "which '%s'" binary)))
+</code></pre>
+</div>
+
+<p>
+The following is just the babel version of <code>(im-when-on ...)</code> function defined above. It helps you insert the text to a file based on current operating system.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp" id="org14f9a1d"><code>(im-when-on :darwin darwin :linux linux)
+</code></pre>
+</div>
+
+<p>
+And this is for getting values of elisp variables:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp" id="org6f4ef7f"><code>(symbol-value (intern var))
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org93abf53" class="outline-2">
+<h2 id="org93abf53"><a href="#org93abf53">Programming languages</a></h2>
+<div class="outline-text-2" id="text-org93abf53">
+</div>
+<div id="outline-container-orgdba4abe" class="outline-3">
+<h3 id="orgdba4abe"><a href="#orgdba4abe">R</a></h3>
+<div class="outline-text-3" id="text-orgdba4abe">
+<div class="org-src-container">
+<pre class="src src-R"><code>options(repos = c(CRAN = "https://cran.rstudio.com"))
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8d05190" class="outline-3">
+<h3 id="org8d05190"><a href="#org8d05190">Guile</a></h3>
+<div class="outline-text-3" id="text-org8d05190">
+<p>
+Just activate readline.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-scheme"><code>(use-modules (ice-9 readline))
+(activate-readline)
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org960d02d" class="outline-3">
+<h3 id="org960d02d"><a href="#org960d02d">Javascript</a></h3>
+<div class="outline-text-3" id="text-org960d02d">
+<p>
+Install global packages to user-local.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><code>prefix=${HOME}/.npm-packages
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd03010a" class="outline-3">
+<h3 id="orgd03010a"><a href="#orgd03010a">Nix</a></h3>
+<div class="outline-text-3" id="text-orgd03010a">
+<p>
+Well, nix is mainly a package manager but it also is a programming language.
+</p>
+
+<p>
+The following enables <code>nix search</code> command.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>experimental-features = nix-command flakes
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org6e64394" class="outline-2">
+<h2 id="org6e64394"><a href="#org6e64394">macOS</a></h2>
+<div class="outline-text-2" id="text-org6e64394">
+</div>
+<div id="outline-container-org72ba31c" class="outline-3">
+<h3 id="org72ba31c"><a href="#org72ba31c">General configuration</a></h3>
+<div class="outline-text-3" id="text-org72ba31c">
+<div class="org-src-container">
+<pre class="src src-sh"><code># Disable gatekeeper, allows you to install apps from unidentified developers
+sudo spctl --master-disable
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org790f019" class="outline-3">
+<h3 id="org790f019"><a href="#org790f019">Start applications at boot</a></h3>
+<div class="outline-text-3" id="text-org790f019">
+<div class="org-src-container">
+<pre class="src src-xml" id="orgb05ea5f"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+    &lt;key&gt;Label&lt;/key&gt;
+    &lt;string&gt;${name}&lt;/string&gt;
+
+    &lt;key&gt;ProgramArguments&lt;/key&gt;
+    &lt;array&gt;
+      ${args}
+    &lt;/array&gt;
+
+    &lt;key&gt;KeepAlive&lt;/key&gt;
+    &lt;true/&gt;
+
+    &lt;key&gt;RunAtLoad&lt;/key&gt;
+    &lt;true/&gt;
+
+    &lt;key&gt;EnvironmentVariables&lt;/key&gt;
+    &lt;dict&gt;
+        &lt;key&gt;PATH&lt;/key&gt;
+        &lt;string&gt;${HOME}/.nix-profile/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin&lt;/string&gt;
+    &lt;/dict&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-elisp" id="org0be736d"><code>(replace-regexp-in-string
+ "\\${[a-zA-Z]+}"
+ (lambda (substr)
+   (pcase substr
+     ("${name}" (format "net.isamert.%s" name))
+     ("${args}" (replace-regexp-in-string
+                 "${HOME}"
+                 (expand-file-name "~")
+                 (string-join (mapcar (lambda (it) (format "&lt;string&gt;%s&lt;/string&gt;" it)) args) "\n") t t))
+     ("${HOME}" (expand-file-name "~"))
+     (_ "???")))
+ (save-excursion
+   (org-babel-goto-named-src-block "mac-launchagent-template")
+   (org-element-property :value (org-element-at-point)))
+ t t)
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeed3611" class="outline-3">
+<h3 id="orgeed3611"><a href="#orgeed3611">Application specific shortcuts</a></h3>
+<div class="outline-text-3" id="text-orgeed3611">
+<p>
+Here is a <a href="https://gist.github.com/miclf/bf4b0cb6de9ead726197db7ed3d937b5">great tool</a> for exporting and importing your application specific bindings in <i>Keyboard Shortcuts</i> settings page. I was hesitant to use this feature because it was not easy to replicate but with this tool it's quite convenient.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code># Installation
+curl -L -o ~/.local/bin/mac-kb-exporter.php https://gist.githubusercontent.com/miclf/bf4b0cb6de9ead726197db7ed3d937b5/raw/a135140b52014273d59567f24983ded99e30ac2d/macos_keyboard_shortcuts_exporter_importer.php
+chmod +x ~/.local/bin/mac-kb-exporter.php
+
+# Usage
+# mac-kb-exporter.php save ~/.config/mac-application-shortcuts.json
+# mac-kb-exporter.php load ~/.config/mac-application-shortcuts.json
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-json"><code>{
+    "org.mozilla.firefox": {
+        "Close Tab": "^W",
+        "Close Window": "⌘W",
+        "Find Again": "^G",
+        "Find in Page...": "^F",
+        "History": "^H",
+        "Bookmarks": "^B",
+        "New Tab": "^T"
+    },
+    "com.google.Chrome": {
+        "Find...": "^F",
+        "New Tab": "^T",
+        "Open Location...": "^L"
+    }
+}
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org63a549e" class="outline-3">
+<h3 id="org63a549e"><a href="#org63a549e">aerospace</a></h3>
+<div class="outline-text-3" id="text-org63a549e">
+<p>
+I used to use <a href="https://github.com/koekeishiya/yabai">yabai</a> but my main pain point was the virtual desktops. <a href="https://nikitabobko.github.io/AeroSpace">Aerospace</a> fixes it completely and it's more responsive.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>brew install --cask nikitabobko/tap/aerospace
+
+# From guide: https://nikitabobko.github.io/AeroSpace/guide
+
+# This helps with expose functionality
+defaults write com.apple.dock expose-group-apps -bool true &amp;&amp; killall Dock
+
+# This helps generally
+defaults write com.apple.spaces spans-displays -bool true &amp;&amp; killall SystemUIServer
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-toml"><code># https://nikitabobko.github.io/AeroSpace/guide
+# https://nikitabobko.github.io/AeroSpace/commands
+
+after-login-command = []
+after-startup-command = []
+start-at-login = true
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+accordion-padding = 30
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+key-mapping.preset = 'qwerty'
+
+# Mouse lazily follows focused monitor (default in i3)
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+# Mouse lazily follows any focus (window or workspace)
+#on-focus-changed = ['move-mouse window-lazy-center']
+
+[gaps]
+inner.horizontal = 0
+inner.vertical =   0
+outer.left =       0
+outer.bottom =     0
+outer.top =        0
+outer.right =      0
+
+[workspace-to-monitor-force-assignment]
+#  When a second monitor is connected, assign workspaces 1-5 to it,
+# regardless of whether it's set as the system's main or secondary
+# display. This ensures the external monitor effectively serves as the
+# main workspace without extra configuration. Additionally, by not
+# setting it as the "main" monitor in system settings, the top bar
+# remains hidden on the external display as I would like it to
+# be. Workspaces 1-5 on the external monitor provide main-monitor
+# functionality while keeping system UI elements on the primary
+# screen.
+1 = ['secondary', 'main', 'built-in']
+2 = ['secondary', 'main', 'built-in']
+3 = ['secondary', 'main', 'built-in']
+4 = ['secondary', 'main', 'built-in']
+5 = ['secondary', 'main', 'built-in']
+6 = ['built-in', 'secondary']
+7 = ['built-in', 'secondary']
+8 = ['built-in', 'secondary']
+9 = ['built-in', 'secondary']
+0 = ['built-in', 'secondary']
+
+# See https://nikitabobko.github.io/AeroSpace/guide#exec-env-vars
+[exec]
+inherit-env-vars = true
+
+[exec.env-vars]
+PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${HOME}/.bin:${PATH}'
+
+[mode.main.binding]
+cmd-period = 'focus-monitor right'
+cmd-comma = 'focus-monitor left'
+cmd-shift-period = 'move-node-to-monitor right'
+cmd-shift-comma = 'move-node-to-monitor left'
+
+cmd-r = 'mode resize'
+cmd-f = 'fullscreen'
+
+cmd-e = 'layout v_accordion h_accordion'
+cmd-y = 'layout tiles horizontal vertical'
+cmd-t = 'layout floating tiling'
+
+cmd-h = 'focus --boundaries-action stop left'
+cmd-j = 'focus --boundaries-action stop down'
+cmd-k = 'focus --boundaries-action stop up'
+cmd-l = 'focus --boundaries-action stop right'
+
+cmd-shift-h = 'move left'
+cmd-shift-j = 'move down'
+cmd-shift-k = 'move up'
+cmd-shift-l = 'move right'
+
+cmd-1 = 'workspace 1'
+cmd-2 = 'workspace 2'
+cmd-3 = 'workspace 3'
+cmd-4 = 'workspace 4'
+cmd-5 = 'workspace 5'
+cmd-6 = 'workspace 6'
+cmd-7 = 'workspace 7'
+cmd-8 = 'workspace 8'
+cmd-9 = 'workspace 9'
+cmd-0 = 'workspace 0'
+
+cmd-shift-1 = 'move-node-to-workspace 1'
+cmd-shift-2 = 'move-node-to-workspace 2'
+cmd-shift-3 = 'move-node-to-workspace 3'
+cmd-shift-4 = 'move-node-to-workspace 4'
+cmd-shift-5 = 'move-node-to-workspace 5'
+cmd-shift-6 = 'move-node-to-workspace 6'
+cmd-shift-7 = 'move-node-to-workspace 7'
+cmd-shift-8 = 'move-node-to-workspace 8'
+cmd-shift-9 = 'move-node-to-workspace 9'
+
+cmd-tab = 'workspace-back-and-forth'
+
+[mode.resize.binding]
+h = 'resize smart -50'
+l = 'resize smart +50'
+esc = 'mode main'
+
+[[on-window-detected]]
+    if.app-name-regex-substring = '(Emacs|Alacritty)'
+    if.during-aerospace-startup = true
+    check-further-callbacks = true
+    run = ['move-node-to-workspace 1']
+
+[[on-window-detected]]
+    if.app-name-regex-substring = '(Firefox|Chrome)'
+    if.during-aerospace-startup = true
+    check-further-callbacks = true
+    run = ['move-node-to-workspace 2']
+
+[[on-window-detected]]
+    if.app-name-regex-substring = 'zoom'
+    if.during-aerospace-startup = true
+    check-further-callbacks = true
+    run = ['move-node-to-workspace 3']
+
+[[on-window-detected]]
+    if.app-name-regex-substring = 'krita'
+    if.during-aerospace-startup = true
+    check-further-callbacks = true
+    run = ['move-node-to-workspace 5']
+
+[[on-window-detected]]
+    if.app-id = 'org.gnu.Emacs'
+    if.window-title-regex-substring = 'emacs-popup'
+    check-further-callbacks = true
+    run = ['layout floating']
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7225b4f" class="outline-3">
+<h3 id="org7225b4f"><a href="#org7225b4f">skhd</a></h3>
+<div class="outline-text-3" id="text-org7225b4f">
+<p>
+This is the global keybinding manager for OSX. <a href="https://github.com/koekeishiya/yabai/blob/master/examples/skhdrc">Here</a> is an example configuration for yabai and <a href="https://github.com/koekeishiya/skhd/blob/master/examples/skhdrc">here</a> is a more generic example configuration demonstrating it's capabilities.
+</p>
+
+<p>
+It can be installed through homebrew:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>brew install koekeishiya/formulae/skhd
+skhd --install-service
+skhd --start-service
+</code></pre>
+</div>
+</div>
+<div id="outline-container-org4f40d5f" class="outline-4">
+<h4 id="org4f40d5f"><a href="#org4f40d5f">Application shortcuts</a></h4>
+<div class="outline-text-4" id="text-org4f40d5f">
+<div class="org-src-container">
+<pre class="src src-conf"><code>hyper - i : emacsclient --eval "(im-globally (im-select-any-snippet))"
+hyper - o : emacsclient --eval "(im-globally (im-people))"
+hyper - g : emacsclient --eval "(im-globally (im-gitlab-select-project))"
+hyper - v : emacsclient --eval "(empv-toggle-video)"
+hyper - return : emacsclient -c -F '((tab-bar-lines . 0) (name . "emacs-temp"))' --eval '(ghostel "new")'
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3929b46" class="outline-4">
+<h4 id="org3929b46"><a href="#org3929b46">Firefox specific</a></h4>
+<div class="outline-text-4" id="text-org3929b46">
+<ul class="org-ul">
+<li><code>cmd-l</code> (focus urlbar) clashes with my global shortcut, so I simply want to remap it to ctrl-l in Firefox. Unfortunately, Firefox does not expose <code>cmd-l</code> in it's menu, so its not possible to remap it natively using macOS' "Keyboard Shortcuts" settings page. Here I remap <code>ctrl-l</code> to <code>F6</code> (which also provides the "focus urlbar" functionality).</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>ctrl - l [
+  "Firefox" : skhd -k "f6"
+  "LibreWolf" : skhd -k "f6"
+  * ~
+]
+ctrl - f [
+  "Firefox" : skhd -k "f3"
+  "LibreWolf" : skhd -k "f3"
+  * ~
+]
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc0472ee" class="outline-3">
+<h3 id="orgc0472ee"><a href="#orgc0472ee">Rootless sshd</a></h3>
+<div class="outline-text-3" id="text-orgc0472ee">
+<div class="org-src-container">
+<pre class="src src-conf"><code>Port 2222
+HostKey «sh("echo $HOME")»/.config/sshd/hostkey
+PidFile «sh("echo $HOME")»/.config/sshd/pid
+</code></pre>
+</div>
+
+<p>
+Create the host key and enable starting it at boot:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>ssh-keygen -t rsa -f ~/.config/sshd/hostkey -N ''
+launchctl load -w ~/Library/LaunchAgents/net.isamert.sshd.plist
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text"><code>«mk-launchagent(name="sshd", args='("/usr/sbin/sshd" "-f" "${HOME}/.config/sshd/cfg"))»
+</code></pre>
+</div>
+
+<p>
+To enable it, run this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>launchctl load -w ~/Library/LaunchAgents/net.isamert.sshd.plist
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf820259" class="outline-3">
+<h3 id="orgf820259"><a href="#orgf820259">Start some applications at login</a></h3>
+<div class="outline-text-3" id="text-orgf820259">
+<div class="org-src-container">
+<pre class="src src-text"><code>«mk-launchagent(name="kdeconnect", args='("/Applications/kdeconnect-indicator.app/Contents/MacOS/kdeconnect-indicator"))»
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>launchctl load -w ~/Library/LaunchAgents/net.isamert.kdeconnect.plist
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8d8e9bd" class="outline-3">
+<h3 id="org8d8e9bd"><a href="#org8d8e9bd">Clear all notifications with a keypress</a></h3>
+<div class="outline-text-3" id="text-org8d8e9bd">
+<p>
+Save the script by running the next code block:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code># This fetches the latest version of the script, be sure to verify before
+curl 'https://gist.githubusercontent.com/lancethomps/a5ac103f334b171f70ce2ff983220b4f/raw' &gt; ~/.local/bin/macos-clear-all-notifications.js
+</code></pre>
+</div>
+
+<p>
+And here is the skhd binding:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>hyper - y : osascript -l JavaScript "$HOME/.local/bin/macos-clear-all-notifications.js"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga453ac5" class="outline-3">
+<h3 id="orga453ac5"><a href="#orga453ac5">hammerspoon</a></h3>
+<div class="outline-text-3" id="text-orga453ac5">
+<p>
+I use it minimally for some quality-of-life improvements.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>brew install hammerspoon
+</code></pre>
+</div>
+
+<p>
+Enable IPC.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lua"><code>-- * Enable IPC
+
+require("hs.ipc")
+</code></pre>
+</div>
+</div>
+<div id="outline-container-orged68ea0" class="outline-4">
+<h4 id="orged68ea0"><a href="#orged68ea0">Emacs Integration</a></h4>
+<div class="outline-text-4" id="text-orged68ea0">
+<p>
+I have a little menubar that shows the current clocked in task and the current tab-bar of Emacs in MacOS menu. I was going to use a socket instead of an HTTP server but didn't manage to get <code>hs.socket</code> to work for some reason.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lua"><code>-- * Menubar &amp; Emacs
+
+menubar = hs.menubar.new()
+menubar:setTitle("-")
+
+workspace = ""
+task = ""
+
+function updateTitle()
+   -- TODO: https://www.hammerspoon.org/docs/hs.styledtext.html
+   local taskIcon = (task == "") and "✖" or "✓"
+   menubar:setTitle(string.format("%s %s | ⭾ [%s]", taskIcon, task, workspace))
+end
+
+function cb(verb, path, headers, body)
+   if path == "/task" then
+      task = body
+      updateTitle()
+   elseif path == "/workspace" then
+      workspace = body
+      updateTitle()
+   else
+      print("&gt;&gt; Unknown request to: ", path, headers, body)
+   end
+   return "ok", 200, {}
+end
+
+server = hs.httpserver.new()
+server:setPort(4562)
+server:setCallback(cb)
+server:start()
+
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge19c09d" class="outline-4">
+<h4 id="orge19c09d"><a href="#orge19c09d">Global bindings and unicode characters</a></h4>
+<div class="outline-text-4" id="text-orge19c09d">
+<div class="org-src-container">
+<pre class="src src-lua"><code>-- * LeftRightHotkey
+
+LeftRightHotkey = hs.loadSpoon("LeftRightHotkey")
+LeftRightHotkey:start()
+
+-- * Shortcuts
+
+function elisp(code)
+   os.execute(string.format("/opt/homebrew/bin/emacsclient --eval \"%s\" &amp;", code))
+end
+
+function elispf(code)
+   return function() os.execute(string.format("/opt/homebrew/bin/emacsclient --eval \"%s\" &amp;", code)) end
+end
+
+function increaseVolume()
+   local device = hs.audiodevice.defaultOutputDevice()
+   local current = device:volume()
+   local new = math.min(current + 5, 100)
+   device:setVolume(new)
+   hs.alert.show("Volume: "  .. math.floor(new) .. "%")
+end
+
+function decreaseVolume()
+   local device = hs.audiodevice.defaultOutputDevice()
+   local current = device:volume()
+   local new = math.max(current - 5, 0)
+   device:setVolume(new)
+   hs.alert.show("Volume: "  .. math.floor(new) .. "%")
+end
+
+function clearNotifications()
+   elisp("(im-notif-clear-all)")
+   os.execute('osascript -l JavaScript "$HOME/.local/bin/macos-clear-all-notifications.js" &amp;')
+end
+
+
+
+function xtypef(thing)
+   return function() hs.execute("/Users/isamert.gurbuz/.local/bin/xtype '" .. thing .. "'") end
+end
+
+HYPER = {"lAlt", "lCtrl", "lCmd", "lShift"};
+
+LeftRightHotkey:bind(HYPER, "l", hs.caffeinate.lockScreen)
+LeftRightHotkey:bind(HYPER, "i", elispf('(im-globally (im-select-any-snippet))'))
+LeftRightHotkey:bind(HYPER, "o", elispf('(im-globally (im-people))'))
+LeftRightHotkey:bind(HYPER, "g", elispf('(im-globally (im-gitlab-select-project))'))
+LeftRightHotkey:bind(HYPER, "y", clearNotifications)
+LeftRightHotkey:bind(HYPER, "return", function() os.execute('/opt/homebrew/bin/alacritty &amp;') end)
+LeftRightHotkey:bind(HYPER, "9", decreaseVolume)
+LeftRightHotkey:bind(HYPER, "0", increaseVolume)
+
+-- * Unicode stuff
+
+LeftRightHotkey:bind({"rAlt"}, "f", xtypef('=&gt;'))
+LeftRightHotkey:bind({"rAlt"}, "g", xtypef('⟹'))
+LeftRightHotkey:bind({"rAlt"}, "w", xtypef('↑'))
+LeftRightHotkey:bind({"rAlt"}, "s", xtypef('↓'))
+-- LeftRightHotkey:bind({"rAlt"}, "a", xtypef('←')) -- This breaks stuff all other bindings. Probably because a is 0, haven't figured it out yet.
+LeftRightHotkey:bind({"rAlt"}, "d", xtypef('→'))
+LeftRightHotkey:bind({"rAlt"}, "r", xtypef('-&gt;'))
+LeftRightHotkey:bind({"rAlt"}, "t", xtypef('✔'))
+LeftRightHotkey:bind({"rAlt"}, "b", xtypef('λ'))
+
+-- Box drawing
+LeftRightHotkey:bind({"rAlt"}, "y", xtypef('┌'))
+LeftRightHotkey:bind({"rAlt"}, "h", xtypef('│'))
+LeftRightHotkey:bind({"rAlt"}, "n", xtypef('└'))
+LeftRightHotkey:bind({"rAlt"}, "u", xtypef('┐'))
+LeftRightHotkey:bind({"rAlt"}, "j", xtypef('─'))
+LeftRightHotkey:bind({"rAlt"}, "m", xtypef('┘'))
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcdcd74e" class="outline-4">
+<h4 id="orgcdcd74e"><a href="#orgcdcd74e">Other files</a></h4>
+<div class="outline-text-4" id="text-orgcdcd74e">
+<div class="org-src-container">
+<pre class="src src-lua"><code>-- * Work stuff
+
+dofile(hs.configdir .. "/modules/work.lua")
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org7cd5999" class="outline-3">
+<h3 id="org7cd5999"><a href="#org7cd5999">The notch and items in the MacOS menu bar</a></h3>
+<div class="outline-text-3" id="text-org7cd5999">
+<p>
+If the icons in the menubar takes a lot of place, some of them goes under the notch and becomes totally invisible, non-interactable. The following two things help:
+</p>
+
+<ul class="org-ul">
+<li>Setting a lower spacing and padding for the icons (need to restart your computer afterwards):</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh"><code>defaults -currentHost write -globalDomain NSStatusItemSpacing -int 5
+defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 3
+</code></pre>
+</div>
+
+<ul class="org-ul">
+<li><a href="https://github.com/dwarvesf/hidden">Hidden Bar</a> → This lets you selectively hide some items so that only the things you want stay visible.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org768e40a" class="outline-3">
+<h3 id="org768e40a"><a href="#org768e40a">Ghostty</a></h3>
+<div class="outline-text-3" id="text-org768e40a">
+<div class="org-src-container">
+<pre class="src src-conf"><code># window-decoration = false
+command = /opt/homebrew/bin/tmux
+macos-titlebar-style = hidden
+macos-option-as-alt = left
+background-opacity = 1.00
+confirm-close-surface = false
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbf121ec" class="outline-3">
+<h3 id="orgbf121ec"><a href="#orgbf121ec">Toggle GlobalProtect VPN AppleScript</a></h3>
+<div class="outline-text-3" id="text-orgbf121ec">
+<p>
+To set up the script as an application, follow these steps:
+</p>
+<ol class="org-ol">
+<li>Open Script Editor.</li>
+<li>Paste the provided script into the editor.</li>
+<li>Save the script with the following options:
+<ul class="org-ul">
+<li>Set the file format to "Application".</li>
+<li>Save under the /Applications directory.</li>
+<li>Name it something like "ToggleGlobalProtectVPN".</li>
+</ul></li>
+</ol>
+
+<p>
+After completing these steps:
+</p>
+<ul class="org-ul">
+<li>The application will now appear in your app launcher.</li>
+<li>You can toggle the VPN directly from there.</li>
+</ul>
+
+<p>
+Note:
+</p>
+<ul class="org-ul">
+<li>The first time you run the application, you will be prompted to grant permission. Ensure you allow it.</li>
+</ul>
+
+<p>
+Modified from: <a href="https://gist.github.com/tmanternach/cbd4c213eab8569e38d6cd021b6255e5">https://gist.github.com/tmanternach/cbd4c213eab8569e38d6cd021b6255e5</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-applescript"><code>tell application "System Events" to tell process "GlobalProtect"
+        click menu bar item 1 of menu bar 2
+        set statusText to name of static text 1 of window 1
+        if statusText is "Disconnected" then
+                # GlobalProtect is disconnected, so let's connect
+                click button "Connect" of window 1
+                set entireContents to entire contents of window 1
+                set resultStatus to "Connected"
+        else if statusText is "Connected" then
+                # GlobalProtect is connected, so let's disconnect
+                set windowText to entire contents of window 1
+                repeat with theItem in windowText
+                        if (name of theItem contains "Disconnect") then
+                                click theItem
+                        end if
+                end repeat
+                set resultStatus to "Disconnected"
+        else
+                set resultStatus to statusText
+        end if
+        click menu bar item 1 of menu bar 2
+end tell
+return resultStatus
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3a56f1f" class="outline-3">
+<h3 id="org3a56f1f"><a href="#org3a56f1f">Check if VPN is Open script</a></h3>
+<div class="outline-text-3" id="text-org3a56f1f">
+<div class="org-src-container">
+<pre class="src src-sh"><code>#!/bin/sh
+# If all utun interfaces are UP, this means VPN is open.
+! ifconfig | grep -E 'utun[0-9]:' | grep -vq UP
+</code></pre>
+</div>
+
+<p>
+This is an alternative script but takes more time and creates more visual clutter:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-applescript"><code>#!/usr/bin/osascript
+tell application "System Events" to tell process "GlobalProtect"
+        click menu bar item 1 of menu bar 2
+        set statusText to name of static text 1 of window 1
+        set resultStatus to statusText
+        click menu bar item 1 of menu bar 2
+end tell
+return resultStatus
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgde06b38" class="outline-2">
+<h2 id="orgde06b38"><a href="#orgde06b38">Linux</a></h2>
+<div class="outline-text-2" id="text-orgde06b38">
+</div>
+<div id="outline-container-org0d05996" class="outline-3">
+<h3 id="org0d05996"><a href="#org0d05996">systemd</a></h3>
+<div class="outline-text-3" id="text-org0d05996">
+<p>
+Journal files starts to take a lot of disk space. I put a simple limit to that here.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Journal]
+SystemMaxUse=500M
+</code></pre>
+</div>
+
+<p>
+Unit files started with <code>--user</code> will have the following variables.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org02d6159"><code>$HOME/.bin:$HOME/.local/bin:$NPM_PACKAGES/bin:$GOPATH/bin:$HOME/.cargo/bin:$PATH
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-conf" id="org2a45507"><code>GOPATH="$HOME/.go"
+R_LIBS_USER="$HOME/.rlibs"
+NPM_PACKAGES="$HOME/.npm-packages"
+NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+BROWSER=jaro
+VISUAL="jaro --method=edit"
+EDITOR="jaro --method=edit"
+PATH="«path-variable»"
+</code></pre>
+</div>
+
+<p>
+KDE fucks-up the PATH variable (and only the PATH variable) while booting up. This fixes that:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>export PATH=«path-variable»
+</code></pre>
+</div>
+
+<p>
+After tangling all unit files, run this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>systemctl --user daemon-reload
+systemctl --user enable emacsd
+systemctl --user enable syncthing
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3c03af5" class="outline-3">
+<h3 id="org3c03af5"><a href="#org3c03af5">Pacman configuration</a></h3>
+<div class="outline-text-3" id="text-org3c03af5">
+<p>
+Following snippet enables some configurations for pacman:
+</p>
+
+<dl class="org-dl">
+<dt>Parallel</dt><dd>Enables parallel downloads. Really makes a difference, especially while upgrading your system.</dd>
+<dt>Color</dt><dd>Adds color to pacman output.</dd>
+<dt>VerbosePkgLists</dt><dd>This gives you more information about the packages that are going to be installed.</dd>
+<dt>TotalDownload</dt><dd>Adds ETA information for total progress etc.</dd>
+</dl>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>«sh("cat /etc/pacman.conf | sed -E 's/^#(Parallel|Color|VerbosePkgLists|TotalDownload)/\\1/'")»
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9d49873" class="outline-3">
+<h3 id="org9d49873"><a href="#org9d49873">Fedora (dnf) configuration</a></h3>
+<div class="outline-text-3" id="text-org9d49873">
+<div class="org-src-container">
+<pre class="src src-conf"><code>[main]
+defaultyes=True
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbe5ee97" class="outline-3">
+<h3 id="orgbe5ee97"><a href="#orgbe5ee97">External monitor brightness</a></h3>
+<div class="outline-text-3" id="text-orgbe5ee97">
+<ul class="org-ul">
+<li>Install <code>ddcutil</code></li>
+<li><p>
+Enable automatic loading of <code>i2c-dev</code> module with systemd.
+</p>
+<div class="org-src-container">
+<pre class="src src-conf"><code>i2c-dev
+</code></pre>
+</div></li>
+<li><p>
+Add your user to the i2c group.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>sudo usermod -aG i2c $USER
+</code></pre>
+</div>
+<ul class="org-ul">
+<li><p>
+The group should've been created by the <code>ddcutil</code> package. If not, do this first:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>sudo groupadd --system i2c
+</code></pre>
+</div></li>
+</ul></li>
+<li><p>
+Give permission to i2c user for <code>/dev/i2c-*</code> devices:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>sudo cp /usr/share/ddcutil/data/45-ddcutil-i2c.rules /etc/udev/rules.d
+# OR do this, if the file does not exist:
+echo 'KERNEL=="i2c-[0-9]*", GROUP="i2c"' &gt;&gt; /etc/udev/rules.d/10-i2c-user-permissions.rules
+</code></pre>
+</div></li>
+</ul>
+
+<p>
+Now you should be able to do:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>ddcutil getvcp 10 # Return current brightness value
+ddcutil setvcp 10 50 # Set the current brightness value
+</code></pre>
+</div>
+
+<p>
+Also see this gnome extension and it's README for further information: <a href="https://github.com/daitj/gnome-display-brightness-ddcutil">https://github.com/daitj/gnome-display-brightness-ddcutil</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgea1613c" class="outline-3">
+<h3 id="orgea1613c"><a href="#orgea1613c">Switch monitor on keyboard change</a></h3>
+<div class="outline-text-3" id="text-orgea1613c">
+<p>
+I have a usb splitter that switches between machines when clicked on a physical button. But this does not change my monitors input automatically. The following script is designed to run-according to the given UDEV rule-when a keyboard (my UHK keyboard) is attached or removed and switches to the right monitor input.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>ACTION=="add", ATTRS{idVendor}=="37a8", ATTRS{idProduct}=="0003", RUN+="/opt/bin/switch-monitor-on-keyboard-change add"
+ACTION=="remove", ENV{PRODUCT}=="37a8/3/2", RUN+="/opt/bin/switch-monitor-on-keyboard-change remove"
+</code></pre>
+</div>
+
+<p>
+Reload the udev rules.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>sudo udevadm control --reload-rules
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/usr/bin/env bash
+
+state_file="/tmp/monitor.state"
+lock_file="/tmp/monitor.state.lock"
+
+action="$1"
+usbc="27"
+hdmi="17"
+
+if [[ "$action" == "add" ]]; then
+    desired="$hdmi"
+elif [[ "$action" == "remove" ]]; then
+    desired="$usbc"
+else
+    echo "Invalid action"
+    exit 1
+fi
+
+# Use flock to synchronize
+(
+    flock -n 9 || { echo "Another instance is running. Exiting."; exit 0; }
+
+    last_state=""
+    if [[ -f "$state_file" ]]; then
+        last_state=$(cat "$state_file")
+    fi
+
+    if [[ "$last_state" == "$desired" ]]; then
+        echo "State already set to $desired. Doing nothing..."
+        exit 0
+    fi
+
+    ddcutil setvcp 0x60 "$desired"
+    echo "$desired" &gt; "$state_file"
+
+) 9&gt;"$lock_file"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbda8376" class="outline-3">
+<h3 id="orgbda8376"><a href="#orgbda8376">foot terminal emulator</a></h3>
+<div class="outline-text-3" id="text-orgbda8376">
+<div class="org-src-container">
+<pre class="src src-conf"><code>shell = tmux
+font = CaskaydiaCove Nerd Font:pixelsize=18
+resize-by-cells = no
+
+[csd]
+preferred = none
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org69f3d43" class="outline-3">
+<h3 id="org69f3d43"><a href="#org69f3d43">Prefer ipv4 over ipv6 records while resolving DNS</a></h3>
+<div class="outline-text-3" id="text-org69f3d43">
+<p>
+This helps to mitigate some issues I encountered while browsing the web through Emacs. Not quite sure why I have these issues (probably related to my ISP?) but nonetheless:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code># Add this to the end of the file:
+precedence ::ffff:0:0/96  100
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb9436e8" class="outline-2">
+<h2 id="orgb9436e8"><a href="#orgb9436e8">X/Wayland related</a></h2>
+<div class="outline-text-2" id="text-orgb9436e8">
+</div>
+<div id="outline-container-orgb782382" class="outline-3">
+<h3 id="orgb782382"><a href="#orgb782382">xremap</a></h3>
+<div class="outline-text-3" id="text-orgb782382">
+<p>
+I'm probably going to fully replace KMonad with xremap on Linux (and maybe replace KMonad with Karabiner on Mac). KMonad is a bit brittle and having to define full keyboard map is just not scalable.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><code># Run with `RUST_LOG=debug xremap ~/.config/xremap.yml` to see the
+# debug logs.
+
+virtual_modifiers:
+  - f24
+
+modmap:
+  - name: Global
+    remap:
+      # See: https://github.com/xremap/xremap/pull/339
+      CapsLock:
+        held: [ctrl_l,super_l,shift_l,alt_l] # "hyper" key
+        alone: Esc
+      alt_r: f24
+
+keymap:
+  - name: Global
+    remap:
+      f24-q: { launch: ["wtype", "↔"] }
+      f24-r: { launch: ["wtype", "--", "-&gt;"] }
+      f24-t: { launch: ["wtype", "✓"] }
+      f24-w: { launch: ["wtype", "↑"] }
+      f24-a: { launch: ["wtype", "←"] }
+      f24-s: { launch: ["wtype", "↓"] }
+      f24-d: { launch: ["wtype", "→"] }
+      f24-e: { launch: ["wtype", "⇄"] }
+      f24-f: { launch: ["wtype", "=&gt;"] }
+      f24-g: { launch: ["wtype", "⇒"] }
+      f24-x: { launch: ["wtype", "✗"] }
+      f24-b: { launch: ["wtype", "λ"] }
+      f24-1: { launch: ["wtype", "("] }
+      f24-2: { launch: ["wtype", ")"] }
+      f24-3: { launch: ["wtype", "«"] }
+      f24-4: { launch: ["wtype", "»"] }
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Unit]
+Description=XRemap (Keyboard remapper)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+ExecStart=«which("xremap")» --watch %h/.config/xremap.yml
+Nice=-20
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgab134ce" class="outline-3">
+<h3 id="orgab134ce"><a href="#orgab134ce">swaywm</a></h3>
+<div class="outline-text-3" id="text-orgab134ce">
+</div>
+<div id="outline-container-org5c50cbe" class="outline-4">
+<h4 id="org5c50cbe"><a href="#org5c50cbe">Config</a></h4>
+<div class="outline-text-4" id="text-org5c50cbe">
+<div class="org-src-container">
+<pre class="src src-sh"><code>«env-variables»
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code># * Variables
+
+set $mod Mod4
+set $hypr Ctrl+Mod1+Mod4+Shift
+
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $term emacsclient -c -F '((tab-bar-lines . 0) (name . "emacs-temp"))' --eval '(ghostel "new")' || footclient
+set $menu vicinae open
+set $calc qalculate-gtk
+set $clip vicinae vicinae://extensions/vicinae/clipboard/history
+
+# * Monitors
+
+output * bg ~/.config/default.png fill
+output * render_bit_depth 10
+
+# * Visuals
+
+smart_borders on
+focus_wrapping no
+default_border pixel 3
+
+# * Behaviour
+
+floating_modifier $mod normal
+
+# * Keybindings - Apps
+
+bindsym $hypr+a exec $menu
+bindsym $hypr+w exec $calc
+bindsym $hypr+s exec grimshot copy area
+bindsym $mod+Return exec $term
+bindsym $hypr+Return exec $term
+bindsym $hypr+c exec $clip
+bindsym $mod+b bar mode toggle
+
+bindsym $hypr+i exec emacsclient --eval "(im-globally (im-select-any-snippet))"
+bindsym $hypr+o exec emacsclient --eval "(im-globally (im-people))"
+bindsym $hypr+l exec loginctl lock-session
+
+# * Keybindings - Notifications
+
+bindsym $hypr+y exec makoctl dismiss --all &amp;&amp; emacsclient --eval '(im-notif-clear-all)'
+
+# * Keybindings - Window management
+
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+bindsym $mod+Shift+c reload
+
+bindsym $mod+w kill
+
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+# * Keybindings - Workspaces
+
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+# * Keybindings - Splitting and container management
+
+# You can "split" the current object of your focus with
+# $mod+b or $mod+v, for horizontal and vertical splits
+# respectively.
+bindsym $mod+backslash splith
+bindsym $mod+minus splitv
+
+# Switch the current container between different layout styles
+bindsym $mod+e layout toggle stacking tabbed split
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+t floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+# Move focus to the parent container
+bindsym $mod+a focus parent
+
+# * Keybindings - Scratchpad
+
+# Move the currently focused window to the scratchpad
+bindsym $hypr+e move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $hypr+r scratchpad show
+
+# * Keybindings - Resize
+
+mode "resize" {
+    bindsym $right resize shrink width 10px
+    bindsym $up resize grow height 10px
+    bindsym $down resize shrink height 10px
+    bindsym $left resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# * Keybindings - Volume
+
+bindsym --locked $hypr+0 exec swayosd-client --output-volume raise
+bindsym --locked $hypr+9 exec swayosd-client --output-volume lower
+
+# * Window configurations
+
+for_window [app_id="qalculate-gtk"] floating enable
+for_window [app_id="com.nextcloud.desktopclient.nextcloud"] floating enable
+for_window [app_id="emacs$" title="^emacs-popup$"] floating enable
+
+# * Swaybar
+
+bar {
+    position top
+    status_command ~/.bin/usages
+    colors {
+        statusline #ffffffff
+        background #323232ff
+        inactive_workspace #323232 #323232 #5c5c5c
+    }
+}
+
+# * Launch
+
+# exec --no-startup-id wacom.sh --monitor-and-remap
+
+# This comes with sway-contrib.  Imports the required variables to
+# systemd and then starts graphical-session.  Through this the
+# startup programs are handled.
+include /etc/sway/config.d/*
+exec systemctl --user start sway-session.target
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7da6b5f" class="outline-4">
+<h4 id="org7da6b5f"><a href="#org7da6b5f">status command for the bar</a></h4>
+<div class="outline-text-4" id="text-org7da6b5f">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+c_icon="#7c7c7c"
+c_text="#b8b8b8"
+c_sep="#4a4a4a"
+c_time="#d0d0d0"
+
+sep="&lt;span color=\"$c_sep\"&gt;  ·  &lt;/span&gt;"
+
+field() { # $1=icon $2=value
+    printf '&lt;span color="%s"&gt;%s&lt;/span&gt; &lt;span color="%s"&gt;%s&lt;/span&gt;' \
+        "$c_icon" "$1" "$c_text" "$2"
+}
+
+# --- CPU: read /proc/stat deltas (builtin math) ---
+read_cpu() {
+    local a b c d rest
+    read -r _ a b c d rest &lt; /proc/stat
+    idle=$d
+    total=$((a + b + c + d))
+    for x in $rest; do total=$((total + x)); done
+}
+
+read_cpu
+prev_idle=$idle
+prev_total=$total
+
+while :; do
+    # CPU %
+    read_cpu
+    di=$((idle - prev_idle))
+    dt=$((total - prev_total))
+    cpu=0
+    (( dt &gt; 0 )) &amp;&amp; cpu=$(( (100 * (dt - di)) / dt ))
+    prev_idle=$idle
+    prev_total=$total
+
+    # MEM % from /proc/meminfo
+    memtotal=0 memavail=0
+    while read -r key val _; do
+        case $key in
+            MemTotal:)     memtotal=$val ;;
+            MemAvailable:) memavail=$val ;;
+        esac
+        [[ $memtotal &amp;&amp; $memavail ]] &amp;&amp; [[ $key == MemAvailable: ]] &amp;&amp; break
+    done &lt; /proc/meminfo
+    mem=$(( (100 * (memtotal - memavail)) / memtotal ))
+
+    # DISK still needs df (no builtin for statvfs)
+    disk=$(df -P / | awk 'NR==2 {sub(/%/,"",$5); print $5}')
+
+    # BATTERY via builtin read
+    bat=""
+    for bat_path in /sys/class/power_supply/BAT[0-1]; do
+        [[ -f $bat_path/capacity ]] &amp;&amp; { read -r bat &lt; "$bat_path/capacity"; break; }
+    done
+
+    # CLOCK via printf builtin (no date spawn)
+    printf -v clock '%(%a %d %b   %H:%M)T' -1
+
+    out="$(field $'\uf4bc' "${cpu}%")$sep"
+    out+="$(field $'\uefc5' "${mem}%")$sep"
+    out+="$(field $'\uf0a0' "${disk}%")$sep"
+
+    if [[ -n $bat ]]; then
+        if   (( bat &gt;= 80 )); then bicon=$'\uf240'
+        elif (( bat &gt;= 60 )); then bicon=$'\uf241'
+        elif (( bat &gt;= 40 )); then bicon=$'\uf242'
+        elif (( bat &gt;= 20 )); then bicon=$'\uf243'
+        else bicon=$'\uf244'
+        fi
+        out+="$(field "$bicon" "${bat}%")$sep"
+    fi
+
+    clock_icon=$'\uf017'
+    out+="&lt;span color=\"$c_time\"&gt;$clock&lt;/span&gt;"
+
+    printf '%s\n' "$out"
+    sleep 5
+done
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9c44cc6" class="outline-4">
+<h4 id="org9c44cc6"><a href="#org9c44cc6">Startup programs</a></h4>
+<div class="outline-text-4" id="text-org9c44cc6">
+<div class="org-src-container">
+<pre class="src src-sh"><code>systemctl --user add-wants sway-session.target xremap.service
+systemctl --user add-wants sway-session.target vicinae.service
+systemctl --user add-wants sway-session.target mako.service
+systemctl --user add-wants sway-session.target foot-server.service
+systemctl --user add-wants sway-session.target swayosd.service
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org0006071" class="outline-3">
+<h3 id="org0006071"><a href="#org0006071">Niri</a></h3>
+<div class="outline-text-3" id="text-org0006071">
+<div class="org-src-container">
+<pre class="src src-kdl-ts"><code>// * General config
+
+prefer-no-csd
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+config-notification {
+    disable-failed
+}
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+
+environment {
+  XDG_CURRENT_DESKTOP "niri"
+}
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+input {
+    tablet {
+        map-to-output "HDMI-A-2"
+        left-handed
+        // calibration-matrix 1.0 0.0 0.0 0.0 1.0 0.0
+    }
+}
+
+layout {
+    preset-column-widths {
+        proportion 0.25
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 0.8
+    }
+
+    default-column-width { proportion 0.5; }
+
+    gaps 7
+
+    border {
+        off
+        width 3
+        active-color   "#707070"      // Neutral gray
+        inactive-color "#d0d0d0"      // Light gray
+        urgent-color   "#cc4444"      // Softer red
+    }
+
+    shadow {
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+
+    tab-indicator {
+        width 8
+        gap 8
+        length total-proportion=1.0
+        position "top"
+        place-within-column
+    }
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+    tiled-state true
+    draw-border-with-background false
+}
+
+// * Window rules
+
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
+window-rule {
+    match app-id=r#"^org\.gnome\."#
+    draw-border-with-background false
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+window-rule {
+    match app-id=r#"^gnome-control-center$"#
+    match app-id=r#"^pavucontrol$"#
+    match app-id=r#"^nm-connection-editor$"#
+    default-column-width { proportion 0.5; }
+    open-floating false
+}
+
+window-rule {
+    match app-id=r#"^gnome-calculator$"#
+    match app-id=r#"^galculator$"#
+    match app-id=r#"^blueman-manager$"#
+    match app-id=r#"^org\.gnome\.Nautilus$"#
+    match app-id=r#"^steam$"#
+    match app-id=r#"^xdg-desktop-portal$"#
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id="Alacritty"
+    match app-id="zen"
+    match app-id="com.mitchellh.ghostty"
+    match app-id="kitty"
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    match app-id="zoom"
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"org.quickshell$"#
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"emacs$"# title="^emacs-popup$"
+    open-floating true
+}
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+// * Animations etc
+
+recent-windows {
+    binds {
+        Alt+Tab         { next-window scope="output"; }
+        Alt+Shift+Tab   { previous-window scope="output"; }
+        Alt+grave       { next-window filter="app-id"; }
+        Alt+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+
+animations {
+    workspace-switch {
+        spring damping-ratio=0.80 stiffness=523 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 150
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+    horizontal-view-movement {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=0.75 stiffness=323 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=0.85 stiffness=423 epsilon=0.0001
+    }
+    config-notification-open-close {
+        spring damping-ratio=0.65 stiffness=923 epsilon=0.001
+    }
+    screenshot-ui-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+    overview-open-close {
+        spring damping-ratio=0.85 stiffness=800 epsilon=0.0001
+    }
+}
+
+// * Bindings
+
+// Use `wev` to identify key names
+
+binds {
+    // === System &amp; Overview ===
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Tab repeat=false { toggle-overview; }
+    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Ctrl+Alt+Shift+Y { spawn "coo" "clear-notifications"; }
+
+    // === Application Launchers ===
+    Mod+A  { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+Ctrl+Alt+Shift+A { spawn "vicinae" "open"; }
+    Mod+Ctrl+Alt+Shift+Return { spawn "coo" "term"; }
+    Mod+Ctrl+Alt+Shift+C { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
+    Mod+Ctrl+Alt+Shift+T {
+        spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
+    }
+    Mod+Ctrl+Alt+Shift+Q hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    Mod+Y {
+        spawn "dms" "ipc" "call" "dankdash" "wallpaper";
+    }
+    Mod+Ctrl+Alt+Shift+N hotkey-overlay-title="Notification Center" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
+
+    // === Stuff ===
+    Mod+Ctrl+Alt+Shift+I hotkey-overlay-title="Emacs Snippet" {
+      spawn "emacsclient" "--eval" "(im-globally (im-select-any-snippet))";
+    }
+    Mod+Ctrl+Alt+Shift+O hotkey-overlay-title="Emacs People" {
+      spawn "emacsclient" "--eval" "(im-globally (im-people))";
+    }
+    Mod+Ctrl+Alt+Shift+V hotkey-overlay-title="Emacs Video Toggle" {
+      spawn "emacsclient" "--eval" "(empv-toggle-video)";
+    }
+
+    // === Security ===
+    Mod+Ctrl+Alt+Shift+E { quit; }
+    Mod+Ctrl+Alt+Shift+B hotkey-overlay-title="Lock Screen" {
+        spawn "dms" "ipc" "call" "lock" "lock";
+    }
+    Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" {
+        spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
+    }
+
+    // === Audio Controls ===
+    Mod+Ctrl+Alt+Shift+0 allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "increment" "3";
+    }
+    Mod+Ctrl+Alt+Shift+9 allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "decrement" "3";
+    }
+    XF86AudioRaiseVolume allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "increment" "3";
+    }
+    XF86AudioLowerVolume allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "decrement" "3";
+    }
+    XF86AudioMute allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "mute";
+    }
+    XF86AudioMicMute allow-when-locked=true {
+        spawn "dms" "ipc" "call" "audio" "micmute";
+    }
+    XF86AudioPause allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "playPause";
+    }
+    XF86AudioPlay allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "playPause";
+    }
+    XF86AudioPrev allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "previous";
+    }
+    XF86AudioNext allow-when-locked=true {
+        spawn "dms" "ipc" "call" "mpris" "next";
+    }
+
+    // === Brightness Controls ===
+    XF86MonBrightnessUp allow-when-locked=true {
+       spawn "dms" "ipc" "call" "brightness" "increment" "5" "";
+    }
+    XF86MonBrightnessDown allow-when-locked=true {
+       spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
+    }
+
+    // === Window Management ===
+    Mod+Q repeat=false { close-window; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+T { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+    Mod+W { toggle-column-tabbed-display; }
+
+    // === Focus Navigation ===
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
+
+    // === Window Movement ===
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Down  { move-window-down; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+J     { move-window-down; }
+    Mod+Shift+K     { move-window-up; }
+    Mod+Shift+L     { move-column-right; }
+
+    // === Column Navigation ===
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+
+    // === Monitor Navigation ===
+    Mod+Comma      { focus-monitor-left; }
+    Mod+Period     { focus-monitor-right; }
+
+    // === Move to Monitor ===
+    Mod+Shift+Comma  { move-column-to-monitor-left; }
+    Mod+Shift+Period { move-column-to-monitor-right; }
+
+    // === Workspace Navigation ===
+    Mod+Page_Down      { focus-workspace-down; }
+    Mod+Page_Up        { focus-workspace-up; }
+    Mod+U              { focus-workspace-down; }
+    Mod+I              { focus-workspace-up; }
+    Mod+Ctrl+Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+U         { move-column-to-workspace-down; }
+    Mod+Ctrl+I         { move-column-to-workspace-up; }
+
+    // === Move Workspaces ===
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up   { move-workspace-up; }
+    Mod+Shift+U         { move-workspace-down; }
+    Mod+Shift+I         { move-workspace-up; }
+
+    // === Mouse Wheel Navigation ===
+    Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollRight { move-column-right; }
+    Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+    Mod+Shift+WheelScrollDown      { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+    // === Numbered Workspaces ===
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+
+    // === Move to Numbered Workspaces ===
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+
+    // === Column Management ===
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+
+    // === Sizing &amp; Layout ===
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+C { center-column; }
+    Mod+Ctrl+C { center-visible-columns; }
+
+    // === Manual Sizing ===
+    Mod+0     { set-column-width "-5%"; }
+    Mod+Minus { set-column-width "+5%"; }
+
+    Mod+Equal     { set-window-height "-5%"; }
+    Mod+Backspace { set-window-height "+5%"; }
+
+    // === Screenshots ===
+    Mod+Ctrl+Alt+Shift+S { screenshot; }
+    XF86Launch1 { screenshot; }
+    Ctrl+XF86Launch1 { screenshot-screen; }
+    Alt+XF86Launch1 { screenshot-window; }
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+
+    // === System Controls ===
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+P { power-off-monitors; }
+}
+
+// * Include dms files
+
+// These are all auto generated, so not included in my config.
+
+include "dms/colors.kdl"
+include "dms/alttab.kdl"
+include "dms/outputs.kdl"
+include "dms/cursor.kdl"
+</code></pre>
+</div>
+</div>
+<div id="outline-container-org3476867" class="outline-4">
+<h4 id="org3476867"><a href="#org3476867">Startup programs</a></h4>
+<div class="outline-text-4" id="text-org3476867">
+<ul class="org-ul">
+<li>See: <a href="https://yalter.github.io/niri/Example-systemd-Setup.html">Example systemd Setup - niri</a></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh"><code>systemctl --user add-wants niri.service xremap.service
+systemctl --user add-wants niri.service vicinae.service
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org715ebc4" class="outline-3">
+<h3 id="org715ebc4"><a href="#org715ebc4">dunst</a></h3>
+<div class="outline-text-3" id="text-org715ebc4">
+<div class="org-src-container">
+<pre class="src src-conf"><code>[global]
+follow = "keyboard"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5c798e5" class="outline-3">
+<h3 id="org5c798e5"><a href="#org5c798e5">wacom</a></h3>
+<div class="outline-text-3" id="text-org5c798e5">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+# remap-tablet-to-monitor MONITOR_NAME
+remap-tablet-to-monitor() {
+    MONITOR_NAME="$1"
+    SWAY_INPUTS="$(swaymsg -t get_inputs -r)"
+    SWAY_OUTPUTS="$(swaymsg -t get_outputs -r)"
+    LIBINPUT_DEVICES="$(libinput list-devices)"
+    read MON_WIDTH MON_HEIGHT &lt;&lt;&lt;$(echo "$SWAY_OUTPUTS" | jq -r ".[] | select(.name==\"$MONITOR_NAME\") | .current_mode | .width, .height" | xargs)
+    IDENTIFIER=$(echo "$SWAY_INPUTS" | jq -r '.[] | select(.type=="tablet_tool") | .identifier' | head -1)
+    TABLET_NAME=$(echo "$SWAY_INPUTS" | jq -r '.[] | select(.type=="tablet_tool") | .name' | head -1)
+    TAB_SIZE_LINE=$(echo "$LIBINPUT_DEVICES" | awk -v name="$TABLET_NAME" '
+      BEGIN{found=0}
+      $0 ~ "Device: *"name"$" {found=1}
+      found &amp;&amp; $0 ~ /Size: / {print $0; exit}
+    ')
+    TAB_WIDTH=$(echo "$TAB_SIZE_LINE" | grep -oP '([0-9]+)x' | tr -d 'x')
+    TAB_HEIGHT=$(echo "$TAB_SIZE_LINE" | grep -oP 'x([0-9]+)' | tr -d 'x')
+    USABLE_RATIO=$(awk -v w="$MON_HEIGHT" -v tw="$TAB_WIDTH" -v mw="$MON_WIDTH" -v th="$TAB_HEIGHT" \
+                       'BEGIN { printf "%.3f", (w * tw / mw) / th }')
+
+    # I could simply set USABLE_RATIO=0.9 since my tablet is 16:10 and my
+    # monitor is 16:9, but this method calculates USABLE_RATIO generically.
+    # If I ever change tablets (which I doubt), this script will still work
+    # without needing modification.
+
+    swaymsg input "$IDENTIFIER" map_to_output $MONITOR_NAME
+    swaymsg input type:tablet_tool map_from_region 0x0 1x$USABLE_RATIO
+    swaymsg input type:tablet_tool left_handed enabled # Rotates the device by 180 degrees
+    echo "Mapped tablet '$TABLET_NAME' ($IDENTIFIER) to monitor '$MONITOR_NAME' 1.0x$USABLE_RATIO"
+}
+
+# This script remaps a connected tablet tool device to the currently
+# focused Sway monitor, adjusting the input area to match the
+# monitor's aspect ratio.  It listens for workspace focus changes in
+# Sway and, when the focus changes, it finds the tablet device and
+# monitor dimensions, calculates a scaling ratio, and applies the
+# mapping and input transformation using swaymsg commands.
+--monitor-and-remap() {
+    # Run it first time for the focused monitor
+    remap-tablet-to-monitor $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name')
+
+    # Main: subscribe to Sway workspace focus, emit output name, run remap per event
+    export -f remap-tablet-to-monitor
+    exec swaymsg -t subscribe -m '["workspace"]' \
+        | jq --unbuffered -r 'select(.change == "focus") | .current.output' \
+        | xargs  -I{} bash -c 'remap-tablet-to-monitor "$@"' _ {}
+}
+
+
+# ...other wacom related commands...
+
+SUBCMD=$1
+shift
+$SUBCMD "$@"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org03166de" class="outline-3">
+<h3 id="org03166de"><a href="#org03166de">swayimg</a></h3>
+<div class="outline-text-3" id="text-org03166de">
+<div class="org-src-container">
+<pre class="src src-conf"><code>[list]
+# Default order (none/alpha/numeric/mtime/size/random)
+order = mtime
+reverse = yes
+recursive = no
+# Add files from the same directory as the first file (yes/no)
+all = yes
+
+[info]
+# Don't show on startup, toggle with i
+show = no
+
+[keys.viewer]
+F1 = help
+g = first_file
+Shift+g = last_file
+Shift+h = prev_file
+Shift+l = next_file
+Space = next_file
+s = mode slideshow
+n = animation
+f = fullscreen
+Return = mode gallery
+h = step_left 10
+l = step_right 10
+k = step_up 10
+j = step_down 10
+Equal = zoom +10
+Plus = zoom +10
+Minus = zoom -10
+w = zoom width
+Shift+w = zoom height
+z = zoom fit
+Shift+z = zoom fill
+0 = zoom real
+9 = zoom optimal
+
+bracketleft = rotate_left
+bracketright = rotate_right
+backslash = flip_vertical
+BackSpace = flip_horizontal
+
+a = antialiasing
+r = reload
+i = info
+Shift+Delete = exec rm -f '%' &amp;&amp; echo "File removed: %"; skip_file
+Escape = exit
+q = exit
+c = exec wl-copy "%" &amp;&amp; echo "Path copied: %"
+y = exec wl-copy "%" &amp;&amp; echo "Path copied: %"
+
+[keys.slideshow]
+F1 = help
+g = first_file
+Shift+g = last_file
+Shift+h = prev_file
+Shift+l = next_file
+Space = pause
+i = info
+f = fullscreen
+Return = mode
+Escape = exit
+q = exit
+
+[keys.gallery]
+F1 = help
+g = first_file
+Shift+g = last_file
+h = step_left
+l = step_right
+k = step_up
+j = step_down
+# Prior = page_up
+# Next = page_down
+s = mode slideshow
+f = fullscreen
+Return = mode viewer
+a = antialiasing
+r = reload
+i = info
+Equal = thumb +20
+Plus = thumb +20
+Minus = thumb -20
+Shift+Delete = exec rm -f '%' &amp;&amp; echo "File removed: %"; skip_file
+Escape = exit
+q = exit
+c = exec wl-copy "%" &amp;&amp; echo "Path copied: %"
+y = exec wl-copy "%" &amp;&amp; echo "Path copied: %"
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org28c579c" class="outline-2">
+<h2 id="org28c579c"><a href="#org28c579c">Mail</a></h2>
+<div class="outline-text-2" id="text-org28c579c">
+</div>
+<div id="outline-container-org612515a" class="outline-3">
+<h3 id="org612515a"><a href="#org612515a">Proton/Hydroixde bridge</a></h3>
+<div class="outline-text-3" id="text-org612515a">
+<ul class="org-ul">
+<li>Install hydroxide.</li>
+<li>hydroxide auth &lt;username&gt;</li>
+<li>Tangle the following and <code>systemctl --user enable --now hydroxide-imap</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Unit]
+Description=Third party ProtonMail IMAP Bridge
+After=network.target
+
+[Service]
+Type=exec
+Restart=on-failure
+ExecStart=/usr/bin/hydroxide imap
+
+[Install]
+WantedBy=default.target
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org5730605" class="outline-2">
+<h2 id="org5730605"><a href="#org5730605">Shell</a></h2>
+<div class="outline-text-2" id="text-org5730605">
+</div>
+<div id="outline-container-org67f717c" class="outline-3">
+<h3 id="org67f717c"><a href="#org67f717c">Fish</a></h3>
+<div class="outline-text-3" id="text-org67f717c">
+<div class="org-src-container">
+<pre class="src src-fish"><code>if status is-interactive
+    «which("starship")» init fish | source
+
+    if test -f ~/.extrarc
+        source ~/.extrarc
+    end
+
+    # I like fish's own ctrl-r interface but it messes everything up
+    # when it encounters a very long command. fzf handles it much
+    # better, with preview.
+    function fzf_fish_history
+        commandline --replace $(history --null | fzf --read0 --reverse --height 30 --preview "echo {} | fish_indent --ansi")
+    end
+
+    bind \cr fzf_fish_history
+end
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code>export «env-variables»
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code># * Stow aliases
+
+alias ssync='stow -d ~/Sync/ -t ~'
+
+# * Package management
+
+abbr -a -- paci 'sudo pacman -S'
+abbr -a -- pacr 'sudo pacman -Rns'
+abbr -a -- pacs 'pacman -Ss'
+abbr -a -- pacupd 'sudo pacman -Sy'
+abbr -a -- pacupg 'sudo pacman -Syu'
+abbr -a -- pacbin 'pacman -F'
+
+abbr -a -- dnfi 'sudo dnf install'
+abbr -a -- dnfr 'sudo dnf remove'
+abbr -a -- dnfs 'dnf search'
+abbr -a -- dnfp 'dnf provides'
+abbr -a -- dnfupd 'sudo dnf update'
+abbr -a -- dnfupg 'sudo dnf upgrade'
+
+abbr -a -- brews 'brew search'
+abbr -a -- brewi 'brew install'
+abbr -a -- brewr 'brew uninstall'
+abbr -a -- brewupd 'brew update'
+abbr -a -- brewupg 'brew upgrade'
+
+function nixi
+    nix-env -iA "nixpkgs.$argv[1]"
+end
+alias nixr='nix-env -e'
+alias nixs='nix search nixpkgs'
+
+# * Systemctl
+
+abbr -a -- ctl 'sudo systemctl'
+abbr -a -- ctls 'sudo systemctl --full status'
+abbr -a -- ctlr 'sudo systemctl --full restart'
+abbr -a -- ctlu 'systemctl --full --user'
+abbr -a -- ctlus 'systemctl --full --user status'
+abbr -a -- ctlur 'systemctl --full --user restart'
+abbr -a -- log 'journalctl --unit'
+abbr -a -- logu 'journalctl --user --unit'
+
+# * Opening stuff
+
+abbr -a -- v 'jaro --method=view'
+abbr -a -- e 'jaro --method=edit'
+abbr -a -- g 'jaro --method=gallery'
+abbr -a -- open jaro
+
+# * File/folder stuff
+
+abbr -a -- mkx 'chmod +x'
+function mkcd
+    mkdir -p "$argv[1]"
+    cd "$argv[1]"
+end
+
+abbr -a -- tree 'lsd --tree'
+
+abbr -a -- ls 'lsd --group-dirs=first --classify'
+abbr -a -- ll 'lsd --group-dirs=first --classify --long --date=relative --timesort --blocks=date,size,name'
+abbr -a -- lls 'lsd --group-dirs=first --classify --long --header --date=relative --timesort --git --hyperlink=auto'
+abbr -a -- lla 'lsd --group-dirs=first --classify --long --header --date=relative --timesort --git --hyperlink=auto --almost-all'
+
+abbr -a -- cdtemp 'cd $(mktemp -d)'
+alias cdf='cd $(fd -t d -d 8 | fzf)' # cd fuzzy
+
+alias find-dups='find . ! -empty -type f -exec md5sum {} + | sort | uniq -w32 -dD'
+
+# * Streaming stuff
+
+# Higlight json parts of the stream and print other lines plain
+# ./program_that_may_output_json | logjson
+abbr -a --position anywhere -- @logjson 'jq -R -r ". as \$line | try fromjson catch \$line"'
+
+# Less that supports color
+abbr -a @less --position anywhere --set-cursor "% | less -r"
+# Complements the one above, adds --color=always to current command.
+# somecommand @color @less
+abbr -a --position anywhere -- @color --color=always
+
+# * Git
+
+abbr -a -- gcm 'git commit -m'
+abbr -a -- gds 'git diff --staged'
+abbr -a -- gs 'git status'
+abbr -a -- gco 'git chekout'
+
+# * Meta
+
+abbr -a :q exit
+
+# * Kubernetes
+
+abbr -a -- kctx 'kubectl config current-context'
+abbr -a -- kctxs-list 'kubectl config get-contexts --output=name'
+abbr -a -- kctx-use 'kubectl config use-context'
+
+# * Project management
+
+function cdp --description 'Switch to a project, fast'
+    set -l selected (gitfind ~/Workspace/projects/ | fzf --tiebreak=index --height=15 --reverse)
+    if test -n "$selected"
+        gitfind --record $selected
+        eval cd $selected
+    end
+end
+
+function fgp --description 'Pick a background job and bring to foreground'
+    jobs -q; or begin; echo "No jobs"; return 1; end
+
+    set -l job (jobs | fzf --reverse --height=10 --header="Foreground which job?")
+    or return
+
+    set -l jid (echo $job | cut -f2)
+    fg %$jid
+end
+</code></pre>
+</div>
+
+<p>
+emacs-eat integration:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code>test -n "$EAT_SHELL_INTEGRATION_DIR" &amp;&amp; source "$EAT_SHELL_INTEGRATION_DIR/fish"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6d44aaf" class="outline-3">
+<h3 id="org6d44aaf"><a href="#org6d44aaf">Starship</a></h3>
+<div class="outline-text-3" id="text-org6d44aaf">
+<div class="org-src-container">
+<pre class="src src-toml"><code>[cmd_duration]
+# Show system notifications for commands that takes longer than 5 seconds
+min_time_to_notify = 5000
+show_notifications = true
+notification_timeout = 99999
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbfe526c" class="outline-3">
+<h3 id="orgbfe526c"><a href="#orgbfe526c">Utility functions</a></h3>
+<div class="outline-text-3" id="text-orgbfe526c">
+<p>
+Utilizing <code>~/.config/fish/functions/</code> instead of the config file or the <code>conf.d</code> folder is a better idea because the funcitons inside <code>functions</code> folder are lazy loaded.
+</p>
+</div>
+<div id="outline-container-orgd34171c" class="outline-4">
+<h4 id="orgd34171c"><a href="#orgd34171c">Compression/decompression</a></h4>
+<div class="outline-text-4" id="text-orgd34171c">
+<div class="org-src-container">
+<pre class="src src-fish"><code>function extract
+    if test -f $argv[1]
+        switch $argv[1]
+            case '*.tar.bz2'
+                tar xjf "$argv[1]"
+            case '*.tar.gz'
+                tar xzf "$argv[1]"
+            case '*.bz2'
+                bunzip2 "$argv[1]"
+            case '*.rar'
+                unrar x "$argv[1]"
+            case '*.gz'
+                gunzip "$argv[1]"
+            case '*.tar' '*.tar.xz'
+                tar xf "$argv[1]"
+            case '*.tbz2'
+                tar xjf "$argv[1]"
+            case '*.tgz'
+                tar xzf "$argv[1]"
+            case '*.zip'
+                unzip "$argv[1]"
+            case '*.Z'
+                uncompress "$argv[1]"
+            case '*.7z'
+                7z x "$argv[1]"
+            case '*'
+                echo "'$argv[1]' cannot be extracted via extract()"
+        end
+    else
+        echo "Usage:"
+        echo "extract &lt;archive-name&gt;"
+    end
+end
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code>function compress
+    set EXT $argv[1]
+    set argv $argv[2..-1]  # Shift the arguments to remove the first one
+
+    switch $EXT
+        case '-h' '--help'
+            echo "Usage:"
+            echo "compress &lt;archive-name&gt;.EXT file1 file2"
+            echo
+            echo "EXT can be one of the following: .7z .tar.gz .tgz .tar.bz2 .zip."
+            echo "Also you can add .nocompress to the end of EXT to archive without compressing."
+            return
+        case '*.7z'
+            7z a "$EXT" $argv
+        case '*.tar.gz' '*.tgz'
+            tar -czvf "$EXT" $argv
+        case '*.tar.gz.nocompress' '*.tgz.nocompress'
+            tar -cvf (string replace .nocompress '' $EXT) $argv
+        case '*.tar.bz2'
+            tar -cjvf "$EXT" $argv
+        case '*.zip'
+            zip -r "$EXT" $argv
+        case '*'
+            echo "Unrecognized EXT: $EXT"
+            echo
+            compress --help
+    end
+end
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4b5cced" class="outline-4">
+<h4 id="org4b5cced"><a href="#org4b5cced">Encryption/Decryption</a></h4>
+<div class="outline-text-4" id="text-org4b5cced">
+<div class="org-src-container">
+<pre class="src src-fish"><code>function encrypt
+    switch $argv[1]
+        case '-h' '--help'
+            echo "Usage:"
+            echo "encrypt &lt;input-file&gt; [&lt;output-file&gt;]"
+            echo
+            echo "If &lt;output-file&gt; is skipped, then the output will be &lt;input-file&gt;.encrypted"
+            return
+        case '*'
+            set INPUT $argv[1]
+            set OUTPUT $argv[2]
+
+            if not test -f "$INPUT"
+                echo "$INPUT not found."
+                return 1
+            end
+
+            if test -z "$OUTPUT"
+                set OUTPUT "$INPUT.encrypted"
+            end
+
+            if test -f "$OUTPUT"
+                echo "$OUTPUT already exists."
+                return 1
+            end
+
+            gpg --symmetric --cipher-algo AES256 --output "$OUTPUT" "$INPUT"
+    end
+end
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code>function decrypt
+    switch $argv[1]
+        case '-h' '--help'
+            echo "Usage:"
+            echo "decrypt &lt;input-file&gt; [&lt;output-file&gt;]"
+            echo
+            echo "If &lt;output-file&gt; is skipped, then the output will be &lt;input-file&gt; but the last suffix is removed"
+            return
+        case '*'
+            set INPUT $argv[1]
+            set OUTPUT $argv[2]
+
+            if not test -f "$INPUT"
+                echo "$INPUT not found."
+                return 1
+            end
+
+            if test -z "$OUTPUT"
+                set OUTPUT (string trim --right --chars='.' (basename "$INPUT"))
+            end
+
+            if test -f "$OUTPUT"
+                echo "$OUTPUT already exists."
+                return 1
+            end
+
+            gpg --decrypt --output "$OUTPUT" "$INPUT"
+    end
+end
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6103f09" class="outline-4">
+<h4 id="org6103f09"><a href="#org6103f09">Network stuff</a></h4>
+<div class="outline-text-4" id="text-org6103f09">
+<div class="org-src-container">
+<pre class="src src-fish"><code>function ipinfo
+    switch (uname)
+        case Linux
+            set localips (ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1)
+        case Darwin
+            set localips (ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}')
+    end
+
+    echo $localips
+    echo
+    echo ======================
+    echo
+    curl --silent https://ipinfo.io | jq .
+end
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org6f72815" class="outline-2">
+<h2 id="org6f72815"><a href="#org6f72815">Tmux</a></h2>
+<div class="outline-text-2" id="text-org6f72815">
+<p>
+I use tmux for it's vi mode. Other than that I generally use my window manager for multiple terminals (which is rarely needed because I'm mostly in Emacs.) I also use it on Android (via Termux) as a WM.
+</p>
+</div>
+<div id="outline-container-org8408262" class="outline-3">
+<h3 id="org8408262"><a href="#org8408262">TPM &ndash; Termux Plugin Manager</a></h3>
+<div class="outline-text-3" id="text-org8408262">
+<p>
+Install this first, configuration is embedded in the next section.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+</code></pre>
+</div>
+
+<p>
+To install newly added plugins, do <code>prefix I</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-orgcc1d511" class="outline-3">
+<h3 id="orgcc1d511"><a href="#orgcc1d511">Configuration</a></h3>
+<div class="outline-text-3" id="text-orgcc1d511">
+<div class="org-src-container">
+<pre class="src src-conf"><code># * General
+
+set -g default-shell «which("fish")»
+set -g mouse on
+set -g base-index 1 # Window indexes starts from 1
+setw -g pane-base-index 1 # Pane indexes starts from 1
+set -s escape-time 0 # Remove the delay after hitting &lt;ESC&gt;
+set -g set-titles on
+# Do `set destroy-unattached off` to disable this for a particular session
+set-option -g destroy-unattached on
+
+set -g set-titles on
+set -g extended-keys on
+set -g extended-keys-format csi-u
+set -g focus-events on
+
+# * Bindings
+
+# Open copy mode
+bind -n M-y copy-mode
+
+# Set prefix to A-a
+# unbind C-b
+set -g prefix M-a
+bind-key M-a send-prefix
+
+# Increase the time of display-panes (PREFIX q)
+set -g display-panes-time 4000
+
+# Split remaps
+bind \\ split-window -h -c '#{pane_current_path}'
+bind - split-window -v -c '#{pane_current_path}'
+unbind '"'
+unbind %
+
+# Vim-like pane switches
+bind k selectp -U
+bind j selectp -D
+bind h selectp -L
+bind l selectp -R
+
+# Vi keys for copy-mode
+setw -g mode-keys vi
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
+
+# New session (s shows sessions, C-s creates new one)
+bind C-s new-session
+
+# * Menu
+
+bind-key Space display-menu -T "Command Palette" \
+    "Persist (on)"        p "set destroy-unattached off; refresh-client" \
+    "Persist (off)"       P "set destroy-unattached on; refresh-client" \
+    "Rename Window"       w "command-prompt 'rename-window %%'" \
+    "Rename Session"      s "command-prompt 'rename-session %%'" \
+    "" \
+    "Horizontal Split"    h "split-window -h" \
+    "Vertical Split"      v "split-window -v" \
+    "New Window"          n "new-window" \
+    "Kill Pane"           x "kill-pane" \
+    "Sync Panes"          s "setw synchronize-panes" \
+    "" \
+    "Reload Config"       R "source-file ~/.tmux.conf; display 'Reloaded'"
+
+# * Theming (uses terminal colors)
+
+set -g status-style "bg=terminal,fg=terminal"
+
+# Left side: session name
+set -g status-left-length 30
+set -g status-left "#{?client_prefix,#[fg=colour2] ◉ ,}#[fg=colour0,bg=colour5,bold] #S #[fg=colour5,bg=terminal,nobold]"
+
+# Right side: date and time
+set -g status-right-length 80
+set -g status-right "#[fg=colour8]#[fg=colour7,bg=colour8] #{?#{==:#{destroy-unattached},on},#[fg=colour1]⏻,#[fg=colour2]⏻} #[fg=colour8]│#[fg=colour7] %a %b %d #[fg=colour5]#[fg=colour0,bg=colour5,bold] %H:%M "
+
+# Window tabs
+set -g window-status-format "#[fg=colour7] #I:#W "
+set -g window-status-current-format "#[fg=colour5,bold] #I:#W "
+
+# Remove window status separator
+set -g window-status-separator ""
+
+# Center window list
+set -g status-justify left
+
+# Pane borders
+set -g pane-border-style "fg=colour8"
+set -g pane-active-border-style "fg=colour5"
+
+# Message styling
+set -g message-style "bg=terminal,fg=terminal"
+
+# * TPM
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org82d79b5" class="outline-2">
+<h2 id="org82d79b5"><a href="#org82d79b5">Utilities</a></h2>
+<div class="outline-text-2" id="text-org82d79b5">
+</div>
+<div id="outline-container-orga1874e5" class="outline-3">
+<h3 id="orga1874e5"><a href="#orga1874e5">git</a></h3>
+<div class="outline-text-3" id="text-orga1874e5">
+<div class="org-src-container">
+<pre class="src src-conf"><code>[user]
+  name = «sh("git config --global --get user.name", "Isa Mert Gurbuz")»
+  email = «sh("git config --global --get user.email", "isamertgurbuz@gmail.com")»
+[github]
+  user = isamert
+[rebase]
+  autoStash = true
+[pull]
+  rebase = true
+[fetch]
+  prune = true
+[status]
+  short = true
+[init]
+  defaultBranch = main
+[push]
+  followTags = true
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3cb2529" class="outline-3">
+<h3 id="org3cb2529"><a href="#org3cb2529">jaro</a></h3>
+<div class="outline-text-3" id="text-org3cb2529">
+</div>
+<div id="outline-container-orga5c3e86" class="outline-4">
+<h4 id="orga5c3e86"><a href="#orga5c3e86">Configuration</a></h4>
+<div class="outline-text-4" id="text-orga5c3e86">
+<p>
+In this file I define some file associations. Please refer to <a href="https://github.com/isamert/jaro">jaro</a> README for more info. It's simply an <code>xdg-open</code> alternative.
+</p>
+
+<ul class="org-ul">
+<li><p>
+To experiment associations/jaro, do:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><code>$ guile
+guile&gt; (load ".local/bin/jaro")
+guile&gt; (load ".config/associactions")
+</code></pre>
+</div></li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-scheme"><code>;; -*- mode: scheme; -*-
+
+;;; Configuration
+
+(set!
+ dynamic-menu-program
+ (oscase
+  #:darwin "choose"
+  #:gnu/linux "rofi -dmenu"))
+
+;;; Bindings
+
+(bind
+ #:pattern '("(application|text)/(x-)?(pdf|postscript|ps|epub.*)" "image/(x-)?eps" ".*pdf")
+ #:program (oscase
+            #:darwin '(open %f)
+            #:gnu/linux '(zathura %f)))
+
+(bind
+ #:pattern '("^text/html" "^application/x?htm")
+ #:program 'browser
+ #:edit 'editor)
+
+(bind
+ #:name 'editor
+ #:pattern '("^text/" "^application/(x-)?(shellscript|json|javascript|xml)")
+ #:emacs (elisp
+          (find-file "%F"))
+ ;; If I simply give the file to emacsclient, it opens it in a split
+ ;; for some reason, instead of making it the only window in the frame
+ #:program '(emacsclient -c --eval "(find-file \"%F\")")
+ #:term '(emacsclient -nw -c --eval "(find-file \"%F\")"))
+
+(bind
+ #:name 'empv
+ #:pattern '("^video/" "^audio/")
+ #:program (elisp (empv--with-video-enabled (empv-play "%f"))))
+
+(bind
+ #:pattern "inode/directory"
+ #:program '(thunar %f)
+ #:term '(yazi %f)
+ #:gallery 'nomacs)
+
+(bind
+ #:pattern "https://.*zoom\\.us/j/(\\w+)\\?pwd=(\\w+)"
+ #:program '(zoom zoommtg://zoom.us/join?confno=%1&amp;pwd=%2))
+
+(bind
+ #:pattern '("^https?://(www.)?youtube.com/"
+             "^https?://(www.)?youtu.be/"
+             "^https?://(www.)?v.redd.it/\\w+/DASH"
+             "^https?://([a-zA-Z-]+)?streamable.com"
+             "^https?://giant.gfycat.com/.+"
+             "https?://v.redd.it/.+"
+             "^https?://.+/.+\\.(gifv|mp4|webm)(\\?.+)?$")
+ #:program 'empv
+ #:on-error 'browser)
+
+(bind
+ #:pattern "^https?://.+/.+\\.(jpg|png|gif)(\\?.+)?$"
+ #:program `(swayimg %f))
+
+(bind
+ #:pattern "^image/.*"
+ #:program '(swayimg %f)
+ #:gallery 'nomacs)
+
+(bind
+ #:pattern "^https?://(www.)?reddit.com/r/(\\w+)/comments/(.*?)/"
+ #:program (elisp (reddigg-view-comments "https://www.reddit.com/r/%2/comments/%3"))
+ #:on-error 'browser)
+
+(bind
+ #:pattern '("^magnet:" "\\.torrent$")
+ #:program '(qbittorrent --skip-dialog=false %f))
+
+(bind
+ #:name 'browser
+ #:pattern '("^https?://.*" "^.*\\.html?(#[\\w_-]+)?")
+ #:emacs (elisp (eww "%f"))
+ ;; #:program (elisp (eww "%f"))
+ ;; #:program '(qutebrowser %f)
+ ;; #:test '(pgrep qutebrowser)
+ #:program '(firefox %f)
+ #:edit 'editor)
+
+(bind
+ #:pattern "^application/(x-)?(tar|gzip|bzip2|lzma|xz|compress|7z|rar|gtar|zip)(-compressed)?"
+ #:program '(file-roller %f))
+
+(bind
+ #:pattern "^application/(x-)?(vnd.)?(ms-|ms)?(excel|powerpoint|word)"
+ #:program '(desktopeditors %F))
+
+;;; Catch-all
+
+(bind
+ #:pattern ".*"
+ #:program (select-one-of
+            #:alternatives
+            #:bindings
+            #:binaries))
+
+;;; References
+
+(bind
+ #:name 'bat
+ #:pattern ".*"
+ #:program '(bat --paging=always %f))
+
+
+(bind
+ #:name 'nomacs
+ #:pattern "^image/.*"
+ #:program '(nomacs %f))
+
+;; vi:syntax=scheme
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd50b094" class="outline-4">
+<h4 id="orgd50b094"><a href="#orgd50b094">.mailcap</a></h4>
+<div class="outline-text-4" id="text-orgd50b094">
+<p>
+Just redirect everything to <a href="#org3cb2529">jaro</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>text/html; w3m -v -F -T text/html %s; edit=jaro --method=edit; compose=jaro --method=edit; nametemplate=%s.html; copiousoutput
+text/*; jaro '%s'; copiousoutput
+application/*; jaro '%s'
+image/*; jaro '%s'
+audio/*; jaro '%s'
+video/*; jaro '%s'
+message/*; jaro '%s'
+model/*; jaro '%s'
+*/*; jaro '%s'
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6e76d56" class="outline-4">
+<h4 id="org6e76d56"><a href="#org6e76d56">.urlview</a></h4>
+<div class="outline-text-4" id="text-org6e76d56">
+<p>
+Redirect everything to <a href="#org3cb2529">jaro</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>COMMAND jaro
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org0e1210b" class="outline-3">
+<h3 id="org0e1210b"><a href="#org0e1210b">scli</a></h3>
+<div class="outline-text-3" id="text-org0e1210b">
+<p>
+Signal messenger for terminal, see <a href="https://github.com/isamert/scli">scli</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>open-command=jaro %u
+enable-notifications=true
+save-history=true
+use-formatting=true
+wrap-at=75
+contacts-autohide=true
+color=true
+partition-contacts=true
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfe31b4c" class="outline-2">
+<h2 id="orgfe31b4c"><a href="#orgfe31b4c">Media</a></h2>
+<div class="outline-text-2" id="text-orgfe31b4c">
+</div>
+<div id="outline-container-orgc8aa9e3" class="outline-3">
+<h3 id="orgc8aa9e3"><a href="#orgc8aa9e3">mpv</a></h3>
+<div class="outline-text-3" id="text-orgc8aa9e3">
+</div>
+<div id="outline-container-org6f13e5d" class="outline-4">
+<h4 id="org6f13e5d"><a href="#org6f13e5d">Keybindings</a></h4>
+<div class="outline-text-4" id="text-org6f13e5d">
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Key</th>
+<th scope="col" class="org-left">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">p</td>
+<td class="org-left">pause</td>
+</tr>
+
+<tr>
+<td class="org-left">f</td>
+<td class="org-left">fullscreen</td>
+</tr>
+
+<tr>
+<td class="org-left">C+l</td>
+<td class="org-left">show playlist</td>
+</tr>
+
+<tr>
+<td class="org-left">&lt;, &gt;</td>
+<td class="org-left">playlist prev,next</td>
+</tr>
+
+<tr>
+<td class="org-left">A+0-5</td>
+<td class="org-left">change window scale</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">9,0</td>
+<td class="org-left">volume down/up</td>
+</tr>
+
+<tr>
+<td class="org-left">m</td>
+<td class="org-left">mute</td>
+</tr>
+
+<tr>
+<td class="org-left">a</td>
+<td class="org-left">change/switch audio</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">z, Z</td>
+<td class="org-left">subtitle delay -/+</td>
+</tr>
+
+<tr>
+<td class="org-left">+, -</td>
+<td class="org-left">scale subtitle</td>
+</tr>
+
+<tr>
+<td class="org-left">s</td>
+<td class="org-left">change/switch subtitle</td>
+</tr>
+
+<tr>
+<td class="org-left">r, R</td>
+<td class="org-left">change sub-position</td>
+</tr>
+
+<tr>
+<td class="org-left">T, A-t</td>
+<td class="org-left">download subtitle (en/tr)</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">ctrl++</td>
+<td class="org-left">increase audio delay</td>
+</tr>
+
+<tr>
+<td class="org-left">ctrl+-</td>
+<td class="org-left">decrease audio delay</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">[, ]</td>
+<td class="org-left">playback speed scale</td>
+</tr>
+
+<tr>
+<td class="org-left">. ,</td>
+<td class="org-left">one frame forward/backward</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">1-2</td>
+<td class="org-left">contrast</td>
+</tr>
+
+<tr>
+<td class="org-left">3-4</td>
+<td class="org-left">brightness</td>
+</tr>
+
+<tr>
+<td class="org-left">5-6</td>
+<td class="org-left">gamma</td>
+</tr>
+
+<tr>
+<td class="org-left">7-8</td>
+<td class="org-left">saturation</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">i</td>
+<td class="org-left">show video info</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left">show youtube comments</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org0473604" class="outline-4">
+<h4 id="org0473604"><a href="#org0473604">Configuration</a></h4>
+<div class="outline-text-4" id="text-org0473604">
+<div class="org-src-container">
+<pre class="src src-bash"><code>input-ipc-server=/tmp/mpvsocket
+
+# Display Turkish subtitles if available, fall back to English otherwise.
+slang=tr,en
+
+# Play Korean audio if available, fall back to English otherwise.
+# (I watch Korean stuff a lot and they always gets overridden by English audio)
+alang=ko,en,eng
+
+# If the file seems to be valid UTF-8, prefer UTF-8, otherwise use Turkish
+# encoding.
+sub-codepage=cp1254
+
+# Search these directories for subtitles
+sub-file-paths=sub:Sub:subs:Subs:subtitle:Subtitle:subtitles:Subtitles
+
+# Load all subtitles from directories listed above
+sub-auto=all
+
+# 10 from bottom
+sub-pos=90
+
+# Filter subtitle additions for the deaf or hard-of-hearing (SDH)
+sub-filter-sdh=yes
+sub-filter-sdh-harder=yes
+
+# Tile properly
+no-keepaspect-window
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org65d84ce" class="outline-4">
+<h4 id="org65d84ce"><a href="#org65d84ce">Bindings configuration</a></h4>
+<div class="outline-text-4" id="text-org65d84ce">
+<div class="org-src-container">
+<pre class="src src-bash"><code># Copy the filename
+y run "/bin/sh" "-c" "printf ${filename} | xcopy"; show-text "Filename copied: ${filename}"
+&amp; run "/bin/sh" "-c" "jaro --program=browser '${path}'"; show-text "Opening ${path} in browser..."
+
+! add chapter -1 # skip to previous chapter
+@ add chapter 1 # next
+
+# Download subtitle
+T run     "mediastuff" "mpv-subdl" "${path}" "eng" # english subtitle
+Alt+t run "mediastuff" "mpv-subdl" "${path}" "tur" # turkish subtitle
+
+l seek 5
+h seek -5
+j seek -60
+k seek 60
+
+L no-osd seek  1 exact
+H no-osd seek -1 exact
+J no-osd seek  5 exact
+K no-osd seek -5 exact
+
+f cycle fullscreen
+p cycle pause
+m cycle mute
+c cycle-values loop-file "inf" "no"
+
+0 add volume 2
+9 add volume -2
+
+s cycle sub
+a cycle audio  # switch audio streams
+
+# resize subtitle
++ add sub-scale +0.1
+- add sub-scale -0.1
+
+Alt+0 set window-scale 0.25
+Alt+1 set window-scale 0.5
+Alt+2 set window-scale 0.75
+Alt+3 set window-scale 1
+Alt+4 set window-scale 1.5
+Alt+5 set window-scale 2
+
+CTRL+l script-message osc-playlist
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga148b85" class="outline-4">
+<h4 id="orga148b85"><a href="#orga148b85">sponsorblock-minimal-plugin&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></h4>
+<div class="outline-text-4" id="text-orga148b85">
+<p>
+Use <code>b</code> key to disable/enable it. It's on by default.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>mkdir -p ~/.config/mpv/scripts/
+curl https://codeberg.org/jouni/mpv_sponsorblock_minimal/raw/branch/master/sponsorblock_minimal.lua -o ~/.config/mpv/scripts/sponsorblock_minimal.lua
+# By default it only skips "sponsor" category, I want more:
+sed -Ei 's/([ \t]+)categories =.*/\1categories = '"'"'"sponsor","selfpromo","interaction","intro","outro"'"'"'/' ~/.config/mpv/scripts/sponsorblock_minimal.lua
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd1ce4ed" class="outline-4">
+<h4 id="orgd1ce4ed"><a href="#orgd1ce4ed">uosc&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></h4>
+<div class="outline-text-4" id="text-orgd1ce4ed">
+<p>
+UI for mpv. Pretty looking and very functional. Has a menu that is searchable. Also allows you to switch stream quality on YouTube videos etc. Spectacular.
+</p>
+
+<p>
+Installation:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tomasklaen/uosc/HEAD/installers/unix.sh)"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8a1cb20" class="outline-4">
+<h4 id="org8a1cb20"><a href="#org8a1cb20">thumbfast&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></h4>
+<div class="outline-text-4" id="text-org8a1cb20">
+<p>
+Thumbnail plugin. Works with uosc.
+</p>
+
+<p>
+Installation:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"><code>curl https://raw.githubusercontent.com/po5/thumbfast/master/thumbfast.lua -o ~/.config/mpv/scripts/thumbfast.lua
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc259bd8" class="outline-4">
+<h4 id="orgc259bd8"><a href="#orgc259bd8">ytdl-preload&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></h4>
+<div class="outline-text-4" id="text-orgc259bd8">
+<ul class="org-ul">
+<li><a href="https://github.com/bitingsock/ytdl-preload">https://github.com/bitingsock/ytdl-preload</a></li>
+<li>Preload next youtube videos in your playlist.</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh"><code>curl https://raw.githubusercontent.com/bitingsock/ytdl-preload/refs/heads/main/ytdl_preload.lua -o ~/.config/mpv/scripts/ytdl_preload.lua
+</code></pre>
+</div>
+
+<p>
+For first time:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>curl https://github.com/bitingsock/ytdl-preload/blob/main/ytdl_preload.conf -o ~/.config/mpv/script-opts/ytdl_preload.conf
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>#format=bestaudio+bestvideo
+subLangs=en
+ytdl_opt1=--extractor-args youtube:player_client=android,web
+ytdl_opt2=--throttled-rate 1M
+ytdl_opt3=-N 5
+#ytdl_opt4=
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgff77c90" class="outline-4">
+<h4 id="orgff77c90"><a href="#orgff77c90">mpv-mpris&nbsp;&nbsp;&nbsp<span class="tag"><span class="plugin">plugin</span></span></a></h4>
+<div class="outline-text-4" id="text-orgff77c90">
+<p>
+Just install the mpv-mpris package from your distros package manager. This integrates mpv with system media keys and system media player.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org8c3f4d0" class="outline-2">
+<h2 id="org8c3f4d0"><a href="#org8c3f4d0">Editors</a></h2>
+<div class="outline-text-2" id="text-org8c3f4d0">
+</div>
+<div id="outline-container-org622ac10" class="outline-3">
+<h3 id="org622ac10"><a href="#org622ac10">Neovim</a></h3>
+<div class="outline-text-3" id="text-org622ac10">
+<p>
+I had a fat neovim configuration at past but I don't use vim anymore. This is just the minimal configuration I've started maintaining
+</p>
+<div class="org-src-container">
+<pre class="src src-vimrc"><code>" ##################################################
+"                   (_)
+"         __   ___ _ __ ___  _ __ ___
+"         \ \ / / | '_ ` _ \| '__/ __|
+"          \ V /| | | | | | | | | (__
+"         (_)_/ |_|_| |_| |_|_|  \___|
+" ##################################################
+
+
+" visuals {{{
+set background=dark                " rearranges colors for dark background
+set colorcolumn=80                 " 80-col line
+set termguicolors                  " true color support
+set number relativenumber          " line numbers relative to current line ()
+set cursorline                     " highlight current line
+"hi Normal guibg=none ctermbg=none| " transparent background
+" }}}
+
+" tabs and spaces {{{
+set mouse=a               " enable mouse (helps precise resizing etc)
+set tabstop=4             " tab-char width
+set shiftwidth=4          " indent-level width
+set softtabstop=4         " column count inserted by the tab key
+set expandtab             " tabs -&gt; spaces
+set smartindent           " do it smart
+filetype plugin indent on " determine indent by plugins
+" }}}
+
+" better defaults {{{
+" search/completion
+set ignorecase " ignore case while searching
+set smartcase  " abc -&gt; Abc and abc, Abc -&gt; only Abc (works in combination with ^^)
+set splitbelow
+set splitright
+set foldmethod=syntax " (indent, marker: fold between {{{ }}})
+" }}}
+
+" utility {{{
+set showmatch             " visually indicate matching parens
+set autoread              " update buffer if file is edited externally
+set title                 " terminal inherits title
+set clipboard=unnamedplus " use system clipboard
+set inccommand=nosplit    " show effects of a command live
+set spelllang=en_us       " default spelllang
+set signcolumn=yes        " removes flickering caused by lang server
+set undofile              " saves undo history to file (nvim's undodir default is OK)
+set completeopt=menu,menuone,preview,noselect,noinsert
+" }}}
+
+" netrw (file browser) {{{
+" :help netrw-quickmap
+let g:netrw_banner = 0       " remove banner
+let g:netrw_liststyle = 3    " tree style listing
+let g:netrw_browse_split = 4 " ...
+let g:netrw_altv = 1         " spawn it at left split
+let g:netrw_usetab = 1       " use tab for expanding/shrinking folders
+let g:netrw_winsize = 10     " occupies 10% of window
+" }}}
+
+" trailing spaces {{{
+set listchars=tab:▸\ ,trail:·       " Show trailing spaces and tabs
+set list                            " ^^ enable it
+autocmd BufWritePre * :%s/\s\+$//e  " remove trailing spaces on save
+" }}}
+
+" stuff {{{
+nmap &lt;space&gt; &lt;leader&gt;
+inoremap jk &lt;ESC&gt;|         " jk escapes to normal mode
+tnoremap jk &lt;C-\&gt;&lt;C-n&gt;|    " jk escapes to normal mode (in terminal mode)
+tnoremap &lt;Esc&gt; &lt;C-\&gt;&lt;C-n&gt;| " esc escapes to normal mode
+" }}}
+
+" split mappings {{{
+" next sections looks pretty much like my i3 config except Win key is replaced
+" with the Alt key
+" move between buffers with alt+hjkl
+nnoremap &lt;A-h&gt; &lt;C-w&gt;h
+nnoremap &lt;A-j&gt; &lt;C-w&gt;j
+nnoremap &lt;A-k&gt; &lt;C-w&gt;k
+nnoremap &lt;A-l&gt; &lt;C-w&gt;l
+
+" faster resize for buffers
+nnoremap &lt;A-J&gt; &lt;C-w&gt;+
+nnoremap &lt;A-K&gt; &lt;C-w&gt;-
+nnoremap &lt;A-L&gt; &lt;C-w&gt;&gt;
+nnoremap &lt;A-H&gt; &lt;C-w&gt;&lt;
+tnoremap &lt;A-J&gt; &lt;C-\&gt;&lt;C-n&gt;&lt;C-w&gt;+
+tnoremap &lt;A-K&gt; &lt;C-\&gt;&lt;C-n&gt;&lt;C-w&gt;-
+tnoremap &lt;A-L&gt; &lt;C-\&gt;&lt;C-n&gt;&lt;C-w&gt;&gt;
+tnoremap &lt;A-H&gt; &lt;C-\&gt;&lt;C-n&gt;&lt;C-w&gt;&lt;
+
+" faster split creation/deletion
+nnoremap &lt;silent&gt; &lt;A--&gt; :split&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;A-\&gt; :vsplit&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;A-d&gt; :bd&lt;CR&gt;
+
+" change buffers
+nnoremap &lt;silent&gt; &lt;C-l&gt; :bn&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;C-h&gt; :bp&lt;CR&gt;
+" }}}
+
+" tabs {{{
+nnoremap &lt;silent&gt; &lt;A-.&gt; :tabnext&lt;CR&gt;|               " alt-.  -&gt; next tab
+tnoremap &lt;silent&gt; &lt;A-.&gt; &lt;C-\&gt;&lt;C-n&gt;:tabnext&lt;CR&gt;|     " alt-.  -&gt; next tab (terminal mode)
+nnoremap &lt;silent&gt; &lt;A-,&gt; :tabprevious&lt;CR&gt;|           " alt-,  -&gt; prev tab
+tnoremap &lt;silent&gt; &lt;A-,&gt; &lt;C-\&gt;&lt;C-n&gt;:tabprevious&lt;CR&gt;| " alt-,  -&gt; prev tab (terminal mode)
+nnoremap &lt;silent&gt; &lt;A-1&gt; :1 tabn&lt;CR&gt;|                " alt-1  -&gt; goes to tab 1
+nnoremap &lt;silent&gt; &lt;A-2&gt; :2 tabn&lt;CR&gt;|                " ^^
+nnoremap &lt;silent&gt; &lt;A-3&gt; :3 tabn&lt;CR&gt;|                " ^^
+nnoremap &lt;silent&gt; &lt;A-4&gt; :4 tabn&lt;CR&gt;|                " ^^
+nnoremap &lt;silent&gt; &lt;A-5&gt; :5 tabn&lt;CR&gt;|                " ^^
+nnoremap &lt;silent&gt; &lt;C-t&gt; :tabnew&lt;CR&gt;|                " ctrl-t -&gt; new tab
+" }}}
+
+" indention mappings {{{
+vnoremap &lt;Tab&gt; &gt;gv|     " tab indents in visual mode
+vnoremap &lt;S-Tab&gt; &lt;gv|   " s-tab de-indents in visual mode
+inoremap &lt;S-Tab&gt; &lt;C-d&gt;| " s-tab de-indents in insert mode
+" }}}
+
+" move visual lines (j,k works in traditional way) {{{
+onoremap &lt;silent&gt; j gj
+onoremap &lt;silent&gt; k gk
+nnoremap &lt;silent&gt; j gj
+nnoremap &lt;silent&gt; k gk
+vnoremap &lt;silent&gt; j gj
+vnoremap &lt;silent&gt; k gk
+" }}}
+
+" Master Wq bindings {{{
+command! Wq wq
+command! W w
+command! Q q
+nnoremap &lt;silent&gt; &lt;C-s&gt; :w&lt;CR&gt;|             " ctrl-s -&gt; save
+nnoremap &lt;silent&gt; &lt;C-q&gt; :q&lt;CR&gt;|             " ctrl-q -&gt; quit
+tnoremap &lt;silent&gt; &lt;C-q&gt; &lt;C-\&gt;&lt;C-n&gt;:q&lt;CR&gt;|   " ctrl-q -&gt; quit (term)
+" }}}
+
+" Turkish keyboard mappings {{{
+nnoremap Ş :
+nnoremap ı i
+nnoremap ğ [
+nnoremap ü ]
+nnoremap Ğ {
+nnoremap Ü }
+nnoremap ç .
+nnoremap Ö &lt;
+nnoremap Ç &gt;
+vnoremap Ş :
+vnoremap ı i
+vnoremap ğ [
+vnoremap ü ]
+vnoremap Ğ {
+vnoremap Ü }
+vnoremap ç .
+vnoremap Ö &lt;
+vnoremap Ç &gt;
+" }}}
+
+" vi: foldmethod=marker
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeb4450d" class="outline-2">
+<h2 id="orgeb4450d"><a href="#orgeb4450d">Browsers</a></h2>
+<div class="outline-text-2" id="text-orgeb4450d">
+</div>
+<div id="outline-container-org1a568f0" class="outline-3">
+<h3 id="org1a568f0"><a href="#org1a568f0">Firefox</a></h3>
+<div class="outline-text-3" id="text-org1a568f0">
+</div>
+<div id="outline-container-orgb30dcbd" class="outline-4">
+<h4 id="orgb30dcbd"><a href="#orgb30dcbd">userChrome.css</a></h4>
+<div class="outline-text-4" id="text-orgb30dcbd">
+<ul class="org-ul">
+<li>I use <a href="https://github.com/mbnuqw/sidebery">Sidebery</a> so I hide the tab bar and siderbar heading.</li>
+<li>I also decrease the width of "flexible space" so that it becomes something useful.</li>
+<li>about:config → <code>sidebar.revamp =&gt; false</code> to make the following work.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-css"><code>#TabsToolbar {
+    visibility: collapse;
+}
+
+#sidebar-header {
+  visibility: collapse !important;
+}
+
+#nav-bar toolbarspring {
+    min-width: 10px !important;
+    max-width: 20px !important;
+}
+</code></pre>
+</div>
+
+<p>
+Also need to enable following config to make userChrome.css work:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><code>user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org00267af" class="outline-4">
+<h4 id="org00267af"><a href="#org00267af">Other configs</a></h4>
+<div class="outline-text-4" id="text-org00267af">
+<div class="org-src-container">
+<pre class="src src-js"><code>user_pref("browser.toolbars.bookmarks.visibility", "never");
+user_pref("browser.fullscreen.exit_on_escape", false)
+
+// Don't show password suggestions from other subdomains
+user_pref("signon.includeOtherSubdomainsInLookup", false);
+
+// Enable syncing of UI customizations
+user_pref("services.sync.prefs.sync.browser.uiCustomization.state", true);
+
+// Rest is generated by https://ffprofile.com
+user_pref("app.normandy.api_url", "");
+user_pref("app.normandy.enabled", false);
+user_pref("app.shield.optoutstudies.enabled", false);
+user_pref("app.update.auto", false);
+user_pref("beacon.enabled", false);
+user_pref("breakpad.reportURL", "");
+user_pref("browser.aboutConfig.showWarning", false);
+user_pref("browser.crashReports.unsubmittedCheck.autoSubmit", false);
+user_pref("browser.crashReports.unsubmittedCheck.autoSubmit2", false);
+user_pref("browser.crashReports.unsubmittedCheck.enabled", false);
+user_pref("browser.disableResetPrompt", true);
+user_pref("browser.newtab.preload", false);
+user_pref("browser.newtabpage.activity-stream.section.highlights.includePocket", false);
+user_pref("browser.newtabpage.enhanced", false);
+user_pref("browser.newtabpage.introShown", true);
+user_pref("browser.safebrowsing.appRepURL", "");
+user_pref("browser.safebrowsing.blockedURIs.enabled", false);
+user_pref("browser.safebrowsing.downloads.enabled", false);
+user_pref("browser.safebrowsing.downloads.remote.enabled", false);
+user_pref("browser.safebrowsing.downloads.remote.url", "");
+user_pref("browser.safebrowsing.enabled", false);
+user_pref("browser.safebrowsing.malware.enabled", false);
+user_pref("browser.safebrowsing.phishing.enabled", false);
+user_pref("browser.search.suggest.enabled", false);
+user_pref("browser.selfsupport.url", "");
+user_pref("browser.send_pings", false);
+user_pref("browser.sessionstore.privacy_level", 0);
+user_pref("browser.shell.checkDefaultBrowser", false);
+user_pref("browser.startup.homepage_override.mstone", "ignore");
+user_pref("browser.tabs.crashReporting.sendReport", false);
+user_pref("browser.urlbar.groupLabels.enabled", false);
+user_pref("browser.urlbar.quicksuggest.enabled", false);
+user_pref("browser.urlbar.speculativeConnect.enabled", false);
+user_pref("browser.urlbar.trimURLs", false);
+user_pref("datareporting.healthreport.service.enabled", false);
+user_pref("datareporting.healthreport.uploadEnabled", false);
+user_pref("datareporting.policy.dataSubmissionEnabled", false);
+user_pref("device.sensors.ambientLight.enabled", false);
+user_pref("device.sensors.enabled", false);
+user_pref("device.sensors.motion.enabled", false);
+user_pref("device.sensors.orientation.enabled", false);
+user_pref("device.sensors.proximity.enabled", false);
+user_pref("dom.battery.enabled", false);
+// This breaks pasting images
+// user_pref("dom.event.clipboardevents.enabled", false);
+user_pref("experiments.activeExperiment", false);
+user_pref("experiments.enabled", false);
+user_pref("experiments.manifest.uri", "");
+user_pref("experiments.supported", false);
+user_pref("extensions.CanvasBlocker@kkapsner.de.whiteList", "");
+user_pref("extensions.ClearURLs@kevinr.whiteList", "");
+user_pref("extensions.TemporaryContainers@stoically.whiteList", "");
+user_pref("extensions.getAddons.cache.enabled", false);
+user_pref("extensions.getAddons.showPane", false);
+user_pref("extensions.greasemonkey.stats.optedin", false);
+user_pref("extensions.greasemonkey.stats.url", "");
+user_pref("extensions.pocket.enabled", false);
+user_pref("extensions.shield-recipe-client.api_url", "");
+user_pref("extensions.shield-recipe-client.enabled", false);
+user_pref("extensions.webservice.discoverURL", "");
+user_pref("media.autoplay.default", 0);
+user_pref("media.autoplay.enabled", true);
+user_pref("media.eme.enabled", false);
+user_pref("media.gmp-widevinecdm.enabled", false);
+user_pref("media.navigator.enabled", false);
+user_pref("media.video_stats.enabled", false);
+user_pref("network.allow-experiments", false);
+user_pref("network.captive-portal-service.enabled", false);
+user_pref("network.cookie.cookieBehavior", 1);
+user_pref("network.dns.disablePrefetch", true);
+user_pref("network.dns.disablePrefetchFromHTTPS", true);
+user_pref("network.http.referer.spoofSource", true);
+user_pref("network.http.speculative-parallel-limit", 0);
+user_pref("network.predictor.enable-prefetch", false);
+user_pref("network.predictor.enabled", false);
+user_pref("network.prefetch-next", false);
+user_pref("network.trr.mode", 5);
+user_pref("privacy.donottrackheader.enabled", true);
+user_pref("privacy.donottrackheader.value", 1);
+user_pref("privacy.query_stripping", true);
+user_pref("privacy.trackingprotection.cryptomining.enabled", true);
+user_pref("privacy.trackingprotection.enabled", true);
+user_pref("privacy.trackingprotection.fingerprinting.enabled", true);
+user_pref("privacy.trackingprotection.pbmode.enabled", true);
+user_pref("privacy.usercontext.about_newtab_segregation.enabled", true);
+user_pref("security.ssl.disable_session_identifiers", true);
+user_pref("services.sync.prefs.sync.browser.newtabpage.activity-stream.showSponsoredTopSite", false);
+user_pref("signon.autofillForms", false);
+user_pref("toolkit.telemetry.archive.enabled", false);
+user_pref("toolkit.telemetry.bhrPing.enabled", false);
+user_pref("toolkit.telemetry.cachedClientID", "");
+user_pref("toolkit.telemetry.enabled", false);
+user_pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+user_pref("toolkit.telemetry.hybridContent.enabled", false);
+user_pref("toolkit.telemetry.newProfilePing.enabled", false);
+user_pref("toolkit.telemetry.prompted", 2);
+user_pref("toolkit.telemetry.rejected", true);
+user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);
+user_pref("toolkit.telemetry.server", "");
+user_pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+user_pref("toolkit.telemetry.unified", false);
+user_pref("toolkit.telemetry.unifiedIsOptIn", false);
+user_pref("toolkit.telemetry.updatePing.enabled", false);
+user_pref("webgl.renderer-string-override", " ");
+user_pref("webgl.vendor-string-override", " ");
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4531ce1" class="outline-4">
+<h4 id="org4531ce1"><a href="#org4531ce1">Sideberry</a></h4>
+<div class="outline-text-4" id="text-org4531ce1">
+<div class="org-src-container">
+<pre class="src src-js"><code>{
+  "settings": {
+    "nativeScrollbars": true,
+    "nativeScrollbarsThin": true,
+    "nativeScrollbarsLeft": false,
+    "selWinScreenshots": false,
+    "updateSidebarTitle": true,
+    "markWindow": false,
+    "markWindowPreface": "[Sidebery] ",
+    "ctxMenuNative": false,
+    "ctxMenuRenderInact": true,
+    "ctxMenuRenderIcons": true,
+    "ctxMenuIgnoreContainers": "",
+    "navBarLayout": "vertical",
+    "navBarInline": true,
+    "navBarSide": "left",
+    "hideAddBtn": false,
+    "hideSettingsBtn": false,
+    "navBtnCount": true,
+    "hideEmptyPanels": true,
+    "hideDiscardedTabPanels": false,
+    "navActTabsPanelLeftClickAction": "none",
+    "navActBookmarksPanelLeftClickAction": "none",
+    "navTabsPanelMidClickAction": "discard",
+    "navBookmarksPanelMidClickAction": "none",
+    "navSwitchPanelsWheel": true,
+    "subPanelRecentlyClosedBar": true,
+    "subPanelBookmarks": true,
+    "subPanelHistory": false,
+    "groupLayout": "grid",
+    "containersSortByName": false,
+    "skipEmptyPanels": false,
+    "dndTabAct": true,
+    "dndTabActDelay": 750,
+    "dndTabActMod": "none",
+    "dndExp": "pointer",
+    "dndExpDelay": 750,
+    "dndExpMod": "none",
+    "dndOutside": "win",
+    "dndActTabFromLink": true,
+    "dndActSearchTab": true,
+    "dndMoveTabs": false,
+    "dndMoveBookmarks": false,
+    "searchBarMode": "dynamic",
+    "searchPanelSwitch": "any",
+    "searchBookmarksShortcut": "",
+    "searchHistoryShortcut": "",
+    "warnOnMultiTabClose": "collapsed",
+    "activateLastTabOnPanelSwitching": true,
+    "activateLastTabOnPanelSwitchingLoadedOnly": false,
+    "switchPanelAfterSwitchingTab": "always",
+    "tabRmBtn": "hover",
+    "activateAfterClosing": "next",
+    "activateAfterClosingStayInPanel": false,
+    "activateAfterClosingGlobal": false,
+    "activateAfterClosingNoFolded": true,
+    "activateAfterClosingNoDiscarded": false,
+    "askNewBookmarkPlace": true,
+    "tabsRmUndoNote": true,
+    "tabsUnreadMark": false,
+    "tabsUpdateMark": "all",
+    "tabsUpdateMarkFirst": true,
+    "tabsReloadLimit": 5,
+    "tabsReloadLimitNotif": true,
+    "showNewTabBtns": true,
+    "newTabBarPosition": "after_tabs",
+    "tabsPanelSwitchActMove": false,
+    "tabsPanelSwitchActMoveAuto": true,
+    "tabsUrlInTooltip": "full",
+    "newTabCtxReopen": false,
+    "tabWarmupOnHover": true,
+    "tabSwitchDelay": 0,
+    "moveNewTabPin": "start",
+    "moveNewTabParent": "last_child",
+    "moveNewTabParentActPanel": false,
+    "moveNewTab": "end",
+    "moveNewTabActivePin": "start",
+    "pinnedTabsPosition": "panel",
+    "pinnedTabsList": false,
+    "pinnedAutoGroup": false,
+    "pinnedNoUnload": true,
+    "pinnedForcedDiscard": false,
+    "tabsTree": true,
+    "groupOnOpen": true,
+    "tabsTreeLimit": 3,
+    "autoFoldTabs": false,
+    "autoFoldTabsExcept": "none",
+    "autoExpandTabs": false,
+    "autoExpandTabsOnNew": false,
+    "rmChildTabs": "folded",
+    "tabsLvlDots": true,
+    "discardFolded": false,
+    "discardFoldedDelay": 0,
+    "discardFoldedDelayUnit": "sec",
+    "tabsTreeBookmarks": true,
+    "treeRmOutdent": "branch",
+    "autoGroupOnClose": false,
+    "autoGroupOnClose0Lvl": false,
+    "autoGroupOnCloseMouseOnly": false,
+    "ignoreFoldedParent": false,
+    "showNewGroupConf": true,
+    "sortGroupsFirst": true,
+    "colorizeTabs": true,
+    "colorizeTabsSrc": "domain",
+    "colorizeTabsBranches": false,
+    "colorizeTabsBranchesSrc": "url",
+    "inheritCustomColor": true,
+    "previewTabs": true,
+    "previewTabsMode": "p",
+    "previewTabsPageModeFallback": "i",
+    "previewTabsInlineHeight": 100,
+    "previewTabsPopupWidth": 280,
+    "previewTabsSide": "right",
+    "previewTabsDelay": 500,
+    "previewTabsFollowMouse": true,
+    "previewTabsWinOffsetY": 36,
+    "previewTabsWinOffsetX": 6,
+    "previewTabsInPageOffsetY": 0,
+    "previewTabsInPageOffsetX": 0,
+    "previewTabsCropRight": 0,
+    "hideInact": false,
+    "hideFoldedTabs": false,
+    "hideFoldedParent": "none",
+    "nativeHighlight": false,
+    "warnOnMultiBookmarkDelete": "collapsed",
+    "autoCloseBookmarks": false,
+    "autoRemoveOther": false,
+    "highlightOpenBookmarks": false,
+    "activateOpenBookmarkTab": false,
+    "showBookmarkLen": true,
+    "bookmarksRmUndoNote": true,
+    "loadBookmarksOnDemand": true,
+    "pinOpenedBookmarksFolder": true,
+    "oldBookmarksAfterSave": "ask",
+    "loadHistoryOnDemand": true,
+    "fontSize": "s",
+    "animations": true,
+    "animationSpeed": "norm",
+    "theme": "plain",
+    "density": "default",
+    "colorScheme": "ff",
+    "sidebarCSS": false,
+    "groupCSS": false,
+    "snapNotify": true,
+    "snapExcludePrivate": false,
+    "snapInterval": 0,
+    "snapIntervalUnit": "min",
+    "snapLimit": 0,
+    "snapLimitUnit": "snap",
+    "snapAutoExport": false,
+    "snapAutoExportType": "json",
+    "snapAutoExportPath": "Sidebery/snapshot-%Y.%M.%D-%h.%m.%s",
+    "snapMdFullTree": false,
+    "hScrollAction": "switch_panels",
+    "onePanelSwitchPerScroll": false,
+    "wheelAccumulationX": true,
+    "wheelAccumulationY": true,
+    "navSwitchPanelsDelay": 128,
+    "scrollThroughTabs": "panel",
+    "scrollThroughVisibleTabs": true,
+    "scrollThroughTabsSkipDiscarded": false,
+    "scrollThroughTabsExceptOverflow": true,
+    "scrollThroughTabsCyclic": false,
+    "scrollThroughTabsScrollArea": 0,
+    "autoMenuMultiSel": true,
+    "multipleMiddleClose": false,
+    "longClickDelay": 500,
+    "wheelThreshold": false,
+    "wheelThresholdX": 10,
+    "wheelThresholdY": 60,
+    "tabDoubleClick": "none",
+    "tabsSecondClickActPrev": false,
+    "tabsSecondClickActPrevPanelOnly": false,
+    "shiftSelAct": true,
+    "activateOnMouseUp": false,
+    "tabLongLeftClick": "none",
+    "tabLongRightClick": "none",
+    "tabMiddleClick": "close",
+    "tabMiddleClickCtrl": "discard",
+    "tabMiddleClickShift": "duplicate",
+    "tabCloseMiddleClick": "close",
+    "tabsPanelLeftClickAction": "none",
+    "tabsPanelDoubleClickAction": "tab",
+    "tabsPanelRightClickAction": "menu",
+    "tabsPanelMiddleClickAction": "tab",
+    "newTabMiddleClickAction": "new_child",
+    "bookmarksLeftClickAction": "open_in_act",
+    "bookmarksLeftClickActivate": false,
+    "bookmarksLeftClickPos": "default",
+    "bookmarksMidClickAction": "open_in_new",
+    "bookmarksMidClickActivate": false,
+    "bookmarksMidClickRemove": false,
+    "bookmarksMidClickPos": "default",
+    "historyLeftClickAction": "open_in_act",
+    "historyLeftClickActivate": false,
+    "historyLeftClickPos": "default",
+    "historyMidClickAction": "open_in_new",
+    "historyMidClickActivate": false,
+    "historyMidClickPos": "default",
+    "syncName": "",
+    "syncSaveSettings": false,
+    "syncSaveCtxMenu": false,
+    "syncSaveStyles": false,
+    "syncSaveKeybindings": false,
+    "selectActiveTabFirst": true
+  },
+  "sidebar": {
+    "panels": {
+      "nqYWdHQS2bL0": {
+        "type": 2,
+        "id": "nqYWdHQS2bL0",
+        "name": "Tabs",
+        "color": "toolbar",
+        "iconSVG": "icon_tabs",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [
+          "Work",
+          "Personal"
+        ],
+        "srcPanelConfig": null
+      },
+      "zkxIyW_E6AZ0": {
+        "type": 2,
+        "id": "zkxIyW_E6AZ0",
+        "name": "Work",
+        "color": "orange",
+        "iconSVG": "briefcase",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [
+          "Work"
+        ],
+        "srcPanelConfig": null
+      },
+      "dmRm04pnK_B5": {
+        "type": 2,
+        "id": "dmRm04pnK_B5",
+        "name": "Personal",
+        "color": "blue",
+        "iconSVG": "fingerprint",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [],
+        "srcPanelConfig": null
+      },
+      "6pf1fzYMrrkm": {
+        "type": 2,
+        "id": "6pf1fzYMrrkm",
+        "name": "Static",
+        "color": "turquoise",
+        "iconSVG": "icon_clipboard",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [],
+        "srcPanelConfig": null
+      },
+      "KaZEk8lZmkkm": {
+        "type": 2,
+        "id": "KaZEk8lZmkkm",
+        "name": "Stuff",
+        "color": "red",
+        "iconSVG": "icon_code",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [],
+        "srcPanelConfig": null
+      },
+      "9HCG-gD6CUjm": {
+        "type": 2,
+        "id": "9HCG-gD6CUjm",
+        "name": "TODO",
+        "color": "purple",
+        "iconSVG": "icon_flask",
+        "iconIMGSrc": "",
+        "iconIMG": "",
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "noEmpty": false,
+        "newTabCtx": "none",
+        "dropTabCtx": "none",
+        "moveRules": [],
+        "moveExcludedTo": -1,
+        "bookmarksFolderId": -1,
+        "newTabBtns": [],
+        "srcPanelConfig": null
+      },
+      "history": {
+        "type": 4,
+        "id": "history",
+        "name": "History",
+        "color": "toolbar",
+        "iconSVG": "icon_clock",
+        "tempMode": false,
+        "lockedPanel": false,
+        "skipOnSwitching": false,
+        "viewMode": "history"
+      }
+    },
+    "nav": [
+      "nqYWdHQS2bL0",
+      "zkxIyW_E6AZ0",
+      "dmRm04pnK_B5",
+      "6pf1fzYMrrkm",
+      "KaZEk8lZmkkm",
+      "9HCG-gD6CUjm",
+      "sp-0",
+      "history",
+      "remute_audio_tabs",
+      "add_tp",
+      "settings"
+    ]
+  },
+  "ver": "5.2.0",
+  "keybindings": {
+    "_execute_sidebar_action": "F1",
+    "next_panel": "Alt+Period",
+    "prev_panel": "Alt+Comma",
+    "new_tab_on_panel": "MacCtrl+Space",
+    "new_tab_in_group": "MacCtrl+Shift+Space",
+    "rm_tab_on_panel": "Alt+D",
+    "up": "MacCtrl+Alt+K",
+    "down": "MacCtrl+Alt+J",
+    "up_shift": "Alt+Shift+Up",
+    "down_shift": "Alt+Shift+Down",
+    "activate": "Alt+Space",
+    "reset_selection": "Alt+R",
+    "fold_inact_branches": "F3",
+    "move_tabs_up": "Alt+Shift+K",
+    "move_tabs_down": "Alt+Shift+J",
+    "tabs_indent": "Alt+Shift+L",
+    "tabs_outdent": "Alt+Shift+H",
+    "switch_to_panel_0": "Alt+1",
+    "switch_to_panel_1": "Alt+2",
+    "switch_to_panel_2": "Alt+3",
+    "switch_to_panel_3": "Alt+4",
+    "switch_to_panel_4": "Alt+5",
+    "move_tabs_to_panel_0": "Alt+Shift+1",
+    "move_tabs_to_panel_1": "Alt+Shift+2",
+    "move_tabs_to_panel_2": "Alt+Shift+3",
+    "move_tabs_to_panel_3": "Alt+Shift+4",
+    "move_tabs_to_panel_4": "Alt+Shift+5",
+    "search": "F2",
+    "switch_to_next_tab": "Alt+J",
+    "switch_to_prev_tab": "Alt+K"
+  }
+}
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org98dafd4" class="outline-3">
+<h3 id="org98dafd4"><a href="#org98dafd4">uBlock custom filters</a></h3>
+<div class="outline-text-3" id="text-org98dafd4">
+<p>
+I filter distracting content on websites I frequently visit. You need to manually import these to uBlock.
+</p>
+
+<p>
+Enabling uBlock <a href="https://github.com/gorhill/uBlock/wiki/Cloud-storage">cloud storage</a> feature may help.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text"><code>! youtube.com
+www.youtube.com##ytd-watch-next-secondary-results-renderer.ytd-watch-flexy.style-scope &gt; .ytd-watch-next-secondary-results-renderer.style-scope
+www.youtube.com##ytd-rich-section-renderer.ytd-rich-grid-renderer.style-scope
+www.youtube.com###shorts-container
+www.youtube.com##ytd-reel-shelf-renderer.ytd-item-section-renderer.style-scope
+
+! stack-exchange
+##.tex2jax_ignore.module
+##.m0.p0.d-block
+##.overflow-hidden.blr-sm.fc-black-600.pb6.p12.bc-black-075.bb.bl.bt
+##.js-sticky-leftnav.left-sidebar--sticky-container
+##.js-dismissable-hero.ps-relative.fc-black-200.bg-black-750.py24.sm\:d-none
+##.py2.fs-body2.ff-sans.fc-white.bg-black-700.js-announcement-banner
+##.js-footer.site-footer
+stackoverflow.com##.js-footer.site-footer
+
+! https://eksisozluk.com
+eksisozluk.com###partial-index
+eksisozluk.com###aside
+eksisozluk.com###bgright
+eksisozluk.com###rightwrap
+eksisozluk.com##.main-left-frame.robots-nocontent
+||seyler.eksisozluk.com/sozluk/baslik/294386?style=dark$subdocument
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1cca0ba" class="outline-3">
+<h3 id="org1cca0ba"><a href="#org1cca0ba">QuteBrowser</a></h3>
+<div class="outline-text-3" id="text-org1cca0ba">
+<div class="org-src-container">
+<pre class="src src-python"><code># * Notes
+
+# Sb → bookmarks page
+# Sh → history page
+# f C-r → rapid hinting
+
+# * Configs
+
+# ** Adblock &amp; content
+
+c.content.blocking.adblock.lists = ['https://easylist.to/easylist/easylist.txt', 'https://easylist.to/easylist/easyprivacy.txt']
+c.content.blocking.method = 'both'
+c.content.blocking.enabled = True
+c.content.pdfjs = True
+
+# ** Appearance &amp; fonts
+
+c.fonts.default_family = ['Cascadia Code NF']
+c.fonts.default_size = '16pt'
+c.fonts.hints = 'normal 16pt Helvetica'
+c.window.hide_decoration = True
+c.window.title_format = "qutebrowser"
+
+# ** Tabs
+
+c.tabs.padding = {"bottom": 7, "left": 5, "right": 5, "top": 7}
+c.tabs.position = 'right'
+c.tabs.show = 'switching'
+c.tabs.show_switching_delay = 1000
+
+# ** Hints
+
+c.hints.chars = 'asdfghjklqweuio'
+c.hints.uppercase = True
+
+# ** Input &amp; mouse
+
+c.input.insert_mode.auto_load = True
+c.input.mouse.rocker_gestures = True
+
+# ** Status bar &amp; completion
+
+c.statusbar.position = 'bottom'
+c.statusbar.show = 'always'
+c.completion.shrink = False
+c.completion.height = '30%'
+c.completion.use_best_match = True
+
+# ** URLs, search engines, editor
+
+c.url.default_page = 'https://start.duckduckgo.com/'
+c.url.yank_ignored_parameters = ['ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+c.url.searchengines = {
+    'DEFAULT': 'https://kagi.com/search?q={}',
+    'k': 'https://kagi.com/search?q={}',
+    'g': 'https://google.com/search?q={}',
+    'd': 'https://duckduckgo.com/?q={}',
+    'yt': 'https://www.youtube.com/results?search_query={}',
+    'r': 'https://reddit.com/r/{}',
+    'a': 'https://web.archive.org/web/{}',
+    'nix': 'https://search.nixos.org/packages?channel=unstable&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query={}',
+}
+c.editor.command = ['/opt/homebrew/bin/emacsclient', '-c', '{}']
+
+# * Bindings
+
+# ** Navigation &amp; scrolling
+
+config.bind('j', 'scroll-px 0 200')
+config.bind('k', 'scroll-px 0 -200')
+config.bind('J', 'tab-next')
+config.bind('K', 'tab-prev')
+config.bind('&lt;Alt-J&gt;', 'tab-move +')
+config.bind('&lt;Alt-K&gt;', 'tab-move -')
+
+# ** Tab management
+
+config.bind('b', 'cmd-set-text -sr :tab-focus')
+config.bind('B', 'cmd-set-text -s :quickmark-load -t')
+config.bind('t', 'cmd-set-text -s :open -t')
+config.bind('T', 'cmd-set-text :open -t -r {url:pretty}')
+config.bind('O', 'cmd-set-text :open {url:pretty}')
+config.bind('x', 'tab-close')
+config.bind('d', 'scroll-page 0 0.5')
+
+# ** Hints
+
+config.bind('yf', 'hint links yank')
+config.bind(';i', 'hint images tab')
+config.bind(';I', 'hint images yank')
+config.bind(',M', 'hint links spawn mpv {hint-url}')
+
+# ** Media &amp; external
+
+config.bind(',m', 'spawn mpv {url}')
+
+# ** Command mode &amp; misc
+
+config.bind('&lt;F1&gt;', 'config-cycle tabs.show always switching')
+config.bind('&lt;Alt-x&gt;', 'cmd-set-text :')
+
+# ** Insert mode overrides
+
+config.bind('&lt;Ctrl+g&gt;', 'fake-key &lt;Escape&gt;', mode='insert')
+config.unbind('&lt;Ctrl-E&gt;', mode='insert')
+config.bind('&lt;Alt-A&gt;', 'edit-text', mode='insert')
+config.bind('&lt;Alt-E&gt;', 'edit-text', mode='insert')
+
+# ** User scripts
+
+config.bind('P', 'spawn --userscript org-pass')
+
+# ** Aliases
+
+c.aliases = {
+    'w': 'session-save',
+    'q': 'close',
+    'qa': 'quit',
+    'wq': 'quit --save',
+    'wqa': 'quit --save',
+    'tbp-get-cookie': "jseval ...",
+    'tbp-set-cookie': "jseval ...",
+}
+
+# ** Whitelist
+
+c.content.blocking.whitelist = ['https://*.trendyol.com']
+
+# * Load
+
+config.load_autoconfig(False)
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6cf32dd" class="outline-3">
+<h3 id="org6cf32dd"><a href="#org6cf32dd">chawan</a></h3>
+<div class="outline-text-3" id="text-org6cf32dd">
+<p>
+cha is kind of w3m on steroids.
+</p>
+
+<p>
+I tried to use it within Emacs with <code>vterm</code> and <code>eat</code> but neither was able to show a good performance. I use it inside a separate term, which is fine. It integrates well with system, you can copy/paste stuff pretty easily and it has all vim keys.
+</p>
+
+<p>
+I still use Emacs eww most of the time for text-heavy browsing but <code>cha</code> is something between eww and a <i>real browser</i>, where you can see the layout of a website more clearly. It's is better suited for <i>surfing</i>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-toml"><code>[start]
+visual-home = "https://lite.duckduckgo.com/"
+
+[buffer]
+images = true
+autofocus = true
+cookie = "save"
+# scripting = true # Enable per site
+
+[search]
+wrap = false
+
+[external]
+history-file = "~/.local/share/chawan/history.uri"
+«when-on(darwin="copy-cmd = 'pbcopy'")»
+
+[display]
+color-mode = "true-color"
+
+[omnirule.kagi]
+match = '^kagi:'
+substitute-url = '(x) =&gt; "https://kagi.com/html/search?q=" + encodeURIComponent(x.split(":").slice(1).join(":"))'
+
+[page]
+'H' = "cmd.pager.prevBuffer"
+'L' = "cmd.pager.nextBuffer"
+
+# 'o' = "cmd.pager.webSearch"
+'o' = '() =&gt; pager.load("kagi:")'
+'O' = "cmd.pager.load"
+
+'yy' = "cmd.pager.copyURL"
+
+# 'M-y' = cmd.pager.copyURL
+# 'yu' = cmd.pager.copyCursorLink
+
+[[siteconf]]
+url = 'https://isamert\.net/.*'
+scripting = true
+
+[[siteconf]]
+url = 'https://kagi\.com/.*'
+scripting = true
+
+[[siteconf]]
+url = 'https://github\.com/.*'
+scripting = true
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdcc28af" class="outline-2">
+<h2 id="orgdcc28af"><a href="#orgdcc28af">Some desktop files</a></h2>
+<div class="outline-text-2" id="text-orgdcc28af">
+</div>
+<div id="outline-container-org01907c2" class="outline-3">
+<h3 id="org01907c2"><a href="#org01907c2">.local/share/applications/jaro.desktop</a></h3>
+<div class="outline-text-3" id="text-org01907c2">
+<div class="org-src-container">
+<pre class="src src-conf"><code>[Desktop Entry]
+Name=jaro
+GenericName=Resource opener
+Terminal=false
+Exec=jaro %F
+Type=Application
+Categories=Utility;
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdfb65e2" class="outline-2">
+<h2 id="orgdfb65e2"><a href="#orgdfb65e2">Scripts</a></h2>
+<div class="outline-text-2" id="text-orgdfb65e2">
+<p>
+This part is almost completely untouched. Needs some revamp.
+</p>
+</div>
+<div id="outline-container-org86dba16" class="outline-3">
+<h3 id="org86dba16"><a href="#org86dba16">Bash Library</a></h3>
+<div class="outline-text-3" id="text-org86dba16">
+</div>
+<div id="outline-container-orgc59b084" class="outline-4">
+<h4 id="orgc59b084"><a href="#orgc59b084">Convert command line arguments to variables automatically</a></h4>
+<div class="outline-text-4" id="text-orgc59b084">
+<p>
+Run <code>PARAM=VALUE</code> for every parameter passed as <code>--param=value</code>. Dashes are converted into underscores before doing the assignment. As an example, if your script is called like <code>./script --param1=value --param-2=value2</code> then you'll have <code>PARAM1</code> variable set to <code>value</code> and <code>PARAM_2</code> variable set to <code>VALUE2</code> inside your script.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash" id="org1a6fac3"><code>while [[ $# -gt 0 ]]; do
+    case $1 in
+        --*)
+            TMP_ARG=${1#--}
+            TMP_ARG=${TMP_ARG%=*}
+            TMP_ARG=${TMP_ARG//-/_}
+            TMP_VAL=${1#*=}
+            declare "${TMP_ARG^^}"="$TMP_VAL"
+            ;;
+    esac
+    shift
+done
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org187e934" class="outline-3">
+<h3 id="org187e934"><a href="#org187e934">shortenurl</a></h3>
+<div class="outline-text-3" id="text-org187e934">
+<p>
+Shorten given url. To make this work:
+</p>
+<ul class="org-ul">
+<li>I simply created a firebase application.</li>
+<li>Added my domain to it (from "Build → Hosting" menu). I used a subdomain, like "urlshortener.mydomain.com". You'll see the why in a minute.</li>
+<li>Installed firebase cli application
+<ul class="org-ul">
+<li><code>yarn global add "firebase-tools"</code></li>
+</ul></li>
+<li>Configured my project with firebase-tools.
+<ul class="org-ul">
+<li><code>firebase login</code></li>
+<li><code>firebase projects:list</code> → Just to check if it works or not</li>
+<li><code>firebase init</code> → Select "Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploy".</li>
+<li><p>
+Here is the firebase.json that I use which rewrites all requests to your domain with the ones provided by "Dynamic Links" application. So it's wise use a subdomain for this application as I outlined above.
+</p>
+<div class="org-src-container">
+<pre class="src src-js"><code>{
+  "hosting": {
+    // Following two lines are the important ones
+    "appAssociation": "AUTO",
+    "rewrites": [ { "source": "/**", "dynamicLinks": true } ],
+
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
+
+</code></pre>
+</div></li>
+</ul></li>
+<li>Then you <b>may</b> need to open "Engage → Dynamic Links" page and click to "Get Started". Select your domain from the list and finish it.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>#!/bin/bash
+
+set -eo pipefail
+
+case "$1" in
+    -h|--help)
+        echo "Usage:"
+        echo "  $(basename "$0") URL"
+        echo "  some-command-that-outputs-a-long-url | $(basename "$0")"
+        exit
+        ;;
+esac
+
+URL=$(echo "${1:-$(&lt;/dev/stdin)}" | xargs)
+
+curl \
+    --silent \
+    -H 'Content-Type: application/json' \
+    -d '{"dynamicLinkInfo":{"domainUriPrefix":"'$FIREBASE_URL_SHORTENER_PREFIX'","link":"'$URL'",},"suffix":{"option":"SHORT"}}' \
+    "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=$FIREBASE_WEB_API_KEY" \
+    | jq -r '.shortLink' | tee &gt;(xcopy)
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org86835d0" class="outline-3">
+<h3 id="org86835d0"><a href="#org86835d0">uploadfile</a></h3>
+<div class="outline-text-3" id="text-org86835d0">
+<p>
+Uploads given file to a predetermined folder in your <code>box.com</code> account and returns you a public download link for the file.
+</p>
+
+<p>
+Need to install <code>boxcli</code> for this to work.
+</p>
+<ul class="org-ul">
+<li>You need to create an application on box.com first.
+<ul class="org-ul">
+<li>Go figure out in the <a href="https://app.box.com/developers/console">developer console</a>.</li>
+<li>Select <code>User Authentication (OAuth 2.0)</code> for your application. It works well with box cli.</li>
+<li>Go to your application page, go to "Configuration" and select "Write all files and folders stored in Box" to give write permissions.</li>
+</ul></li>
+<li><code>yarn global add "@box/cli"</code></li>
+<li><code>box login</code></li>
+</ul>
+
+<p>
+The variable <code>BOX_UPLOAD_DIR</code> is defined in <code>~/.extrarc</code> (I don't upload this file as it contains personal information). This variable simply holds the <b>id</b> of a folder you've created in <code>box.com</code>. You can list all folders in your root by issuing this command: <code>box folders:items 0</code>. Then copy the folder id that you want your files to be uploaded and set this variable. I use this script for being able to quickly share files with people, I don't do complex uploads with it, so all files under one folder suffices my needs.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+set -eo pipefail
+FILE=$1
+FILE_ID=$(box files:upload --id-only "$FILE" --parent-id "$BOX_UPLOAD_DIR")
+box shared-links:create --json "$FILE_ID" file | jq -j '.url' | tee &gt;(xcopy)
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga35f59c" class="outline-3">
+<h3 id="orga35f59c"><a href="#orga35f59c">mediastuff</a></h3>
+<div class="outline-text-3" id="text-orga35f59c">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+# This whole script is based on the fact that I'm not that retard to
+# listen/watch more than one audio/video streams at the same time.
+# If I do, I'll get punished for that sin.
+
+MPV_SOCKET=/tmp/mpvsocket
+
+mpv_pause() {
+    echo '{ "command": ["set_property", "pause", true] }' | socat - "$MPV_SOCKET"
+}
+
+mpv_toggle() {
+    echo '{"command": ["cycle", "pause"]}' | socat - "$MPV_SOCKET"
+}
+
+mpv_seek() {
+    if [[ $1 == *% ]]; then # seek $1 percent
+        echo 'percent'
+        echo '{"command": ["seek", "'"${1%\%}"'",  "relative-percent"]}' | socat - "$MPV_SOCKET"
+    else # seek $1 seconds
+        echo '{"command": ["seek", "'"$1"'"]}' | socat - "$MPV_SOCKET"
+    fi
+}
+
+# TODO: somehow pause videos/audios playing in firefox/qutebrowser
+all_pause() {
+    mpv_pause
+    mpc pause
+}
+
+all_toggle() {
+    # Give priority to mpv
+    if pgrep mpv; then
+        mpv_toggle
+    else
+        mpc toggle
+    fi
+}
+
+all_seek() {
+    if pgrep mpv; then
+        mpv_seek "$@"
+    else
+        mpc seek "$@"
+    fi
+}
+
+get_sink_name_from_sink_id() {
+    local ids="${1:-$(&lt;/dev/stdin)}"
+    echo "$ids" | while read -r id; do
+        echo "($id) $(pactl list sinks | grep -E "(Sink #$id)|(device.description)" | grep -A1 "Sink #$id" | sed -n "2p" | cut -d'"' -f2)"
+    done
+}
+
+switch_audio_channel() {
+    if [[ $1 = "--help" ]]; then
+        echo "Changes default sink to next one and moves all inputs to new default sink."
+        echo "Try to use it when something is already playing."
+    fi
+
+    readarray -t sinks &lt;&lt;&lt; "$(pactl list sinks short | cut -f1)"
+    readarray -t inputs &lt;&lt;&lt; "$(pactl list sink-inputs short | cut -f1)"
+    current_sink=$(pactl list sinks short | grep "RUNNING" | head -c 1)
+
+    if [[ -z $current_sink ]]; then
+        notify-send "Error while switching audio channels" "Could not detect default sink. Playing something may help."
+        exit 1
+    fi
+
+    if [[ $1 = --interactive ]]; then
+        new_sink=$(printf "%s\n" "${sinks[@]}" | get_sink_name_from_sink_id | rofi -dmenu | grep -Po "\(\K[0-9]*")
+    else
+        new_sink=${sinks[0]}
+        for sink in "${sinks[@]}"; do
+            if (( sink &gt; current_sink )); then
+                new_sink="$sink"
+                break
+            fi
+        done
+    fi
+
+    [[ -z $new_sink ]] &amp;&amp; exit;
+
+    notify-send "Switching audio channel" "New default channel is $(get_sink_name_from_sink_id $new_sink), moving all inputs to that."
+
+    # Move every input to new sink
+    for input in "${inputs[@]}"; do
+        pacmd move-sink-input "$input" "$new_sink"
+    done
+
+    # Make new sink the default
+    pactl set-default-sink "$new_sink"
+}
+
+# Get the movie name from file/folder name and find the imdb-id
+find_imdb_id_from_filename() {
+    MOVIE_NAME=$(echo "$@" | sed -r 's/((\w{1,}[-. ]?)*?)(\(?[0-9]{4}\)?[. -]).*/\1\3/; s/[.()-]/ /g; s/  / /g')
+    curl 'https://searx.prvcy.eu/search' \
+         --data-urlencode "q=$MOVIE_NAME" \
+         --data-urlencode 'language=en-US' \
+         --data-urlencode 'format=csv' \
+         --silent \
+        | grep -oP 'imdb.com/title/\K\w+' -m 1
+}
+
+mpv_subdl() {
+    MPV_SOCKET=/tmp/mpvsocket
+    file_path=$1
+    language=$2
+    sub_file_path="${file_path%.*}.srt"
+
+    # First try if there is a zip/rar file that has been downloaded in last 5 mins
+    # if so try to extract it
+    SUB_FILE=$(find ~/Downloads -cmin -5 | grep -E '(rar|zip)')
+    if [[ -n $SUB_FILE ]]; then
+        if sub-extract --no-confirm --auto "$SUB_FILE"; then
+            echo 'show-text "Subtitle EXTRACTED from ~/Downloads."' | socat - $MPV_SOCKET
+            echo "sub-add \"$sub_file_path\"" | socat - $MPV_SOCKET
+            exit
+        else
+            echo 'show-text "Failed to extract, trying to download."' | socat - $MPV_SOCKET
+            sleep 2
+        fi
+    fi
+
+    # Now try `subdl`
+    echo 'show-text "Downloading subtitle with subdl..."' | socat - $MPV_SOCKET
+    if subdl --lang="$language" "$file_path"; then
+        echo 'show-text "Subtitle downloaded."' | socat - $MPV_SOCKET
+        echo "sub-add \"$sub_file_path\"" | socat - $MPV_SOCKET
+    else
+        IMDB_ID=$(find_imdb_id_from_filename "$file_path")
+        echo "show-text \"Failed! Trying for $IMDB_ID.\"" | socat - $MPV_SOCKET
+        if subdl --lang="$language" --imdb-id="$IMDB_ID" --force-imdb --download=best-rating "$file_path"; then
+            echo 'show-text "Alternative method worked!"' | socat - $MPV_SOCKET
+            echo "sub-add \"$sub_file_path\"" | socat - $MPV_SOCKET
+            exit
+        fi
+    fi
+
+    # Try `subliminal`
+    echo 'show-text "Downloading subtitle with subliminal..."' | socat - $MPV_SOCKET
+    SUBLIMINAL_OUTPUT=$(subliminal download -l "$language")
+    if [[ -n $(echo $SUBLIMINAL_OUTPUT | sed -nr '/Downloaded [1-9] subtitle/p') ]]; then
+        # Load all srt files into mpv, subliminal does not output the srt name
+        for srt in ./*.srt; do
+            echo "sub-add \"$srt\"" | socat - $MPV_SOCKET
+        done
+
+        echo 'show-text "Subtitle downloaded with subliminal."' | socat - $MPV_SOCKET
+        exit
+    fi
+
+}
+
+
+opt=$1; shift
+case "$opt" in
+    *help) echo "mediastuff [mpv-(subdl|toggle|pause|seek)|all-(toggle|pause|seek)|switch-audio-channel|connect-bt-headphones|find-imdb]" ;;
+    mpv*toggle)              mpv_toggle                 "$@" ;;
+    mpv*pause)               mpv_pause                  "$@" ;;
+    mpv*seek)                mpv_seek                   "$@" ;;
+    all*toggle)              all_toggle                 "$@" ;;
+    all*pause)               all_pause                  "$@" ;;
+    all*seek)                all_seek                   "$@" ;;
+    switch*audio*channel)    switch_audio_channel       "$@" ;;
+    connect*bt*headphones)   connect_bt_headphones      "$@" ;;
+    mpv*subdl)               mpv_subdl                  "$@" ;;
+    find*imdb)               find_imdb_id_from_filename "$@" ;;
+esac
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org16638c1" class="outline-3">
+<h3 id="org16638c1"><a href="#org16638c1">menu</a></h3>
+<div class="outline-text-3" id="text-org16638c1">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+function trim {
+    local var="${*:-$(&lt;/dev/stdin)}"
+    var="${var#"${var%%[![:space:]]*}"}"
+    var="${var%"${var##*[![:space:]]}"}"
+    echo -n "$var"
+}
+
+function dmenu {
+    rofi -dmenu -fuzzy -i "$@"
+}
+
+function files {
+    f=$( ( git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" ls-files; fd . --no-ignore-vcs --color=never --max-depth=5 ) | dmenu)
+
+    if [[ "$1" == "--open" ]] &amp;&amp; [[ -n "$f" ]]; then
+        jaro "$f"
+    else
+        echo "$f"
+    fi
+}
+
+function folders {
+    f=$(fd . "$HOME" --no-ignore-vcs --color=never --type=d --max-depth=5 | dmenu)
+
+    if [[ "$1" == "--open" ]] &amp;&amp; [[ -n "$f" ]]; then
+        jaro "$f"
+    else
+        echo "$f"
+    fi
+}
+
+function file_contents {
+    term --float -e /bin/sh -c "fuzzy file-contents Documents \$(git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" ls-files --full-name)"
+}
+
+function bookmarks {
+    grep -E '^*' ~/Documents/notes/bookmarks.org | grep '\[\[' | sed -E 's/\[\[(.*)\]\[(.*)\]\]/\2  &lt;span foreground="grey" size="small"&gt;\1&lt;\/span&gt;/; s/\**//' | dmenu -i -markup-rows | grep -Eo 'https?://[^ ]+' | sed 's/&lt;\/span&gt;//' | jaro
+}
+
+
+cmd="$1"
+shift
+case $cmd in
+    *help) echo "menu [files|folders|file-contents|passwords]";;
+    files) files "$@";;
+    folders) folders "$@";;
+    file*contents) file_contents "$@";;
+    bookmarks) bookmarks "$@";;
+    calc*) rofi -show calc -modi calc -no-show-match -no-sort ;;
+    *) rofi -show combi "$@" ;;
+esac
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeae4cd1" class="outline-3">
+<h3 id="orgeae4cd1"><a href="#orgeae4cd1">sub-extract</a></h3>
+<div class="outline-text-3" id="text-orgeae4cd1">
+<div class="org-src-container">
+<pre class="src src-python"><code>#!/bin/python
+
+import os
+import sys
+
+def extract_auto():
+    """ Automatically find the movie and extract SUB_ARCHIVE with proper name """
+    movies = get_movies()
+    movies_normalized = list(enumerate(map(normalize, movies)))
+    movie_index, _ = max(movies_normalized, key=lambda tup: matches(tup[1]))
+    movie_full_path = movies[movie_index]
+
+    extract(movie_full_path)
+
+def extract_interactive():
+    import subprocess
+    selected_movie = subprocess \
+            .run(['/bin/sh', '-c', 'echo -n "' + '\n'.join(get_movies()) + '" | fzf --header="Subtitle name: '+ SUB_ARCHIVE +'" --preview=""'], stdout=subprocess.PIPE) \
+        .stdout.decode('utf-8') \
+        .strip()
+
+    if selected_movie != "":
+        extract(selected_movie)
+
+def extract(movie_full_path):
+    """ Extract sub file from SUB_ARCHIVE """
+    srt_full_path = mk_srt_path(movie_full_path)
+    srt_archive_ext = os.path.splitext(SUB_ARCHIVE)[1]
+
+    print("Given sub file: " + SUB_ARCHIVE)
+    print("Movie: " + movie_full_path)
+    print("Sub  : " + srt_full_path)
+
+    yn = 'y' if NOCONFIRM else input("y/n? ")
+    if yn != 'y':
+        exit(1)
+
+    if srt_archive_ext == ".zip":
+        import zipfile
+        with zipfile.ZipFile(SUB_ARCHIVE) as z:
+            # Just take the first srt file
+            srt_file = list(filter(lambda f: ".srt" in f, [file_info.filename for file_info in z.filelist]))[0]
+            with open(srt_full_path, 'wb') as f:
+                f.write(z.read(srt_file))
+    elif srt_archive_ext == ".rar":
+        import rarfile
+        with rarfile.RarFile(SUB_ARCHIVE) as z:
+            # Just take the first srt file
+            srt_file = list(filter(lambda f: ".srt" in f, z.namelist()))[0]
+            with open(srt_full_path, 'wb') as f:
+                f.write(z.read(srt_file))
+    else:
+        print("wut? (for now)")
+
+    print("Done.")
+
+# #############################################################################
+# Utility functions
+# #############################################################################
+def get_movies():
+    movie_exts = [".mkv", ".mp4", ".avi"]
+    movies = []
+    for movie_dir in MOVIE_DIRS:
+        for root, _, fs in os.walk(movie_dir):
+            for f in fs:
+                name, ext = os.path.splitext(os.path.basename(f))
+                # Skip non-movie files and sample files
+                # (and hope the movie name does not contain "sample")
+                if ext in movie_exts and not "sample" in name.lower():
+                    movies.append(os.path.join(root, f))
+    return movies
+
+def mk_srt_path(movie_full_path):
+    """ Replace movie extension with .srt """
+    return os.path.splitext(movie_full_path)[0] + ".srt"
+
+def normalize(s):
+    # 1080p, 720p etc makes matching harder because sometimes the downloaded
+    # subtitle has different resolution spec
+    return s.lower() \
+            .replace("-", " ") \
+            .replace(".", " ") \
+            .replace("_", " ") \
+            .replace("1080p", "") \
+            .replace("720p", "") \
+            .replace("bdrip", "") \
+            .replace("blueray", "") \
+            .replace("x264", "")
+
+def matches(text):
+    return sum(word in text for word in SUB_NAME)
+
+# #############################################################################
+# Here we go
+# #############################################################################
+
+SUB_ARCHIVE = sys.argv[-1]
+SUB_NAME = normalize(SUB_ARCHIVE).split()
+MOVIE_DIRS = [os.path.expanduser("~/Videos")]
+NOCONFIRM = "--no-confirm" in sys.argv
+
+if "--movie_dirs" in sys.argv:
+    arg_index = sys.argv.index("--movie_dirs")
+    MOVIE_DIRS = sys.argv[arg_index + 1].split(",")
+    MOVIE_DIRS = [os.path.expanduser(x.strip()) for x in MOVIE_DIRS]
+    for mdir in MOVIE_DIRS:
+        if not os.path.exists(mdir):
+            print("Movie directory does not exist: " + mdir)
+            exit(1)
+
+if "--help" in sys.argv:
+    print("sub-extract [--(interactive|auto)] [--noconfirm] [--help] archive-file")
+    print("This program extracts a subtitle file from an archive file into the selected movie folder.")
+    print("")
+    print("\t--auto")
+    print("\t\tAutomatically matches the sub file with the movie using some heuristics. (Default)")
+    print("\t--interactive")
+    print("\t\tOpen fzf to find matching movie file.")
+    print("\t--no-confirm")
+    print("\t\tDo not ask for user consent and automatically copy the sub file.")
+    print("\t--movie-dirs")
+    print("\t\tA comma separated list of movie directories that you want to be searched. (Default: ~/Videos)")
+    print("\t\tExample: sub-extract --movie-dirs ~/Movies,~/Shows")
+elif os.path.exists(SUB_ARCHIVE):
+    if "--auto" in sys.argv and "--interactive" not in sys.argv:
+        extract_auto()
+    elif "--interactive" in sys.argv and "--auto" not in sys.argv:
+        extract_interactive()
+else:
+    print("File not found: " + SUB_ARCHIVE)
+    print("Archive path should be the last argument.")
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7409855" class="outline-3">
+<h3 id="org7409855"><a href="#org7409855">term</a></h3>
+<div class="outline-text-3" id="text-org7409855">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+# When using st, it expects window class properties while urxvt expects
+# window name properties for enabling floating windows. So
+# Rule for urxvt:
+# bspc rule --add '*:float'   state=floating
+# Rule for st:
+# bspc rule --add 'float'     state=floating
+
+# st, urxvt, urxvtc, alacritty
+RUNNER='alacritty'
+FLOAT=''
+OPAQUE=''
+GEOMETRY=''
+TITLE=''
+OPTS=()
+
+for arg; do
+    case "$arg" in
+        "--term="*) RUNNER=${arg#*=}; shift ;;
+        "--title="*) TITLE=${arg#*=}; shift ;;
+        "--geometry="*) GEOMETRY=${arg#*=}; shift ;;
+        "--float") FLOAT='1'; shift ;;
+        "--opaque") OPAQUE='1'; shift ;;
+        "--tophalf") TOPHALF='1'; shift ;;
+    esac
+done
+
+if [[ $RUNNER == 'urxvtc' ]]; then
+    if ! pgrep urxvtd; then
+        urxvtd &amp; disown
+        sleep 0.5
+    fi
+fi
+
+if [[ -n "$FLOAT" ]]; then
+    case "$RUNNER" in
+        "st")        OPTS+=(-c float) ;;
+        "urxvt"*)    OPTS+=(-name float) ;;
+        "alacritty") OPTS+=(--class float) ;;
+    esac
+fi
+
+if [[ -n "$TOPHALF" ]]; then
+    case "$RUNNER" in
+        "st")        OPTS+=(-c tophalf) ;;
+        "urxvt"*)    OPTS+=(-name tophalf) ;;
+        "alacritty") OPTS+=(--class tophalf) ;;
+    esac
+fi
+
+if [[ -n "$TITLE" ]]; then
+    case "$RUNNER" in
+        "st")        OPTS+=(-t "$TITLE") ;;
+        "urxvt"*)    OPTS+=(-name "$TITLE") ;;
+        "alacritty") OPTS+=(--title "$TITLE") ;;
+    esac
+fi
+
+if [[ -n "$OPAQUE" ]]; then
+    case "$RUNNER" in
+        "st")        OPTS+=(-A 1) ;;
+        "urxvt"*)    OPTS+=(-bg "$(xrdb-get-value '*background')") ;;
+        "alacritty") OPTS+=(--option background_opacity=1) ;;
+    esac
+fi
+
+if [[ -n "$GEOMETRY" ]]; then
+    case "$RUNNER" in
+        "st"|"urxvt"*) OPTS+=(-g "$GEOMETRY") ;;
+        "alacritty")
+            echo "Not supported"
+            # TODO: Use bspwm rules for geometry
+            ;;
+    esac
+fi
+echo "${OPTS[@]}"
+$RUNNER "${OPTS[@]}" "$@"
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org433bec5" class="outline-3">
+<h3 id="org433bec5"><a href="#org433bec5">togif</a></h3>
+<div class="outline-text-3" id="text-org433bec5">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+in_file="$1"
+out_file="$2"
+height_px=512
+start_sec=00
+end_sec=59
+color_count=256
+framerate=15
+
+for i in "$@"; do
+case $i in
+    -i=*|--input=*)  in_file="${i#*=}"; shift ;;
+    -o=*|--output=*) out_file="${i#*=}"; shift ;;
+    -h=*|--height=*) height_px="${i#*=}"; shift ;;
+    -s=*|--start=*)  start_sec="${i#*=}"; shift ;;
+    -e=*|--end=*)    end_sec="${i#*=}"; shift ;;
+    -c=*|--color=*)  color_count="${i#*=}"; shift ;;
+    -r=*|--framerate=*)  framerate="${i#*=}"; shift ;;
+esac
+done
+
+if [ $1 = "help" ] || [ $1 = "--help" ] || [ $1 = "-h" ] || [ $1 = "" ]; then
+    echo -e "togif in_file out_file [OPTION...]\n"
+    echo -e "OPTIONS"
+    echo -e "\t-i FILE, --input=FILE\n"
+    echo -e "\t-o FILE, --output=FILE\n"
+    echo -e "\t-h HEIGHT, --height=HEIGHT"
+    echo -e "\t\tWidth will be scaled according to given HEIGHT. Default: 512\n"
+    echo -e "\t-s SEC, --start=SEC"
+    echo -e "\t\tStarts the video from given SEC. Default: 00\n"
+    echo -e "\t-e SEC, --end=SEC"
+    echo -e "\t\tEnds the video at the given SEC. Default: 59\n"
+    echo -e "\t-c COUNT, --color=COUNT"
+    echo -e "\t\tReduce the color palette to COUNT colors. (If it's lower already, does nothing.) (Only works for gif outputs) Default: 256\n"
+    echo -e "\t-r COUNT, --framerate=COUNT"
+    echo -e "\t\tReduce videos framerate to COUNT. Default: 15"
+else
+
+    echo "=== CONVERTING ==="
+    ffmpeg \
+      -i "$in_file" \
+      -r $framerate \
+      -vf scale=$height_px:-1 \
+      -ss 00:00:$start_sec -to 00:00:$end_sec \
+      "$out_file"
+    convert_result=$?
+    echo "=== DONE ==="
+
+    # Optimize if it's a gif
+    if [[ $convert_result == 0 ]] &amp;&amp; [[ "$out_file" == *.gif ]]; then
+        echo ""
+        echo "=== OPTIMIZING ==="
+        gifsicle -i "$out_file" --optimize=3 --colors $color_count -o "${out_file}_optimized"
+        rm "$out_file"
+        mv "${out_file}_optimized" "$out_file"
+        echo "=== DONE ==="
+    fi
+
+fi
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4e33de3" class="outline-3">
+<h3 id="org4e33de3"><a href="#org4e33de3">ts<sub>onfinish</sub></a></h3>
+<div class="outline-text-3" id="text-org4e33de3">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+# When a job that is called with tsp finishes, this script is called.
+# Need to set $TS_ONFINISH variable to path of this script. (See ~/.profile)
+
+job_id="$1"
+err="$2"
+out_file="$3"
+cmd="$4"
+
+remaining_job_count=$(($(tsp | tail -n +2 | grep -cvE '^[0-9]+ +finished') - 1))
+
+if [[ "$err" = 0 ]]; then
+    icon=terminal
+    title="finished"
+    duration=5
+else
+    icon=error
+    title="failed"
+    duration=10
+
+    # Put cmd into clipboard
+    echo "$cmd" | xclip -selection clipboard
+fi
+
+notify-send \
+    -i "$icon" \
+    -t $((duration*1000))\
+    "[TSP] job $title (remaining: $remaining_job_count)" \
+    "$cmd"
+
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org47b8482" class="outline-3">
+<h3 id="org47b8482"><a href="#org47b8482">xcopy</a></h3>
+<div class="outline-text-3" id="text-org47b8482">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/sh
+
+file="$1"
+input="$*"
+
+if which xclip &amp;&gt;/dev/null; then
+    CLIP_CMD="xclip -selection clipboard"
+elif which pbcopy &amp;&gt;/dev/null; then
+    CLIP_CMD="pbcopy"
+else
+    echo "Install xclip."
+    exit 1
+fi
+
+if [[ -f "$file" ]]; then
+    if [[ CLIP_CMD = "pbcopy" ]]; then
+        echo "Not supported by pbcopy."
+        exit 1
+    fi
+
+    xclip -selection clipboard -t "$(file -b --mime-type "$file")" -i "$file"
+elif [[ -z "$input" ]]; then
+    $CLIP_CMD &lt;&amp;0
+else
+    printf "$input" | "$CLIP_CMD"
+fi
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1237599" class="outline-3">
+<h3 id="org1237599"><a href="#org1237599">media-downloader</a></h3>
+<div class="outline-text-3" id="text-org1237599">
+<p>
+Downloads given file in given folder with given name. Useful for adding keybindings in browsers etc.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+«bash-initialize-variables»
+
+URL=${URL-$(zenity --entry --text="Enter url to download:")}
+FILE_NAME=${FILE_NAME-$(zenity --entry --text="Enter file name (without extension).")}
+SAVE_PATH=${SAVE_PATH-$(zenity --entry --text="Where to save?" --entry-text="${HOME}/")}
+
+cd "${SAVE_PATH}" || exit
+
+if [[ -n "$FILE_NAME" ]]; then
+    youtube-dl --no-mtime --output "$FILE_NAME.%(ext)s" "$URL"
+else
+    youtube-dl --no-mtime "$URL"
+fi
+
+echo -n "$(pwd)/$(/bin/ls -tr | tail -n 1)" | xcopy
+notify-send "Download finished!" "File path copied to your clipboard."
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1be1f46" class="outline-3">
+<h3 id="org1be1f46"><a href="#org1be1f46">find-duplicate-images</a></h3>
+<div class="outline-text-3" id="text-org1be1f46">
+<div class="org-src-container">
+<pre class="src src-sh"><code>#!/bin/bash
+
+# Source: https://askubuntu.com/questions/1308613/how-to-remove-slightly-modified-duplicate-images
+
+if [[ $1 = "--help" ]] || [[ $1 = "-h" ]]; then
+    echo "Find duplicate images in current directory. Images are compared WITHOUT the metadata."
+    echo "It lists duplicate files. You need to delete them manually."
+    echo
+    echo "USAGE:"
+    echo "  find-duplicate-images"
+    exit
+fi
+
+echo "Scanning images... This may take some time..."
+
+find -type f -a '(' \
+        -iname '*.jpg' -o \
+        -iname '*.png' -o \
+        -iname '*.jpeg' -o \
+        -iname '*.mov' -o \
+        -iname '*.mpg' -o \
+        -iname '*.mpeg' -o \
+        -iname '*.avi' \
+    ')' -print0 |perl -n0e '
+    my $f = $_;
+    chomp($f);
+    (my $fe = $f) =~ s|\x27|\x27\\\x27\x27|g;
+    my $md5;
+    if($f =~ m|\.[aA][vV][iI]$| or $f =~ m|\.[mM][pP][gG]$|) {
+      $md5 = `cat \x27$fe\x27 |md5sum`;
+    } else {
+      $md5 = `exiftool \x27$fe\x27 -all= -o - |md5sum`;
+    }
+    chomp($md5); $md5 =~ s| +-\n||;
+    print("$md5 $f\n");
+' | sort | uniq --check-chars=32 --all-repeated
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org38ede18" class="outline-3">
+<h3 id="org38ede18"><a href="#org38ede18">mgm</a></h3>
+<div class="outline-text-3" id="text-org38ede18">
+<div class="org-src-container">
+<pre class="src src-ruby"><code>#!/usr/bin/env ruby
+
+require 'net/http'
+require 'uri'
+require 'json'
+
+CONDITIONS = {
+  "A"     =&gt; "Açık",
+  "AB"    =&gt; "Az Bulutlu",
+  "PB"    =&gt; "Parçalı Bulutlu",
+  "CB"    =&gt; "Çok Bulutlu",
+  "HY"    =&gt; "Hafif Yağmurlu",
+  "Y"     =&gt; "Yağmurlu",
+  "KY"    =&gt; "Kuvvetli Yağmurlu",
+  "KKY"   =&gt; "Karla Karışık Yağmurlu",
+  "HKY"   =&gt; "Hafif Kar Yağışlı",
+  "K"     =&gt; "Kar Yağışlı",
+  "YKY"   =&gt; "Yoğun Kar Yağışlı",
+  "HSY"   =&gt; "Hafif Sağanak Yağışlı",
+  "SY"    =&gt; "Sağanak Yağışlı",
+  "KSY"   =&gt; "Kuvvetli Sağanak Yağışlı",
+  "MSY"   =&gt; "Mevzi Sağanak Yağışlı",
+  "DY"    =&gt; "Dolu",
+  "GSY"   =&gt; "Gökgürültülü Sağanak Yağışlı",
+  "KGY"   =&gt; "Kuvvetli Gökgürültülü Sağanak Yağışlı",
+  "SIS"   =&gt; "Sisli",
+  "PUS"   =&gt; "Puslu",
+  "DMN"   =&gt; "Dumanlı",
+  "KF"    =&gt; "Kum veya Toz Taşınımı",
+  "R"     =&gt; "Rüzgarlı",
+  "GKR"   =&gt; "Güneyli Kuvvetli Rüzgar",
+  "KKR"   =&gt; "Kuzeyli Kuvvetli Rüzgar",
+  "SCK"   =&gt; "Sıcak",
+  "SGK"   =&gt; "Soğuk",
+  "HHY"   =&gt; "Yağışlı"
+}
+
+def fetch_data(url, params)
+  uri = URI(url)
+  uri.query = URI.encode_www_form(params)
+
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Get.new(uri.request_uri)
+  request['Origin'] = 'https://mgm.gov.tr'
+  request['Host'] = 'mgm.gov.tr'
+  request['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
+
+  http.request(request)
+  response = http.request(request)
+  return JSON.parse(response.body)
+end
+
+if ARGV.empty?
+  puts "Usage: mgm SEHIR"
+  exit 1
+end
+
+merkez = fetch_data('https://servis.mgm.gov.tr/web/merkezler', { il: ARGV.first })[0]
+durum = fetch_data("https://servis.mgm.gov.tr/web/sondurumlar", { merkezid: merkez["merkezId"] })[0]
+puts &lt;&lt;-HERE
+Hadise           :: #{CONDITIONS[durum["hadiseKodu"]]}
+Sicaklik         :: #{durum["sicaklik"]} °C
+Nem              :: #{durum["nem"]}%
+Yagmur olasiligi :: #{durum["yagis00Now"]}%
+HERE
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org04b4631" class="outline-3">
+<h3 id="org04b4631"><a href="#org04b4631">git-file-history-grep</a></h3>
+<div class="outline-text-3" id="text-org04b4631">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/bin/bash
+
+# TODO: Create an emacs wrapper which fuzzy searches through these
+# results and opens the file on that revision using
+# (vc-revision-other-window REV)
+
+case "$1" in
+    -h|--help)
+        echo "Search STRING in all revisions of given FILE."
+        echo
+        echo "Usage:"
+        echo "git-file-hist-grep STRING FILE"
+        ;;
+    *)
+        SEARCH_STRING=$1
+        FILE_NAME=$2
+        git rev-list --all "$FILE_NAME" | while read REVISION; do
+            git --no-pager grep -F "$SEARCH_STRING" "$REVISION" "$FILE_NAME"
+        done
+        ;;
+esac
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org312d614" class="outline-3">
+<h3 id="org312d614"><a href="#org312d614">fissh</a></h3>
+<div class="outline-text-3" id="text-org312d614">
+<p>
+Source: <a href="https://unix.stackexchange.com/questions/476107/how-to-use-fish-on-remote-servers-that-have-it-installed-without-changing-login">ssh - How to use fish on remote servers that have it installed without changing login shell? - Unix &amp; Linux Stack Exchange</a>
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>#!/bin/sh
+ssh "$@" -t "sh -c 'if which fish &gt;/dev/null ; then exec fish -li; else exec \$SHELL -li; fi'"
+</code></pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-fish"><code>complete -c fissh -w ssh
+</code></pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd5d9849" class="outline-3">
+<h3 id="orgd5d9849"><a href="#orgd5d9849">set-timezone</a></h3>
+<div class="outline-text-3" id="text-orgd5d9849">
+<div class="org-src-container">
+<pre class="src src-bash"><code>#!/usr/bin/env bash
+
+set -euo pipefail
+
+TIMEZONE=$(curl -s --fail ipinfo.io | jq -r '.timezone // empty')
+
+if [[ -z "$TIMEZONE" ]]; then
+    echo "Error: Could not determine timezone" &gt;&amp;2
+    exit 1
+fi
+
+sudo timedatectl set-timezone "$TIMEZONE"
+echo "Timezone set to: $TIMEZONE"
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd0e02c1" class="outline-2">
+<h2 id="orgd0e02c1"><a href="#orgd0e02c1">Tools</a></h2>
+<div class="outline-text-2" id="text-orgd0e02c1">
+<dl class="org-dl">
+<dt><code>dconf-editor</code></dt><dd>List and explore gnome/gshell/app settings.</dd>
+<dt><code>d-feet</code></dt><dd>List and explore running dbus instances.</dd>
+<dt><code>peek</code></dt><dd>Screen recorder (records gifs etc.)</dd>
+<dt><code>tokei</code></dt><dd>CLOC (count lines of code)</dd>
+<dt><code>subdl</code></dt><dd>dowload subtitles from opensubtitles.org</dd>
+<dt><code>socat</code></dt><dd>needed for communicating with mpv trough unix sockets</dd>
+<dt><code>entr</code></dt><dd>Listen/subscribe to file changes. (linux)</dd>
+<dt><code>fswatch</code></dt><dd>Listen/subscribe to file changes. (cross-platform)
+<ul class="org-ul">
+<li>fswatch -o src/main | xargs -n1 ./mvnw compile
+<ul class="org-ul">
+<li><code>-o</code> one per batch</li>
+</ul></li>
+</ul></dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org703fa8e" class="outline-2">
+<h2 id="org703fa8e"><a href="#org703fa8e">Work stuff</a></h2>
+<div class="outline-text-2" id="text-org703fa8e">
+</div>
+<div id="outline-container-org16c446a" class="outline-3">
+<h3 id="org16c446a"><a href="#org16c446a">Barrier</a></h3>
+<div class="outline-text-3" id="text-org16c446a">
+<p>
+To be able to access my personal computer while I'm on my work computer (or vice-versa) without needing to physically switch keyboards, I use barrier.
+See <a href="https://github.com/symless/synergy-core/wiki/Text-Config">here</a> for detailed configuration documentation.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>section: screens
+  trendyol:
+  x220:
+end
+
+section: aliases
+end
+
+section: links
+  trendyol:
+    right = x220
+  x220:
+    left = trendyol
+end
+
+section: options
+  screenSaverSync = true
+  clipboardSharing = true
+  keystroke(alt+BracketL) = switchToScreen(trendyol)
+  keystroke(alt+BracketR) = switchToScreen(x220)
+end
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orge951df8" class="outline-2">
+<h2 id="orge951df8"><a href="#orge951df8">Postamble</a></h2>
+<div class="outline-text-2" id="text-orge951df8">
+<ul class="org-ul">
+<li>The following thing automatically loads the code necessary when this file is opened.</li>
+<li>This basically makes use of <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables">file local variables</a>.</li>
+<li>It also changes <code>org-babel-noweb-wrap-{start,end}</code> variables so that when noweb references are used inside sh/bash blocks, it does not mess up the code highlighting. You need to use <code>«ref»</code> instead of <code>&lt;&lt;ref&gt;&gt;</code> to include noweb references inside code blocks.</li>
+</ul>
+</div>
+</div>
+
+  </article>
+  </main>
+  <footer>copyright &copy; 2026, isamert. <a href="https://github.com/isamert/isamert.github.io">source</a>.</footer>
+</body>
+</html>

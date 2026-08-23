@@ -3104,6 +3104,167 @@ void init();
   <script src="/assets/watchlist.js" defer></script>
 #+end_export
 
+* dotfiles :page:dotfiles:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-08-23 Sun 02:28]  +0100
+:EXPORT_AS: dotfiles
+:OPTIONS: toc:nil title:nil
+:CUSTOM_ID: dotfiles
+:TEMPLATE: content-template
+:END:
+You can find [[https://github.com/isamert/dotfiles][all of my dotfiles]] here in this repository. I also publish them here on my website.[fn:: The reason for that is people can find these webpages better than random GitHub repository files, search engines prioritize webpages over code files in GitHub.]
+
+Here you can find [[./system.org.html][my whole system configuration]], expect my Emacs configuration. It's just an org file and files get tangled to their destinations. I don't use an org file to document what I am doing, instead I am using it like /[[https://www.gnu.org/software/stow/][GNU Stow]] with occasional comments/.
+
+Here is my [[./.emacs.d/init.el.html][init.el]] file. It's huge, around 12k-13k lines. There is a lot of dead code too, probably. Also some outdated commentary.[fn:: Now that I am publishing these files on my website, I have a reason to fix them. Hopefully soon, one at a time...]
+
+Lately I am trying to move the parts into smaller packages to reduce the line count of the ~init.el~ itself. I publish some of them as [[https://github.com/isamert?tab=repositories&q=&type=&language=emacs+lisp&sort=stargazers][separate packages]] and some just stays in my dotfiles repository. You can find these packages also in here:
+
+/TODO: packages will be listed here in the future, for now see the/ [[https://github.com/isamert/dotfiles/tree/master/.emacs.d/packages][dotfiles repository]].
+
+I used the following code to export these ~.el~ files into HTML:[fn:: There are similar packages that does a very similar thing ([[https://github.com/tumashu/el2org][el2org]], [[https://github.com/zevlg/ellit-org.el#commenting-el-files][ellit-org]]) but I found them after writing this piece of code and they are somewhat different in a sense that they convert whole document to org and then export into HTML. This code directly converts code parts into HTML and commentary parts are converted to org file and then HTML. Makes things much faster.]
+
+#+begin_src elisp :eval yes
+(defun isamert/el2html (el-file)
+  (with-current-buffer (find-file-noselect (expand-file-name el-file))
+    (let* ((forms (isamert/elisp-top-level-forms))
+           (len (length forms))
+           (curr 0))
+      (with-temp-buffer
+        (while (< curr len)
+          (let* ((current (nth curr forms))
+                 (current-type (plist-get current :type))
+                 (currents (list current))
+                 (next (1+ curr)))
+            (while (and (< next len)
+                        (eq current-type
+                            (plist-get (nth next forms) :type))
+                        (or (eq current-type 'comment)
+                            (not (string-match-p "\n[ \t\r]*\n" (plist-get (nth next forms) :before)))))
+              (push (nth next forms) currents)
+              (setq next (1+ next)))
+            (setq currents (nreverse currents)
+                  curr next)
+            (let ((current-texts
+                   (if (eq current-type 'comment)
+                       (mapconcat (lambda (it) (plist-get it :text))
+                                  currents
+                                  "")
+                     (mapconcat (lambda (it) (plist-get it :text))
+                                currents
+                                "\n"))))
+              (pcase current-type
+                ('form
+                 (insert
+                  ;; same as how org exports src containers
+                  "<div class=\"org-src-container\"><pre class=\"src src-elisp elisp\">\n"
+                  (org-html-encode-plain-text current-texts)
+                  "\n</pre></div>"))
+                ('comment
+                 (let* ((text current-texts)
+                        (lines (s-lines text)))
+                   (insert
+                    (with-temp-buffer
+                      (let ((section-depth 0))
+                        (dolist (line lines)
+                          (if (s-blank? line)
+                              (insert "\n")
+                            (insert
+                             (-let (((_ depth heading rest)
+                                     (s-match
+                                      ";;\\(;+\\)?\\( \\*+\\)? \\(.*\\)"
+                                      line)))
+                               (cond
+                                (depth
+                                 (setq section-depth (length depth))
+                                 (format "%s %s\n:PROPERTIES:\n:CUSTOM_ID: %s\n:END:"
+                                         (s-repeat section-depth "*")
+                                         rest
+                                         ;; There will be some clashes but better than having random ids
+                                         (isamert/blog-url-case rest)))
+                                (heading
+                                 (format "%s%s %s\n:PROPERTIES:\n:CUSTOM_ID: %s\n:END:"
+                                         (s-repeat section-depth "*")
+                                         (s-trim heading)
+                                         rest
+                                         (isamert/blog-url-case rest)))
+                                ((not rest) "")
+                                (t rest)))
+                             "\n"))))
+                      (delay-mode-hooks
+                        (org-mode)
+                        (let ((org-export-with-broken-links t)
+                              (org-export-use-babel nil)
+                              (org-export-with-toc nil)
+                              (org-export-with-section-numbers nil))
+                          (org-export-as 'html nil nil 'body)))))))))))
+        (buffer-substring-no-properties (point-min) (point-max))))))
+
+(defun isamert/elisp-top-level-forms ()
+  (save-excursion
+    (goto-char (point-min))
+    (let ((read-eval nil)
+          forms)
+      (condition-case nil
+          (while t
+            (let ((ws-beg (point)))
+              (skip-chars-forward " \t\r\n")
+              (let ((before (buffer-substring-no-properties ws-beg (point))))
+                (if (looking-at-p ";")
+                    (let ((beg ws-beg))
+                      (forward-comment (point-max))
+                      (push (list :type 'comment
+                                  :begin beg
+                                  :end (point)
+                                  :text (buffer-substring-no-properties
+                                         beg (point)))
+                            forms))
+                  (let ((beg (point))
+                        (form (read (current-buffer)))
+                        (end (point)))
+                    (push (list :type 'form
+                                :begin beg
+                                :end end
+                                :before before
+                                :form form
+                                :text (buffer-substring-no-properties beg end))
+                          forms))))))
+        (end-of-file
+         (nreverse forms))))))
+#+end_src
+
+* .emacs.d/init.el :page:dotfiles:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-08-23 Sun 01:26] +0100
+:CUSTOM_ID: emacs-d
+:EXPORT_AS: .emacs.d/init.el
+:OPTIONS: toc:nil title:nil
+:TEMPLATE: content-template
+:END:
+#+begin_comment
+Currently, my init.el (and other files) are exported whenever I export this page. There is no automatic update and only works on my computer.
+#+end_comment
+
+#+begin_src emacs-lisp :eval yes :exports results :results value html
+(isamert/el2html "~/.emacs.d/init.el")
+#+end_src
+
+*
+* system.org :page:dotfiles:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-08-23 Sun 01:26] +0100
+:EXPORT_AS: system.org
+:OPTIONS: toc:nil title:nil
+:CUSTOM_ID: system-org
+:TEMPLATE: content-template
+:END:
+
+#+begin_comment
+Because this file is directly included, my custom id assigning flow is not working.
+#+end_comment
+
+#+INCLUDE: "~/Workspace/projects/personal/dotfiles/index.org" :minlevel 2
+
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:
 :PUBLISH_DATE: [2016-07-13 Wed 00:00] +0300
@@ -6793,7 +6954,7 @@ You can also go to [[https://ipleak.net/][ipleak.net]] and use /Torrent Address 
 This was a deeper rabbit hole than I expected for just "turning on a VPN". However, now that the initial configuration is done, the system is rock solid. It has been running flawlessly for weeks, automatically handling port refreshes and IP changes in the background. Since everything is managed via Systemd, I get all the standard reliability guarantees like automatic restarts, plus my custom enhancements—like crash notifications to my phone—via drop-ins.
 * Publish Code :noexport:
 #+NAME: startup
-#+begin_src elisp
+#+begin_src elisp :lexical t
 ;;; isamert/blog --- My blog generating code -*- lexical-binding: t; -*-
 
 ;;; Code
@@ -7337,6 +7498,7 @@ They can be overridden in header properties."
        (isamert/blog-with-publish-dir (format "%s/%s.html" isamert/blog-tags-dir it))
        (isamert/template "tag-template"
                          :title (format "'%s' posts" it)
+                         :title? t
                          :tag-name it
                          :language (if (equal it "turkish") "tr" "en")
                          :posts (gethash it taggeds))))))

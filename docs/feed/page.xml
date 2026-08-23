@@ -29,5 +29,23 @@
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0200</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>dotfiles</title>
+      <link>https://isamert.net/dotfiles.html</link>
+      <pubDate>Sun, 23 Aug 2026 02:28:00  +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>.emacs.d/init.el</title>
+      <link>https://isamert.net/.emacs.d/init.el.html</link>
+      <pubDate>Sun, 23 Aug 2026 01:26:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+    <item>
+      <title>system.org</title>
+      <link>https://isamert.net/system.org.html</link>
+      <pubDate>Sun, 23 Aug 2026 01:26:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

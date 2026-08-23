@@ -21,6 +21,21 @@
       <changefreq>monthly</changefreq>
    </url>
    <url>
+      <loc>https://isamert.net/dotfiles.html</loc>
+      <lastmod>2026-08-23</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://isamert.net/.emacs.d/init.el.html</loc>
+      <lastmod>2026-08-23</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://isamert.net/system.org.html</loc>
+      <lastmod>2026-08-23</lastmod>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
       <loc>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</loc>
       <lastmod>2016-07-13</lastmod>
       <changefreq>monthly</changefreq>

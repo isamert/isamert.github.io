@@ -1,3 +1,13 @@
+// Umami is a privacy friendly analytics app. I self-host it so the
+// data is not in the hands of greater evils.
+if (location.port != 3000) {
+  let script = document.createElement('script');
+  script.src = 'https://u.isamert.net/u.js';
+  script.setAttribute("defer", "true");
+  script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+  document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks()
 })

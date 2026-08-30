@@ -157,6 +157,16 @@ Just setting the port and binding it into an org-variable. I'll utilize this lat
 This is the file that contains all the dynamic logic for my website. I'm trying to keep it minimal as possible.
 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
+// Umami is a privacy friendly analytics app. I self-host it so the
+// data is not in the hands of greater evils.
+if (location.port != <<blog-local-port()>>) {
+  let script = document.createElement('script');
+  script.src = 'https://u.isamert.net/u.js';
+  script.setAttribute("defer", "true");
+  script.setAttribute("data-website-id", "049cb414-45e0-4b83-a82c-2d19fd8827ce");
+  document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks()
 })

@@ -168,7 +168,8 @@ if (location.port != <<blog-local-port()>>) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  highlightCodeBlocks()
+  highlightCodeBlocks();
+  registerRefHandlers();
 })
 
 function highlightCodeBlocks(_event) {
@@ -196,6 +197,30 @@ function highlightCodeBlocks(_event) {
       block.classList.add(pageLang)
     }
     hljs.highlightBlock(block)
+  })
+}
+
+function registerRefHandlers() {
+  document.querySelectorAll('.fn-ref').forEach(ref => {
+    const noteId = ref.getAttribute("aria-describedby")
+    const sidenote = document.querySelector(`#note-${noteId}`);
+    ref.addEventListener('mouseenter', event => {
+      sidenote.classList.add("highlighted");
+    });
+    ref.addEventListener('mouseleave', event => {
+      sidenote.classList.remove("highlighted");
+    });
+  });
+
+  document.querySelectorAll('.sidenote').forEach(sidenote => {
+    const noteId = sidenote.getAttribute("id").split("-")[1];
+    const ref = document.querySelector(`sup[aria-describedby='${noteId}']`)
+    sidenote.addEventListener('mouseenter', event => {
+      ref.classList.add("highlighted");
+    });
+    sidenote.addEventListener('mouseleave', event => {
+      ref.classList.remove("highlighted");
+    });
   })
 }
 #+end_src
@@ -284,6 +309,7 @@ Serving fonts through here. I guess a bit more traffic but better than pinging G
 :root {
   /* Colors */
   --bg: #080808;
+  --highlight-bg: rgb(255 184 102 / 0.16);
   --rule: #3e2e24;
   --accent: #ee975f;
   --accent-rgb: 238 151 95;
@@ -877,15 +903,20 @@ article p {
 }
 
 .fn-ref {
-  margin-left: 0.08em;
+  margin-left: 0.1em;
+  padding: 0.3em;
+  cursor: pointer;
   color: var(--accent);
-  font: 500 0.67em var(--mono);
+  font: 500 0.6em var(--mono);
   vertical-align: super;
   text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.3);
 }
 
+.fn-ref.highlighted {
+  background: var(--highlight-bg) !important;
+}
+
 .sidenote {
-  display: block;
   margin: 0.7rem 0 1rem;
   padding-left: 1rem;
   color: var(--muted);
@@ -897,6 +928,10 @@ article p {
   margin-right: 0.4em;
   color: var(--accent);
   font: 0.85em var(--mono);
+}
+
+.sidenote.highlighted {
+  background: var(--highlight-bg) !important;
 }
 
 article h2 {
@@ -960,9 +995,9 @@ article img {
 
 @media (min-width: 1180px) {
   .sidenote {
-    width: 12.5rem;
+    width: 13rem;
     margin-block: 0.25rem 0.8rem;
-    padding: 0;
+    padding: 0.3rem;
   }
 
   .sidenote.right {

@@ -9,7 +9,8 @@ if (location.port != 3000) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  highlightCodeBlocks()
+  highlightCodeBlocks();
+  registerRefHandlers();
 })
 
 function highlightCodeBlocks(_event) {
@@ -37,5 +38,29 @@ function highlightCodeBlocks(_event) {
       block.classList.add(pageLang)
     }
     hljs.highlightBlock(block)
+  })
+}
+
+function registerRefHandlers() {
+  document.querySelectorAll('.fn-ref').forEach(ref => {
+    const noteId = ref.getAttribute("aria-describedby")
+    const sidenote = document.querySelector(`#note-${noteId}`);
+    ref.addEventListener('mouseenter', event => {
+      sidenote.classList.add("highlighted");
+    });
+    ref.addEventListener('mouseleave', event => {
+      sidenote.classList.remove("highlighted");
+    });
+  });
+
+  document.querySelectorAll('.sidenote').forEach(sidenote => {
+    const noteId = sidenote.getAttribute("id").split("-")[1];
+    const ref = document.querySelector(`sup[aria-describedby='${noteId}']`)
+    sidenote.addEventListener('mouseenter', event => {
+      ref.classList.add("highlighted");
+    });
+    sidenote.addEventListener('mouseleave', event => {
+      ref.classList.remove("highlighted");
+    });
   })
 }

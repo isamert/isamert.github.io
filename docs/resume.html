@@ -1,543 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Isa Mert Gurbuz</title>
-
-    <!-- https://github.com/cognitom/paper-css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
-    <style>@page { size: A4 }</style>
-
-    <!-- Custom styles for this document -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-     @import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;700&display=swap');
-     @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
-     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-     @import url('https://fonts.googleapis.com/css2?family=Acme&display=swap');
-     @import url('https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap');
-
-     body {
-       font-size: 0.9em;
-       /* font-family: 'Saira Condensed', sans-serif; */
-       /* font-family: 'Roboto', sans-serif; */
-       font-family: 'IBM Plex Sans Condensed', sans-serif;
-     }
-
-     .group h1 {
-       font-size: 1.7em;
-       border-bottom: 1.7px solid #d0cde8;
-       letter-spacing: 0.04em;
-       padding-left: 0.4em;
-       border-left: 3.5px solid #7c6bb5;
-       color: #2e2a40;
-     }
-
-     .group-instance h2 {
-       font-size: 1.1em;
-       line-height: 0%;
-       margin-top: 1.2em;
-       margin-bottom: 1em;
-     }
-
-     .group-instance .header {
-       position: relative;
-     }
-
-     .duration {
-       font-family: 'Yanone Kaffeesatz', sans-serif;
-       display: inline;
-       text-align: right;
-       position: absolute;
-       line-height: 0%;
-       right: 0;
-       top: 0;
-     }
-
-     .quick-info {
-       text-align: center;
-       margin: 1rem 0;
-       background: linear-gradient(to right, transparent, rgba(124, 107, 181, 0.07), transparent);
-       border-top: 1px solid #e0ddf0;
-       border-bottom: 1px solid #e0ddf0;
-       padding: 0.45rem 0;
-     }
-
-     .info-item + .info-item::before {
-       content: '·';
-       color: #b0a8d0;
-       padding-right: 0.15rem;
-       font-size: 1.1em;
-       vertical-align: middle;
-     }
-
-     .quick-info i {
-       font-size: 1.3rem;
-       vertical-align: middle;
-     }
-
-     .quick-info a {
-       vertical-align: middle;
-       font-family: 'Signika', sans-serif;
-       /* font-family: 'Patua One', cursive; */
-       text-decoration: none;
-     }
-
-     .info-item {
-       padding-right: 0.15rem;
-       display: inline;
-       font-size: 0.85em;
-     }
-
-     .quick-info i {
-       font-size: 1.1rem;
-     }
-     .projects li a {
-       font-family: 'Acme', sans-serif;
-       text-decoration: none;
-       /* text-transform: uppercase; */
-     }
-
-     h1, h2 {
-       margin: 0;
-       font-family: 'Roboto Slab', serif;
-     }
-
-     .sheet > h1 {
-       text-align: center;
-       font-size: 2.3em;
-       letter-spacing: 0.08em;
-       color: #2e2a40;
-     }
-
-     projects ul {
-       margin: 0;
-     }
-
-     ul {
-       padding-left: 1.7em;
-       list-style: none;
-     }
-
-     ul li::before {
-       content: '▪';
-       color: #7c6bb5;
-       font-size: 0.65em;
-       vertical-align: middle;
-       margin-right: 0.4em;
-       margin-left: -1.2em;
-     }
-
-     h2 > a {
-       text-decoration: none;
-     }
-
-     b {
-       background-color: rgba(124, 107, 181, 0.08);
-       border-radius: 2px;
-       padding: 0 0.18em;
-     }
-
-     a {
-       color: #4a3f8f;
-     }
-
-     .duration {
-       color: #7c6bb5;
-       font-weight: bold;
-     }
-
-     .role-progression {
-       margin-top: 0.6em;
-       padding-left: 1.7em;
-       border-left: 2px solid #e0ddf0;
-     }
-
-     .role-progression .header {
-       margin-bottom: 0.3em;
-     }
-
-     .role-progression .role-title {
-       font-size: 0.85em;
-       color: #555;
-     }
-
-     .role-progression .duration {
-       font-size: 0.85em;
-       color: #aaa;
-     }
-
-     .tagline {
-       text-align: center;
-       font-family: 'IBM Plex Sans Condensed', sans-serif;
-       font-style: italic;
-       font-size: 0.88em;
-       color: #6a5fa8;
-       margin: 0.3em auto 0.1em;
-       max-width: 80%;
-       line-height: 1.5;
-       letter-spacing: 0.01em;
-     }
-
-     .skills strong {
-       font-family: 'Acme', sans-serif;
-       font-weight: normal;
-     }
-
-     ul {
-       margin: 0;
-     }
-    </style>
-  </head>
-
-  <body class="A4">
-
-    <section class="sheet padding-10mm">
-
-      <h1>Isa Mert Gurbuz</h1>
-
-      <p class="tagline">
-        Staff Software Engineer with 7+ years of experience building and scaling high-impact systems across adtech, healthcare, and enterprise platforms.
-        Passionate about functional programming, free software, and crafting elegant tooling that amplifies developer productivity.
-        Equally at home deep in system architecture as mentoring teams and shaping engineering culture.
-      </p>
-
-      <section class="quick-info">
-        <div class="info-item">
-          <i class="info-item fa fa-github"></i>
-          <a href="https://github.com/isamert">github.com/isamert</a>
-        </div>
-
-        <div class="info-item">
-          <i class="info-item fa fa-globe"></i>
-          <a href="https://isamert.net">https://isamert.net</a>
-        </div>
-
-        <div class="info-item">
-          <i class="info-item fa fa-envelope"></i>
-          <a href="mailto:isamertgurbuz@gmail.com">isamertgurbuz@gmail.com</a>
-        </div>
-
-        <div class="info-item">
-          <i class="info-item fa fa-phone"></i>
-          <a href="tel:+31627598816">+31 627598816</a>
-        </div>
-
-        <div class="info-item">
-          <i class="info-item fa fa-map-marker"></i>
-          <span>Amsterdam, Netherlands</span>
-        </div>
-
-      </section>
-
-      <section class="experience group">
-        <h1>Experience <i class="fa fa-gear"></i></h1>
-
-        <!-- TRENDYOL -->
-
-        <div class="group-instance">
-          <div class="header">
-            <h2><a href="https://trendyol.com">Trendyol</a> &#8226; <i>hybrid</i></h2>
-            <span class="duration">July 2021 - <i>ongoing</i></span>
-          </div>
-
-          <div class="role-progression">
-            <div class="header">
-              <span class="role-title">Staff Software Engineer &#8226; <i>hybrid</i> </span>
-              <span class="duration">Jan 2024 - <i>ongoing</i></span>
-            </div>
-            <ul>
-              <li>
-                Ran workshops and presentations on <b>AI</b> adoption and practical usage across engineering teams.
-              </li>
-              <li>
-                Closely paired with and mentored engineers across Ads teams.
-              </li>
-              <li>
-                Designed and led L/XL scale projects spanning all Ads teams end-to-end.
-              </li>
-              <li>
-                Formed cross-organizational workgroups (e.g. fraud prevention), actively contributing to their design and supporting other teams throughout.
-              </li>
-              <li>
-                Participated in the staff eng community, shaped organizational decisions and pushed back on misdirections in architectural and process discussions.
-              </li>
-            </ul>
-
-            <div class="header">
-              <span class="role-title">Senior Software Engineer  &#8226; <i>remote/hybrid</i></span>
-              <span class="duration">June 2022 - Jan 2024</span>
-            </div>
-            <ul>
-              <li>
-                Overhauled pipeline structures across all Ads teams — defined a unified architecture, contributing guidelines, and improved both performance and maintainability.
-              </li>
-              <li>
-                Built an internal deployment utility in <b>Deno</b>/<b>TypeScript</b> that unified alerts, dashboards and deployments. Still actively used across all Ads teams and parts of the wider organization.
-              </li>
-              <li>
-                Reshaped how teams handle documentation using open-source tools (<b>HackMD</b>) and a custom wrapper, enabling real-time collaborative docs. Adopted across Ads teams and beyond.
-              </li>
-              <li>
-                Designed and built multiple <b>BigQuery</b>-backed data systems for ads reporting and analytics, owning the architecture end-to-end from ingestion pipelines to query optimization.
-              </li>
-              <li>
-                Built an end-to-end testing framework leveraging the <b>BigQuery emulator</b>, enabling fast, reliable local testing of data pipelines — significantly streamlining the development workflow around <b>BigQuery</b>-dependent processes.
-              </li>
-            </ul>
-
-            <div class="header">
-              <span class="role-title">Software Engineer &#8226; <i>remote</i> </span>
-              <span class="duration">July 2021 - June 2022</span>
-            </div>
-            <ul>
-              <li>
-                Transitioned the entire ads consumption subsystem from scheduled jobs (~30 min latency) to near-real-time <b>Kafka Streams</b>, reducing overspend from 10–15% to sub 1%.
-              </li>
-              <li>
-                Designed and delivered multiple projects end-to-end using <b>React.js</b>, <b>node.js</b> (<b>NestJS</b>), <b>Kotlin</b>/<b>Java</b> (<b>Quarkus</b>/<b>Spring</b>) and databases including <b>Couchbase</b>, <b>PostgreSQL</b> and <b>Cassandra</b>. Services deployed and operated on <b>Kubernetes</b> with <b>Docker</b>.
-              </li>
-            </ul>
-          </div>
-        </div>
-
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>Software Engineer &#8226; <a href="http://soostone.com">Soostone</a>/<a href="https://www.well.co">Well</a> &#8226; <i>remote</i></h2>
-            <span class="duration">Sept 2020 - July 2021</span>
-          </div>
-
-          <p>
-            <ul>
-              <li>
-                Worked as a fullstack developer on a healthcare project in a multicultural, multi-timezone environment.
-              </li>
-              <li>
-                Built and maintained <b>node.js</b> microservices on <b>AWS</b>, using <b>Lambda</b>, <b>DynamoDB</b> and <b>Cognito</b>.
-              </li>
-              <li>
-                Contributed to a <b>Haskell</b> monolith backend and several <b>React.js</b> frontend projects.
-              </li>
-              <li>
-                Developed internal tools in <b>Haskell</b> and <b>TypeScript</b> for automating and validating internal workflows, resulting in at least ~70% productivity improvement on targeted tasks.
-              </li>
-            </ul>
-          </p>
-        </div>
-
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>Software Engineer &#8226; <a href="https://huawei.com">Huawei</a> &#8226; <i>Istanbul, Turkey</i></h2>
-            <span class="duration">Sept 2019 - Sept 2020</span>
-          </div>
-
-          <p>
-            <ul>
-              <li>
-                Developed a <b>Java</b>-based CMS backend consisting of several microservices, used by maintainers to manage applications on the <a href="https://appgallery.huawei.com/">AppGallery</a> market. Designed new endpoints, performed refactoring, and was responsible for building and maintaining the <b>DevOps</b> pipeline.
-              </li>
-              <li>
-                Worked on adapting <a href="https://huaweimobileservices.com">Huawei Mobile Services</a> to third-party frameworks — led a newly formed team of ~10 <b>Cordova</b> developers, built cross-framework libraries alongside the <b>React Native</b> team, and automated internal workflows using <b>Bash</b>.
-              </li>
-            </ul>
-          </p>
-        </div>
-
-      </section>
-    </section>
-
-    <section class="sheet padding-10mm">
-
-      <div class="group-instance">
-        <div class="header">
-          <h2>Software Engineer &#8226; <a href="https://akadumi.com">Akadumi.com</a> &#8226; <i>freelance</i></h2>
-          <span class="duration">June - Aug 2019</span>
-        </div>
-
-        <p>
-          <ul>
-            <li>
-              Built an e-commerce platform for selling courses using <b>MongoDB</b>, <b>Node.js</b> and <b>Express.js</b> on the backend, <b>React.js</b> and <b>Next.js</b> on the frontend, deployed on <b>GCP</b>.
-            </li>
-          </ul>
-        </p>
-      </div>
-
-
-      <div class="group-instance">
-        <div class="header">
-          <h2>Software Engineer &#8226; Civil Aviation Research and Application Center &#8226; <i>Eskisehir, Turkey</i></h2>
-          <span class="duration">Apr - Aug 2017</span>
-        </div>
-
-        <p>
-          <ul>
-            <li>
-              Designed and developed a tool in <b>Kotlin</b> and <b>Java</b> for managing, archiving and automating aviation-related test results, with support for secure collaborative workflows.
-            </li>
-          </ul>
-        </p>
-      </div>
-
-      <div class="group-instance">
-        <div class="header">
-          <h2>Software Engineer Intern &#8226; <a href="http://www.savronik.com.tr/en/home/">Savronik</a> &#8226; <i>Eskisehir, Turkey</i></h2>
-          <span class="duration">June - Sept 2016</span>
-        </div>
-
-        <p>
-          <ul>
-            <li>
-              Designed and developed a full-featured IDE and GUI designer for the <b>D4D</b> library using <b>C++</b> and <b>Qt</b>. The IDE generates pure C code, includes basic code editing, a translation manager, and other utilities for <b>embedded device</b> development.
-            </li>
-          </ul>
-        </p>
-      </div>
-
-      <section class="projects group">
-        <h1>Personal Projects <i class="fa fa-tags"></i></h1>
-        <p>
-          <ul>
-            <li>
-              <a href="https://github.com/isamert/techne">techne</a> <b> ∷ </b> A <em>functional</em> programming language with Hindley-Milner type system, OOP features and an interesting syntax. Written in <b>Haskell</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/marks">marks</a> <b>∷</b> A grep-like, fast, contextual search/filtering tool for <b>Markdown</b> and <b>org-mode</b> documents. Written in <b>Rust</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/scli">scli</a> <b>∷</b> A simple yet highly configurable, keyboard-driven TUI for Signal messenger. Written in <b>Python</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/scheme.rs">scheme.rs</a> <b>∷</b> A <b>Scheme</b> interpreter that implements <a href="https://schemers.org/Documents/Standards/R5RS/HTML/">R5RS</a> with some extensions from R7RS. Written in <b>Rust</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/jaro">jaro</a> <b> ∷ </b> A highly customizable/extensible <a href="https://linux.die.net/man/1/xdg-open">xdg-open</a> alternative with a custom DSL. Written in <b>Guile Scheme</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/jsdoc.el">jsdoc.el</a> <b> ∷ </b> An Emacs tool for generating JSDoc texts for functions with minimal type-inference. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a> <b> ∷ </b> An <a href="https://www.omdbapi.com/">OMDb</a> API client and a watchlist manager for <em>Emacs</em> and <em>org-mode</em>. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/swagg.el">swagg.el</a> <b> ∷ </b> An <b>Emacs</b> client for exploring and querying <b>Swagger/OpenAPI</b> definitions interactively. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/tabgo.el">tabgo.el</a> <b> ∷ </b> An <b>Emacs</b> package for quick keyboard-driven navigation between tab bar tabs. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/egnuplot">egnuplot</a> <b> ∷ </b> A composable <b>Emacs</b> macro for <b>gnuplot</b>, enabling creation of plots in Elisp syntax. Written in <b>Emacs Lisp</b>.
-            </li>
-          </ul>
-          <ul>
-            <li>
-              <a href="https://github.com/isamert/isamert.github.io">isamert.net</a> <b> ∷ </b> A static website generator and my personal website. The blog is generated from a single file that also contains the generator code and its own documentation — a form of literate programming. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/empv.el">empv.el</a> <b> ∷ </b> A comprehensive <b>Emacs</b> interface for the <b>MPV</b> media player, including a YouTube client. Written in <b>Emacs Lisp</b>.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/dotfiles">dotfiles</a> <b> ∷ </b> My very detailed system configuration written in style of literate programming.
-            </li>
-            <li>
-              <a href="https://github.com/isamert/sozluk">sozluk</a> <b> ∷ </b> An <a href="https://eksisozluk.com">eksisozluk</a> clone with Reddit-like commenting and category system. Written in <b>PHP</b>.
-            </li>
-          </ul>
-        </p>
-        <p>Other projects — some inactive or smaller in scope — are available on my <a href="https://github.com/isamert">GitHub page</a>.</p>
-      </section>
-
-      <section class="education group">
-        <h1>Education <i class="fa fa-graduation-cap"></i></h1>
-
-        <div class="group-instance">
-          <div class="header">
-            <h2>&#8226; Politechnika Krakowska &#8226; Computer Engineering &#8226; <i>Exchange Semester</i></h2>
-            <span class="duration">Fall 2017</span>
-          </div>
-
-          <div class="header">
-            <h2>&#8226; Eskisehir Technical University &#8226; Computer Engineering  &#8226; <i>Undergrad</i></h2>
-            <span class="duration">2014 - 2018</span>
-          </div>
-
-          <div class="header">
-            <h2>&#8226; Anadolu University, Open Education Faculty &#8226; Philosophy  &#8226; <i>Undergrad</i></h2>
-            <span class="duration">2017 - dropped</span>
-          </div>
-        </div>
-      </section>
-
-
-      <section class="skills group">
-        <h1>Skills <i class="fa fa-flask"></i></h1>
-        <div class="group-instance">
-          <p>
-            <ul>
-              <li>
-                <strong>Languages ∷</strong> JavaScript and TypeScript (browser and node.js/deno), Haskell, Rust, Kotlin, Java, Emacs Lisp, Python, Bash, C++, Guile Scheme, C, PHP, R, Clojure, C#
-              </li>
-              <li>
-                <strong>Frameworks ∷</strong> Javascript {React.js, Express.js, Next.js}, Java/Kotlin {Spring, JavaFX}, C++/Python {Qt}
-              </li>
-              <li>
-                <strong>Tooling ∷</strong> Emacs, Basic UNIX tools {sed, grep, find, vi(m), ssh}, git, Bash/ZSH, Nix, AWS, serverless, GCP, Docker, Kubernetes, Kafka
-              </li>
-              <li>
-                <strong>Concepts ∷</strong> functional programming, object-oriented programming, API design, automation, workflow optimization, literate programming
-              </li>
-            </ul>
-          </p>
-
-        </div>
-
-      </section>
-
-      <!-- <section class="additional-work group">
-           <h1>Additional/Voluntary work <i class="fa fa-users"></i></h1>
-
-           <div class="group-instance">
-           <p>
-           <ul>
-           <li>
-           Gave an introductory course on <b>Python</b> at <em>Anadolu University Computer Club</em>, fall 2016.
-           </li>
-           <li>
-           Gave an introductory course on <b>GNU/Linux</b> at <em>Anadolu University Computer Club</em>, fall 2015.
-           </li>
-           </ul>
-           </p>
-
-           </div>
-
-           </section>
-      -->
-      <!-- <section class="additional-work group">
-           <h1>Interests and Activities <i class="fa fa-podcast"></i></h1>
-
-           <div class="group-instance">
-           <p>
-           <ul>
-           <li>
-           Strong advocate of the <em>free software movement</em> — publish all personal work as free software and actively contribute to FOSS projects. Contributions are visible on my GitHub page.
-           </li>
-           <li>
-           Enjoy reading philosophy in my free time, particularly the German idealists and more contemporary currents like post-modernism and post-structuralism.
-           </li>
-           <li>
-           Publish short movie, show and album reviews in Turkish <a href="https://eksisozluk.com/biri/yasli-ateist">here</a>. Watchlist available <a href="https://isamert.net/watchlist.html">here</a>.
-           </li>
-           <li>
-           More content available on <a href="https://isamert.net">my website</a>.
-           </li>
-           </ul>
-           </p>
-
-           </div>
-
-           </section>
-      -->
-  </body>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Isa Mert Gurbuz</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css" rel="stylesheet"/>
+        <style>@page { size: A4 }</style>
+        <style>
+         @import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;700&display=swap');
+         @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
+         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+         @import url('https://fonts.googleapis.com/css2?family=Acme&display=swap');
+         @import url('https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap');
+
+         * {
+             -webkit-print-color-adjust: exact;
+             print-color-adjust: exact;
+         }
+
+         body {
+             font-size: 0.9em;
+             /* font-family: 'Saira Condensed', sans-serif; */
+             /* font-family: 'Roboto', sans-serif; */
+             font-family: 'IBM Plex Sans Condensed', sans-serif;
+             color: #293230;
+         }
+
+         .group h1 {
+             font-size: 1.45em;
+             text-transform: uppercase;
+             border-bottom: 1.7px solid #cbdcd9;
+             letter-spacing: 0.09em;
+             padding-left: 0.45em;
+             padding-bottom: 0.1em;
+             border-left: 3.5px solid #376b68;
+             color: #263b39;
+             margin-bottom: 0.5em;
+         }
+
+         .group-instance h2 {
+             font-size: 1.1em;
+             line-height: 0%;
+             margin-top: 1.2em;
+             margin-bottom: 1em;
+         }
+
+         .group-instance {
+             margin-bottom: 0.4em;
+         }
+
+         .group-instance ul li,
+         .projects ul li {
+             margin-bottom: 0.15em;
+             line-height: 1.25;
+         }
+
+         .group-instance .header {
+             position: relative;
+         }
+
+         .duration {
+             font-family: 'Yanone Kaffeesatz', sans-serif;
+             display: inline;
+             text-align: right;
+             position: absolute;
+             line-height: 0%;
+             right: 0;
+             top: 0;
+         }
+
+         .quick-info {
+             text-align: center;
+             margin: 1rem 0;
+             background: linear-gradient(to right, transparent, rgba(55, 107, 104, 0.07), transparent);
+             border-top: 1px solid #dce7e5;
+             border-bottom: 1px solid #dce7e5;
+             padding: 0.45rem 0;
+         }
+
+         .info-item + .info-item::before {
+             content: '·';
+             color: #9db8b4;
+             padding-right: 0.15rem;
+             font-size: 1.1em;
+             vertical-align: middle;
+         }
+
+         .quick-info i {
+             font-size: 1.3rem;
+             vertical-align: middle;
+         }
+
+         .quick-info a {
+             vertical-align: middle;
+             font-family: 'Signika', sans-serif;
+             /* font-family: 'Patua One', cursive; */
+             text-decoration: none;
+         }
+
+         .info-item {
+             padding-right: 0.15rem;
+             display: inline;
+             font-size: 0.85em;
+         }
+
+         .quick-info i {
+             font-size: 1.1rem;
+         }
+         .projects li a {
+             font-family: 'Acme', sans-serif;
+             text-decoration: none;
+             /* text-transform: uppercase; */
+         }
+
+         h1, h2 {
+             margin: 0;
+             font-family: 'Roboto Slab', serif;
+         }
+
+         .sheet > h1 {
+             text-align: center;
+             font-size: 2.3em;
+             letter-spacing: 0.1em;
+             color: #263b39;
+             padding-top: 0.15em;
+         }
+
+         .sheet > h1::after {
+             content: '';
+             display: block;
+             width: 3.2em;
+             height: 3px;
+             margin: 0.22em auto 0;
+             border-radius: 2px;
+             background: linear-gradient(to right, #9abbb6, #376b68, #9abbb6);
+         }
+
+         .projects ul {
+             margin: 0;
+         }
+
+         ul {
+             padding-left: 1.7em;
+             list-style: none;
+         }
+
+         ul li::before {
+             content: '▪';
+             color: #376b68;
+             font-size: 0.65em;
+             vertical-align: middle;
+             margin-right: 0.4em;
+             margin-left: -1.2em;
+         }
+
+         h2 > a {
+             text-decoration: none;
+         }
+
+         b {
+             background-color: rgba(55, 107, 104, 0.08);
+             border-radius: 2px;
+             padding: 0 0.18em;
+         }
+
+         a {
+             color: #376b68;
+         }
+
+         .duration {
+             color: #376b68;
+             font-weight: bold;
+             letter-spacing: 0.03em;
+         }
+
+         .role-progression {
+             margin-top: 0.6em;
+             padding-left: 1.7em;
+             border-left: 1px solid #e2ebe9;
+         }
+
+         .role-progression .header {
+             margin-bottom: 0.3em;
+         }
+
+         .role-progression ul + .header {
+             margin-top: 0.4em;
+         }
+
+         .role-progression .role-title {
+             font-size: 0.85em;
+             font-weight: bold;
+             color: #3f5552;
+         }
+
+         .role-progression .header::before {
+             content: '';
+             position: absolute;
+             left: calc(-1.7em - 0.5px);
+             top: 50%;
+             width: 4px;
+             height: 4px;
+             transform: translate(-50%, -50%);
+             border-radius: 50%;
+             background: #a6bfbb;
+         }
+
+         .role-progression .duration {
+             top: 50%;
+             font-size: 0.85em;
+             color: #5e7470;
+         }
+
+         .tagline {
+             text-align: center;
+             font-family: 'IBM Plex Sans Condensed', sans-serif;
+             font-style: italic;
+             font-size: 0.88em;
+             color: #456e68;
+             margin: 0.5em auto 0.1em;
+             max-width: 82%;
+             line-height: 1.5;
+             letter-spacing: 0.01em;
+         }
+
+         .role-summary {
+             margin: 0.35em 0 0.45em;
+             color: #3f5552;
+             font-size: 0.9em;
+             font-weight: bold;
+         }
+
+         /* Use the available space on page one without making page two overflow. */
+         .sheet:first-of-type .experience ul li {
+             margin-bottom: 0.35em;
+             line-height: 1.28;
+         }
+
+         .skills strong {
+             font-family: 'Acme', sans-serif;
+             font-weight: normal;
+         }
+
+         ul {
+             margin: 0;
+         }
+        </style>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    </head>
+    <body class="A4">
+
+        <!-- * Page 1 * -->
+        <section aria-label="Resume page 1" class="sheet padding-10mm">
+            <h1>Isa Mert Gurbuz</h1>
+            <p class="tagline">
+                Senior Backend &amp; Platform Engineer with 7+ years of experience building and operating real-time, high-throughput, highly available systems across e-commerce, adtech, and healthcare. Leads cross-team platforms and technical initiatives from system and data design through production operations, incident response, and continuous improvement.
+            </p>
+
+            <section class="quick-info">
+                <div class="info-item">
+                    <a href="https://github.com/isamert">github.com/isamert</a>
+                </div>
+                <div class="info-item">
+                    <a href="https://isamert.net">isamert.net</a>
+                </div>
+                <div class="info-item">
+                    <a href="https://www.linkedin.com/in/isamert">linkedin.com/in/isamert</a>
+                </div>
+                <div class="info-item">
+                    <a href="mailto:isamertgurbuz@gmail.com">isamertgurbuz@gmail.com</a>
+                </div>
+                <div class="info-item">
+                    <a href="tel:+31627598816">+31 627598816</a>
+                </div>
+                <div class="info-item">
+                    <span>Amsterdam, Netherlands</span>
+                </div>
+            </section>
+
+            <section class="skills group">
+                <h1>Core Stack</h1>
+                <p><strong>Languages &amp; backend:</strong> TypeScript/JavaScript, Java, Kotlin, Scala, Rust, Clojure, Haskell · JVM (Spring, Quarkus), Node.js (NestJS, Express.js), REST APIs, microservices, distributed and event-driven systems.</p>
+                <p><strong>Data, infrastructure &amp; practices:</strong> Kafka/Kafka Streams, PostgreSQL, BigQuery, Couchbase, Cassandra, DynamoDB · Kubernetes, Docker, AWS, GCP · OpenTelemetry, end-to-end testing, CI/CD, production operations, incident response.</p>
+            </section>
+
+            <section class="experience group">
+                <h1>Experience</h1>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2><a href="https://trendyol.com">Trendyol</a> · E-commerce</h2>
+                        <span class="duration">Jul 2021 – Present</span>
+                    </div>
+                    <p class="role-summary">Software Engineer → Senior Software Engineer → Staff Software Engineer</p>
+                    <ul>
+                        <li><b>Reduced ad overspend from 10–15% to below 1%</b> by replacing scheduled batch jobs with a <b>Kafka Streams</b> pipeline processing <b>1 billion ad events per day</b>. Cut processing latency from ~30 minutes to near-real-time.</li>
+                        <li>Led an ad-fraud detection and automated-refund initiative across 6 teams, combining a data-science model with legacy detection. Reduced false positives and recovered <b>0.5% of daily ad consumption</b> previously lost to incorrect fraud detection.</li>
+                        <li>Led and delivered a GitOps migration for ~50 workflows on an internal orchestration platform used by 6 teams. Replaced manual UI-based upgrades with reviewable merge-request changes and added self-service scheduling, local development, and end-to-end testing.</li>
+                        <li>Created TypeKube, a Deno/TypeScript toolkit adopted across ~10 internal teams to generate Kubernetes manifests, alerts, and dashboards from type-safe definitions. Standardized deployment and observability configuration across hundreds of services and repositories; local validation and compile-time checks cut new-service setup from hours to minutes.</li>
+                        <li>Designed and built BigQuery-backed ads reporting and analytics systems, owning architecture from ingestion pipelines to query optimization. Built an end-to-end test framework using the BigQuery emulator for local pipeline testing.</li>
+                        <li>Drove performance, infrastructure, and cost optimizations across Ads: halved request volume in a Store Ads integration, removed unused services and database indexes, and used a DSL-based design to avoid doubling recommendation-engine traffic.</li>
+                        <li>Led incident response, recovery, and post-mortems for database, Kafka, and seller-facing migration incidents. Improved pipeline error delivery to surface previously silent failures and drove preventive fixes across service boundaries.</li>
+                        <li>Mentored ~10 engineers, served on 5+ promotion committees, and led cross-team design reviews and technical planning. Helped establish dedicated technical-backlog capacity and team-health measurement.</li>
+                        <li>Extended CodiMD into a documentation platform adopted across multiple teams. Built a separate frontend and a tag-based virtual-folder hierarchy for document categorization and discovery; integrated the platform with AI workflows through MCP and custom tooling.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </section>
+
+        <!-- * Page 2 * -->
+        <section aria-label="Resume page 2" class="sheet padding-10mm">
+
+            <section class="experience group">
+                <h1>Experience, continued</h1>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2>Software Engineer · <a href="http://soostone.com">Soostone</a> / <a href="https://www.well.co">Well</a></h2>
+                        <span class="duration">Sep 2020 – Jul 2021</span>
+                    </div>
+                    <ul>
+                        <li>Built and maintained Node.js microservices for a healthcare platform on AWS using Lambda, DynamoDB, and Cognito; contributed to a Haskell backend and React applications in a distributed team.</li>
+                        <li>Built an end-to-end design-to-application pipeline: a TypeScript Figma plugin used heuristics to interpret manually crafted, <b>30–40-page app journey designs</b> and generate structured JSON; a Haskell validation and repair tool checked and corrected the output. Replaced weeks of manual design translation with <b>automated generation</b>, reducing turnaround from <b>2–3 weeks to 2–3 days</b>.</li>
+                        <li>Brought design and mobile/frontend engineering teams together to establish a shared design language, enabling direct code/JSON generation from designs and further shortening delivery times.</li>
+                    </ul>
+                </div>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2>Software Engineer · <a href="https://huawei.com">Huawei</a></h2>
+                        <span class="duration">Sep 2019 – Sep 2020</span>
+                    </div>
+                    <ul>
+                        <li>Developed Java microservices for the CMS used to manage AppGallery applications; designed API endpoints and owned the development and maintenance of the CI/CD pipeline.</li>
+                        <li>Served as technical lead for a newly formed team of ~10 Cordova developers adapting Huawei Mobile Services for third-party frameworks; designed projects, coordinated work allocation, conducted reviews, and guided delivery. Built cross-framework libraries with the React Native team and automated workflows using Bash.</li>
+                    </ul>
+                </div>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2>Software Engineer · Akadumi.com · Freelance</h2>
+                        <span class="duration">Jun – Aug 2019</span>
+                    </div>
+                    <ul>
+                        <li>Built a course-commerce platform using Node.js, Express.js, MongoDB, React, and Next.js; deployed on GCP.</li>
+                    </ul>
+                </div>
+                <div class="group-instance">
+                    <h2>Earlier experience</h2>
+                    <p><strong>Software Engineer · Civil Aviation Research and Application Center</strong> · Apr – Aug 2017<br/>
+                        Built a Java/Kotlin tool for managing, archiving, and automating aviation test results with collaborative workflows.</p>
+                    <p><strong>Software Engineer Intern · Savronik</strong> · Jun – Sep 2016<br/>
+                        Built a C++/Qt IDE and GUI designer for the D4D embedded graphics library, including C code generation and translation tooling.</p>
+                </div>
+            </section>
+
+            <section class="projects group">
+                <h1>Selected Open-Source Projects</h1>
+                <ul>
+                    <li><strong><a href="https://github.com/isamert/ellm.el">ellm.el</a> · Emacs Lisp:</strong> Extensible AI coding agent with editable, plain-text conversations, tool calling, permission controls, subagent orchestration, MCP integration, and multiple LLM backends.</li>
+                    <li><strong><a href="https://github.com/isamert/scli">scli</a> · Python:</strong> Keyboard-driven Signal terminal client built on signal-cli and urwid, with customizable keybindings and external-editor integration.</li>
+                    <li><strong><a href="https://github.com/isamert/scheme.rs">scheme.rs</a> · Rust:</strong> Dependency-free Scheme interpreter implementing a substantial subset of R5RS with R7RS extensions; includes a REPL and script execution.</li>
+                    <li><strong><a href="https://github.com/isamert/marks">marks</a> · Rust:</strong> Structure-aware search CLI for Markdown and org-mode, combining fuzzy, exact, regex, and exclusion queries with heading-hierarchy context.</li>
+                    <li><strong><a href="https://github.com/isamert/techne">techne</a> · Haskell:</strong> A functional programming language with a Hindley–Milner type system and object-oriented features.</li>
+                    <li><strong><a href="https://github.com/isamert/swagg.el">swagg.el</a> · Emacs Lisp:</strong> Interactive client for exploring Swagger/OpenAPI definitions and querying APIs from Emacs.</li>
+                </ul>
+                <p>More open-source projects and technical writing: <a href="https://github.com/isamert">github.com/isamert</a> · <a href="https://isamert.net">isamert.net</a></p>
+            </section>
+
+            <section class="education group">
+                <h1>Education</h1>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2>Eskisehir Technical University</h2>
+                        <span class="duration">2014 – 2018</span>
+                    </div>
+                    <p>Bachelor’s degree in Computer Engineering</p>
+                </div>
+                <div class="group-instance">
+                    <div class="header">
+                        <h2>Politechnika Krakowska</h2>
+                        <span class="duration">Fall 2017</span>
+                    </div>
+                    <p>Computer Engineering · Exchange semester</p>
+                </div>
+            </section>
+
+        </section>
+    </body>
 </html>

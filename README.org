@@ -283,48 +283,48 @@ Serving fonts through here. I guess a bit more traffic but better than pinging G
 #+begin_src css :tangle docs/assets/main.css
 :root {
   /* Colors */
-  --bg: #08080e;
-  --rule: #4c3143;
-  --accent: #e56182;
-  --accent-rgb: 229 97 130;
-  --coral: #ff9b7a;
-  --coral-rgb: 255 155 122;
+  --bg: #080808;
+  --rule: #3e2e24;
+  --accent: #ee975f;
+  --accent-rgb: 238 151 95;
+  --coral: #ffc08a;
+  --coral-rgb: 255 192 138;
 
   --white: #fff;
-  --bright: #f2edf2;
-  --text: #c6c4cc;
-  --subtle: #aaa6b1;
-  --muted: #777481;
+  --bright: #f5eee7;
+  --text: #cec4bb;
+  --subtle: #b2a497;
+  --muted: #84756a;
 
-  --link: #eb7e9f;
-  --link-hover: #ffa4c2;
-  --pink: #ff6bab;
+  --link: #f3ab75;
+  --link-hover: #ffd0a3;
+  --pink: #ff955c;
 
-  --logo-glow-soft: #ffb8df;
-  --logo-glow-medium: #ff69bc;
-  --logo-glow-hot: #ff258c;
-  --logo-rgb: 242 0 104;
+  --logo-glow-soft: #ffd3a6;
+  --logo-glow-medium: #ffa14f;
+  --logo-glow-hot: #ff6b24;
+  --logo-rgb: 255 107 36;
 
   /* Syntax highlighting */
-  --code-text: #d7d4dd;
+  --code-text: #ded5cb;
 
-  --syntax-comment: #aaa6b8;
-  --syntax-keyword: #ff7fa5;
-  --syntax-string: #8ee6c3;
-  --syntax-number: #d6a6ff;
-  --syntax-function: #8bc9c5;
-  --syntax-class: #b8a7d9;
-  --syntax-section: #62f4ed;
-  --syntax-variable: #f2c27b;
-  --syntax-attribute: #9ad7ff;
-  --syntax-meta: #b5b8ff;
-  --syntax-built-in: #ff9f7a;
-  --syntax-regexp: #ff91cf;
+  --syntax-comment: #ab9c8d;
+  --syntax-keyword: #ffa46d;
+  --syntax-string: #bdcf9b;
+  --syntax-number: #d6acd2;
+  --syntax-function: #edc58d;
+  --syntax-class: #d9b99b;
+  --syntax-section: #ffd19a;
+  --syntax-variable: #efd5ae;
+  --syntax-attribute: #a9c8bd;
+  --syntax-meta: #c7b4d6;
+  --syntax-built-in: #ffbd85;
+  --syntax-regexp: #e5a6a1;
 
-  --syntax-addition: #8ee6c3;
-  --syntax-addition-bg: rgb(98 244 237 / 0.1);
-  --syntax-deletion: #ff7085;
-  --syntax-deletion-bg: rgb(229 97 130 / 0.12);
+  --syntax-addition: #bdcf9b;
+  --syntax-addition-bg: rgb(189 207 155 / 0.1);
+  --syntax-deletion: #f18b78;
+  --syntax-deletion-bg: rgb(241 139 120 / 0.12);
 
   /* Typography */
   --body: "Bricolage Grotesque", system-ui, sans-serif;

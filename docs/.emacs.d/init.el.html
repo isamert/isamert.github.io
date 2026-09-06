@@ -963,6 +963,19 @@ TODO: This breaks org-mode.
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (setq-default indent-tabs-mode nil)
+</pre></div><div id="outline-container-better-display-buffer-defaults" class="outline-2">
+<h2 id="better-display-buffer-defaults"><a href="#better-display-buffer-defaults">Better display buffer defaults</a></h2>
+<div class="outline-text-2" id="text-better-display-buffer-defaults">
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(setq display-buffer-fallback-action
+      '((display-buffer-same-window
+         display-buffer-reuse-window
+         display-buffer--maybe-pop-up-frame-or-window
+         display-buffer-in-previous-window
+         display-buffer-use-some-window
+         display-buffer-pop-up-frame)))
 </pre></div><div id="outline-container-shackle-windows" class="outline-2">
 <h2 id="shackle-windows"><a href="#shackle-windows">Shackle windows</a></h2>
 <div class="outline-text-2" id="text-shackle-windows">
@@ -3380,11 +3393,12 @@ open.")
      im-open-thing-at-point-alist)))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-button-action-at-point ()
-  "Return button action at point.
+  "Return point if there is a button.
 Useful for checking if `push-button' can be used."
-  (and-let* ((btn (button-at (point)))
+  (and-let* ((pt (point))
+             (btn (button-at (point)))
              ((button-get btn 'action)))
-    btn))
+    pt))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (add-to-list 'im-open-thing-at-point-alist `(,(apply-partially #'thing-at-point 'url) . browse-url))
 (add-to-list 'im-open-thing-at-point-alist `(im-button-action-at-point . push-button))
@@ -3726,6 +3740,7 @@ You may need to call `eat-compile-terminfo' after installing eat.
                    ("integration" "integration/*")
                    (:exclude ".dir-locals.el" "*-tests.el")))
   :autoload (eat-make)
+  :diminish eat-eshell-mode
   :defer t
   :general
   (im-leader-v
@@ -4337,8 +4352,12 @@ forget or use infrequently.
 (use-package pretty-hydra
   :after hydra
   :general
-  (im-leader "a" (lambda () (interactive) (require 'pretty-hydra) (im-appearance/body)))
+  (im-leader "a" #'im-appearance-hydra)
   :config
+  (defun im-appearance-hydra ()
+    (interactive)
+    (require 'pretty-hydra)
+    (im-appearance/body))
   (pretty-hydra-define im-appearance
     (:foreign-keys warn :title "Appearance" :quit-key "q" :color amaranth)
     ("Writeroom"
@@ -4420,7 +4439,7 @@ There is also <code>wdired-mode</code> which you can use to do bulk rename intui
     (put 'dired-find-alternate-file 'disabled nil)))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package dirvish
-  :ensure (:host github :repo "hlissner/dirvish")
+  :ensure (:host github :repo "alexluigit/dirvish")
   :after dired
   :general
   (im-leader
@@ -4619,6 +4638,7 @@ Some tips:
           (substitute-command-keys
            "  \\[calendar-cursor-holidays] Holidays at point (or \\[calendar-list-holidays] to list holidays in buffer) │ \\[calendar-goto-today] Go to today │ \\[im-calendar-jump-org-agenda] Agenda at point │ \\[calendar-backward-month] Backward month │ \\[calendar-forward-month] Forward month ")))
   (add-hook 'calendar-mode-hook #'im-setup-calendar-mode)
+  (add-hook 'calendar-mode-hook #'diary-mark-entries)
   (calendar-set-date-style 'european)
 
   ;; Mark holidays by default
@@ -6355,7 +6375,8 @@ When ARG is non-nil, query the whole workspace/project."
   (completion-preview-idle-delay 0.2)
   :config
   (setq completion-preview-sort-function #'prescient-completion-sort)
-  (define-key completion-preview-active-mode-map (kbd "RET") #'completion-preview-insert)
+  (define-key completion-preview-active-mode-map (kbd "TAB") #'tab-jump-out) ; disable tab
+  (define-key completion-preview-active-mode-map (kbd "M-l") #'completion-preview-insert)
   (define-key completion-preview-active-mode-map (kbd "&lt;down&gt;") #'completion-preview-next-candidate)
   (define-key completion-preview-active-mode-map (kbd "&lt;up&gt;") #'completion-preview-prev-candidate)
   (define-key completion-preview-active-mode-map (kbd "M-j") #'completion-preview-next-candidate)
@@ -6477,7 +6498,21 @@ prescient is enough I guess?
   (setq-default completion-at-point-functions nil)
   (add-hook 'completion-at-point-functions #'cape-dabbrev t)
   (add-hook 'completion-at-point-functions #'cape-line t)
-  (add-hook 'completion-at-point-functions #'cape-file t))
+  (add-hook 'completion-at-point-functions #'cape-file t)
+
+  (defun im-cape-same-project-buffers ()
+    "Return buffers with same major mode and same project as current buffer."
+    (let ((project (or (im-current-project-root) default-directory)))
+      (cape--buffer-list
+       (lambda (buf)
+         (let ((bname (buffer-name)))
+           (and (eq major-mode (buffer-local-value 'major-mode buf))
+                (not (string-prefix-p " " bname))
+                (not (string-prefix-p "*" bname))
+                (f-same? project (or (im-current-project-root) default-directory))))))))
+
+  (setq cape-line-buffer-function #'im-cape-same-project-buffers)
+  (setq cape-dabbrev-buffer-function #'im-cape-same-project-buffers))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (cl-defmacro im-cape
     (&amp;key name completion extractor category
@@ -7598,6 +7633,8 @@ creating it which is super convenient.</dd>
   :init
   (im-leader "T" #'tmr-with-details)
   :config
+  (setopt tmr-tabulated-columns '(end remaining acknowledge description))
+
   ;; Replace the notification function so that it works on my Mac
   (remove-hook 'tmr-timer-finished-functions #'tmr-notification-notify)
   (add-hook 'tmr-timer-finished-functions #'im-tmr-notify)
@@ -7609,11 +7646,17 @@ creating it which is super convenient.</dd>
     (setq tmr-sound-file "/System/Library/Sounds/Glass.aiff"))
 
   ;; evilify
+  (general-def :keymaps 'tmr-tabulated-mode-map :states 'normal
+    "x" #'tmr-remove
+    "d" #'tmr-remove
+    "r" #'tmr-reschedule
+    "c" #'tmr-remove-finished
+    "e" #'tmr-edit-description)
   (define-key tmr-tabulated-mode-map "j" #'next-line)
   (define-key tmr-tabulated-mode-map "k" #'previous-line)
   (define-key tmr-tabulated-mode-map "x" #'tmr-remove)
   (define-key tmr-tabulated-mode-map "d" #'tmr-remove)
-  (evil-set-initial-state 'tmr-tabulated-mode 'emacs)
+  (evil-set-initial-state 'tmr-tabulated-mode 'normal)
 
   ;; See `im-update-global-mode-line'
   (add-hook 'tmr-timer-finished-functions #'im-update-global-mode-line)
@@ -8889,7 +8932,9 @@ This is an optional dependency for sozluk.
 (use-package turkish
   :defer t
   :general
-  (im-leader-v "tc" #'turkish-correct-region))
+  (im-leader-v
+    "tc" #'turkish-correct-region
+    "tC" #'turkish-asciify-region))
 </pre></div><div id="outline-container-jinx-spellchecker-flyspell-alternative" class="outline-2">
 <h2 id="jinx-spellchecker-flyspell-alternative"><a href="#jinx-spellchecker-flyspell-alternative">jinx &ndash; spellchecker, flyspell alternative</a></h2>
 <div class="outline-text-2" id="text-jinx-spellchecker-flyspell-alternative">
@@ -9033,11 +9078,11 @@ you the power of IDEs but in some dummy/restricted way.
 </p>
 
 <dl class="org-dl">
-<dt><a id="orge47bd40"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
-<dt><a id="org410cea7"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
+<dt><a id="org59f9a38"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
+<dt><a id="orgb573675"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
 <dt>(no term)</dt><dd>To debug why it's not working: M-x <code>set-variable dumb-jump-debug t</code>, then go to <b>Messages</b> buffer.</dd>
-<dt><a id="org01d36b9"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
-<dt><a id="orgcb43a0e"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
+<dt><a id="orgddb662e"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
+<dt><a id="org449d211"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
 <dt>(no term)</dt><dd>Use <code>]t</code> and <code>[t</code> to go next/prev TODO/FIXME item.</dd>
 </dl>
 </div>
@@ -9454,7 +9499,7 @@ need <code>format-all-buffer</code> and it works with more formatters.
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package apheleia
   :hook (elpaca-after-init . apheleia-global-mode)
-  :diminish 'apheleia-mode
+  :diminish (apheleia-mode apheleia-global-mode)
   :init
   (defalias 'im-toggle-auto-code-formatter #'apheleia-mode)
 
@@ -10521,7 +10566,16 @@ A package for  managing docker.
 </pre></div><div id="outline-container-sql" class="outline-2">
 <h2 id="sql"><a href="#sql">sql</a></h2>
 <div class="outline-text-2" id="text-sql">
-<p>
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(use-package sql-mode
+  :ensure nil
+  :general
+  (:keymaps 'sql-interactive-mode-map
+   :states 'insert
+   "C-r" #'consult-history))
+</pre></div><p>
 I generally do not edit <code>.sql</code> files but instead I do SQL through
 code blocks in org-mode. <i>lsp-mode</i> offers <code>lsp-org</code> command to
 help using LSP features inside org-mode code blocks. It synergzes
@@ -10547,8 +10601,6 @@ I initialize <code>sql-connection-alist</code> in another file that is not
 checked out to this repository and afterwards I call the
 <code>im-sql-setup-lsp</code> function.
 </p>
-</div>
-</div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-sql-setup-lsp ()
   "Set `lsp-sqls-connections' using `sql-connection-alist'.
@@ -10928,10 +10980,6 @@ mini-buffer.
         (cadr str)
       name)))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
-(defvar-local im-buffer-project-root nil
-  "Cached value for project root of a buffer.
-Looping all buffers and re-calculating their roots are quite expensive,
-hence the cache.")
 (defun im-tab-line-buffers ()
   "Return buffers grouped for tab-line display.
 
@@ -10958,12 +11006,8 @@ where these special buffers may be duplicated."
            (cl-loop for buf in (buffer-list)
                     as buf-name = (buffer-name buf)
                     unless (string-match-p im-tab-line-hidden-buffer-name-regexp buf-name)
-                    when (when-let* ((proj-root
-                                      (or (buffer-local-value 'im-buffer-project-root buf)
-                                          (with-current-buffer buf
-                                            (setq-local im-buffer-project-root
-                                                        (or (im-current-project-root)
-                                                            default-directory))))))
+                    when (when-let* ((proj-root (or (im-current-project-root)
+                                                    default-directory)))
                            (and (equal proj-root cur-root)
                                 (string-prefix-p prefix buf-name)))
                     collect buf)))

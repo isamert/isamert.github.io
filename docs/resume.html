@@ -6,11 +6,7 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css" rel="stylesheet"/>
         <style>@page { size: A4 }</style>
         <style>
-         @import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;700&display=swap');
-         @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
-         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-         @import url('https://fonts.googleapis.com/css2?family=Acme&display=swap');
-         @import url('https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;700&family=Roboto+Slab:wght@400;700&family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,700;1,400;1,700&family=Acme&family=Signika:wght@400;700&display=swap');
 
          * {
              -webkit-print-color-adjust: exact;
@@ -253,7 +249,7 @@
         <section aria-label="Resume page 1" class="sheet padding-10mm">
             <h1>Isa Mert Gurbuz</h1>
             <p class="tagline">
-                Senior Backend &amp; Platform Engineer with 7+ years of experience building and operating real-time, high-throughput, highly available systems across e-commerce, adtech, and healthcare. Leads cross-team platforms and technical initiatives from system and data design through production operations, incident response, and continuous improvement.
+                Staff/Senior Backend &amp; Platform Engineer with 7+ years of experience building and operating real-time, high-throughput, highly available systems across e-commerce, adtech, and healthcare. Leads cross-team platforms and technical initiatives from system and data design through production operations, incident response...
             </p>
 
             <section class="quick-info">
@@ -294,12 +290,14 @@
                     <ul>
                         <li><b>Reduced ad overspend from 10–15% to below 1%</b> by replacing scheduled batch jobs with a <b>Kafka Streams</b> pipeline processing <b>1 billion ad events per day</b>. Cut processing latency from ~30 minutes to near-real-time.</li>
                         <li>Led an ad-fraud detection and automated-refund initiative across 6 teams, combining a data-science model with legacy detection. Reduced false positives and recovered <b>0.5% of daily ad consumption</b> previously lost to incorrect fraud detection.</li>
+                        <li>Re-platformed the stats subsystem from a single-source pipeline to a composable multi-source aggregation model, enabling batch and real-time systems to contribute to the same statistics. Reduced event-processing latency, added backpressure handling for peak load, and enabled automatic fallback to alternate data sources during upstream outages.</li>
                         <li>Led and delivered a GitOps migration for ~50 workflows on an internal orchestration platform used by 6 teams. Replaced manual UI-based upgrades with reviewable merge-request changes and added self-service scheduling, local development, and end-to-end testing.</li>
                         <li>Created TypeKube, a Deno/TypeScript toolkit adopted across ~10 internal teams to generate Kubernetes manifests, alerts, and dashboards from type-safe definitions. Standardized deployment and observability configuration across hundreds of services and repositories; local validation and compile-time checks cut new-service setup from hours to minutes.</li>
                         <li>Designed and built BigQuery-backed ads reporting and analytics systems, owning architecture from ingestion pipelines to query optimization. Built an end-to-end test framework using the BigQuery emulator for local pipeline testing.</li>
                         <li>Drove performance, infrastructure, and cost optimizations across Ads: halved request volume in a Store Ads integration, removed unused services and database indexes, and used a DSL-based design to avoid doubling recommendation-engine traffic.</li>
                         <li>Led incident response, recovery, and post-mortems for database, Kafka, and seller-facing migration incidents. Improved pipeline error delivery to surface previously silent failures and drove preventive fixes across service boundaries.</li>
                         <li>Mentored ~10 engineers, served on 5+ promotion committees, and led cross-team design reviews and technical planning. Helped establish dedicated technical-backlog capacity and team-health measurement.</li>
+                        <li>Extended CodiMD into a documentation platform adopted across multiple teams. Built a separate frontend and a tag-based virtual-folder hierarchy for document categorization and discovery; integrated the platform with AI workflows through MCP and custom tooling.</li>
                         <li>Extended CodiMD into a documentation platform adopted across multiple teams. Built a separate frontend and a tag-based virtual-folder hierarchy for document categorization and discovery; integrated the platform with AI workflows through MCP and custom tooling.</li>
                     </ul>
                 </div>

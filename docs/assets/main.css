@@ -170,6 +170,14 @@ footer {
   text-align: center;
 }
 
+.copyleft-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  filter: invert(1);
+  opacity: 0.55;
+}
+
 /* Code */
 
 code {

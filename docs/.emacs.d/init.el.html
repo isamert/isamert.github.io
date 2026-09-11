@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>((isamert))</title>
+  <title>.emacs.d/init.el | ((isamert)</title>
   <link rel="stylesheet" href="/assets/fonts.css">
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="alternate" type="application/rss+xml"
@@ -8497,35 +8497,19 @@ contacts.
     :key "M-o b"
     :doc (lambda (xs x) (plist-get (map-elt xs x) :doc))
     :annotate (lambda (xs x) (concat " → " (plist-get (map-elt xs x) :ann))))))
-</pre></div><div id="outline-container-easysession-el-session-manager" class="outline-2">
-<h2 id="easysession-el-session-manager"><a href="#easysession-el-session-manager">easysession.el &ndash; session manager</a></h2>
-<div class="outline-text-2" id="text-easysession-el-session-manager">
-<p>
-Simple package to save/retrieve Emacs sessions. It works well with
-tab-bar. Currently my workflow is:
-</p>
-
-<p>
-`easysession-save-as' :: Save a named session.
-`easysession-switch-to' :: Load a session. Usually called after starting Emacs.
-</p>
-
-<p>
-By default, all file visiting buffers, dired buffers, and indirect
-buffers are persisted and restored.
-</p>
+</pre></div><div id="outline-container-im-session-el-session-manager" class="outline-2">
+<h2 id="im-session-el-session-manager"><a href="#im-session-el-session-manager">im-session.el &ndash; session manager</a></h2>
+<div class="outline-text-2" id="text-im-session-el-session-manager">
 </div>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
-(use-package easysession
-  :ensure (:host github :repo "jamescherti/easysession.el")
-  :hook (elpaca-after-init . easysession-save-mode)
-  :diminish easysession-save-mode
-  :custom
-  (easysession-mode-line-misc-info t)
-  (easysession-buffer-list-function #'im-tab-bar-visible-buffers)
-  :config
-  (setq easysession-mode-line-misc-info-prefix " S:["))
+(use-package im-session
+  :ensure `(:repo ,im-packages-path :files ("im-session.el"))
+  :hook (elpaca-after-init . im-enable-session)
+  :init
+  (defun im-enable-session ()
+    (im-session-restore "last")
+    (im-session-auto-save-mode)))
 </pre></div><div id="outline-container-im-git-my-git-workflow-magit-alternative" class="outline-2">
 <h2 id="im-git-my-git-workflow-magit-alternative"><a href="#im-git-my-git-workflow-magit-alternative">im-git &ndash; my git workflow, magit alternative</a></h2>
 <div class="outline-text-2" id="text-im-git-my-git-workflow-magit-alternative">
@@ -9078,11 +9062,11 @@ you the power of IDEs but in some dummy/restricted way.
 </p>
 
 <dl class="org-dl">
-<dt><a id="org59f9a38"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
-<dt><a id="orgb573675"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
+<dt><a id="org47c9c49"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
+<dt><a id="org8d30c9c"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
 <dt>(no term)</dt><dd>To debug why it's not working: M-x <code>set-variable dumb-jump-debug t</code>, then go to <b>Messages</b> buffer.</dd>
-<dt><a id="orgddb662e"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
-<dt><a id="org449d211"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
+<dt><a id="orgb7e7bb0"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
+<dt><a id="org863eb6f"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
 <dt>(no term)</dt><dd>Use <code>]t</code> and <code>[t</code> to go next/prev TODO/FIXME item.</dd>
 </dl>
 </div>
@@ -14069,9 +14053,6 @@ End:
 <div class="outline-text-2" id="text-init-el-ends-here">
 </div>
 </div>
-
-<p>
-*</p>
 
   </article>
   </main>

@@ -6,7 +6,7 @@
     <description>My notes and ideas.</description>
     
     <item>
-      <title>Main</title>
+      <title>Blog Archive</title>
       <link>https://isamert.net/index.html</link>
       <pubDate>Thu, 21 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>
@@ -30,7 +30,7 @@
       <description><![CDATA[  ]]></description>
     </item>
     <item>
-      <title>dotfiles</title>
+      <title>Dotfiles</title>
       <link>https://isamert.net/dotfiles.html</link>
       <pubDate>Sun, 23 Aug 2026 02:28:00  +0100</pubDate>
       <description><![CDATA[  ]]></description>

@@ -9,7 +9,7 @@
       <title>Hosting Invidious on sub-folder with Nginx</title>
       <link>https://isamert.net/2024/05/17/running-invidious-on-sub-folder-with-nginx.html</link>
       <pubDate>Fri, 17 May 2024 17:40:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workaround for hosting Invidious under an Nginx sub-folder, despite the project not officially supporting that setup. ]]></description>
     </item>
   </channel>
 </rss>

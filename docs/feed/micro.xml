@@ -9,43 +9,43 @@
       <title>Emacs&apos;te Türkçe imla denetimi</title>
       <link>https://isamert.net/2021/01/31/emacs-te-turkce-imla-denetimi.html</link>
       <pubDate>Sun, 31 Jan 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Emacs üzerinde Türkçe imla denetimi kullanmak için hunspell ve Türkçe sözlük dosyalarını kurma rehberi. ]]></description>
     </item>
     <item>
       <title>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</title>
       <link>https://isamert.net/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html</link>
       <pubDate>Sun, 16 May 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Ekşi Sözlük gündemini daha az dikkat dağıtıcı hale getirmek için geliştirdiğim küçük çözümü ve bunu Emacs ile nasıl kullandığımı anlatıyorum. ]]></description>
     </item>
     <item>
       <title>Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</title>
       <link>https://isamert.net/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html</link>
       <pubDate>Wed, 02 Mar 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Emacs içinden çevrimiçi sözlüklere erişmeyi sağlayan sozluk.el paketinin duyurusu ve temel kullanımına kısa bir bakış. ]]></description>
     </item>
     <item>
       <title>Typing (unicode) characters programmatically on Linux and macOS</title>
       <link>https://isamert.net/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html</link>
       <pubDate>Fri, 12 Aug 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A cross-platform setup for typing Unicode characters programmatically on Linux and macOS, building on keyboard remapping with KMonad. ]]></description>
     </item>
     <item>
       <title>A simple new tab page (that works with TreeStyleTab)</title>
       <link>https://isamert.net/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html</link>
       <pubDate>Sat, 17 Sep 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A tiny custom new-tab page that provides stable named tabs for TreeStyleTab, without losing the names after a refresh or browser restart. ]]></description>
     </item>
     <item>
       <title>Hosting Invidious on sub-folder with Nginx</title>
       <link>https://isamert.net/2024/05/17/running-invidious-on-sub-folder-with-nginx.html</link>
       <pubDate>Fri, 17 May 2024 17:40:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workaround for hosting Invidious under an Nginx sub-folder, despite the project not officially supporting that setup. ]]></description>
     </item>
     <item>
       <title>Signing long PDF documents automatically with Bash</title>
       <link>https://isamert.net/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html</link>
       <pubDate>Wed, 25 Dec 2024 20:49:00 +0100</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A Bash script for automatically signing every page of a long PDF. ]]></description>
     </item>
   </channel>
 </rss>

@@ -9,13 +9,13 @@
       <title>Bash scripting guide</title>
       <link>https://isamert.net/2019/02/21/bash-scripting-guide.html</link>
       <pubDate>Thu, 21 Feb 2019 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A collection of Bash scripting lessons and practical patterns covering everything from shebangs and variables to parameters, functions, subshells, and linting. ]]></description>
     </item>
     <item>
       <title>A (relatively) deep dive into (zsh) shell login process (without a display manager)</title>
       <link>https://isamert.net/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html</link>
       <pubDate>Tue, 02 Mar 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A deep dive into what happens during a zsh login without a display manager, following the relevant startup files and environment setup step by step. ]]></description>
     </item>
   </channel>
 </rss>

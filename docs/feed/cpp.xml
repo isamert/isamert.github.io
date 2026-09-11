@@ -9,13 +9,13 @@
       <title>Median cut algorithm in C++/Qt</title>
       <link>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</link>
       <pubDate>Wed, 13 Jul 2016 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A from-scratch implementation of the median cut color quantization algorithm in C++ and Qt, with a step-by-step explanation of how to build a smaller color palette from an image. ]]></description>
     </item>
     <item>
       <title>Functional programming in C++</title>
       <link>https://isamert.net/2018/03/01/functional-programming-in-cpp.html</link>
       <pubDate>Thu, 01 Mar 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An exploration of functional programming techniques in C++, from higher-order functions and currying to folding, sum types, and functors. ]]></description>
     </item>
   </channel>
 </rss>

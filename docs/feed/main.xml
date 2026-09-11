@@ -9,175 +9,175 @@
       <title>Split tunneling &amp; port forwarding qBittorrent with WireGuard VPN</title>
       <link>https://isamert.net/2026/01/01/split-tunneling-and-port-forwarding-qbittorrent-with-wireguard-vpn.html</link>
       <pubDate>Thu, 01 Jan 2026 20:46:00 +0100</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A guide to routing qBittorrent through a WireGuard VPN with split tunneling and setting up port forwarding for better seeding. ]]></description>
     </item>
     <item>
       <title>Signing long PDF documents automatically with Bash</title>
       <link>https://isamert.net/2024/12/25/signing-long-pdf-documents-automatically-with-bash.html</link>
       <pubDate>Wed, 25 Dec 2024 20:49:00 +0100</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A Bash script for automatically signing every page of a long PDF. ]]></description>
     </item>
     <item>
       <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers</title>
       <link>https://isamert.net/2024/08/20/corg-el-announcement.html</link>
       <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for corg.el, an Emacs completion package for Org-mode source block and dynamic block headers. ]]></description>
     </item>
     <item>
       <title>Hosting Invidious on sub-folder with Nginx</title>
       <link>https://isamert.net/2024/05/17/running-invidious-on-sub-folder-with-nginx.html</link>
       <pubDate>Fri, 17 May 2024 17:40:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workaround for hosting Invidious under an Nginx sub-folder, despite the project not officially supporting that setup. ]]></description>
     </item>
     <item>
       <title>Announcement: upver.el -- Interactively update your project dependencies</title>
       <link>https://isamert.net/2024/05/14/upver-el-announchement.html</link>
       <pubDate>Tue, 14 May 2024 23:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for upver.el, an Emacs package for interactively updating npm dependencies from a package.json buffer. ]]></description>
     </item>
     <item>
       <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
       <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
       <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for swagg.el, an Emacs package that lets you fetch and interact with Swagger definitions directly inside an Emacs frame. ]]></description>
     </item>
     <item>
       <title>Elisp editing/development tips</title>
       <link>https://isamert.net/2023/08/14/elisp-editing-development-tips.html</link>
       <pubDate>Mon, 14 Aug 2023 00:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A collection of interactive, REPL-driven tips for editing and developing Elisp more comfortably in Emacs. ]]></description>
     </item>
     <item>
       <title>A simple new tab page (that works with TreeStyleTab)</title>
       <link>https://isamert.net/2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html</link>
       <pubDate>Sat, 17 Sep 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A tiny custom new-tab page that provides stable named tabs for TreeStyleTab, without losing the names after a refresh or browser restart. ]]></description>
     </item>
     <item>
       <title>Typing (unicode) characters programmatically on Linux and macOS</title>
       <link>https://isamert.net/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html</link>
       <pubDate>Fri, 12 Aug 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A cross-platform setup for typing Unicode characters programmatically on Linux and macOS, building on keyboard remapping with KMonad. ]]></description>
     </item>
     <item>
       <title>Global interactive Emacs functions</title>
       <link>https://isamert.net/2022/03/16/global-interactive-emacs-functions.html</link>
       <pubDate>Wed, 16 Mar 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How to trigger interactive Emacs functions from outside Emacs using emacsclient, so small actions do not require switching back to the editor. ]]></description>
     </item>
     <item>
       <title>Duyuru: sozluk.el, Emacs için çevrimiçi sözlük uygulaması</title>
       <link>https://isamert.net/2022/03/02/duyuru-sozluk-el-emacs-icin-cevrimici-sozluk-uygulamasi.html</link>
       <pubDate>Wed, 02 Mar 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Emacs içinden çevrimiçi sözlüklere erişmeyi sağlayan sozluk.el paketinin duyurusu ve temel kullanımına kısa bir bakış. ]]></description>
     </item>
     <item>
       <title>Dealing with APIs, JSONs and databases in org-mode</title>
       <link>https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html</link>
       <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A practical Org-mode workflow for calling APIs, working with JSON responses, and querying the resulting data with databases and executable blocks. ]]></description>
     </item>
     <item>
       <title>Ekşisözlük, gündem, dikkat dağınıklığı ve Emacs</title>
       <link>https://isamert.net/2021/05/16/eksisozluk-gundem-dikkat-daginikligi-ve-emacs.html</link>
       <pubDate>Sun, 16 May 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Ekşi Sözlük gündemini daha az dikkat dağıtıcı hale getirmek için geliştirdiğim küçük çözümü ve bunu Emacs ile nasıl kullandığımı anlatıyorum. ]]></description>
     </item>
     <item>
       <title>Migrating my IMDb ratings list and watch list into org-mode</title>
       <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
       <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workflow for exporting IMDb data, parsing it, and turning ratings and watch lists into a useful Org-mode database. ]]></description>
     </item>
     <item>
       <title>Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</title>
       <link>https://isamert.net/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html</link>
       <pubDate>Wed, 21 Apr 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How I keep contacts in an Org file and synchronize them with a phone, while retaining a simple, editable source of truth. ]]></description>
     </item>
     <item>
       <title>Killing (copying) currently selected candidate&apos;s content/text in Selectrum</title>
       <link>https://isamert.net/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html</link>
       <pubDate>Sat, 27 Mar 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A small Selectrum and Emacs function that copies the content of the currently selected candidate, making project-wide searches a little less repetitive. ]]></description>
     </item>
     <item>
       <title>A (relatively) deep dive into (zsh) shell login process (without a display manager)</title>
       <link>https://isamert.net/2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html</link>
       <pubDate>Tue, 02 Mar 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A deep dive into what happens during a zsh login without a display manager, following the relevant startup files and environment setup step by step. ]]></description>
     </item>
     <item>
       <title>Emacs&apos;te Türkçe imla denetimi</title>
       <link>https://isamert.net/2021/01/31/emacs-te-turkce-imla-denetimi.html</link>
       <pubDate>Sun, 31 Jan 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Emacs üzerinde Türkçe imla denetimi kullanmak için hunspell ve Türkçe sözlük dosyalarını kurma rehberi. ]]></description>
     </item>
     <item>
       <title>How do I keep my days organized with org-mode and Emacs</title>
       <link>https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html</link>
       <pubDate>Mon, 25 Jan 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A tour of how I use Org-mode and Emacs to organize projects, plans, recurring tasks, daily notes, and the rest of my life. ]]></description>
     </item>
     <item>
       <title>Better keyboard experience in Linux</title>
       <link>https://isamert.net/2020/05/30/better-keyboard-experience-in-linux.html</link>
       <pubDate>Sat, 30 May 2020 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ Ideas and tools for making keyboard use on Linux more comfortable and productive, including keymaps, modifier keys, and useful shortcuts. ]]></description>
     </item>
     <item>
       <title>Running SQL on org-mode tables</title>
       <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
       <pubDate>Thu, 14 Nov 2019 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How to query and visualize Org tables with SQL, using R, sqldf, and an Org Babel workflow instead of wrestling with table formulas. ]]></description>
     </item>
     <item>
       <title>Bash scripting guide</title>
       <link>https://isamert.net/2019/02/21/bash-scripting-guide.html</link>
       <pubDate>Thu, 21 Feb 2019 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A collection of Bash scripting lessons and practical patterns covering everything from shebangs and variables to parameters, functions, subshells, and linting. ]]></description>
     </item>
     <item>
       <title>Emacs - Run flycheck on all buffers after save</title>
       <link>https://isamert.net/2018/06/06/emacs-run-flycheck-on-all-buffers-after-save.html</link>
       <pubDate>Wed, 06 Jun 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A small Emacs solution that runs Flycheck on every relevant file buffer after saving, instead of checking only the current buffer. ]]></description>
     </item>
     <item>
       <title>Automatize your logins with gnome-keyring (and optionally with KeePassXC)</title>
       <link>https://isamert.net/2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html</link>
       <pubDate>Fri, 04 May 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A guide to storing passwords securely with gnome-keyring and using them from the command line, with an optional KeePassXC setup. ]]></description>
     </item>
     <item>
       <title>Nice little curl commands</title>
       <link>https://isamert.net/2018/03/24/nice-little-curl-commands.html</link>
       <pubDate>Sat, 24 Mar 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A collection of useful curl-friendly web services for checking things like weather, IP addresses, files, translations, and cryptocurrency rates from the terminal. ]]></description>
     </item>
     <item>
       <title>Functional programming in C++</title>
       <link>https://isamert.net/2018/03/01/functional-programming-in-cpp.html</link>
       <pubDate>Thu, 01 Mar 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An exploration of functional programming techniques in C++, from higher-order functions and currying to folding, sum types, and functors. ]]></description>
     </item>
     <item>
       <title>Programming AVR microcontrollers in Linux</title>
       <link>https://isamert.net/2017/12/22/programming-avr-microcontrollers-in-linux.html</link>
       <pubDate>Fri, 22 Dec 2017 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A practical guide to compiling and flashing AVR microcontroller programs from Linux without relying on ATMEL Studio. ]]></description>
     </item>
     <item>
       <title>Kotlin function application</title>
       <link>https://isamert.net/2017/08/15/kotlin-function-application.html</link>
       <pubDate>Tue, 15 Aug 2017 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A small look at how to apply Kotlin functions as values, including a handy way to make function application read more naturally. ]]></description>
     </item>
     <item>
       <title>Median cut algorithm in C++/Qt</title>
       <link>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</link>
       <pubDate>Wed, 13 Jul 2016 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A from-scratch implementation of the median cut color quantization algorithm in C++ and Qt, with a step-by-step explanation of how to build a smaller color palette from an image. ]]></description>
     </item>
     <item>
       <title>system.org</title>
@@ -192,7 +192,7 @@
       <description><![CDATA[  ]]></description>
     </item>
     <item>
-      <title>dotfiles</title>
+      <title>Dotfiles</title>
       <link>https://isamert.net/dotfiles.html</link>
       <pubDate>Sun, 23 Aug 2026 02:28:00  +0100</pubDate>
       <description><![CDATA[  ]]></description>
@@ -216,7 +216,7 @@
       <description><![CDATA[  ]]></description>
     </item>
     <item>
-      <title>Main</title>
+      <title>Blog Archive</title>
       <link>https://isamert.net/index.html</link>
       <pubDate>Thu, 21 Jan 2021 00:00:00 +0300</pubDate>
       <description><![CDATA[  ]]></description>

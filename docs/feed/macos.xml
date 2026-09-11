@@ -9,7 +9,7 @@
       <title>Typing (unicode) characters programmatically on Linux and macOS</title>
       <link>https://isamert.net/2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html</link>
       <pubDate>Fri, 12 Aug 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A cross-platform setup for typing Unicode characters programmatically on Linux and macOS, building on keyboard remapping with KMonad. ]]></description>
     </item>
   </channel>
 </rss>

@@ -9,73 +9,73 @@
       <title>Emacs - Run flycheck on all buffers after save</title>
       <link>https://isamert.net/2018/06/06/emacs-run-flycheck-on-all-buffers-after-save.html</link>
       <pubDate>Wed, 06 Jun 2018 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A small Emacs solution that runs Flycheck on every relevant file buffer after saving, instead of checking only the current buffer. ]]></description>
     </item>
     <item>
       <title>Running SQL on org-mode tables</title>
       <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
       <pubDate>Thu, 14 Nov 2019 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How to query and visualize Org tables with SQL, using R, sqldf, and an Org Babel workflow instead of wrestling with table formulas. ]]></description>
     </item>
     <item>
       <title>How do I keep my days organized with org-mode and Emacs</title>
       <link>https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html</link>
       <pubDate>Mon, 25 Jan 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A tour of how I use Org-mode and Emacs to organize projects, plans, recurring tasks, daily notes, and the rest of my life. ]]></description>
     </item>
     <item>
       <title>Killing (copying) currently selected candidate&apos;s content/text in Selectrum</title>
       <link>https://isamert.net/2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html</link>
       <pubDate>Sat, 27 Mar 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A small Selectrum and Emacs function that copies the content of the currently selected candidate, making project-wide searches a little less repetitive. ]]></description>
     </item>
     <item>
       <title>Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</title>
       <link>https://isamert.net/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html</link>
       <pubDate>Wed, 21 Apr 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How I keep contacts in an Org file and synchronize them with a phone, while retaining a simple, editable source of truth. ]]></description>
     </item>
     <item>
       <title>Migrating my IMDb ratings list and watch list into org-mode</title>
       <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
       <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workflow for exporting IMDb data, parsing it, and turning ratings and watch lists into a useful Org-mode database. ]]></description>
     </item>
     <item>
       <title>Dealing with APIs, JSONs and databases in org-mode</title>
       <link>https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html</link>
       <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A practical Org-mode workflow for calling APIs, working with JSON responses, and querying the resulting data with databases and executable blocks. ]]></description>
     </item>
     <item>
       <title>Global interactive Emacs functions</title>
       <link>https://isamert.net/2022/03/16/global-interactive-emacs-functions.html</link>
       <pubDate>Wed, 16 Mar 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How to trigger interactive Emacs functions from outside Emacs using emacsclient, so small actions do not require switching back to the editor. ]]></description>
     </item>
     <item>
       <title>Elisp editing/development tips</title>
       <link>https://isamert.net/2023/08/14/elisp-editing-development-tips.html</link>
       <pubDate>Mon, 14 Aug 2023 00:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A collection of interactive, REPL-driven tips for editing and developing Elisp more comfortably in Emacs. ]]></description>
     </item>
     <item>
       <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
       <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
       <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for swagg.el, an Emacs package that lets you fetch and interact with Swagger definitions directly inside an Emacs frame. ]]></description>
     </item>
     <item>
       <title>Announcement: upver.el -- Interactively update your project dependencies</title>
       <link>https://isamert.net/2024/05/14/upver-el-announchement.html</link>
       <pubDate>Tue, 14 May 2024 23:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for upver.el, an Emacs package for interactively updating npm dependencies from a package.json buffer. ]]></description>
     </item>
     <item>
       <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers</title>
       <link>https://isamert.net/2024/08/20/corg-el-announcement.html</link>
       <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for corg.el, an Emacs completion package for Org-mode source block and dynamic block headers. ]]></description>
     </item>
   </channel>
 </rss>

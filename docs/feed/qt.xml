@@ -9,7 +9,7 @@
       <title>Median cut algorithm in C++/Qt</title>
       <link>https://isamert.net/2016/07/13/median-cut-algorithm-in-cpp-qt.html</link>
       <pubDate>Wed, 13 Jul 2016 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A from-scratch implementation of the median cut color quantization algorithm in C++ and Qt, with a step-by-step explanation of how to build a smaller color palette from an image. ]]></description>
     </item>
   </channel>
 </rss>

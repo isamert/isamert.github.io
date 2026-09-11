@@ -9,31 +9,31 @@
       <title>Running SQL on org-mode tables</title>
       <link>https://isamert.net/2019/11/14/running-sql-on-org-mode-tables.html</link>
       <pubDate>Thu, 14 Nov 2019 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How to query and visualize Org tables with SQL, using R, sqldf, and an Org Babel workflow instead of wrestling with table formulas. ]]></description>
     </item>
     <item>
       <title>How do I keep my days organized with org-mode and Emacs</title>
       <link>https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html</link>
       <pubDate>Mon, 25 Jan 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A tour of how I use Org-mode and Emacs to organize projects, plans, recurring tasks, daily notes, and the rest of my life. ]]></description>
     </item>
     <item>
       <title>Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</title>
       <link>https://isamert.net/2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html</link>
       <pubDate>Wed, 21 Apr 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ How I keep contacts in an Org file and synchronize them with a phone, while retaining a simple, editable source of truth. ]]></description>
     </item>
     <item>
       <title>Migrating my IMDb ratings list and watch list into org-mode</title>
       <link>https://isamert.net/2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html</link>
       <pubDate>Sun, 09 May 2021 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A workflow for exporting IMDb data, parsing it, and turning ratings and watch lists into a useful Org-mode database. ]]></description>
     </item>
     <item>
       <title>Dealing with APIs, JSONs and databases in org-mode</title>
       <link>https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html</link>
       <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ A practical Org-mode workflow for calling APIs, working with JSON responses, and querying the resulting data with databases and executable blocks. ]]></description>
     </item>
   </channel>
 </rss>

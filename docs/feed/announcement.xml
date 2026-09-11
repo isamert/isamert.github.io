@@ -9,19 +9,19 @@
       <title>Announcement: swagg.el -- Swagger UI, inside Emacs</title>
       <link>https://isamert.net/2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html</link>
       <pubDate>Mon, 04 Sep 2023 00:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for swagg.el, an Emacs package that lets you fetch and interact with Swagger definitions directly inside an Emacs frame. ]]></description>
     </item>
     <item>
       <title>Announcement: upver.el -- Interactively update your project dependencies</title>
       <link>https://isamert.net/2024/05/14/upver-el-announchement.html</link>
       <pubDate>Tue, 14 May 2024 23:00:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for upver.el, an Emacs package for interactively updating npm dependencies from a package.json buffer. ]]></description>
     </item>
     <item>
       <title>Announcement: corg.el -- Seamless auto completion for org-mode block headers</title>
       <link>https://isamert.net/2024/08/20/corg-el-announcement.html</link>
       <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>
-      <description><![CDATA[  ]]></description>
+      <description><![CDATA[ An announcement for corg.el, an Emacs completion package for Org-mode source block and dynamic block headers. ]]></description>
     </item>
   </channel>
 </rss>

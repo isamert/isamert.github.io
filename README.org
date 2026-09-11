@@ -7166,7 +7166,7 @@ Useful when styling or templating has changed."
          :update-date-iso update-date-iso
          :update-date-formatted (if updated? (format-time-string "%d %b %Y" update-time) "")
          :updated? updated?
-         :abstract (or abstract (concat (substring entry-body 0 (min (length entry-body) 150)) "..."))
+         :abstract (or abstract (user-error "You should provide an ABSTRACT for the post %s" (or title id)))
          :tags tags
          :author author
          :options options

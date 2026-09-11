@@ -1387,8 +1387,8 @@ Pages that list posts belonging to a particular tag will be generated based on t
 * Main :page:
 :PROPERTIES:
 :EXPORT_AS: index
-:OPTIONS: toc:nil title:nil
-:BLOG_OPTIONS: title:nil
+:OPTIONS: toc:nil
+:TITLE: Blog Archive
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu 00:00] +0300
 :END:

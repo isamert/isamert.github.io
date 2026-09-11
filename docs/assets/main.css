@@ -50,7 +50,7 @@
 
   /* Layout */
   --content-width: 720px;
-  --line-height: 1.68;
+  --line-height: 1.5;
 }
 
 * {
@@ -69,7 +69,7 @@ body {
   overflow-x: clip;
   color: var(--text);
   background: var(--bg);
-  font: 18px / var(--line-height) var(--body);
+  font: 1.25rem / var(--line-height) var(--body);
 }
 
 .hidden {
@@ -620,7 +620,7 @@ article p {
   margin: 0.7rem 0 1rem;
   padding-left: 1rem;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.85rem;
   line-height: 1.5;
 }
 
@@ -692,6 +692,13 @@ article img {
 }
 
 /* Responsive */
+
+@media (max-width: 730px) {
+  body {
+    font-size: 1.17rem;
+    line-height: 1.45;
+  }
+}
 
 @media (min-width: 1180px) {
   .sidenote {

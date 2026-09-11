@@ -45,7 +45,7 @@
   --syntax-deletion-bg: rgb(241 139 120 / 0.12);
 
   /* Typography */
-  --body: "Bricolage Grotesque", system-ui, sans-serif;
+  --body: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
   --mono: "Cascadia Code", "Cascadia Mono", monospace;
 
   /* Layout */

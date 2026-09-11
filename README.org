@@ -7603,11 +7603,10 @@ They can be overridden in header properties."
    <url>
       <loc>%s/%s</loc>
       <lastmod>%s</lastmod>
-      <changefreq>monthly</changefreq>
    </url>"
                 isamert/blog-url
                 (isamert/blog-mk-path)
-                (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "MODIFY_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
+                (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "UPDATE_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
       ) "LEVEL=1")
    (--keep it)
    (--reduce (format "%s%s" acc it))

@@ -7533,8 +7533,9 @@ They can be overridden in header properties."
 
 (defun isamert/blog-generate-rss-item-current ()
   "Return the list of tags and RSS item for current post."
-  (when (isamert/blog-can-export-current)
-    `(,(--filter (not (s-blank? it)) (s-split ":" (org-entry-get nil "TAGS")))
+  (and-let* (((isamert/blog-can-export-current))
+             (post (isamert/get-current-post-info)))
+    `(,(plist-get post :tags)
       .
       ,(format
         "
@@ -7544,15 +7545,15 @@ They can be overridden in header properties."
       <pubDate>%s</pubDate>
       <description><![CDATA[ %s ]]></description>
     </item>"
-        (xml-escape-string (org-entry-get nil "ITEM"))
+        (xml-escape-string (plist-get post :title))
         isamert/blog-url
         (isamert/blog-mk-path)
-        (-let (((time zone) (s-split "] " (org-entry-get nil "PUBLISH_DATE"))))
+        (-let (((time zone) (s-split "] " (plist-get post :publish-date))))
           (concat
            (format-time-string "%a, %d %b %Y %H:%M:%S" (encode-time (org-parse-time-string time)))
            " "
            zone))
-        (or (org-entry-get nil "ABSTRACT") "")))))
+        (or (plist-get post :abstract) "")))))
 
 (defun isamert/blog-make-rss-doc (items &optional tag)
   (format "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>

@@ -1392,23 +1392,6 @@ Pages that list posts belonging to a particular tag will be generated based on t
 :CUSTOM_ID: main
 :PUBLISH_DATE: [2021-01-21 Thu 00:00] +0300
 :END:
-#+begin_src elisp :exports none :eval yes
-(defun isamert/blog-draw-main-posts-list (year posts)
-  `(section ((class . "year")
-             (aria-labelledby . ,(concat "year-" year)))
-            (h2 ((id . ,(concat "year-" year))) ,year)
-            (ul ((class . "post-list"))
-                ,@(--map
-                   (let-plist it
-                     `(li ()
-                          (time ((datetime . ,.publish-date-iso))
-                                ,.publish-month)
-                          (a ((href . ,(concat "/" .path))
-                              ,@(when (equal .language "tr")
-                                  '((lang . "tr"))))
-                             ,.title)))
-                   posts))))
-#+end_src
 
 #+begin_src elisp :exports results :results value html
 (->> (map-values (im-inspect isamert/blog-all-posts))
@@ -3184,7 +3167,7 @@ Lately I am trying to move the parts into smaller packages to reduce the line co
 
 I used the following code to export these ~.el~ files into HTML:[fn:: There are similar packages that does a very similar thing ([[https://github.com/tumashu/el2org][el2org]], [[https://github.com/zevlg/ellit-org.el#commenting-el-files][ellit-org]]) but I found them after writing this piece of code and they are somewhat different in a sense that they convert whole document to org and then export into HTML. This code directly converts code parts into HTML and commentary parts are converted to org file and then HTML. Makes things much faster.]
 
-#+begin_src elisp :eval yes
+#+begin_src elisp :eval yes :exports both
 (defun isamert/el2html (el-file)
   (with-current-buffer (find-file-noselect (expand-file-name el-file))
     (let* ((forms (isamert/elisp-top-level-forms))
@@ -7730,6 +7713,24 @@ They can be overridden in header properties."
    (if (assq :result-params params)
        params
      (org-babel-process-params params))))
+
+;;;; Post specific functions
+
+(defun isamert/blog-draw-main-posts-list (year posts)
+  `(section ((class . "year")
+             (aria-labelledby . ,(concat "year-" year)))
+            (h2 ((id . ,(concat "year-" year))) ,year)
+            (ul ((class . "post-list"))
+                ,@(--map
+                   (let-plist it
+                     `(li ()
+                          (time ((datetime . ,.publish-date-iso))
+                                ,.publish-month)
+                          (a ((href . ,(concat "/" .path))
+                              ,@(when (equal .language "tr")
+                                  '((lang . "tr"))))
+                             ,.title)))
+                   posts))))
 #+end_src
 
 * Load blog code :noexport:

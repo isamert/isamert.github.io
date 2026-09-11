@@ -1297,12 +1297,9 @@ This is the post template, post pages will be generated based on this.
 #+NAME: post-meta
 #+begin_src html-template
 <meta property="og:type" content="article">
-<meta property="og:title"
-      content="${title}">
-<meta property="og:description"
-      content="${description}">
-<meta property="og:url"
-      content="https://isamert.net/${path}">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${abstract}">
+<meta property="og:url" content="https://isamert.net/${path}">
 <meta property="og:site_name" content="((isamert))">
 #+end_src
 
@@ -7135,7 +7132,6 @@ Useful when styling or templating has changed."
              (title (or (org-entry-get nil "TITLE")
                         (org-entry-get nil "ITEM")))
              (title? (not (s-contains? "title:nil" (or options ""))))
-             (description (org-entry-get nil "DESCRIPTION"))
              (path (isamert/blog-mk-path))
              (custom-id (org-entry-get nil "CUSTOM_ID"))
              (id (or custom-id (org-entry-get nil "ID")))
@@ -7156,7 +7152,6 @@ Useful when styling or templating has changed."
          :id id
          :title? title?
          :title title
-         :description (or description (concat (substring entry-body 0 (min (length entry-body) 100)) "..."))
          :path path
          :file-path (isamert/blog-with-publish-dir path)
          :page? (-contains? tags "page")
@@ -7171,7 +7166,7 @@ Useful when styling or templating has changed."
          :update-date-iso update-date-iso
          :update-date-formatted (if updated? (format-time-string "%d %b %Y" update-time) "")
          :updated? updated?
-         :abstract abstract
+         :abstract (or abstract (concat (substring entry-body 0 (min (length entry-body) 150)) "..."))
          :tags tags
          :author author
          :options options

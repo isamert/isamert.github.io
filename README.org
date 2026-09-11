@@ -109,7 +109,7 @@ See the following example org file that has two special pages and two posts. It 
 
   ,#+name: page-template
   ,#+begin_src html :noweb yes
-    <<post-template>>
+    «post-template»
   ,#+end_src
   ,*** Tag page template
   This is template that tag-overview (pages that lists all the posts
@@ -159,7 +159,7 @@ This is the file that contains all the dynamic logic for my website. I'm trying 
 #+begin_src js :tangle docs/assets/index.js :noweb yes
 // Umami is a privacy friendly analytics app. I self-host it so the
 // data is not in the hands of greater evils.
-if (location.port != <<blog-local-port()>>) {
+if (location.port != «blog-local-port()») {
   let script = document.createElement('script');
   script.src = 'https://u.isamert.net/u.js';
   script.setAttribute("defer", "true");
@@ -1276,20 +1276,20 @@ Headers tagged with =page= tag will be generated based on this template.
 
 #+NAME: page-template
 #+begin_src html-template :noweb yes
-<<template-header(extras="")>>
+«template-header(extras="")»
   ${body}
-<<template-footer>>
+«template-footer»
 #+end_src
 *** Content template
 Almost same as page but wraps the content with ~article~ only.
 
 #+NAME: content-template
 #+begin_src html-template :noweb yes
-<<template-header(extras="")>>
+«template-header(extras="")»
   <article>
     ${body}
   </article>
-<<template-footer>>
+«template-footer»
 #+end_src
 *** Post template
 This is the post template, post pages will be generated based on this.
@@ -1305,7 +1305,7 @@ This is the post template, post pages will be generated based on this.
 
 #+NAME: post-template
 #+begin_src html-template :noweb yes
-<<template-header(extras=post-meta())>>
+«template-header(extras=post-meta())»
   <article>
     <header class="post-header">
       <h1>${title}</h1>
@@ -1344,7 +1344,7 @@ This is the post template, post pages will be generated based on this.
             defer>
     </script>
   </div>
-<<template-footer>>
+«template-footer»
 #+end_src
 *** Tag template
 :PROPERTIES:
@@ -1366,12 +1366,12 @@ Pages that list posts belonging to a particular tag will be generated based on t
 
 #+NAME: tag-template
 #+begin_src html
-<<template-header(extras="")>>
+«template-header(extras="")»
  <section>
    <h1>
     <code>${tag-name}</code> posts
     <a href="${(format "/%s/%s.xml" isamert/blog-rss-per-tag tag-name)}" aria-label="RSS feed" class="rss-link">
-      <<rss-svg>>
+      «rss-svg»
     </a>
   </h1>
 
@@ -1382,7 +1382,7 @@ Pages that list posts belonging to a particular tag will be generated based on t
                           (aria-labelledby . "archive"))))
       (shr-dom-to-xml))}
  </section>
-<<template-footer>>
+«template-footer»
 #+end_src
 * Main :page:
 :PROPERTIES:
@@ -7737,6 +7737,8 @@ They can be overridden in header properties."
 - I also set some useful variables that improves HTML generation.
 
 # Local Variables:
+# org-babel-noweb-wrap-start: "«"
+# org-babel-noweb-wrap-end: "»"
 # org-html-html5-fancy: t
 # org-html-doctype: "html5"
 # eval: (progn (org-babel-goto-named-src-block "startup") (let ((code (org-babel-expand-noweb-references))) (with-temp-buffer (insert code) (eval-buffer))))

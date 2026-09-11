@@ -3164,11 +3164,11 @@ void init();
   <script src="/assets/watchlist.js" defer></script>
 #+end_export
 
-* dotfiles :page:dotfiles:
+* Dotfiles :page:dotfiles:
 :PROPERTIES:
 :PUBLISH_DATE: [2026-08-23 Sun 02:28]  +0100
 :EXPORT_AS: dotfiles
-:OPTIONS: toc:nil title:nil
+:OPTIONS: toc:nil
 :CUSTOM_ID: dotfiles
 :TEMPLATE: content-template
 :END:
@@ -3298,7 +3298,7 @@ I used the following code to export these ~.el~ files into HTML:[fn:: There are 
 :PUBLISH_DATE: [2026-08-23 Sun 01:26] +0100
 :CUSTOM_ID: emacs-d
 :EXPORT_AS: .emacs.d/init.el
-:OPTIONS: toc:nil title:nil
+:OPTIONS: toc:nil
 :TEMPLATE: content-template
 :END:
 #+begin_comment
@@ -3309,12 +3309,11 @@ Currently, my init.el (and other files) are exported whenever I export this page
 (isamert/el2html "~/.emacs.d/init.el")
 #+end_src
 
-*
 * system.org :page:dotfiles:
 :PROPERTIES:
 :PUBLISH_DATE: [2026-08-23 Sun 01:26] +0100
 :EXPORT_AS: system.org
-:OPTIONS: toc:nil title:nil
+:OPTIONS: toc:nil
 :CUSTOM_ID: system-org
 :TEMPLATE: content-template
 :END:

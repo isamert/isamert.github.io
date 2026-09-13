@@ -1561,6 +1561,36 @@ I maintain a few projects and occasionally contribute to other free software pro
   - A contact manager based on org-mode. I have a blog post about this here: [[./2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html][Managing your contacts in org-mode and syncing them to your phone (Android, iOS)]].
   - Other smaller stuff.
 
+* Fun :page:
+:PROPERTIES:
+:CUSTOM_ID: fun
+:EXPORT_AS: fun
+:PUBLISH_DATE: [2026-09-13 Sun 18:45] +0300
+:TEMPLATE: content-template
+:END:
+
+#+begin_center
+*[[./watchlist.html][my watchlist]]*
+#+end_center
+
+#+begin_center
+This page contains my watchlist with my ratings. There are filters and stuff, check it out.
+#+end_center
+
+-----
+
+#+begin_center
+*[[./dotfiles.html][dotfiles]]*
+#+end_center
+
+#+begin_center
+All of my dotfiles, exported automatically from my [[https://github.com/isamert/dotfiles][dotfiles repository]] repository for web. You can also find my [[./.emacs.d/init.el.html][init.el]] here.
+#+end_center
+
+-----
+
+Although I refrain to do this[fn:: /this/ meaning talking about the things I haven't done yet/things I am planning to do, but I find myself doing it anyway all the time. It also probably kills the anticipation of /doing/ itself. The page looked too empty and I couldn't hold myself. For a page that asserts itself as fun, things are not very fun right now.], there will be other fun stuff here, hopefully. I find the idea of having a weird little corner of mine on the web fascinating.
+
 * Watchlist :page:
 :PROPERTIES:
 :CUSTOM_ID: watchlist

@@ -805,7 +805,9 @@ article img {
 
 @media (max-width: 560px) {
   .org-src-container::before,
-  .org-src-container::after {
+  .org-src-container::after,
+  #similar-posts::before,
+  #similar-posts::after {
     right: -0.5rem;
     left: -0.5rem;
   }

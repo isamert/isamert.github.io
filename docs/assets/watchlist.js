@@ -327,7 +327,15 @@ function parseWatchDate(movie) {
   return new Date(Number(year), Number(month) - 1, Number(day));
 }
 
-function drawTimeline(movies, visibleCount = 6) {
+function getTimelinePageSize() {
+  return window.matchMedia("(max-width: 480px)").matches ? 3 : 6;
+}
+
+function drawTimeline(
+  movies,
+  visibleCount = getTimelinePageSize(),
+  pageSize = getTimelinePageSize(),
+) {
   const watched = movies
     .map((movie) => ({ movie, date: parseWatchDate(movie) }))
     .filter(({ date }) => date != null)
@@ -339,17 +347,17 @@ function drawTimeline(movies, visibleCount = 6) {
   const visible = watched.slice(0, count);
   const timeline = container([], "watch-timeline");
   const controls = container([
-    count > 6
+    count > pageSize
       ? el("button", "Show less ↑", {
         clazz: "timeline-toggle",
-        onclick: () => timeline.replaceWith(drawTimeline(movies, 6)),
+        onclick: () => timeline.replaceWith(drawTimeline(movies, pageSize, pageSize)),
       })
       : null,
     count < watched.length
       ? el("button", `Show more (${watched.length - count}) ↓`, {
         clazz: "timeline-toggle",
         onclick: () => timeline.replaceWith(
-          drawTimeline(movies, count + 6),
+          drawTimeline(movies, count + pageSize, pageSize),
         ),
       })
       : null,
@@ -358,7 +366,7 @@ function drawTimeline(movies, visibleCount = 6) {
   timeline.append(
     container([
       div("recently watched", "timeline-title"),
-      watched.length > 6 ? controls : null,
+      watched.length > pageSize ? controls : null,
     ], "timeline-header"),
     container(
       visible.map(({ movie, date }) =>
@@ -380,7 +388,7 @@ function drawTimeline(movies, visibleCount = 6) {
           onclick: () => showMovieDetails(movie),
         })
       ),
-      `timeline-items${count > 6 ? " expanded" : ""}`,
+      `timeline-items${count > pageSize ? " expanded" : ""}`,
     ),
   );
 
@@ -398,6 +406,7 @@ function drawMoviePoster(movie) {
 
   return img(movie.image, {
     clazz: "movie-poster-img",
+    loading: "lazy",
     onerror: (event) => event.currentTarget.replaceWith(fallback()),
   });
 }
@@ -1409,9 +1418,9 @@ section:has(#movie-list) {
   text-decoration: none;
 }
 
-// ========================================
+/* ========================================
    Scrollbar
-   ======================================== //
+   ======================================== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1437,9 +1446,9 @@ section:has(#movie-list) {
   }
 }
 
-// ========================================
+/* ========================================
    Responsive - Tablet
-   ======================================== //
+   ======================================== */
 @media (max-width: 768px) {
   :root {
     --card-min-width: 140px;
@@ -1493,22 +1502,24 @@ section:has(#movie-list) {
   }
 }
 
-// ========================================
+/* ========================================
    Responsive - Mobile
-   ======================================== //
+   ======================================== */
 @media (max-width: 480px) {
   #movie-list {
     padding: var(--space-md);
   }
 
-  .watch-timeline {
-    overflow-x: auto;
-    scrollbar-width: thin;
+  .filters-container::before,
+  .filters-container::after,
+  .timeline-items::before {
+    right: 0;
+    left: 0;
   }
 
   .timeline-items {
-    grid-template-columns: repeat(6, 125px);
-    padding-bottom: var(--space-sm);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-sm);
   }
 
   .filters-container {

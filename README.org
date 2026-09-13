@@ -1312,7 +1312,7 @@ article img {
     <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
     <nav class="home-links">
       <a href="/about.html">about</a>
-      <a href="https://github.com/isamert">projects</a>
+      <a href="/fun.html">fun</a>
       <a href="/feeds.html">rss</a>
     </nav>
   </header>

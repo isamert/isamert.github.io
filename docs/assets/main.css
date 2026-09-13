@@ -1,3 +1,5 @@
+/* * Generic */
+
 :root {
   /* Colors */
   --bg: #080808;
@@ -72,15 +74,6 @@ body {
   font: 1.25rem / var(--line-height) var(--body);
 }
 
-.hidden {
-  display: none !important;
-}
-
-.org-center {
-  display: flex;
-  justify-content: center;
-}
-
 a {
   text-decoration: none;
   color: var(--link);
@@ -93,7 +86,18 @@ a:hover {
   text-shadow: 0 0 0.55rem rgb(var(--accent-rgb) / 0.3);
 }
 
-/* Header */
+/* * Utilities */
+
+.hidden {
+  display: none !important;
+}
+
+.org-center {
+  display: flex;
+  justify-content: center;
+}
+
+/* * Header */
 
 .site-header {
   position: relative;
@@ -163,6 +167,8 @@ a:hover {
   transform: translateY(-2px);
 }
 
+/* * Footer */
+
 footer {
   margin-top: 3rem;
   color: var(--muted);
@@ -178,7 +184,7 @@ footer {
   opacity: 0.55;
 }
 
-/* Code */
+/* * Code blocks */
 
 code {
   padding: 0.3em 0.2em;
@@ -241,7 +247,7 @@ pre code {
   text-shadow: 0 0 0.5rem rgb(197 194 202 / 0.04);
 }
 
-/* RSS button */
+/* * RSS button */
 
 .rss-link {
   position: relative;
@@ -274,7 +280,7 @@ pre code {
   outline-offset: 3px;
 }
 
-/* Table of contents */
+/* * Table of contents */
 
 #table-of-contents {
   position: fixed;
@@ -380,7 +386,7 @@ pre code {
   transform: translateX(0.2rem);
 }
 
-/* Archive */
+/* * Archive */
 
 .year {
   margin-bottom: 1rem;
@@ -454,7 +460,7 @@ pre code {
   text-shadow: 0 0 0.65rem rgb(var(--accent-rgb) / 0.24);
 }
 
-/* Posts */
+/* * Posts */
 
 article hr {
   border: 0;
@@ -693,7 +699,7 @@ article img {
   border-radius: 0.25rem;
 }
 
-/* Responsive */
+/* * Responsive stuff */
 
 @media (max-width: 730px) {
   body {
@@ -769,7 +775,6 @@ article img {
 }
 
 /* * HLJS */
-
 
 .hljs {
   color: var(--code-text);

@@ -699,6 +699,57 @@ article img {
   border-radius: 0.25rem;
 }
 
+#similar-posts h2 {
+    margin: 0;
+    padding: 0;
+}
+
+#similar-posts ul {
+    padding: 0;
+    margin: 0;
+    margin-top: 0.2rem;
+}
+
+#similar-posts {
+  position: relative;
+  padding: 1rem;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+#similar-posts::before,
+#similar-posts::after {
+  content: "";
+  position: absolute;
+  right: -8rem;
+  left: -8rem;
+  height: 1px;
+  pointer-events: none;
+}
+
+#similar-posts::before {
+  top: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--accent-rgb) / 0.65) 22%,
+    rgb(var(--accent-rgb) / 0.22) 72%,
+    transparent
+  );
+}
+
+#similar-posts::after {
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--coral-rgb) / 0.18) 28%,
+    rgb(var(--coral-rgb) / 0.55) 78%,
+    transparent
+  );
+}
+
 /* * Responsive stuff */
 
 @media (max-width: 730px) {

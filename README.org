@@ -7650,18 +7650,23 @@ They can be overridden in header properties."
 (defun isamert/blog-generate-sitemap ()
   (interactive)
   (->>
-   (org-map-entries
-    (lambda ()
-      (when (isamert/blog-can-export-current)
-        (format "
+   `(,@(org-map-entries
+        (lambda ()
+          (when (isamert/blog-can-export-current)
+            (format "
    <url>
       <loc>%s/%s</loc>
       <lastmod>%s</lastmod>
    </url>"
-                isamert/blog-url
-                (isamert/blog-mk-path)
-                (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "UPDATE_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
-      ) "LEVEL=1")
+                    isamert/blog-url
+                    (isamert/blog-mk-path)
+                    (s-join "-" (isamert/parse-org-date (or (org-entry-get nil "UPDATE_DATE") (org-entry-get nil "PUBLISH_DATE"))))))
+          ) "LEVEL=1")
+     ,@(--map (format "
+   <url>
+      <loc>%s/%s</loc>
+   </url>"
+                      isamert/blog-url (isamert/make-tag-url it)) (isamert/blog-all-tags)))
    (--keep it)
    (--reduce (format "%s%s" acc it))
    (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -7706,10 +7711,13 @@ They can be overridden in header properties."
   "Convert given ORG-DATE (like [2021-03-28 Sun]) to ISO date (2021-03-28)"
   (s-replace-regexp "[^0-9-]" "" (car (s-split " " org-date))))
 
+(defun isamert/make-tag-url (tag)
+  (format "tags/%s.html" tag))
+
 (defun isamert/create-tag-list (tags)
   (->> tags
        (--filter (not (s-blank? it)))
-       (--map (format "<a href=\"/tags/%s.html\">%s</a>" it it))
+       (--map (format "<a href=\"/%s\">%s</a>" (isamert/make-tag-url it) it))
        (s-join "")))
 
 (defun isamert/blog-all-tags ()

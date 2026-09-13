@@ -7201,8 +7201,11 @@ id's to their info, which is a plist.")
   "Export/render current file as a whole blog."
   (interactive)
   (isamert/blog-refresh-templates)
+  (message "isamert :: Metadata refreshed...")
   (isamert/blog-export-meta)
-  (isamert/blog-export-all-posts-pages))
+  (message "isamert :: Meta exported...")
+  (isamert/blog-export-all-posts-pages)
+  (message "isamert :: Posts and pages exported..."))
 
 (defun isamert/blog-export-all-pages ()
   "Export all HTML pages (tag pages, posts, normal pages etc., except xml stuff).
@@ -7372,7 +7375,8 @@ Useful when styling or templating has changed."
                            (org-entry-properties nil nil)))))))))
             (isamert/write-string-to-file file-path contents)
             (when cool-uri
-              (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents)))
+              (isamert/write-string-to-file (isamert/blog-with-publish-dir cool-uri) contents))
+            (message "isamert :: %s exported" (or title id)))
           (widen)
           `(,title ,export-path ,is-page ,publish-date))))))
 

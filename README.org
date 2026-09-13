@@ -829,26 +829,28 @@ article h1 {
 .date-day {
   grid-row: 1 / 3;
   color: var(--link-hover);
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 500;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.05em;
   text-shadow: 0 0 0.7rem rgb(var(--accent-rgb) / 0.18);
+  font-family: var(--mono);
 }
 
 .date-month {
   align-self: end;
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .date-year {
   align-self: start;
   color: var(--muted);
-  font-size: 0.85rem;
-  letter-spacing: 0.07em;
+  font-size: 0.9rem;
+  /* letter-spacing: 0.07em; */
+  font-family: var(--mono);
 }
 
 .meta .updated {
@@ -7033,7 +7035,6 @@ This was a deeper rabbit hole than I expected for just "turning on a VPN". Howev
 (require 'org)
 (require 'dash)
 (require 's)
-(require 'elnode)
 (require 'ox-html)
 
 ;;;; Variables
@@ -7602,6 +7603,7 @@ They can be overridden in header properties."
 (defun isamert/blog-start-local-server ()
   "Start the local server."
   (interactive)
+  (require 'elnode)
   (unless (-contains? (elnode-ports) isamert/blog-local-port)
     (elnode-make-webserver (expand-file-name isamert/blog-publish-path) isamert/blog-local-port)
     (when (called-interactively-p 'interactive)

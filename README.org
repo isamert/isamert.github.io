@@ -1692,10 +1692,20 @@ Following code uses the exported watchlist JSON movies data and populates the pa
 let MOVIES = [];
 let FILTER = {};
 let SORT = null;
+let SEARCH = "";
 let CURRENT = null;
 
 // * Constants
 
+const SEARCH_FIELDS = [
+  "item",
+  "plot",
+  "actors",
+  "directors",
+  "genres",
+  "countries",
+  "tags",
+];
 const SORTERS = {
   "isamert's rating": "rating",
   IMDb: "imdb_rating",
@@ -1726,6 +1736,7 @@ async function loadGlobals() {
   const params = new URLSearchParams(window.location.search);
 
   CURRENT = params.get("id");
+  SEARCH = params.get("q") ?? "";
   FILTER = Object.fromEntries(FILTER_TYPES.map(x => [x[1], params.getAll(x[1])]))
   MOVIES = await fetch("assets/watchlist.json").then((response) =>
     response.json()
@@ -1938,8 +1949,19 @@ function drawFilters(filters, sortBy) {
     sortCombo,
   ], "sort-container");
 
+  const searchBox = input("text", {
+    placeholder: "Search titles, plots, cast, genres…",
+    id: "search",
+    clazz: "search",
+    value: SEARCH,
+    oninput: withDebounce((e) => {
+      updateSearch(e.target.value);
+      draw(FILTER, SORT, MOVIES, () => document.getElementById("search").focus());
+    }, 200),
+  });
+
   root.append(
-    container([filterButtons, sortContainer], "filter-header"),
+    container([filterButtons, sortContainer, searchBox], "filter-header"),
     activeFilters.children.length > 0 ? activeFilters : div(""),
   );
 
@@ -2205,18 +2227,28 @@ function showMovieDetails(movie) {
   });
 }
 
-function draw(filters, sortBy, movies) {
+function matchesSearch(movie, query) {
+  const terms = query.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (terms.length === 0) return true;
+
+  const haystack = SEARCH_FIELDS
+    .flatMap((field) => movie[field] ?? [])
+    .join(" ")
+    .toLocaleLowerCase();
+
+  return terms.every((term) => haystack.includes(term));
+}
+
+function draw(filters, sortBy, movies, then) {
   const root = document.getElementById("movie-list");
   root.innerHTML = "";
 
-  const tryInt = (x) => parseInt();
-  const filteredMovies = movies
-    .filter((movie) =>
-      Object.entries(filters ?? {}).reduce((acc, pred) => {
-        const [key, val] = pred;
-        return acc && val.every((x) => (movie[key] ?? []).includes(x));
-      }, true)
-    );
+  const filteredMovies = movies.filter((movie) =>
+    matchesSearch(movie, SEARCH) &&
+    Object.entries(filters ?? {}).every(([key, values]) =>
+      values.every((value) => (movie[key] ?? []).includes(value))
+    )
+  );
   const filteredAndSortedMovies = filteredMovies
     .toSorted((a, b) => {
       if (sortBy) {
@@ -2243,11 +2275,15 @@ function draw(filters, sortBy, movies) {
   const timeline = drawTimeline(filteredMovies);
   if (timeline) root.appendChild(timeline);
   root.appendChild(drawMovies(filteredAndSortedMovies));
+
+  if (then) {
+    then();
+  }
 }
 
 // * URL stuff
 
-function updateURLParam(key, val) {
+function updateURLParam(key, val, replace = false) {
   const href = new URL(window.location.href);
   href.searchParams.delete(key);
   if (val) {
@@ -2257,7 +2293,12 @@ function updateURLParam(key, val) {
       href.searchParams.set(key, val);
     }
   }
-  window.history.pushState({}, "", href);
+  window.history[replace ? "replaceState" : "pushState"]({}, "", href);
+}
+
+function updateSearch(query) {
+  SEARCH = query;
+  updateURLParam("q", SEARCH, true);
 }
 
 function updateFilter(opts) {
@@ -2428,15 +2469,23 @@ section:has(#movie-list) {
 
 .filter-header {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-md);
+}
+
+.filter-header > .search {
+  flex: 1 1 16rem;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 0;
 }
 
 .filter-buttons {
   display: flex;
+  flex: 1 1 auto;
   flex-wrap: nowrap;
+  justify-content: space-between;
   gap: var(--space-xs);
   min-width: 0;
 }
@@ -2893,6 +2942,19 @@ section:has(#movie-list) {
   text-transform: capitalize;
 }
 
+.search {
+  width: 100%;
+  margin-bottom: var(--space-md);
+  padding: 10px var(--space-md);
+  color: var(--color-text);
+  caret-color: var(--color-primary);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
 .modal-search {
   width: 95%;
   margin-bottom: var(--space-md);
@@ -3151,6 +3213,11 @@ section:has(#movie-list) {
   .filter-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .filter-header > .search {
+    flex: 0 0 auto;
+    width: 100%;
   }
 
   .filter-buttons {

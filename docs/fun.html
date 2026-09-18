@@ -30,11 +30,25 @@
 </p>
 </div>
 
+<p>
+This page contains my watchlist with my ratings. I keep what I watch in a single org file, as explained <a href="./2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">here</a>. I also use a package that I wrote to maintain that file, called <a href="https://github.com/isamert/orgmdb.el">orgmdb.el</a>. I export that file as JSON, using <a href="https://github.com/isamert/isamert.github.io/blob/8fb2f50ef9366b88aeccbfcec741a79abd063b28/README.org?plain=1#L1594">this code</a> (which itself is part of this website, see the next section) and serve in <a href="./watchlist.html">this page</a> using some javascript to make it interactive and filterable etc.
+</p>
+
+<p>
+My memory is a bit weak, so I find it hard to talk about movies I watched but this page served me very well on this regard. Whenever a <i>movie talk</i> happens, I open up this page to refresh my memory. I also observed that people organically start scrolling and start discussions about the movies we both saw which I find quite amusing.
+</p>
+
+<hr>
+
 <div class="org-center">
 <p>
-This page contains my watchlist with my ratings. There are filters and stuff, check it out.
+<b><a href="https://github.com/isamert.github.io">source of this website</a></b>
 </p>
 </div>
+
+<p>
+The interesting part about this website is everything is generated from single <a href="https://orgmode.org/">org-mode</a> file (including all the assets) and the code that generates it is even in the file itself. <sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>Only exceptions are the image files and my <a href="file:///resume.html">resume</a>. It is also possible to embed them into the file using some base64 shenanigans but has no practical value, so I kept them separate. Resume itself is not really part of the blog itself, so I also kept it outside.</span> To list a few properties of it: It has a templating system, makes use of <a href="https://orgmode.org/worg/org-contrib/babel/">org-babel</a> and <a href="https://orgmode.org/manual/Noweb-Reference-Syntax.html">noweb syntax</a> heavily, you can embed arbitrary elisp anywhere and make it output HTML,<sup class="fn-ref" aria-describedby="2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>Or you can also use the <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/net/shr.el">shr package</a> to render HTML using elisp lists, not powerful as <a href="https://github.com/weavejester/hiccup">Clojure's hiccup</a> but it's still very good!</span> it has tagging system, generates RSS feeds/pages, contains a local server for development&hellip;
+</p>
 
 <hr>
 
@@ -44,16 +58,8 @@ This page contains my watchlist with my ratings. There are filters and stuff, ch
 </p>
 </div>
 
-<div class="org-center">
 <p>
-All of my dotfiles, exported automatically from my <a href="https://github.com/isamert/dotfiles">dotfiles repository</a> repository for web. You can also find my <a href="./.emacs.d/init.el.html">init.el</a> here.
-</p>
-</div>
-
-<hr>
-
-<p>
-Although I refrain to do this<sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span><i>this</i> meaning talking about the things I haven't done yet/things I am planning to do, but I find myself doing it anyway all the time. It also probably kills the anticipation of <i>doing</i> itself. The page looked too empty and I couldn't hold myself. For a page that asserts itself as fun, things are not very fun right now.</span>, there will be other fun stuff here, hopefully. I find the idea of having a weird little corner of mine on the web fascinating.
+All of my dotfiles, exported automatically from my <a href="https://github.com/isamert/dotfiles">dotfiles repository</a> repository for web. You can also find my <a href="./.emacs.d/init.el.html">init.el</a> here. Again, these are exported by the single org file mentioned above by making use of org's <a href="https://orgmode.org/manual/Include-Files.html">INCLUDE directive</a>.
 </p>
 
   </article>

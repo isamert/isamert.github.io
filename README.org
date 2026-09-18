@@ -1958,9 +1958,14 @@ function drawFilters(filters, sortBy) {
     clazz: "search",
     value: SEARCH,
     oninput: withDebounce((e) => {
+      const lastCursorPos = searchBox.selectionStart;
       updateSearch(e.target.value);
-      draw(FILTER, SORT, MOVIES, () => document.getElementById("search").focus());
-    }, 200),
+        draw(FILTER, SORT, MOVIES, () => {
+          const search = document.getElementById("search")
+          search.focus();
+          search.setSelectionRange(lastCursorPos, lastCursorPos);
+        });
+    }, 300),
   });
 
   root.append(

@@ -7510,15 +7510,15 @@ This does some changes on the original document like:
   (s-format
    (cdr (assoc template-name isamert/blog-templates))
    (lambda (var plist)
-     (if (s-prefix? "(" var)
-         ;; WARN:  Here I remove "(" and ")" from the output of evaluated code
-         ;; to be able to make lists appear as intended. This may cause  issues
-         ;; if output itself is not a list but a string that is wrapped inside paranthesis
-         (->>
-          (isamert/eval-code-with-env plist var)
-          (format "%s")
-          (s-chop-prefix "(")
-          (s-chop-suffix ")"))
+     (if (s-prefix? "(" var) ; code eval
+         (let* ((evaled (isamert/eval-code-with-env plist var))
+                (output (format "%s" evaled)))
+           (if (listp evaled)
+               (->>
+                output
+                (s-chop-prefix "(")
+                (s-chop-suffix ")"))
+             output))
        ;; Every key in plist starts with ":", hence (concat ":" var)
        (plist-get plist (intern (concat ":" var)))))
    args))

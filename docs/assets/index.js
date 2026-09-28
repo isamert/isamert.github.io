@@ -64,3 +64,38 @@ function registerRefHandlers() {
     });
   })
 }
+
+// * Lights out!
+
+const title = document.querySelector(".site-title");
+let bangTimer;
+let currentFrame = 0;
+let grayedOut = false;
+
+const clearAnimation = () => {
+    currentFrame = 0;
+    if (bangTimer) {
+        clearInterval(bangTimer);
+    }
+};
+
+
+title.addEventListener('mouseenter', event => {
+    if (!grayedOut) {
+        bangTimer = setInterval(() => {
+            currentFrame += 1;
+            if (currentFrame == 14) {
+                title.style.animation = "neon-flicker-dying 3s  ease-in-out forwards";
+                grayedOut = true;
+            } else if (currentFrame == 44) /* 1.4 seconds neon-flicker + 3 seconds neon-flicker-dying */ {
+                document.documentElement.style.filter = "grayscale(1)";
+                clearAnimation();
+            }
+        }, 100);
+    }
+});
+
+title.addEventListener('mouseleave', event => {
+    clearAnimation();
+    title.style.animation = "";
+});

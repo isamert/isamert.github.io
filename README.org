@@ -227,6 +227,7 @@ function registerRefHandlers() {
 // * Lights out!
 
 const title = document.querySelector(".site-title");
+const toc = document.querySelector("#table-of-contents h2");
 let bangTimer;
 let currentFrame = 0;
 let grayedOut = false;
@@ -235,28 +236,38 @@ const clearAnimation = () => {
     currentFrame = 0;
     if (bangTimer) {
         clearInterval(bangTimer);
+        bangTimer = null;
     }
 };
 
-
 title.addEventListener('mouseenter', event => {
-    if (!grayedOut) {
-        bangTimer = setInterval(() => {
-            currentFrame += 1;
-            if (currentFrame == 14) {
-                title.style.animation = "neon-flicker-dying 3s  ease-in-out forwards";
-                grayedOut = true;
-            } else if (currentFrame == 44) /* 1.4 seconds neon-flicker + 3 seconds neon-flicker-dying */ {
-                document.documentElement.style.filter = "grayscale(1)";
-                clearAnimation();
-            }
-        }, 100);
-    }
+  if (!grayedOut && !bangTimer) {
+    bangTimer = setInterval(() => {
+      currentFrame += 1;
+      if (currentFrame == 14) {
+        title.style.animation = "neon-flicker-dying 3s ease-in-out forwards";
+      } else if (currentFrame == 44) /* 1.4 seconds neon-flicker + 3 seconds neon-flicker-dying */ {
+        document.documentElement.style.filter = "grayscale(1)";
+
+        // a very bad fall effect
+        // title.style.transformOrigin = "left center";
+        // title.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.7, 1)";
+        // title.style.transform = "translate(0.3em, 1.4em) rotate(17deg)";
+
+        title.style.setProperty("text-shadow", "none", "important");
+        title.style.animation = "none";
+        toc.style.setProperty("text-shadow", "none", "important");
+        toc.style.animation = "none";
+
+        grayedOut = true;
+        clearAnimation();
+      }
+    }, 100);
+  }
 });
 
 title.addEventListener('mouseleave', event => {
-    clearAnimation();
-    title.style.animation = "";
+  clearAnimation();
 });
 #+end_src
 

@@ -7260,6 +7260,64 @@ You can also go to [[https://ipleak.net/][ipleak.net]] and use /Torrent Address 
 -----
 
 This was a deeper rabbit hole than I expected for just "turning on a VPN". However, now that the initial configuration is done, the system is rock solid. It has been running flawlessly for weeks, automatically handling port refreshes and IP changes in the background. Since everything is managed via Systemd, I get all the standard reliability guarantees like automatic restarts, plus my custom enhancements—like crash notifications to my phone—via drop-ins.
+* Opening org-capture in a new frame :emacs:elisp:org:micro:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-10-04 Sun 16:02] +0200
+:CUSTOM_ID: opening-org-capture-in-a-new-frame
+:END:
+
+I wanted to simply have a way of opening org-capture in a new frame.[fn:: This is good for the cases where you want it to be available from other programs without switching into Emacs. There is also something called [[https://orgmode.org/worg/org-contrib/org-protocol.html][org-protocol]] which may replace/aid your need of opening org-capture outside of Emacs. Just wanted to let you know about this, too.] When I searched for a solution I found a lot of, what I believe is, outdated information and misuse of Emacas Lisp. Here is a simple alternative that you can put into your Emacs configuration. When you invoke ~im-org-capture~ this takes care of opening the capture selection window on a new Emacs frame, no split windows whatsoever. I've also disabled system window decorations, made the frame a bit more compact, handles quitting properly etc.
+
+#+begin_src elisp
+(defun im-org-capture ()
+  "Select a template and capture in a new frame."
+  (interactive)
+  (let ((frame (make-frame '((name . "org-capture")
+                             ;; Optional configuration, change it as you like
+                             (width . 80)
+                             (height . 20)
+                             (undecorated . t)
+                             (internal-border-width . 5)
+                             (left-fringe . 0)
+                             (right-fringe . 0)
+                             (menu-bar-lines . 0)
+                             (tool-bar-lines . 0)
+                             (vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil)
+                             (tab-bar-lines . 0)))))
+    (select-frame-set-input-focus frame)
+    (condition-case err
+        (let ((display-buffer-overriding-action
+               '(display-buffer-same-window
+                 (inhibit-same-window . nil))))
+          (org-capture))
+      ((quit user-error)
+       (when (frame-live-p frame)
+         (delete-frame frame))
+       (signal (car err) (cdr err))))))
+
+(defun im-delete-frame-after-capture ()
+  "Delete the current frame after org-capture is finished."
+  (when (equal (frame-parameter nil 'name) "org-capture")
+    (delete-frame)))
+
+(add-hook 'org-capture-after-finalize-hook #'im-delete-frame-after-capture)
+#+end_src
+
+Just bind any key globally to ~emacsclient --eval "(im-org-capture)"~. For example I use [[https://swaywm.org/][Sway]] and here is a binding example for it:
+
+#+begin_src conf
+bindsym $mod+c exec emacsclient --eval "(im-org-capture)"
+#+end_src
+
+Also if you want to make it floating on Sway:
+
+#+begin_src conf
+for_window [app_id="emacs$" title="^org-capture$"] floating enable
+#+end_src
+
+Same idea probably works for other WM's too, we set the frame's name to ~org-capture~ and you need to mark it floating in your configuration.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp :lexical t

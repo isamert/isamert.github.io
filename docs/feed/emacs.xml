@@ -77,5 +77,11 @@
       <pubDate>Tue, 20 Aug 2024 00:06:00 +0200</pubDate>
       <description><![CDATA[ An announcement for corg.el, an Emacs completion package for Org-mode source block and dynamic block headers. ]]></description>
     </item>
+    <item>
+      <title>Opening org-capture in a new frame</title>
+      <link>https://isamert.net/2026/10/04/opening-org-capture-in-a-new-frame.html</link>
+      <pubDate>Sun, 04 Oct 2026 16:02:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

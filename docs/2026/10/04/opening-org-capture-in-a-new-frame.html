@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening org-capture in a new frame | ((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  <meta property="og:type" content="article">
+<meta property="og:title" content="Opening org-capture in a new frame">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://isamert.net/2026/10/04/opening-org-capture-in-a-new-frame.html">
+<meta property="og:site_name" content="((isamert))">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="/fun.html">fun</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Opening org-capture in a new frame</h1>
+
+      <div class="meta">
+        <time datetime="2026-10-04" class="publish-time"
+              aria-label="Published Oct 04, 2026">
+          <span class="date-day">04</span>
+          <span class="date-month">Oct</span>
+          <span class="date-year">2026</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/elisp.html">elisp</a><a href="/tags/org.html">org</a><a href="/tags/micro.html">micro</a>
+        </span>
+      </div>
+
+    </header>
+
+    <p>
+I wanted to simply have a way of opening org-capture in a new frame.<sup class="fn-ref" aria-describedby="1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>This is good for the cases where you want it to be available from other programs without switching into Emacs. There is also something called <a href="https://orgmode.org/worg/org-contrib/org-protocol.html">org-protocol</a> which may replace/aid your need of opening org-capture outside of Emacs. Just wanted to let you know about this, too.</span> When I searched for a solution I found a lot of, what I believe is, outdated information and misuse of Emacas Lisp. Here is a simple alternative that you can put into your Emacs configuration. When you invoke <code>im-org-capture</code> this takes care of opening the capture selection window on a new Emacs frame, no split windows whatsoever. I've also disabled system window decorations, made the frame a bit more compact, handles quitting properly etc.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defun im-org-capture ()
+  "Select a template and capture in a new frame."
+  (interactive)
+  (let ((frame (make-frame '((name . "org-capture")
+                             ;; Optional configuration, change it as you like
+                             (width . 80)
+                             (height . 20)
+                             (undecorated . t)
+                             (internal-border-width . 5)
+                             (left-fringe . 0)
+                             (right-fringe . 0)
+                             (menu-bar-lines . 0)
+                             (tool-bar-lines . 0)
+                             (vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil)
+                             (tab-bar-lines . 0)))))
+    (select-frame-set-input-focus frame)
+    (condition-case err
+        (let ((display-buffer-overriding-action
+               '(display-buffer-same-window
+                 (inhibit-same-window . nil))))
+          (org-capture))
+      ((quit user-error)
+       (when (frame-live-p frame)
+         (delete-frame frame))
+       (signal (car err) (cdr err))))))
+
+(defun im-delete-frame-after-capture ()
+  "Delete the current frame after org-capture is finished."
+  (when (equal (frame-parameter nil 'name) "org-capture")
+    (delete-frame)))
+
+(add-hook 'org-capture-after-finalize-hook #'im-delete-frame-after-capture)
+</code></pre>
+</div>
+
+<p>
+Just bind any key globally to <code>emacsclient --eval "(im-org-capture)"</code>. For example I use <a href="https://swaywm.org/">Sway</a> and here is a binding example for it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>bindsym $mod+c exec emacsclient --eval "(im-org-capture)"
+</code></pre>
+</div>
+
+<p>
+Also if you want to make it floating on Sway:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>for_window [app_id="emacs$" title="^org-capture$"] floating enable
+</code></pre>
+</div>
+
+<p>
+Same idea probably works for other WM's too, we set the frame's name to <code>org-capture</code> and you need to mark it floating in your configuration.
+</p>
+
+  </article>
+
+  <div id="similar-posts">
+    <h2>Similar stuff</h2>
+    <ul>
+      <li> <a href="2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li><li> <a href="2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li><li> <a href="2021/03/27/killing-copying-currently-selected-candidates-content-text-in-selectrum.html">Killing (copying) currently selected candidate's content/text in Selectrum</a></li><li> <a href="2022/09/17/a-simple-new-tab-page-that-works-with-treestyletab.html">A simple new tab page (that works with TreeStyleTab)</a></li><li> <a href="2023/08/14/elisp-editing-development-tips.html">Elisp editing/development tips</a></li>
+    </ul>
+  </div>
+
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>
+  <img class="copyleft-icon" src="/assets/Copyleft.svg" alt="Copyleft"> 2016–2026 isamert ·
+  <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
+  <a href="https://github.com/isamert/isamert.github.io">source</a>
+  </footer>
+</body>
+</html>

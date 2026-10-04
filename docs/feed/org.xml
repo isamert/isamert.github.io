@@ -35,5 +35,11 @@
       <pubDate>Tue, 04 Jan 2022 00:00:00 +0300</pubDate>
       <description><![CDATA[ A practical Org-mode workflow for calling APIs, working with JSON responses, and querying the resulting data with databases and executable blocks. ]]></description>
     </item>
+    <item>
+      <title>Opening org-capture in a new frame</title>
+      <link>https://isamert.net/2026/10/04/opening-org-capture-in-a-new-frame.html</link>
+      <pubDate>Sun, 04 Oct 2026 16:02:00 +0200</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

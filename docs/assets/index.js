@@ -90,24 +90,19 @@ title.addEventListener('mouseenter', event => {
       } else if (currentFrame == 44) /* 1.4 seconds neon-flicker + 3 seconds neon-flicker-dying */ {
         document.documentElement.style.filter = "grayscale(1)";
 
-        // a very bad fall effect
-        // title.style.transformOrigin = "left center";
-        // title.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.7, 1)";
-        // title.style.transform = "translate(0.3em, 1.4em) rotate(17deg)";
+        grayedOut = true;
+        clearAnimation();
 
         title.style.setProperty("text-shadow", "none", "important");
         title.style.animation = "none";
         toc.style.setProperty("text-shadow", "none", "important");
         toc.style.animation = "none";
-
-        grayedOut = true;
-        clearAnimation();
       }
     }, 100);
   }
 });
 
 title.addEventListener('mouseleave', event => {
-  title.style.animation = "";
+  if (!grayedOut) title.style.animation = "";
   clearAnimation();
 });

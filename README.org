@@ -267,6 +267,7 @@ title.addEventListener('mouseenter', event => {
 });
 
 title.addEventListener('mouseleave', event => {
+  title.style.animation = "";
   clearAnimation();
 });
 #+end_src
@@ -492,6 +493,24 @@ a:hover {
   61%,
   76% {
     opacity: 0.35;
+    text-shadow: none;
+  }
+}
+
+@keyframes neon-flicker-dying {
+  0%, 18%, 24%, 42%, 48%, 58%, 63%, 70%, 74%,
+  79%, 82%, 85%, 88%, 91%, 94%, 97% {
+    opacity: 1;
+  }
+
+  20%, 44%, 60%, 72%, 77%, 81%, 84%, 87%,
+  90%, 93%, 96% {
+    opacity: 0.2;
+    text-shadow: none;
+  }
+
+  100% {
+    opacity: 0.2;
     text-shadow: none;
   }
 }

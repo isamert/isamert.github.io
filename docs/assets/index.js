@@ -108,5 +108,6 @@ title.addEventListener('mouseenter', event => {
 });
 
 title.addEventListener('mouseleave', event => {
+  title.style.animation = "";
   clearAnimation();
 });

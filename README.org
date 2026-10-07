@@ -5352,7 +5352,7 @@ I have a file called =bullet.org= where I keep all these day management stuff.[f
 :END:
 Every new day, I create a new level 1 header with today's date and start planning the day. I have a snippet, called =daily=, that expands to a big checklist of my daily routines.[fn:: The reason for not using a static header for these kind of habits/routines with a recurring timestamp is that it does not give you enough flexibility. Sometimes I skip breakfast and sometimes I do it in a very different time than usual. This way I have full control over the day with some starting points. I also like to see the all of my daily items under the same header instead of resorting to the agenda.] So far I got this:
 
-#+ATTR_HTML: :src /images/bullet_routines.png :class centered
+#+ATTR_HTML: :src /images/bullet_routines.png
 [[file:./docs/images/bullet_routines.png]]
 
 I use [[https://orgmode.org/manual/Clocking-Work-Time.html][clocking]] functionality to keep track of how much time I spent on doing stuff. So I just start clocking on the =Daily planning= TODO item. I'll show how I utilize this later in the post.
@@ -5366,16 +5366,16 @@ As my habits/routines change, this =daily= snippet also changes. Important thing
 The reason for having all of these routines under a header called =Routines= instead of expanding them right under the current days header is to keep my daily view clean and uncluttered. See next screenshot.
 
 So when I finish planning, I just clock out:
-#+ATTR_HTML: :src /images/bullet_2.png :class centered
+#+ATTR_HTML: :src /images/bullet_2.png
 [[file:./docs/images/bullet_2.png]]
 
 And this is what the whole day looks like after planning:
-#+ATTR_HTML: :src /images/bullet_4.png :class centered
+#+ATTR_HTML: :src /images/bullet_4.png
 [[file:./docs/images/bullet_4.png]]
 
 Right now, it's weekend and there is nothing related to work here. When there is work items, I just tag them with =work= tag, so that I can do just hide/show work-related and non-work-related pretty easily. Other than this case, I don't use tags much. Here is an example working day:
 
-#+ATTR_HTML: :src /images/bullet_work.png :class centered
+#+ATTR_HTML: :src /images/bullet_work.png
 [[file:./docs/images/bullet_work.png]]
 
 I tend to schedule things to specific hours, so that I can see them on my agenda view and when I sync this files to my phone [[http://www.orgzly.com][orgzly]] sends me notifications before the scheduled time. I don't really use /orgzly/ anything other than this, except using it's pretty widget on my main screen so that when I pull up my phone, the first thing I see is my =TODO= items.
@@ -5459,7 +5459,7 @@ This does not need any external dependency, it's possible to do it with =prettif
 :CUSTOM_ID: quickly-accessing-the-file
 :END:
 It's quite important to be able to easily open and take notes into this file. Thus, I created a shortcut that toggles this file on right side of Emacs. See the following:
-#+ATTR_HTML: :src /images/bullet_toggling.png :class centered
+#+ATTR_HTML: :src /images/bullet_toggling.png
 [[file:./docs/images/bullet_toggling.png]]
 
 The code is a bit long but the important function is =isamert/toggle-side-bullet-org-buffer=. I assigned a keybinding to this and it simply toggles the file in a side buffer.
@@ -5548,7 +5548,7 @@ If you've seen in the above screenshots, there was another header called =Summar
 - =:maxlevel 3= :: Just to make things simple.
 - =:block untilnow= :: Instead of using =:block day=, I use this. Because a day does not end when clock hits to =00:00= (technically yes, the day ends but for my perception the day ends when I go to sleep). So =:block untilnow= incorporates all the clockings under this days header (/day/ as in my perception) and we are limited with the =:scope tree1= so no other clockings from other days gets mixed up in our table. See:
 
-#+ATTR_HTML: :src /images/bullet_summary_clocktable.png :class centered
+#+ATTR_HTML: :src /images/bullet_summary_clocktable.png
 [[file:./docs/images/bullet_summary_clocktable.png]]
 
 After this, if I'm feeling well I just add a few observations about the day or maybe note down unexpected things that I encountered during the day. I also open my =Notes= header and try to create tasks based on those and simply move easy ones to where they belong (like moving snippets to my snippet file etc.).
@@ -5748,7 +5748,7 @@ To bind it to a key, use the following:
 
 It works with all kinds of Selectrum completion commands. See the following gif:
 
-#+ATTR_HTML: :src /images/emacs_consult_copy_text.gif :class centered
+#+ATTR_HTML: :src /images/emacs_consult_copy_text.gif
 [[file:./docs/images/emacs_consult_copy_text.gif]]
 
 ** For =embark= users
@@ -5890,12 +5890,12 @@ Don't forget to point =find-file-noselect= to your =people.org= file.
 :END:
 I have been using org-mode to keep track of my movie ratings and critiques. Org-mode, combined with [[https://github.com/alphapapa/org-ql/][org-ql]], gives me quite a lot flexibility. I'm also utilizing [[https://en.wikipedia.org/wiki/Zettelkasten][Zettelkasten]]-like backlinking and references, so keeping these rating information on org-mode makes sense for me. First, let me show you how it looks like:
 
-#+ATTR_HTML: :src /images/org_imdb_structre.png :class centered
+#+ATTR_HTML: :src /images/org_imdb_structre.png
 [[file:./docs/images/org_imdb_structre.png]]
 
 And this is how a movie with it's properties looks like:
 
-#+ATTR_HTML: :src /images/org_imdb_expanded.png :class centered
+#+ATTR_HTML: :src /images/org_imdb_expanded.png
 [[file:./docs/images/org_imdb_expanded.png]]
 
 I mainly automated the needed information-retrieval using the [[https://github.com/isamert/orgmdb.el][orgmdb.el]], a package that I wrote. The link contains the related information for automatically filling this data. Before all that, I was using IMDb to log my ratings only. So I just wanted to migrate those ratings into my new org-mode based watch/rating list.
@@ -5906,7 +5906,7 @@ I mainly automated the needed information-retrieval using the [[https://github.c
 :END:
 Log in to IMDb and open [[https://www.imdb.com/list/ratings][this link]]. Hit the 3-dot icon on top-right and click ~Export~.
 
-#+ATTR_HTML: :src /images/org_imdb_export.png :class centered
+#+ATTR_HTML: :src /images/org_imdb_export.png
 [[file:docs/images/org_imdb_export.png]]
 
 This will give you a file named ~ratings.csv~.
@@ -6080,7 +6080,7 @@ Bir ihtimal başlığı açıp bir iki entry'e bakmak istersem diye de bunu inte
 
 O da böyle gözüküyor:
 
-#+ATTR_HTML: :src /images/eksi_emacs.png :class centered
+#+ATTR_HTML: :src /images/eksi_emacs.png
 [[file:./docs/images/eksi_emacs.png]]
 
 Browser üzerinde de sol frame'i ve ekşişeyler frame'ini uBlock origin aracılığıyla engelledim. Bu sayede entry okumak için girdiğimde sağdan soldan fırlayan şeyler dikkatimi dağıtmıyor. Umarım gelecekte bir vakit hiç girmem şu siteye.
@@ -6297,7 +6297,7 @@ Görünüşe göre az da olsa RSS takipçilerim var ve belki aralarından bazıl
 
 Her şeyi Emacs'e taşıma hastalığımın sonucu olarak bir akşamüstü yazdığım birkaç fonksiyondan oluşan [[https://github.com/isamert/sozluk.el][sozluk.el]], ~sozluk.gov.tr~ ve ~etimolojiturkce.com~ API'larını kullanarak çalışan bir sözlük paketi. Sonuçlarını güzelce formatlanmış bir org-mode buffer'ında gösteriyor. README dosyasında çeşitli demo gif'leri bulunmakta. İlgilenenlere duyurulur.
 
-#+ATTR_HTML: :src /images/sozluk_el.gif :class centered
+#+ATTR_HTML: :src /images/sozluk_el.gif
 [[file:docs/images/sozluk_el.gif]]
 
 API'ların kullanım hakları ile alakalı bahsi geçen sitelerde herhangi bir bilgilendirme bulunmuyor. Sadece 3-5 kişinin kullanacağı bu paketten ötürü de üzerime geleceklerini sanmıyorum fakat herhangi bir uyarı almam neticesinde muhtemelen yayından kaldıracağım bir paket olacak.
@@ -6336,19 +6336,19 @@ But the following will show the radio channels using [[https://github.com/davato
 Here is how the command looks like without wrapping it with ~(isamert/globally)~:
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/emacs_global_interactive_fun_default.png :class centered
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_default.png
 [[file:docs/images/emacs_global_interactive_fun_default.png]]
 
 Here is how it looks when you wrap it with ~(isamert/globally ...)~, using default rofi config:
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/emacs_global_interactive_fun.png :class centered
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun.png
 [[file:docs/images/emacs_global_interactive_fun.png]]
 
 This is how it looks like on macOS with choose:
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/emacs_global_interactive_fun_choose.png :class centered
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_choose.png
 [[file:docs/images/emacs_global_interactive_fun_choose.png]]
 
 ~isamert/globally~ is a pretty simple macro that overrides ~completing-read-function~ for the current running context.
@@ -6426,7 +6426,7 @@ We updated ~isamert/globally~ to set ~isamert/defer-to-system-app~ to ~t~ for th
 Just to make this concrete, here is how it looks:
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/emacs_global_interactive_fun_read_string.png :class centered
+#+ATTR_HTML: :src /images/emacs_global_interactive_fun_read_string.png
 [[file:docs/images/emacs_global_interactive_fun_read_string.png]]
 
 Now, if you want to extend ~isamert/globally~, you need to define an around advice for the function that you want to provide an system level alternative and make it dynamically select either the default implementation or the system-level alternative based on the ~isamert/defer-to-system-app~ variable. This works nicely for simple use cases, like getting a string from user, making user to select a string from list of strings etc. but I don't think what's beyond that is sustainable. If this seems useful, I can turn it into a package. Currently I use it with /empv.el/, my custom password manager, and for interactively selecting inserting my [[https://github.com/Kungsgeten/yankpad/][yankpad]] snippets to other programs.
@@ -6545,7 +6545,7 @@ You need to get a API key from Unsplash to make it work and add it to the code. 
 Here is how it looks like on my machine:
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/tree_style_tabs_newtab_html.png :class centered
+#+ATTR_HTML: :src /images/tree_style_tabs_newtab_html.png
 [[file:docs/images/tree_style_tabs_newtab_html.png]]
 
 You can click and edit the title on the page directly. If you choose to not to show the title in the page, you can still edit the ~?title=Your Title~ parameter as you wish.
@@ -6560,7 +6560,7 @@ Couple thins to note about the file:
 - There are some customizations you can do, see the beginning of the ~<script>~ tag and set them to your liking. Or see bottom of this page to see how you can set these settings without editing the file.
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/tree_style_tabs_newtab_html_with_notes.png :class centered
+#+ATTR_HTML: :src /images/tree_style_tabs_newtab_html_with_notes.png
 [[file:docs/images/tree_style_tabs_newtab_html_with_notes.png]]
 
 ** [[https://isamert.net/newtab.html][isamert.net/newtab.html]]
@@ -6950,7 +6950,7 @@ This package tackles a frequent issue I encounter when dealing with various Babe
 For example, my other package [[https://github.com/isamert/lab.el][lab.el]] includes a dynamic block named ~lab-merge-requests~ that lists merge requests. corg.el simplifies creating these queries for me. Instead of relying on trial-and-error or looking up documentation, /corg.el/ automates parameter name completion. While it doesn't autocomplete parameter values for this specific block, corg.el shows the executor's documentation, making it easier to understand the required parameters.
 
 #+ATTR_ORG: :width 400
-#+ATTR_HTML: :src /images/corg_lab_completion_doc_example.png :class centered
+#+ATTR_HTML: :src /images/corg_lab_completion_doc_example.png
 [[file:./docs/images/corg_lab_completion_doc_example.png]]
 
 It's a nice quality-of-life package. Give it a try and let me know if it improves your workflow!
@@ -7266,7 +7266,7 @@ sudo systemctl enable --now qbittorrent-port-forwarder
 
 Now that you got your new port, and it's applied to your qBittorrent configuration, you should be seeing this green little icon that indicates everything is working properly:
 
-#+ATTR_HTML: :src /images/qbittorrent_port_forwarding_enabled.png :class centered
+#+ATTR_HTML: :src /images/qbittorrent_port_forwarding_enabled.png
 [[file:./docs/images/qbittorrent_port_forwarding_enabled.png]]
 
 You can also go to [[https://ipleak.net/][ipleak.net]] and use /Torrent Address Detection/ to ensure that you are using your VPN and your port is correct.

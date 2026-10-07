@@ -7659,10 +7659,11 @@ This does some changes on the original document like:
   (save-current-buffer
     (let ((org-html-htmlize-output-type nil)
           (org-html-footnotes-section "#FOOTNOTES_START# %s %s #FOOTNOTES_END#")
-          (fn-direction 'right))
-      (add-hook 'org-export-before-parsing-functions 'isamert/blog-pre-process-pure)
+          (fn-direction 'right)
+          (org-export-before-parsing-functions
+           (cons #'isamert/blog-pre-process-pure
+                 org-export-before-parsing-functions)))
       (org-html-export-as-html nil nil nil t nil)
-      (remove-hook 'org-export-before-parsing-functions 'isamert/blog-pre-process-pure)
       (let ((output (buffer-string)))
         (->>
          output

@@ -7677,7 +7677,7 @@ This does some changes on the original document like:
           (lambda (match)
             (let ((n (match-string 2 match)))
               (prog1 (format
-                      "<sup class=\"fn-ref\" aria-describedby=\"\\2\">\\2</sup><span class=\"sidenote %s\" id=\"note-\\2\"><span class=\"note-number\">\\2</span>#footnote_ref_\\2</span>"
+                      "<sup class=\"fn-ref\" aria-describedby=\"note-\\2\">\\2</sup><span class=\"sidenote %s\" id=\"note-\\2\"><span class=\"note-number\">\\2</span>#footnote_ref_\\2</span>"
                       fn-direction)
                 (setq fn-direction (if (eq 'right fn-direction) 'left 'right))))))
          (replace-regexp-in-string

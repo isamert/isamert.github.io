@@ -998,3 +998,45 @@ article img {
   color: var(--bright);
   font-weight: 700;
 }
+
+/* * Copy button */
+
+.copy-code {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 150ms;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.35rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.copy-code img {
+  filter: invert(1);
+}
+
+.copy-code:hover {
+  color: var(--link-hover);
+  border-color: var(--accent);
+}
+
+.org-src-container:hover .copy-code,
+.org-src-container:focus-within .copy-code {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .copy-code {
+    opacity: 1;
+  }
+}

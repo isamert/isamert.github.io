@@ -11,6 +11,7 @@ if (location.port != 3000) {
 document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks();
   registerRefHandlers();
+  addCopyButtons();
 })
 
 function highlightCodeBlocks(_event) {
@@ -63,6 +64,36 @@ function registerRefHandlers() {
       ref.classList.remove("highlighted");
     });
   })
+}
+
+function addCopyButtons() {
+  document.querySelectorAll('.org-src-container').forEach(container => {
+    const block = container.querySelector('pre.src');
+    const button = document.createElement('button');
+    const copyImage = '<img src="/assets/copy.svg" alt="" width="18" height="18">';
+    button.type = 'button';
+    button.innerHTML = copyImage;
+    button.className = 'copy-code';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(block.textContent);
+        button.textContent = '✓';
+        button.setAttribute('aria-label', 'Copied!');
+      } catch {
+        button.textContent = '!';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+
+      setTimeout(() => {
+        button.innerHTML = copyImage;
+      }, 1500);
+    });
+
+    container.appendChild(button);
+  });
 }
 
 // * Lights out!

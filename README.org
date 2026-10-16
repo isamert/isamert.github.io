@@ -170,6 +170,7 @@ if (location.port != «blog-local-port()») {
 document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks();
   registerRefHandlers();
+  addCopyButtons();
 })
 
 function highlightCodeBlocks(_event) {
@@ -222,6 +223,36 @@ function registerRefHandlers() {
       ref.classList.remove("highlighted");
     });
   })
+}
+
+function addCopyButtons() {
+  document.querySelectorAll('.org-src-container').forEach(container => {
+    const block = container.querySelector('pre.src');
+    const button = document.createElement('button');
+    const copyImage = '<img src="/assets/copy.svg" alt="" width="18" height="18">';
+    button.type = 'button';
+    button.innerHTML = copyImage;
+    button.className = 'copy-code';
+    button.title = 'Copy code';
+    button.setAttribute('aria-label', 'Copy code');
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(block.textContent);
+        button.textContent = '✓';
+        button.setAttribute('aria-label', 'Copied!');
+      } catch {
+        button.textContent = '!';
+        button.setAttribute('aria-label', 'Copy failed');
+      }
+
+      setTimeout(() => {
+        button.innerHTML = copyImage;
+      }, 1500);
+    });
+
+    container.appendChild(button);
+  });
 }
 
 // * Lights out!
@@ -1347,6 +1378,48 @@ article img {
   color: var(--bright);
   font-weight: 700;
 }
+
+/* * Copy button */
+
+.copy-code {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 150ms;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.35rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.copy-code img {
+  filter: invert(1);
+}
+
+.copy-code:hover {
+  color: var(--link-hover);
+  border-color: var(--accent);
+}
+
+.org-src-container:hover .copy-code,
+.org-src-container:focus-within .copy-code {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .copy-code {
+    opacity: 1;
+  }
+}
 #+end_src
 ** Templates
 *** Header & Footer
@@ -1518,6 +1591,25 @@ Pages that list posts belonging to a particular tag will be generated based on t
       (shr-dom-to-xml))}
  </section>
 «template-footer»
+#+end_src
+*** Images
+#+begin_src html :tangle docs/assets/copy.svg
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="16" height="16" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false">
+  <rect x="9" y="9" width="13" height="13" rx="2"/>
+  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+</svg>
+#+end_src
+
+#+begin_src html :tangle docs/assets/Copyleft.svg
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 980">
+  <circle cx="490" cy="490" r="440" fill="none" stroke="#000" stroke-width="100"/>
+  <path d="M219,428H350a150,150 0 1 1 0,125H219a275,275 0 1 0 0-125z"/>
+</svg>
 #+end_src
 * Main :page:
 :PROPERTIES:

@@ -144,6 +144,11 @@ See the following example org file that has two special pages and two posts. It 
 #+end_src
 
 * My configuration :noexport:
+** Org utilities
+#+name: constant
+#+begin_src emacs-lisp :var name=""
+(org-table-get-constant name)
+#+end_src
 ** General configuration
 Just setting the port and binding it into an org-variable. I'll utilize this later in [[index.js]].
 
@@ -152,7 +157,12 @@ Just setting the port and binding it into an org-variable. I'll utilize this lat
 (setq isamert/blog-local-port 3000)
 #+end_src
 
+Some constants that I use within multiple files:
+
+#+CONSTANTS: DESKTOP_WIDTH=1180px TABLET_WIDTH=768px
+
 ** Static files
+
 *** index.js
 This is the file that contains all the dynamic logic for my website. I'm trying to keep it minimal as possible.
 
@@ -171,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks();
   registerRefHandlers();
   addCopyButtons();
+  positionSidenotes();
 })
 
 function highlightCodeBlocks(_event) {
@@ -255,6 +266,41 @@ function addCopyButtons() {
   });
 }
 
+/**
+ ,* This moves sidenotes after the end of closes paragraph, instead of
+ ,* splitting the paragraph in half.
+ ,*/
+function positionSidenotes() {
+  const desktop = window.matchMedia('(min-width: «constant("DESKTOP_WIDTH")»)');
+
+  const notes = [...document.querySelectorAll('.sidenote')]
+    .map(note => {
+      const paragraph = note.closest('p');
+      if (!paragraph) {
+        return null
+      };
+
+      const marker = document.createComment('sidenote position');
+      note.before(marker);
+
+      return { note, paragraph, marker };
+    })
+    .filter(Boolean);
+
+  const update = () => {
+    notes.forEach(({ note, paragraph, marker }) => {
+      if (desktop.matches) {
+        marker.after(note);
+      } else {
+        paragraph.append(note);
+      }
+    });
+  }
+
+  update();
+  desktop.addEventListener('change', update);
+}
+
 // * Lights out!
 
 const title = document.querySelector(".site-title");
@@ -301,7 +347,7 @@ title.addEventListener('mouseleave', event => {
 *** fonts.css
 Serving fonts through here. I guess a bit more traffic but better than pinging Google, less surveillance! Having said that, this website is hosted on GitHub Pages, so, I don't know.
 
-#+begin_src css :tangle docs/assets/fonts.css
+#+begin_src css :tangle docs/assets/fonts.css :noweb yes
 /* ET Book */
 @font-face {
   font-family: "ET Book";
@@ -377,7 +423,7 @@ Serving fonts through here. I guess a bit more traffic but better than pinging G
 #+end_src
 
 *** main.css
-#+begin_src css :tangle docs/assets/main.css
+#+begin_src css :tangle docs/assets/main.css :noweb yes
 /* * Generic */
 
 :root {
@@ -1023,6 +1069,7 @@ article p {
 }
 
 .sidenote {
+  display: block;
   margin: 0.7rem 0 1rem;
   padding-left: 1rem;
   color: var(--muted);
@@ -1150,14 +1197,14 @@ article img {
 
 /* * Responsive stuff */
 
-@media (max-width: 730px) {
+@media (max-width: «constant("TABLET_WIDTH")») {
   body {
     font-size: 1.17rem;
     line-height: 1.45;
   }
 }
 
-@media (min-width: 1180px) {
+@media (min-width: «constant("DESKTOP_WIDTH")») {
   .sidenote {
     width: 13rem;
     margin-block: 0.25rem 0.8rem;
@@ -1180,13 +1227,13 @@ article img {
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: «constant("DESKTOP_WIDTH")») {
   #table-of-contents {
     display: none;
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: «constant("TABLET_WIDTH")») {
   article h2::before {
     content: none;
   }
@@ -1841,7 +1888,7 @@ This function must be called inside the root if the blog project."
 Following code uses the exported watchlist JSON movies data and populates the page.
 #+end_comment
 
-#+begin_src js :tangle docs/assets/watchlist.js :exports none
+#+begin_src js :tangle docs/assets/watchlist.js :exports none :noweb yes
 // * State
 
 let MOVIES = [];
@@ -3360,7 +3407,7 @@ section:has(#movie-list) {
 /* ========================================
    Responsive - Tablet
    ======================================== */
-@media (max-width: 768px) {
+@media (max-width: «constant("TABLET_WIDTH")») {
   :root {
     --card-min-width: 140px;
     --poster-width: 100%;

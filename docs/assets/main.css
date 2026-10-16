@@ -771,7 +771,7 @@ article img {
 
 /* * Responsive stuff */
 
-@media (max-width: 730px) {
+@media (max-width: 768px) {
   body {
     font-size: 1.17rem;
     line-height: 1.45;
@@ -807,7 +807,7 @@ article img {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   article h2::before {
     content: none;
   }

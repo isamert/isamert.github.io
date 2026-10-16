@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   highlightCodeBlocks();
   registerRefHandlers();
   addCopyButtons();
+  positionSidenotes();
 })
 
 function highlightCodeBlocks(_event) {
@@ -94,6 +95,41 @@ function addCopyButtons() {
 
     container.appendChild(button);
   });
+}
+
+/**
+ * This moves sidenotes after the end of closes paragraph, instead of
+ * splitting the paragraph in half.
+ */
+function positionSidenotes() {
+  const desktop = window.matchMedia('(min-width: 1180px)');
+
+  const notes = [...document.querySelectorAll('.sidenote')]
+    .map(note => {
+      const paragraph = note.closest('p');
+      if (!paragraph) {
+        return null
+      };
+
+      const marker = document.createComment('sidenote position');
+      note.before(marker);
+
+      return { note, paragraph, marker };
+    })
+    .filter(Boolean);
+
+  const update = () => {
+    notes.forEach(({ note, paragraph, marker }) => {
+      if (desktop.matches) {
+        marker.after(note);
+      } else {
+        paragraph.append(note);
+      }
+    });
+  }
+
+  update();
+  desktop.addEventListener('change', update);
 }
 
 // * Lights out!

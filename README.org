@@ -3695,7 +3695,7 @@ Currently, my init.el (and other files) are exported whenever I export this page
 Because this file is directly included, my custom id assigning flow is not working.
 #+end_comment
 
-#+INCLUDE: "~/Workspace/projects/personal/dotfiles/index.org" :minlevel 2
+#+INCLUDE: "~/Projects/Personal/dotfiles/index.org" :minlevel 2
 
 * Median cut algorithm in C++/Qt :cpp:qt:
 :PROPERTIES:

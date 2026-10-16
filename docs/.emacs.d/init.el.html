@@ -243,7 +243,7 @@ init.el and can't wait elpaca's async package installations.</li>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (elpaca elpaca-use-package
-        (elpaca-use-package-mode))
+  (elpaca-use-package-mode))
 (setq use-package-always-ensure t)
 </pre></div><p>
 <code>diminish.el</code> provides a way to hide mode indicators from mode
@@ -443,6 +443,7 @@ a shebang at the beginning, then the executable bit is set to file."
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (setq save-silently t)
+(setq find-file-visit-truename t)
 (setenv "EDITOR" "emacsclient")
 (setenv "VISUAL" "emacsclient")
 (setenv "BROWSER" "emacs-browser")
@@ -459,6 +460,11 @@ Echo area max 5 lines
 </p>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (setq max-mini-window-height 5)
+</pre></div><p>
+Avoid performance issues in files with very long lines.
+</p>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(global-so-long-mode 1)
 </pre></div><div id="outline-container-m-backspace-should-delete-instead-of-killing" class="outline-2">
 <h2 id="m-backspace-should-delete-instead-of-killing"><a href="#m-backspace-should-delete-instead-of-killing">M-Backspace should delete, instead of killing</a></h2>
 <div class="outline-text-2" id="text-m-backspace-should-delete-instead-of-killing">
@@ -1220,6 +1226,44 @@ repeatable:
   :prefix "&lt;f16&gt;"
   :keymaps 'override
   :states '(normal visual))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-general-active-mode-bindings ()
+  "Message General bindings for active mode maps in the current buffer.
+Almost the same thing as `general-describe-keybindings' but shows it in
+minibuffer and excludes some modes.  This helps me to discover what I
+purposefully bound a key to."
+  (interactive)
+  (let* ((excluded '(evil-normal-state-map general-override-mode-map outline-minor-mode-map outli-mode-map))
+         (active-maps (current-active-maps))
+         (entries
+          (cl-loop
+           for (map . state-alist) in general-keybindings
+           unless (memq map excluded)
+           when (and (boundp map)
+                     (memq (symbol-value map) active-maps))
+           append
+           (cl-loop for (state . bindings) in state-alist
+                    append
+                    (cl-loop for (key command _previous) in bindings
+                             collect
+                             (format "%-15s → %s"
+                                     (format "%s%s"
+                                             (if state
+                                                 (format "[%s] " state)
+                                               "")
+                                             (key-description key))
+                                     (s-truncate 30 (format "%S" command))))))))
+    (if entries
+        (message
+         "%s"
+         (string-join
+          (cl-loop for (left right) on entries by #'cddr
+                   collect (format "%-48s | %s" left (or right "")))
+          "\n"))
+      (message "No General bindings in active mode maps."))))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(im-leader
+  "?" #'im-general-active-mode-bindings)
 </pre></div><div id="outline-container-evil-collection" class="outline-2">
 <h2 id="evil-collection"><a href="#evil-collection">evil-collection</a></h2>
 <div class="outline-text-2" id="text-evil-collection">
@@ -1782,7 +1826,17 @@ Some lesser known functions:
   (defun im--maybe-disable-dnd ()
     (im-notif-disable-dnd))
 
-  (add-hook 'org-clock-out-hook #'im--maybe-disable-dnd 90))
+  (add-hook 'org-clock-out-hook #'im--maybe-disable-dnd 90)
+
+  ;; org-clock sends notification if the current tasks estimated effort is met.
+  (setq
+   org-show-notification-handler
+   (lambda (notification)
+     (im-notif :message notification
+               :title "*org-mode*"
+               :labels '("org"))))
+  (with-eval-after-load 'im-notif
+    (add-to-list 'im-notif-dnd-whitelist-labels "org")))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package org-contrib :after org)
 </pre></div><p>
@@ -1990,7 +2044,7 @@ Allow these languages to run in code blocks
      (shell . t)
      (scheme . t)
      (python . t)
-     (jupyter . t)
+     ;; (jupyter . t)
      (julia . t)
      (verb . t)
      (http . t)
@@ -2284,15 +2338,48 @@ Sync calendars with: `org-caldav-sync'.
 </pre></div><div id="outline-container-org-capture" class="outline-2">
 <h2 id="org-capture"><a href="#org-capture">org-capture</a></h2>
 <div class="outline-text-2" id="text-org-capture">
-<p>
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-org-capture ()
+  "Select a template and capture in a new, unsplit frame."
+  (interactive)
+  (let ((frame (make-frame '((name . "org-capture")
+                             (undecorated . t)
+                             (internal-border-width . 5)
+                             (left-fringe . 0)
+                             (right-fringe . 0)
+                             (menu-bar-lines . 0)
+                             (tool-bar-lines . 0)
+                             (vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil)
+                             (tab-bar-lines . 0)
+                             (width . 80)
+                             (height . 20)))))
+    (select-frame-set-input-focus frame)
+    (condition-case err
+        (let ((display-buffer-overriding-action
+               '(display-buffer-same-window
+                 (inhibit-same-window . nil))))
+          (org-capture))
+      ((quit user-error)
+       (when (frame-live-p frame)
+         (delete-frame frame))
+       (signal (car err) (cdr err))))))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-delete-frame-after-capture ()
+  "Delete the current frame after org-capture is finished."
+  (when (equal (frame-parameter nil 'name) "org-capture")
+    (delete-frame)))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(add-hook 'org-capture-after-finalize-hook #'im-delete-frame-after-capture)
+</pre></div><p>
 See <a href="https://orgmode.org/manual/Template-elements.html#Template-elements">this page</a> for more detail on template elements.
 </p>
 
 <p>
 Some functions that I utilize for capture templates:
 </p>
-</div>
-</div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-org-capture--find-first-top-level-todo-entry ()
   "Find first top-level TODO entry in current buffer.
@@ -3092,6 +3179,46 @@ NOTE: With C-o in minibuffer, I can insert links to minibuffer.
                              (abs (float-time (time-subtract (plist-get other :start) now))))
                           slots))
              :length)))))))
+</pre></div><div id="outline-container-im-copy-as-org" class="outline-2">
+<h2 id="im-copy-as-org"><a href="#im-copy-as-org">im-copy-as-org</a></h2>
+<div class="outline-text-2" id="text-im-copy-as-org">
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-copy-as-org (start end)
+  "Export the region from START to END to markdown and save on the `kill-ring'."
+  (interactive "r")
+  (let* ((str (buffer-substring-no-properties start end))
+         (mode-name (s-chop-suffix "-mode" (symbol-name major-mode))))
+    (im-kill
+     (cond
+      ((-contains?
+        '(markdown-mode md-ts-mode ellm-mode)
+        major-mode)
+       (with-temp-buffer
+         (insert str)
+         (call-process-region
+          (point-min) (point-max)
+          "pandoc" t t nil "-f" "markdown-auto_identifiers" "-t" "org")
+         (buffer-string)))
+      ;; Shot in the dark but worth trying
+      ((derived-mode-p 'text-mode)
+       (with-temp-buffer
+         (insert str)
+         (call-process-region
+          (point-min) (point-max)
+          "pandoc" t t nil "-f"
+          mode-name
+          "-t" "org")
+         (buffer-string)))
+      ((derived-mode-p 'prog-mode)
+       (concat "#+begin_src " mode-name "\n"
+               (s-trim str) "\n"
+               "#+end_src")))))
+  (deactivate-mark))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(with-eval-after-load 'embark
+  (keymap-set embark-region-map "O" #'im-copy-as-org))
 </pre></div><div id="outline-container-capture-changed-headings-on-save" class="outline-2">
 <h2 id="capture-changed-headings-on-save"><a href="#capture-changed-headings-on-save">Capture changed headings on save</a></h2>
 <div class="outline-text-2" id="text-capture-changed-headings-on-save">
@@ -3673,9 +3800,9 @@ bit more like what I use in org-mode:
   ;; outli-mode.  And comments are not that long generally, so this is
   ;; good.
   (hs-hide-comments-when-hiding-all nil))
-</pre></div><div id="outline-container-eat-eshell-ghostel" class="outline-2">
-<h2 id="eat-eshell-ghostel"><a href="#eat-eshell-ghostel">eat &amp; eshell &amp; ghostel</a></h2>
-<div class="outline-text-2" id="text-eat-eshell-ghostel">
+</pre></div><div id="outline-container-terminals-eat-eshell-ghostel" class="outline-2">
+<h2 id="terminals-eat-eshell-ghostel"><a href="#terminals-eat-eshell-ghostel">terminals: eat &amp; eshell &amp; ghostel</a></h2>
+<div class="outline-text-2" id="text-terminals-eat-eshell-ghostel">
 </div>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
@@ -3688,7 +3815,7 @@ bit more like what I use in org-mode:
                    (setq-local corfu-auto nil)
                    (corfu-mode)))
   :general
-  (:states 'insert :keymaps '(eshell-prompt-mode-map override)
+  (:states 'insert :keymaps 'eshell-prompt-mode-map
    "C-l" (λ-interactive (eshell/clear t)))
   :config
   (evil-collection-eshell-setup)
@@ -3775,6 +3902,12 @@ You may need to call `eat-compile-terminfo' after installing eat.
                    "extensions/*/*.el"
                    "extensions/*.el"))
   :config
+  (general-def :keymaps 'ghostel-semi-char-mode-map :states 'insert
+    "M-l" (λ-interactive (ghostel-send-key "right"))
+    "M-h" (λ-interactive (ghostel-send-key "left"))
+    "M-j" (λ-interactive (ghostel-send-key "down"))
+    "M-k" (λ-interactive (ghostel-send-key "up")))
+
   (defun im-ghostel-close-temp-frame ()
     "Close the current frame when its name is `emacs-temp'."
     (let ((frame (selected-frame)))
@@ -3796,6 +3929,62 @@ You may need to call `eat-compile-terminfo' after installing eat.
   :ensure nil
   :after (ghostel evil)
   :hook (ghostel-mode . evil-ghostel-mode))
+</pre></div><p>
+Taken from:
+<a href="https://www.jamescherti.com/emacs-terminal-performance-vterm-eat-ansi-term-ghostel/">https://www.jamescherti.com/emacs-terminal-performance-vterm-eat-ansi-term-ghostel/</a>
+</p>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-speed-up-terminal-buffer ()
+  "Reduce unnecessary Emacs features in terminal buffers."
+  (let ((ghostel-buffer (derived-mode-p 'ghostel-mode)))
+    (setq-local font-lock-defaults '(nil t))
+    (setq-local scroll-conservatively most-positive-fixnum)
+    (setq-local hscroll-margin 0)
+    (setq-local scroll-margin 0)
+    (setq-local auto-hscroll-mode nil)
+    (setq-local vertical-scroll-bar nil)
+    (setq-local horizontal-scroll-bar nil)
+    (setq-local truncate-lines t)
+    (setq-local nobreak-char-display nil)
+    (setq-local bidi-paragraph-direction 'left-to-right)
+    (setq-local bidi-inhibit-bpa t)
+    ;; Ghostel coordinates row height calculations via ghostel-line-spacing
+    (unless ghostel-buffer
+      (setq-local line-spacing 0)
+      (setq-local mode-line-format nil))
+    (setq-local process-adaptive-read-buffering nil)
+    (let ((output-max (* 1024 1024)))
+      (when (&lt; read-process-output-max output-max)
+        (setq-local read-process-output-max output-max)))
+    (buffer-disable-undo)
+    ;; Evil users
+    (remove-hook 'pre-command-hook 'evil--jump-hook t)
+    (remove-hook 'post-command-hook 'evil--jump-handle-buffer-crossing t)
+    ;; Disable modes
+    (let ((inhibit-redisplay t)
+          (inhibit-message t)
+          (modes (list 'electric-indent-local-mode
+                       'display-line-numbers-mode
+                       'display-fill-column-indicator-mode
+                       'hl-line-mode
+                       'show-paren-local-mode
+                       'flymake-mode
+                       'flycheck-mode
+                       'evil-surround-mode
+                       'evil-snipe-local-mode
+                       'yas-minor-mode)))
+      (unless ghostel-buffer
+        (push 'eldoc-mode modes)
+        (push 'auto-composition-mode modes))
+
+      (dolist (mode modes)
+        (when (fboundp mode)
+          ;; Disable the mode
+          (ignore-errors
+            (funcall mode -1)))))))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(add-hook 'eat-mode-hook 'im-speed-up-terminal-buffer t)
+(add-hook 'ghostel-mode-hook 'im-speed-up-terminal-buffer t)
 </pre></div><div id="outline-container-utility-functions" class="outline-2">
 <h2 id="utility-functions"><a href="#utility-functions">Utility functions</a></h2>
 <div class="outline-text-2" id="text-utility-functions">
@@ -4292,16 +4481,7 @@ notifications. Here I set some defaults/fallback values.
       (do-applescript (format "display notification %S with title %S"
                               (substring-no-properties (plist-get info :message))
                               (substring-no-properties (plist-get info :title))))
-      (alert-message-notify info)))
-  ;; org-clock sends notification if the current tasks estimated effort is met.
-  (setq
-   org-show-notification-handler
-   (lambda (notification)
-     (im-notif :message notification
-               :title "*org-mode*"
-               :labels '("org"))))
-  (with-eval-after-load 'im-notif
-    (add-to-list 'im-notif-dnd-whitelist-labels "org")))
+      (alert-message-notify info))))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package im-notif
   :ensure `(:repo ,im-packages-path :files ("im-notif.el"))
@@ -4934,21 +5114,20 @@ properly."
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (setq browse-url-secondary-browser-function #'browse-url-firefox)
 (setq browse-url-handlers
-      `((".*jtracker.trendyol.*/browse/.*" . ,(im-purified-url-handler #'im-jira-view-ticket))
-        (".*slack.com/archives/.*" . ,(im-purified-url-handler #'im-slack-open-link))
-        (,im-reddit-comment-url-regexp . ,(im-purified-url-handler #'(lambda (url)
-                                                                       (let* ((post (replace-regexp-in-string "^https?://\\(www\\.\\)?reddit\\.com/" "" url)))
-                                                                         (reddigg-view-comments post)))))
+      `((".*slack.com/archives/.*" . ,(im-purified-url-handler #'im-slack-open-link))
+        ;; (".*jtracker.trendyol.*/browse/.*" . ,(im-purified-url-handler #'im-jira-view-ticket))
+        ;; (,im-reddit-comment-url-regexp . ,(im-purified-url-handler #'(lambda (url)
+        ;;                                                                (let* ((post (replace-regexp-in-string "^https?://\\(www\\.\\)?reddit\\.com/" "" url)))
+        ;;                                                                  (reddigg-view-comments post)))))
         (".*news.ycombinator.com/item\\?id=.*" . ,(im-purified-url-handler #'hnreader-comment))
-        (".*\\(stackoverflow.com\\|stackexchange.com\\).*" . ,(im-purified-url-handler #'im-open-stackexchange-link))
+        ;; (".*\\(stackoverflow.com\\|stackexchange.com\\).*" . ,(im-purified-url-handler #'im-open-stackexchange-link))
         (".*\\(youtube.com/watch.*\\|youtu.be/.*\\)" . ,(im-purified-url-handler #'empv-play-or-enqueue))
         (".*\\.mp3" . ,(im-purified-url-handler #'empv--play-or-enqueue))
         (".*github.com/.*issues/.*" . ,(im-purified-url-handler #'lab-github-issue-view))
         ("https://github.com/\\([^/]+\\)/\\([^/]+\\)/blob/\\([^/]+\\)/\\(.+\\)" . ,(im-purified-url-handler #'lab-github-view-repo-file))
         (".*github.com/[A-Za-z0-9\\. _-]+/[A-Za-z0-9\\. _-]+\\(\\?tab=readme-ov-file.*\\)?$" . ,(im-purified-url-handler #'lab-github-view-repo-readme))
         (".*zoom.us/j/.*" . ,(im-purified-url-handler #'im-open-zoom-meeting-dwim))
-        (".*trendyol.*/merge_requests/.*" . ,(im-purified-url-handler #'lab-open-merge-request-diff))
-        (".*\\(trendyol\\|gitlab\\|slack\\|docs.google\\).*" . browse-url-firefox)
+        (".*\\(gitlab\\|slack\\|docs.google\\).*" . browse-url-firefox)
         ("." . (lambda (link &amp;rest _) (im-eww link)))))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package eww
@@ -5253,8 +5432,15 @@ but it's very fast and much more streamlined for my usage. See
   (:keymaps 'vc-dir-mode-map :states 'normal
    "r" #'vc-dir-refresh)
   (:keymaps 'vc-git-log-view-mode-map :states 'normal
-   "&lt;backtab&gt;" #'im-vc-toggle-all-log-view-entries)
+   "&lt;backtab&gt;" #'im-vc-toggle-all-log-view-entries
+   "f" #'im-git-fixup-at-point
+   "r" #'im-git-reword-at-point
+   "x" #'log-view-uncommit-revisions-from-end
+   "X" #'log-view-delete-revisions-from-end
+   "C" #'log-view-cherry-pick
+   "w" #'log-view-copy-revision-as-kill)
   :config
+  (add-hook 'vc-git-log-view-mode-hook #'im-vc-git-log-show-help)
   (im-when-on :darwin
     (setq vc-git-program "/opt/homebrew/bin/git"))
   (setq vc-log-short-style '(directory file)))
@@ -5263,6 +5449,12 @@ but it's very fast and much more streamlined for my usage. See
 (with-eval-after-load 'log-view (evil-collection-log-view-setup))
 (with-eval-after-load 'vc-dir (evil-collection-vc-dir-setup))
 (with-eval-after-load 'vc-annotate (evil-collection-vc-annotate-setup))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-vc-git-log-show-help ()
+  "Show Git log actions in the header line."
+  (setq-local header-line-format
+              '(:eval (substitute-command-keys
+                       " Git log: \\[log-view-diff] diff · \\[im-git-fixup-at-point] fixup · \\[log-view-modify-change-comment] reword · \\[log-view-uncommit-revisions-from-end] mixed reset · \\[log-view-delete-revisions-from-end] hard reset · \\[log-view-cherry-pick] cherry-pick · \\[log-view-copy-revision-as-kill] copy hash · \\[describe-mode] more"))))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-vc-toggle-all-log-view-entries ()
   "Toggle the visibility of all log view entries in the current buffer."
@@ -6131,9 +6323,8 @@ Here is a nice description of the package from it's README:
        "~/Videos/Movies/"
        "~/Documents/notes/"
        "~/Documents/notes/img/"
-       "~/Workspace/projects/"
-       "~/Workspace/temp/"
-       "~/Workspace/temp/git/"
+       ,im-projects-root
+       ,im-temp-dir
        "~/.emacs.d/"
        "~/.local/share/"
        "~/.local/bin/"
@@ -6230,24 +6421,24 @@ Here is a nice description of the package from it's README:
 <p>
 Nice little embark action that let's you open files with sudo.
 </p>
-
-<p>
-Source: <a href="https://karthinks.com/software/fifteen-ways-to-use-embark/">https://karthinks.com/software/fifteen-ways-to-use-embark/</a>
-</p>
 </div>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
+  (require 'tramp-cmds)
   (when (file-writable-p file)
     (user-error "File is user writeable, aborting sudo"))
-  (find-file (if (file-remote-p file)
-                 (concat "/" (file-remote-p file 'method) ":"
-                         (file-remote-p file 'user) "@" (file-remote-p file 'host)
-                         "|sudo:root@"
-                         (file-remote-p file 'host) ":" (file-remote-p file 'localname))
-               (concat "/sudo:root@localhost:" file))))
+  (find-file (tramp-file-name-with-sudo file)))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-sudo-current-file ()
+  "Visit the current file again with superuser, or root, permissions."
+  (interactive)
+  (require 'tramp-cmds)
+  (when (file-writable-p (buffer-file-name))
+    (user-error "File is user writeable, aborting sudo"))
+  (tramp-revert-buffer-with-sudo))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (with-eval-after-load 'embark
   (define-key embark-file-map (kbd "#") 'im-sudo-find-file))
@@ -6722,15 +6913,14 @@ coursier bootstrap org.scalameta:metals<sub>2.13</sub>:1.5.1 -o metals -f
   (lsp-metals-server-args '("-J-Dmetals.allow-multiline-string-formatting=off"
                             "-J-Dmetals.icons=unicode"))
   :hook (scala-mode . lsp))
-</pre></div><div id="outline-container-simple-modeline" class="outline-2">
-<h2 id="simple-modeline"><a href="#simple-modeline">simple-modeline</a></h2>
-<div class="outline-text-2" id="text-simple-modeline">
+</pre></div><div id="outline-container-simple-modeline-doom-modeline" class="outline-2">
+<h2 id="simple-modeline-doom-modeline"><a href="#simple-modeline-doom-modeline">simple-modeline/doom-modeline</a></h2>
+<div class="outline-text-2" id="text-simple-modeline-doom-modeline">
 <p>
 Lightweight and nice modeline.
 </p>
-</div>
-</div>
-<div class="org-src-container"><pre class="src src-elisp elisp">
+
+<p>
 (use-package simple-modeline
   :ensure (:host github :repo "gexplorer/simple-modeline")
   :hook (elpaca-after-init-hook . simple-modeline-mode)
@@ -6743,6 +6933,15 @@ Lightweight and nice modeline.
               simple-modeline-segment-process
               simple-modeline-segment-minor-modes
               simple-modeline-segment-major-mode))))
+</p>
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :hook (elpaca-after-init-hook . doom-modeline-mode)
+  :custom
+  (doom-modeline-buffer-file-name-style 'buffer-name))
 </pre></div><div id="outline-container-howdoyou" class="outline-2">
 <h2 id="howdoyou"><a href="#howdoyou">howdoyou</a></h2>
 <div class="outline-text-2" id="text-howdoyou">
@@ -6825,7 +7024,7 @@ etc) sites.
    (elpaca-after-init . yas-global-mode)))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package yankpad
-  :ensure (:host github :repo "Kungsgeten/yankpad")
+  :ensure (:host github :repo "isamert/yankpad" :branch "clanker-fixes")
   :after (org yasnippet)
   :autoload (yankpad--categories yankpad--snippets)
   :general
@@ -6841,6 +7040,9 @@ etc) sites.
    (kbd "M-s") #'yankpad-insert
    (kbd "M-e") #'hippie-expand)
   (:keymaps 'minibuffer-local-map
+   (kbd "M-s") #'yankpad-insert
+   (kbd "M-e") #'hippie-expand)
+  (:keymaps 'evil-command-line-map
    (kbd "M-s") #'yankpad-insert
    (kbd "M-e") #'hippie-expand)
   :custom
@@ -7438,6 +7640,9 @@ file. The ones with username "apikey" are for gtpel.
                    :source (get-buffer bname)
                    :labels '("ai"))))))
 
+  (with-eval-after-load 'im-notif
+    (add-to-list 'im-notif-dnd-whitelist-labels "ai"))
+
   (add-to-list 'gptel-post-response-functions #'im-gptel-on-response-finished))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (im-leader
@@ -7581,29 +7786,167 @@ If SHELL-BUFFER is nil, use the current buffer."
   (im-agent-shell-notif-mode 1))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (add-hook 'agent-shell-mode-hook #'im-agent-shell-notif-mode-enable)
-</pre></div><div id="outline-container-im-cursor" class="outline-2">
-<h2 id="im-cursor"><a href="#im-cursor">im-cursor</a></h2>
-<div class="outline-text-2" id="text-im-cursor">
+(with-eval-after-load 'im-notif
+  (add-to-list 'im-notif-dnd-whitelist-labels "agent"))
+</pre></div><div id="outline-container-ellm-el" class="outline-2">
+<h2 id="ellm-el"><a href="#ellm-el">ellm.el</a></h2>
+<div class="outline-text-2" id="text-ellm-el">
+<p>
+This is my own "agent" implementation. See it's README for more
+information.
+</p>
 </div>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
-(use-package im-cursor
-  :ensure `(:repo ,im-packages-path :files ("im-cursor.el"))
-  :defer t
+(use-package ellm
+  :ensure (:host github :repo "isamert/ellm.el" :files ("*.el"))
+  :general
+  (im-leader-v
+    "ta" #'ellm-toggle-side-window
+    "t&gt;" #'ellm-comment
+    "tn" #'ellm-list
+    "tA" (λ-interactive (ellm-toggle-side-window 'new)))
   :config
+  ;; (add-hook 'ellm-mode-hook #'tab-line-mode)
+  ;; (require 'ellm-mcp)
+  ;; (ellm-register-mcp-tools)
+  ;; (mcp-hub-get-all-tool :asyncp t :categoryp t)
+  ;; (ellm-register-mcp-tools)
+  (require 'ellm-tools)
+  (require 'ellm-llm)
+  (require 'ellm-acp)
+  (require 'ellm-kagi)
+  (require 'ellm-codex)
+  (require 'llm-openai)
+  (require 'llm-claude)
+  (require 'llm-deepseek)
+  (setq llm-warn-on-nonfree nil)
+  ;; (setq ellm-acp-log-messages t)
+  ;; (setq ellm-kagi-cookie im-kagi-assistant-cookie)
+  (setq ellm-persistence-enabled t)
+  (setq ellm-persistence-directory "~/Sync/ellm/")
+  (setq ellm-header-line-template "%p %t%&gt;%r")
+  (setq
+   ellm-notification-function
+   (lambda (notification)
+     (im-notif
+      :message (plist-get notification :body)
+      :title (plist-get notification :title)
+      :severity (pcase (plist-get notification :urgency)
+                  ('critical 'urgent)
+                  ('low 'low)
+                  (_ 'normal))
+      :buffer
+      :duration 10
+      :labels '("ellm"))))
   (with-eval-after-load 'im-notif
-    (add-to-list 'im-notif-dnd-whitelist-labels "agent")))
-</pre></div><div id="outline-container-im-kagi-assistant" class="outline-2">
-<h2 id="im-kagi-assistant"><a href="#im-kagi-assistant">im-kagi-assistant</a></h2>
-<div class="outline-text-2" id="text-im-kagi-assistant">
-</div>
-</div>
-<div class="org-src-container"><pre class="src src-elisp elisp">
-(use-package im-kagi-assistant
-  :ensure `(:repo ,im-packages-path :files ("im-kagi-assistant.el"))
-  :defer t
-  :custom
-  (im-kagi-assistant-cookie im-kagi-cookie))
+    (add-to-list 'im-notif-dnd-whitelist-labels "ellm"))
+  (setq
+   ellm-new-buffer-default-configuration-function
+   #'(lambda ()
+       (let ((work-project? (f-ancestor-of? "~/Projects/Work" default-directory))
+             (elisp-project? (f-ancestor-of? "~/.emacs.d/elpaca/" default-directory))
+             (provider (if (workpc?)
+                           (intern (completing-read
+                                    "Which? "
+                                    '("mlplatform" "cursor")))
+                         (caar ellm-provider-alist)))
+             (snippets (yankpad--snippets "ellm-mode")))
+         (list
+          :provider provider
+          :model (ellm-provider-default-model provider)
+          :tool-permissions '(("@emacs" . "allow"))
+          :yolo elisp-project?
+          :profile
+          (cond
+           ((eq 'cursor provider) nil)
+           ((or work-project? elisp-project?) "agent")
+           (t "explore"))
+          :tools+
+          (cond
+           (elisp-project? '("@emacs")))))))
+  (setq
+   ellm-provider-alist
+   `((codex
+      .
+      (:provider ,(ellm-make-codex-provider)
+       :small-model "gpt-5-nano"
+       :models ("gpt-6.1-sol"
+                "gpt-6-sol"
+                "gpt-6-luna"
+                "gpt-5.6-terra"
+                "gpt-5.6-sol"
+                "gpt-5.6-luna"
+                "gpt-5.5"
+                "gpt-5.3-codex"
+                "gpt-5-nano")))
+     (personal-claude
+      .
+      (:provider ,(make-llm-claude
+                   :key (plist-get (car (auth-source-search :host "api.anthropic.com")) :secret)
+                   :chat-model "claude-opus-4-8")
+       :small-model "claude-haiku-4-5"
+       :models ("claude-fable-5"
+                "claude-opus-4-8"
+                "claude-opus-4-6"
+                "claude-sonnet-4-6"
+                "claude-haiku-4-5")))
+     (personal-deepseek
+      .
+      (:provider ,(make-llm-deepseek
+                   :key (plist-get (car (auth-source-search :host "api.deepseek.com")) :secret)
+                   :chat-model "deepseek-v4-flash")
+       :small-model "deepseek-v4-flash"
+       :models ("deepseek-v4-flash" "deepseek-v4-pro")))
+     (kagi . ,(ellm-make-kagi-provider
+               :session-token im-kagi-cookie
+               :model "kimi-k2-6-thinking"))
+     (cursor
+      . ,(ellm-make-acp-provider
+          :command "agent"
+          :args '("acp")))
+     (opencode
+      . ,(ellm-make-acp-provider
+          :command "opencode"
+          :args '("acp")))))
+
+  (defun im-ellm-question ()
+    (interactive)
+    (ellm-new-buffer-with-configuration
+     :provider 'codex
+     :model "gpt-6.1-sol"
+     :ephemeral t
+     :system "You are an helpful agent. Be concise and clear. Answer users questions."))
+
+  (defun im-ellm-kagi-search ()
+    (interactive)
+    (ellm-new-buffer-with-configuration
+     :provider 'kagi
+     :model "gemini-3-1-flash-lite"
+     :ephemeral t))
+
+  (defun im-ellm-kagi-research ()
+    (interactive)
+    (ellm-new-buffer-with-configuration
+     :provider 'kagi
+     :model "glm-5-3-flash"
+     :reasoning "maximum"
+     :ephemeral t))
+
+  (define-advice scroll-up (:filter-args (args)  ellm-turn-rule)
+    (let ((window (selected-window)))
+      (when (and (= (car args) 1)
+                 (with-current-buffer (window-buffer window)
+                   (and (derived-mode-p 'ellm-mode)
+                        ellm-turn-rules
+                        (save-excursion
+                          (goto-char (window-start window))
+                          (overlays-at (line-beginning-position))
+                          (seq-some (lambda (overlay)
+                                      (overlay-get overlay 'ellm-rule))
+                                    (overlays-at (line-beginning-position)))))))
+        (setcar args 2)))
+    args))
 </pre></div><div id="outline-container-tmr-el-timers-reminders-etc" class="outline-2">
 <h2 id="tmr-el-timers-reminders-etc"><a href="#tmr-el-timers-reminders-etc">tmr.el &ndash; timers, reminders etc.</a></h2>
 <div class="outline-text-2" id="text-tmr-el-timers-reminders-etc">
@@ -7758,18 +8101,8 @@ open-source work needs instead of regular stuff.
   (im-leader
     "er" #'whisper-run)
   :config
-  ;; Override `whisper-command' as instructed, to be able to use my
-  ;; whisper server installation on my home lab.
-  (setq whisper-install-whispercpp nil) ; Opt-out from local whisper installation
-  (defun whisper-command (input-file)
-    ;; No support for `whisper-translate',
-    ;; `whisper-show-progress-in-mode-line' and `whisper-language'.
-    `("curl"
-      ,(concat im-server "/whisper/inference")
-      "-H" ,(concat "isamert-token: " im-token)
-      "-H" "Content-Type: multipart/form-data"
-      "-F" ,(concat "file=@" (expand-file-name input-file))
-      "-F" "response_format=text")))
+  (setq whisper-use-threads 8)
+  (setq whisper-model "small"))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (define-advice whisper-run (:before (&amp;rest _) set-microphone)
   (unless whisper--ffmpeg-input-device
@@ -7945,7 +8278,7 @@ where I can tinker with options is sometimes better
   (consult-gh-pr-maxnum 150)
   (consult-gh-code-maxnum 50)
   (consult-gh-default-orgs-list '("isamert"))
-  (consult-gh-default-clone-directory "~/Workspace/temp")
+  (consult-gh-default-clone-directory "~/Projects/Temp")
   (consult-gh-file-action #'consult-gh--files-view-action)
   (consult-gh-issue-action
    (lambda (it)
@@ -8199,14 +8532,17 @@ Good time to set these values:
   :general
   (im-leader
     "eN" #'im-notmuch-inbox
-    "en" #'notmuch-hello)
+    "en" #'notmuch-jump-search)
   :config
   (setq-default notmuch-search-oldest-first nil)
   (evil-collection-notmuch-setup)
   (general-def :keymaps 'notmuch-search-mode-map :states 'normal
     ;; gr → Refresh view
     ;; C → compose mail
+    ;; t → notmuch-search-filter-by-tag
+    ;; M-RET → notmuch-tree-from-search-thread
     "u" #'evil-collection-notmuch-search-toggle-unread
+    "gt" #'notmuch-tree-from-search-current-query
     "gs" #'notmuch-search
     "gS" #'notmuch-tree
     "o" #'notmuch-search-show-thread
@@ -8221,7 +8557,41 @@ Good time to set these values:
     "S" nil)
   ;; Fix RET on notmuch-show-mode
   (evil-collection-bind 'notmuch-show-mode-map
-                        'action 'im-open-thing-at-point))
+                        'action 'im-open-thing-at-point)
+
+  (defun im-notmuch-search-header ()
+    (setq-local
+     header-line-format
+     '(:eval
+       (substitute-command-keys
+        (concat
+         " \\[notmuch-tree-from-search-thread] open (tree-view) |"
+         " \\[notmuch-search-filter-by-tag] filter tags |"
+         " \\[notmuch-search-filter-by-tag] filter tags |"
+         " \\[notmuch-search-show-thread] open (full thread, buffer) |"
+         " \\[notmuch-search-show-thread] open (full thread, buffer) |"
+         " \\[notmuch-search-reply-to-thread-sender] reply (sender) |"
+         " \\[notmuch-search-reply-to-thread] reply (thread) |"
+         " \\[notmuch-search] new search")))))
+
+  (add-hook 'notmuch-search-hook #'im-notmuch-search-header)
+
+  (defun im-notmuch-rename-show-buffer ()
+    "Name a notmuch show buffer as *mail: Sender - Subject*."
+    (save-excursion
+      ;; `notmuch-show-hook' runs before Notmuch positions point on its
+      ;; selected message, so explicitly use the first message.
+      (goto-char (point-min))
+      (let ((from (or (notmuch-show-get-from) "Unknown sender"))
+            (subject (or (notmuch-show-get-subject) "[No subject]")))
+        (rename-buffer
+         (format "*Mail: %s - %s*"
+                 subject
+                 (notmuch-show-clean-address from))
+         t))))
+
+  ;; Rename buffer titles so they are easier to find
+  (add-hook 'notmuch-show-hook #'im-notmuch-rename-show-buffer))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package message
   :ensure nil
@@ -8332,7 +8702,8 @@ Non-interactive calls perform the normal synchronization configured
 for each Channel."
   (interactive (list t))
   (when (im-check-internet-connection)
-    (let ((accounts (im-mbsync-accounts)))
+    (let ((accounts (im-mbsync-accounts))
+          (failed-accounts '()))
       (condition-case reason
           (let (count mails)
             (when interactive?
@@ -8344,19 +8715,20 @@ for each Channel."
              (promise-all
               (mapcar
                (lambda (account)
-                 (im-shell-command
-                  :command "mbsync"
-                  :args
-                  (if interactive?
-                      ;; Only download newly arrived INBOX messages.
-                      (list "--pull-new"
-                            (format "%s:INBOX" account))
-                    ;; Perform the channel's normal full synchronization.
-                    (list account))
-                  :buffer-name (format "*mbsync-%s*" account)
-                  :async t))
+                 (promise-chain
+                     (im-shell-command
+                      :command "mbsync"
+                      :args
+                      (if interactive?
+                          ;; Only download newly arrived INBOX messages.
+                          (list "--pull-new"
+                                (format "%s:INBOX" account))
+                        ;; Perform the channel's normal full synchronization.
+                        (list account))
+                      :buffer-name (format "*mbsync-%s*" account)
+                      :async t)
+                   (catcha (push account failed-accounts))))
                accounts)))
-
             ;; Index mail, discarding all output from `notmuch new'.
             (ignore
              (await
@@ -8401,7 +8773,9 @@ for each Channel."
                            (not (equal im-unread-mail-count count))))
               (when interactive?
                 (im-notmuch-inbox)
-                (message "&gt;&gt; Checking mail...Done"))
+                (if failed-accounts
+                    (message "&gt;&gt; Checking mail...Done, but some accounts FAILED: %s" failed-accounts)
+                  (message "&gt;&gt; Checking mail...Done")))
               (setq im-unread-mail-count count)
               (unless interactive?
                 (im-notif
@@ -8497,6 +8871,16 @@ contacts.
     :key "M-o b"
     :doc (lambda (xs x) (plist-get (map-elt xs x) :doc))
     :annotate (lambda (xs x) (concat " → " (plist-get (map-elt xs x) :ann))))))
+</pre></div><div id="outline-container-syncthing-ui" class="outline-2">
+<h2 id="syncthing-ui"><a href="#syncthing-ui">Syncthing UI</a></h2>
+<div class="outline-text-2" id="text-syncthing-ui">
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(use-package syncthing
+  :commands (syncthing)
+  :config
+  (setq syncthing-default-server-token (cdr (assoc-string (system-name) im-syncthing-token))))
 </pre></div><div id="outline-container-im-session-el-session-manager" class="outline-2">
 <h2 id="im-session-el-session-manager"><a href="#im-session-el-session-manager">im-session.el &ndash; session manager</a></h2>
 <div class="outline-text-2" id="text-im-session-el-session-manager">
@@ -8535,8 +8919,6 @@ contacts.
      ["Commit/Branch"
       ("c" "Commit changes" im-git-commit)
       ("al" "Amend last commit" im-git-amend-last-commit)
-      ("aa" "Amend to any commit" im-git-amend-commit)
-      ("ar" "Reword any commit" im-git-reword-commit)
       ("bc" "New branch" vc-create-branch)
       ("bs" "Switch branch" vc-switch-branch)
       ("P" "Push" vc-push)
@@ -9062,11 +9444,11 @@ you the power of IDEs but in some dummy/restricted way.
 </p>
 
 <dl class="org-dl">
-<dt><a id="org47c9c49"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
-<dt><a id="org8d30c9c"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
+<dt><a id="orgad034e0"></a></dt><dd>Automatically highlights the all instances of the symbol under the cursor in the buffer. Simply use evils <code>*</code> and <code>#</code> to jump between them.</dd>
+<dt><a id="orga4332d1"></a></dt><dd>Jumps to definition by using predefined-regexps, generally works fine. Use <code>gd</code>.</dd>
 <dt>(no term)</dt><dd>To debug why it's not working: M-x <code>set-variable dumb-jump-debug t</code>, then go to <b>Messages</b> buffer.</dd>
-<dt><a id="orgb7e7bb0"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
-<dt><a id="org863eb6f"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
+<dt><a id="org16d48bb"></a></dt><dd>This is a generic parser for bunch of languages. You can also inspect the syntax tree on the fly and do whatever you want to do with it. Best feature so far is just better (like, miles ahead better) syntax highlighting for some languages. Especially for JS/TS and Rust.</dd>
+<dt><a id="orgb425981"></a></dt><dd>Highlight TODO/FIXME etc.</dd>
 <dt>(no term)</dt><dd>Use <code>]t</code> and <code>[t</code> to go next/prev TODO/FIXME item.</dd>
 </dl>
 </div>
@@ -9557,6 +9939,12 @@ folding. origami was a bit confusing (as the <i>thing</i> itself).
           (eq major-mode 'kotlin-mode) (im-eval-dwim #'kotlin-send-line #'kotlin-send-region #'kotlin-send-line)
           ;; I only use lua for hammerspoon
           (eq major-mode 'lua-mode) (im-eval-dwim #'im-eval-hammerspoon #'im-eval-hammerspoon #'im-eval-hammerspoon))
+    ":" (general-predicate-dispatch (im-eval-dwim
+                                     #'im-elisp-eval-last-sexp-and-replace
+                                     #'im-elisp-eval-region-and-replace
+                                     #'im-elisp-eval-defun-and-replace)
+          (eq major-mode 'clojure-mode)
+          #'cider-eval-last-sexp-and-replace)
     "'" (general-predicate-dispatch #'eros-inspect-last-result
           (eq major-mode 'java-ts-mode) #'im-repl-inspect-last-result
           (eq major-mode 'js-ts-mode) #'im-repl-inspect-last-result
@@ -9577,6 +9965,42 @@ works for Lispy languages."
       (call-interactively lastf))
      (t
       (call-interactively defunf)))))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-elisp-eval-and-replace (beg end)
+  "Evaluate the forms between BEG and END and replace them with the last value.
+Leave the source unchanged if reading, evaluation, or printing fails."
+  (let* ((source (buffer-substring-no-properties beg end))
+         ;; Read every form before evaluating anything.
+         (forms (read (concat "(" source "\n)")))
+         (value (eval (cons 'progn forms) lexical-binding))
+         (print-length nil)
+         (print-level nil)
+         (replacement (prin1-to-string value)))
+    (pcase (cadr (read-multiple-choice "Do " '((?c "copy") (?r "replace"))))
+      ("copy" (im-kill replacement))
+      ("replace" (atomic-change-group
+                   (delete-region beg end)
+                   (goto-char beg)
+                   (insert replacement))))))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-elisp-eval-last-sexp-and-replace ()
+  (interactive)
+  (let ((end (point))
+        (beg (save-excursion
+               (backward-sexp)
+               (point))))
+    (im-elisp-eval-and-replace beg end)))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-elisp-eval-region-and-replace (beg end)
+  (interactive "r")
+  (im-elisp-eval-and-replace beg end))
+</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+(defun im-elisp-eval-defun-and-replace ()
+  (interactive)
+  (let ((bounds (bounds-of-thing-at-point 'defun)))
+    (unless bounds
+      (user-error "No defun at point"))
+    (im-elisp-eval-and-replace (car bounds) (cdr bounds))))
 </pre></div><div id="outline-container-markdown-md-ts-mode" class="outline-2">
 <h2 id="markdown-md-ts-mode"><a href="#markdown-md-ts-mode">markdown (md-ts-mode)</a></h2>
 <div class="outline-text-2" id="text-markdown-md-ts-mode">
@@ -9595,6 +10019,12 @@ works for Lispy languages."
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package edit-indirect
   :after md-ts-mode)
+</pre></div><p>
+Useful for generating "Table of Contents"
+</p>
+<div class="org-src-container"><pre class="src src-elisp elisp">
+(use-package markdown-toc
+  :commands (markdown-toc-generate-or-refresh-toc))
 </pre></div><div id="outline-container-haskell" class="outline-2">
 <h2 id="haskell"><a href="#haskell">haskell</a></h2>
 <div class="outline-text-2" id="text-haskell">
@@ -10465,10 +10895,6 @@ Some major modes for editing files.
 <div class="org-src-container"><pre class="src src-elisp elisp">
 (use-package dockerfile-mode
   :mode "Dockerfile\\'")
-(use-package docker-compose-mode
-  :mode "docker-compose\\'"
-  :hook
-  (docker-compose-mode . highlight-indent-guides-mode))
 </pre></div><p>
 A package for  managing docker.
 </p>
@@ -10737,20 +11163,22 @@ If you are using virtualenvironments, then simply do
 After activating the venv, you may need to do
 <code>jupyter-repl-restart-kernel</code>.
 </p>
-</div>
-</div>
-</div>
-<div class="org-src-container"><pre class="src src-elisp elisp">
+
+<p>
 (use-package pyvenv
   :defer t)
-</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+</p>
+
+<p>
 (use-package jupyter
   :ensure (:host github :repo "isamert/jupyter")
   :defer t
   :custom
   (jupyter-org-want-keybinding . nil)
   (jupyter-org-want-integration . nil))
-</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+</p>
+
+<p>
 (with-eval-after-load 'jupyter-org-client
   (setq org-babel-default-header-args:jupyter-python
         '((:async . "yes")      ;; Make outputs async
@@ -10760,7 +11188,11 @@ After activating the venv, you may need to do
           ;; Prefer plain-text outputs from jupyter instead of
           ;; direct html outputs
           (:display "text/plain text/html"))))
-</pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
+</p>
+</div>
+</div>
+</div>
+<div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-convert-ipynb-to-org-buffer ()
   "Convert the current IPython Notebook file to Org format and open it in a new buffer."
   (interactive)
@@ -11106,7 +11538,8 @@ Good for buffer management, especially for groupped killings.
   "wt" #'im-tab-bar-new-tab ;; tab
   "wT" #'im-tab-bar-new-tab-with-current-buffer ;; tab
   "wn" #'tab-bar-rename-tab ;; name
-  "wm" #'tab-move ;; move
+  "wm" #'tab-move ;; move +1
+  "wM" #'tab-move-to ;; move -1
   "wl" #'tab-bar-switch-to-recent-tab ;; last
   "we" #'tab-switch
   "wx" #'tab-close ;; kill
@@ -11253,8 +11686,13 @@ post</a> for further information.
        ,@(im-contacts--build-contact-item "TEL;TYPE=$1:%s" "PHONE_$1")
        ,@(im-contacts--build-contact-item "EMAIL;TYPE=$1:%s" "EMAIL_$1")
        ,@(im-contacts--build-contact-item "ADR;TYPE=$1:;;%s;;;;" "ADDRESS_$1")
-       ,(im-contacts--build-contact-item "ORG:%s" "GROUP")
-       ,(im-contacts--build-contact-item "CATEGORIES:%s" "GROUP")
+       ,@(and-let* ((categories (thread-last
+                                  (org-get-tags)
+                                  (mapcar #'s-capitalize)
+                                  (s-join ",")))
+                    ((not (s-blank? categories))))
+           (list (format "ORG:%s\n" categories)
+                 (format "CATEGORIES:%s\n" categories)))
        ,(thread-last
           (im-contacts--build-contact-item "BDAY:%s" "SCHEDULED")
           (s-replace-regexp "BDAY:&lt;[0-9]\\{4\\}\\(.*\\) \\(\\w+\\)&gt;" "BDAY:1900\\1")
@@ -12046,7 +12484,7 @@ Toggle temproary buffers
 </div>
 </div>
 <div class="org-src-container"><pre class="src src-elisp elisp">
-(defvar im-scratch-project-path "~/workspace/projects/personal/scratch")
+(defvar im-scratch-project-path (concat im-projects-root "/Personal/scratch"))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-new-scratch-file ()
   "Create a new scratch file in `im-scratch-project-path' with selected major mode."
@@ -12853,32 +13291,32 @@ an indirect buffer."
           (let* ((now (current-time))
                  (meetings
                   (-&gt;&gt; (org-map-entries
-                      (lambda ()
-                        (when-let* ((sched (org-entry-get nil "SCHEDULED"))
-                                    (_ (string-match "&lt;\\([0-9-]+\\) [A-Za-z]+ \\([0-9:]+\\)-\\([0-9:]+\\)&gt;" sched))
-                                    (date (match-string 1 sched))
-                                    (start (date-to-time (format "%s %s" date (match-string 2 sched))))
-                                    (end (date-to-time (format "%s %s" date (match-string 3 sched))))
-                                    (until-start (float-time (time-subtract start now))))
-                          (list :marker (point-marker)
-                                :heading (org-get-heading t t t t)
-                                :zoom (org-entry-get nil "ZOOM")
-                                :until-start until-start
-                                :in-progress (and (time-less-p start now) (time-less-p now end))
-                                :starting-soon (and (&gt; until-start 0) (&lt;= until-start 300))
-                                :well-past (&gt; (float-time (time-subtract now start)) 600))))
-                      "meeting" 'agenda)
-                     (-non-nil)))
+                        (lambda ()
+                          (when-let* ((sched (org-entry-get nil "SCHEDULED"))
+                                      (_ (string-match "&lt;\\([0-9-]+\\) [A-Za-z]+ \\([0-9:]+\\)-\\([0-9:]+\\)&gt;" sched))
+                                      (date (match-string 1 sched))
+                                      (start (date-to-time (format "%s %s" date (match-string 2 sched))))
+                                      (end (date-to-time (format "%s %s" date (match-string 3 sched))))
+                                      (until-start (float-time (time-subtract start now))))
+                            (list :marker (point-marker)
+                                  :heading (org-get-heading t t t t)
+                                  :zoom (org-entry-get nil "ZOOM")
+                                  :until-start until-start
+                                  :in-progress (and (time-less-p start now) (time-less-p now end))
+                                  :starting-soon (and (&gt; until-start 0) (&lt;= until-start 300))
+                                  :well-past (&gt; (float-time (time-subtract now start)) 600))))
+                        "meeting" 'agenda)
+                       (-non-nil)))
                  (best (-&gt;&gt; meetings
-                          (--filter (or (plist-get it :in-progress) (plist-get it :starting-soon)))
-                          (--sort (cond
-                                   ((and (plist-get it :starting-soon)
-                                         (plist-get other :in-progress)
-                                         (plist-get other :well-past)) t)
-                                   ((and (plist-get other :starting-soon)
-                                         (plist-get it :in-progress)
-                                         (plist-get it :well-past)) nil)
-                                   (t (&lt; (plist-get it :until-start) (plist-get other :until-start)))))))
+                            (--filter (or (plist-get it :in-progress) (plist-get it :starting-soon)))
+                            (--sort (cond
+                                     ((and (plist-get it :starting-soon)
+                                           (plist-get other :in-progress)
+                                           (plist-get other :well-past)) t)
+                                     ((and (plist-get other :starting-soon)
+                                           (plist-get it :in-progress)
+                                           (plist-get it :well-past)) nil)
+                                     (t (&lt; (plist-get it :until-start) (plist-get other :until-start)))))))
                  (best (if (length= best 1)
                            (car best)
                          (im-completing-read
@@ -13268,9 +13706,12 @@ contents."
                   (&lt; (im-line-count-below-cursor) (length (s-lines str)))
                   (&lt; (im-line-count-below-cursor) (- (window-height) 10)))
              (recenter 10))
-           (quick-peek-show str nil nil im-peek--line-count)
-           (im-unfold-if-folded (save-excursion (end-of-line) (1+ (point))))
-           (im-peek-mode +1)))))))
+           (im-unfold-if-folded
+            (save-excursion
+              (end-of-line)
+              (min (point-max) (1+ (point)))))
+           (im-peek-mode +1)
+           (quick-peek-show str nil nil im-peek--line-count)))))))
 </pre></div><div class="org-src-container"><pre class="src src-elisp elisp">
 (defun im-peek-open? ()
   "Return t if &gt;=1 peek window is open."

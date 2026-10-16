@@ -643,6 +643,7 @@ article p {
 }
 
 .sidenote {
+  display: block;
   margin: 0.7rem 0 1rem;
   padding-left: 1rem;
   color: var(--muted);

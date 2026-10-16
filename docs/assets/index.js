@@ -45,7 +45,7 @@ function highlightCodeBlocks(_event) {
 function registerRefHandlers() {
   document.querySelectorAll('.fn-ref').forEach(ref => {
     const noteId = ref.getAttribute("aria-describedby")
-    const sidenote = document.querySelector(`#note-${noteId}`);
+    const sidenote = document.querySelector(`#${noteId}`);
     ref.addEventListener('mouseenter', event => {
       sidenote.classList.add("highlighted");
     });
@@ -56,7 +56,7 @@ function registerRefHandlers() {
 
   document.querySelectorAll('.sidenote').forEach(sidenote => {
     const noteId = sidenote.getAttribute("id").split("-")[1];
-    const ref = document.querySelector(`sup[aria-describedby='${noteId}']`)
+    const ref = document.querySelector(`sup[aria-describedby='note-${noteId}']`)
     sidenote.addEventListener('mouseenter', event => {
       ref.classList.add("highlighted");
     });

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A more intuitive Sway scratchpad: Turn it into a floating workspace | ((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  <meta property="og:type" content="article">
+<meta property="og:title" content="A more intuitive Sway scratchpad: Turn it into a floating workspace">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://isamert.net/2026/10/18/a-more-intuitive-sway-scratchpad-turn-it-into-a-floating-workspace.html">
+<meta property="og:site_name" content="((isamert))">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="/fun.html">fun</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>A more intuitive Sway scratchpad: Turn it into a floating workspace</h1>
+
+      <div class="meta">
+        <time datetime="2026-10-18" class="publish-time"
+              aria-label="Published Oct 18, 2026">
+          <span class="date-day">18</span>
+          <span class="date-month">Oct</span>
+          <span class="date-year">2026</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/sway.html">sway</a><a href="/tags/linux.html">linux</a>
+        </span>
+      </div>
+
+    </header>
+
+    <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#background">Background</a></li>
+<li><a href="#solution">Solution</a></li>
+</ul>
+</div>
+</nav>
+<div id="outline-container-background" class="outline-2">
+<h2 id="background"><a href="#background">Background</a></h2>
+<div class="outline-text-2" id="text-background">
+<div class="org-center">
+<p>
+(<i>If you already familiar with scratchpad and it's limitations, jump the <a href="#solution">Solution</a> section below.</i>)
+</p>
+</div>
+
+<p>
+In <a href="https://swaywm.org/">Sway</a>/<a href="https://i3wm.org/">i3</a><sup class="fn-ref" aria-describedby="note-1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>The idea on this post is only execised in Sway. Let me know if you've tried it on i3 and if it works or not.</span> the basic scratchpad usage is as follows:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code># Send the focused window to the scratchpad
+bindsym $mod+Shift+grave move scratchpad
+
+# Show or hide a scratchpad window
+bindsym $mod+grave scratchpad show
+</code></pre>
+</div>
+
+<ul class="org-ul">
+<li>Open an application.</li>
+<li>Hit <code>$mod+Shift+grave</code> to send it to the scratchpad.</li>
+<li>Hit <code>$mod+grave</code> to bring it back.</li>
+</ul>
+
+<p>
+This works for one application quite well. If you send more than one application to scratchpad, <code>scratchpad show</code> (the <code>$mod+grave</code> binding) cycles through them. This is somewhat manageable for maybe two applications.
+</p>
+
+<p>
+To go beyond this, you start defining application specific bindings:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code># Toggle each app independently
+bindsym $mod+F1 [app_id="scratch-term"] scratchpad show
+# ...
+
+# (Optional) Automatically stash matching windows when they open
+for_window [app_id="scratch-term"] move scratchpad
+# ...
+</code></pre>
+</div>
+
+<p>
+Now when you do <code>$mod+F1</code>, your terminal will be fetched from the scratchpad. Do <code>$mod+F1</code> again and send it back to scratchpad. Easy.
+</p>
+
+<p>
+You also need to start applications with proper titles or WM classes so that these bindings do work. For our scratchpad terminal example, if you are using <code>foot</code>, you need to do something like this to start it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>foot --app-id=scratch-term
+</code></pre>
+</div>
+
+<p>
+This is also good for applications that you use fairly often but of course it comes with a maintenance burden. For every application, you need to handle the configuration above, find proper keys for them and you also need to remember them. Again, this works fairly well for a couple of applications maybe. After that, things get messy.
+</p>
+
+<hr>
+
+<p>
+With configurations like this, I feel we lose the power of manual tiling. Application specific bindings work well for a fixed set of frequently used tools but I don't want to configure every window that might temporarily belong in my scratchpad. I want to collect windows on the fly and arrange them just as I would on a normal workspace.
+</p>
+
+<p>
+If you search for i3/sway scratchpad, you'll see an abundance of scripts that tries to make this easy for you. Here, I am going to add one more to the pile.
+</p>
+</div>
+</div>
+<div id="outline-container-solution" class="outline-2">
+<h2 id="solution"><a href="#solution">Solution</a></h2>
+<div class="outline-text-2" id="text-solution">
+<p>
+I want to think of the scratchpad as a separate workspace that I can summon on demand and hide on demand. This workspace is also a floating one, hence, it can float on top of whatever my current workspace is. I think this model simplifies how scratchpad works and aligns better with what I want: an ad-hoc layout for my hidden windows.
+</p>
+
+<p>
+Another benefit is that, there is no more cycling. Instead of cycling through separate scratchpad windows, I summon the whole group at once. I can see its tabs, switch between its windows using the usual focus commands, or arrange them side by side.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code># Send current window to our "scratchpad workspace"
+bindsym $mod+m exec ~/.config/sway/scripts/scratch-workspace
+
+# Toggle visibility of our "scratchpad workspace"
+bindsym $mod+grave [con_mark="^_scratch_workspace$"] scratchpad show
+</code></pre>
+</div>
+
+<p>
+Now assume I simply opened Signal application, hit <code>$mod+m</code>. Then I opened the WhatsApp application, hit <code>$mod+m</code>. And lastly opened Talk application and hit <code>$mod+m</code>. These are all sent to my <i>scratchpad workspace</i>. Then I hit <code>$mod+grave</code> to show my scratchpad workspace:
+</p>
+
+
+<figure>
+<img src="/images/sway_scratchpad_workspace_initial.png" alt="sway_scratchpad_workspace_initial.png">
+
+</figure>
+
+<p>
+As you can see, all three applications are now in a tabbed container that floats above my current workspace. This is a workspace and I can switch to a horizontal layout of course:
+</p>
+
+
+<figure>
+<img src="/images/sway_scratchpad_workspace_horizontal_split.png" alt="sway_scratchpad_workspace_horizontal_split.png">
+
+</figure>
+
+<p>
+Just to have a complete example, here I have two windows in one of my normal workspace:
+</p>
+
+
+<figure>
+<img src="/images/sway_scratchpad_workspace_before_move.png" alt="sway_scratchpad_workspace_before_move.png">
+
+</figure>
+
+<p>
+I hit <code>$mod+m</code> while I am focused on the terminal on the right. It goes to my scratchpad workspace. Then I hit <code>$mod+grave</code> to summon it:
+</p>
+
+
+<figure>
+<img src="/images/sway_scratchpad_workspace_after_move.png" alt="sway_scratchpad_workspace_after_move.png">
+
+</figure>
+
+<p>
+Of course this scratchpad workspace is just one container that is in the scratchpad. You can still have the usual scratchpad bindings:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-conf"><code>bindsym $mod+tab scratchpad show
+bindsym $mod+shift+tab move scratchpad
+</code></pre>
+</div>
+
+<p>
+&hellip;and they will work as before. The group is just another item in Sway's scratchpad, so the ordinary bindings still cycle through it alongside any other scratchpad windows.
+</p>
+
+<p>
+Here is the script that handles the lifecycle of the scratchpad workspace:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><code>#!/usr/bin/env bash
+set -euo pipefail
+
+# *** Configuration ***
+
+# Layout: tabbed, splith, splitv
+LAYOUT=tabbed
+
+# Size: percentage of the workspace, or pixels (px instead of ppt).
+WIDTH="80 ppt"
+HEIGHT="75 ppt"
+
+# Keep manual size/position changes after creating the group. If
+# false, every time you add something to this workspace, the geometry
+# is sync with what you've defined here.
+PRESERVE_GEOMETRY=false
+
+# *** Main ***
+
+marks=$(swaymsg -r -t get_marks)
+created=false
+
+if jq -e 'index("_scratch_workspace") != null' &lt;&lt;&lt; "$marks" &gt;/dev/null; then
+    swaymsg 'fullscreen disable, floating disable, mark --add _scratch_incoming'
+    swaymsg '[con_mark="^_scratch_workspace$"] move scratchpad'
+    swaymsg '[con_mark="^_scratch_workspace$"] scratchpad show'
+    swaymsg '[con_mark="^_scratch_incoming$"] move container to mark _scratch_workspace'
+    swaymsg '[con_mark="^_scratch_incoming$"] unmark _scratch_incoming'
+else
+    swaymsg "fullscreen disable; floating enable; split h; layout $LAYOUT; focus parent; mark --add _scratch_workspace"
+    created=true
+fi
+
+if [[ "$created" == true || "$PRESERVE_GEOMETRY" == false ]]; then
+    swaymsg "[con_mark=\"^_scratch_workspace$\"] resize set width $WIDTH height $HEIGHT, move position center"
+fi
+
+swaymsg '[con_mark="^_scratch_workspace$"] move scratchpad'
+</code></pre>
+</div>
+
+<p>
+What it essentially does is, it tries to see if there is a marked container named <code>_scratch_workspace</code>. If so, it moves the current window into that container. If not, it creates that marked container with the current window and sends that container into the scratchpad. Simple. You can generalize this idea and make the <code>_scratch_workspace</code> mark configurable and have any number of mini scratchpad workspaces (the script probably takes it as an argument) but I haven't had the need for more than one.
+</p>
+
+<p>
+One thing I wasn't able to solve is that it's not possible to move the current window to this mini scratchpad workspace without making it visible first. Unfortunately Sway does not allow that but it happens so fast that most of the time you don't even see anything at all.
+</p>
+</div>
+</div>
+
+  </article>
+
+  <div id="similar-posts">
+    <h2>Similar stuff</h2>
+    <ul>
+      <li> <a href="2021/03/02/a-relatively-deep-dive-into-zsh-shell-login-process-without-a-display-manager-.html">A (relatively) deep dive into (zsh) shell login process (without a display manager)</a></li><li> <a href="2022/08/12/typing-unicode-characters-programmatically-on-linux-and-macos.html">Typing (unicode) characters programmatically on Linux and macOS</a></li><li> <a href="2020/05/30/better-keyboard-experience-in-linux.html">Better keyboard experience in Linux</a></li><li> <a href="2018/05/04/automatize-your-logins-with-gnome-keyring-and-optionally-with-keepassxc-.html">Automatize your logins with gnome-keyring (and optionally with KeePassXC)</a></li><li> <a href="2017/12/22/programming-avr-microcontrollers-in-linux.html">Programming AVR microcontrollers in Linux</a></li>
+    </ul>
+  </div>
+
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>
+  <img class="copyleft-icon" src="/assets/Copyleft.svg" alt="Copyleft"> 2016–2026 isamert ·
+  <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
+  <a href="https://github.com/isamert/isamert.github.io">source</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tracking issues with Emacs and Org mode dynamic blocks | ((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  <meta property="og:type" content="article">
+<meta property="og:title" content="Tracking issues with Emacs and Org mode dynamic blocks">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://isamert.net/2026/11/05/tracking-issues-with-emacs-and-org-mode-dynamic-blocks.html">
+<meta property="og:site_name" content="((isamert))">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="/fun.html">fun</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>Tracking issues with Emacs and Org mode dynamic blocks</h1>
+
+      <div class="meta">
+        <time datetime="2026-11-05" class="publish-time"
+              aria-label="Published Nov 05, 2026">
+          <span class="date-day">05</span>
+          <span class="date-month">Nov</span>
+          <span class="date-year">2026</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/org.html">org</a><a href="/tags/enterprise.html">enterprise</a>
+        </span>
+      </div>
+
+    </header>
+
+    <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#idea">Idea</a></li>
+<li><a href="#implementation">Implementation</a>
+<ul>
+<li><a href="#dynamic-block-implementation">Dynamic block implementation</a></li>
+<li><a href="#getting-notified-automatically">Getting notified automatically</a></li>
+</ul>
+</li>
+<li><a href="#package">Package</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</div>
+</nav>
+<p>
+I use Org mode for literally everything, including $DAYJOB projects. To be able to effectively work with different tools your company utilizes, you need to have some sort of integration with those tools. Of course every integration you add comes with some level of maintenance burden, so keeping them scoped is quite important. Other than scope, one other thing you need to take care is the flexibility of the integration. Does it restrict you to certain workflows or does it blend with your already-existing workflow?
+</p>
+
+<p>
+For <i>Emacs</i> itself, there are really good <i>integrations</i> to deal with Jira that may fill this gap: just search for <code>emacs jira</code> and you'll be greeted with a lot of different packages.<sup class="fn-ref" aria-describedby="note-1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span><a href="https://github.com/unmonoqueteclea/jira.el">jira.el</a> looks very featureful and active but I haven't tried it yet.</span> While these are really good, what they essentially do is to bring Jira into an Emacs buffer. That alone provides a lot of value but I want a more precise way to track Jira issues/projects within my notes without introducing an elaborate hierarchy or a new system to learn. Something with small scope but with high return value due to being able to integrate with our existing note system. Specifically, I want an Org integration, not just an Emacs interface.
+</p>
+
+<p>
+In this post, I'll try to describe how I fill this gap myself in Org mode using <a href="https://orgmode.org/manual/Dynamic-Blocks.html">dynamic blocks</a> with a bit of glue code.<sup class="fn-ref" aria-describedby="note-2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>Also see my earlier <a href="https://isamert.net/2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">post about custom Org src blocks</a> where I talk about a similar idea that you utilize Org mode to keep things in Emacs.</span> With this, you'll be able to see what's happening in Jira within your notes and you'll get notified about the changes. I believe dynamic blocks are quite effective for providing bespoke integrations with other tools. They let you bring external information into Org with whatever structure you want. Even if you are not interested in Jira issues, learning about dynamic blocks may provide some value.
+</p>
+<div id="outline-container-idea" class="outline-2">
+<h2 id="idea"><a href="#idea">Idea</a></h2>
+<div class="outline-text-2" id="text-idea">
+<p>
+See this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><code>#+begin: jira :issues (YZ-1459 YZ-1460 XY-1461) :progress? t :target 100
+#+end:
+</code></pre>
+</div>
+
+<p>
+Here we have a simple custom Org dynamic block named <code>jira</code>. You can pass a parameter called <code>:issues</code> to that and upon calling this block (by hitting <code>C-c C-c</code> while your cursor is on the block), it'll create a table, showing a summary of these issues:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><code>#+begin: jira :issues (YZ-1459 YZ-1460 XY-1461) :progress? t :target 100
+- Progress :: 2/3 (66%)
+
+| Assignee | Creator | Points | Status   | Sprint        | Issue                          |
+|----------+---------+--------+----------+---------------+--------------------------------|
+| john.doe | isamert |    2.0 | Released | XY Sprint 29  | XY-1461 - Do this thing        |
+| jane.doe | isamert |    5.0 | Released | YZ Sprint 29  | YZ-1459 - Do that thing        |
+| mao      | isamert |    0.5 | To-Do    | YZ Sprint 30  | YZ-1460 - And maybe this thing |
+#+end:
+</code></pre>
+</div>
+
+<p>
+Instead of listing issues explicitly, we can use a JQL query:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><code>#+begin: jira :jql "...a JQL returning these issues..." :progress? t :target 100
+#+end:
+</code></pre>
+</div>
+
+<p>
+And here is a screenshot of what I see in a real Emacs buffer, to give you a more concrete idea:
+</p>
+
+
+<figure>
+<img src="/images/org_jira_dblock_first.png" alt="org_jira_dblock_first.png">
+
+</figure>
+
+<p>
+This is already useful on its own. You can logically group some issues, take notes about them under an Org heading and also see their statuses live right in the buffer. Bonus points for displaying the issue details within Emacs. This is exactly what I do when tracking large projects:
+</p>
+
+
+<figure>
+<img src="/images/org_jira_dblock_second.png" alt="org_jira_dblock_second.png">
+
+</figure>
+<hr>
+
+<p>
+The remaining parameter is <code>:target</code>. This is what I use to <i>automatically</i> track these <i>issue groups</i>. Every day, a simple Cron job runs on my computer, goes through all the <code>jira</code> dynamic blocks that contain a <code>:target</code> parameter, updates these blocks and if the target is met for that particular block it creates a new entry in my <i>inbox</i> to let me know that I need to act on these.<sup class="fn-ref" aria-describedby="note-3">3</sup><span class="sidenote right" id="note-3"><span class="note-number">3</span>In practice, I don't use a cron job but it's a simpler example to understand what's going on. In reality I do the following: I have a checklist that I go over every single day and in there I have a step to run this update function. See <a href="https://isamert.net/2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">this post</a> about the extended version of the <i>daily checklist</i> idea.</span> Here is what happens briefly:
+</p>
+
+
+<figure>
+<img src="/images/org_jira_dblock_completed_block_and_inbox.png" alt="org_jira_dblock_completed_block_and_inbox.png">
+
+</figure>
+<hr>
+
+<p>
+The useful part here is that these <i>issue groups</i> don't need to correspond to an epic, a sprint, or even a single team's work. One block might represent everything needed for a rollout, another an initiative spanning several teams etc. This way you can take your notes in whatever way you want and attach a simple interactive view along with them. By adding another parameter (<code>:target</code>), you also get notifications for free.
+</p>
+</div>
+</div>
+<div id="outline-container-implementation" class="outline-2">
+<h2 id="implementation"><a href="#implementation">Implementation</a></h2>
+<div class="outline-text-2" id="text-implementation">
+<div class="org-center">
+<p>
+<i>(If you don't want to be bothered by the implementation details, skip to the <a href="#package">Package</a> section below but I highly recommend tailoring the implementation for your needs.)</i>
+</p>
+</div>
+</div>
+<div id="outline-container-dynamic-block-implementation" class="outline-3">
+<h3 id="dynamic-block-implementation"><a href="#dynamic-block-implementation">Dynamic block implementation</a></h3>
+<div class="outline-text-3" id="text-dynamic-block-implementation">
+<p>
+To introduce a new dynamic block (a <i>dblock</i>) in Org, all you have to do is implement a function called <code>org-dblock-write:&lt;your-dblock-name&gt;</code>. For <code>jira</code>, that looks like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defun org-dblock-write:jira (params)
+  "Insert a Jira summary table using :issues or :jql from PARAMS.
+With :progress? t, also show the percentage of Done or Released issues.
+There is also :target parameter, which is not used here but utilized by
+the notification function."
+  (when (and (plist-get params :target) (not (plist-get params :progress?)))
+    (user-error "Jira target tracking requires :progress? t"))
+  (let* ((issues (plist-get params :issues))
+         (jql (if issues
+                  (format "key IN (%s)" (mapconcat #'symbol-name issues ", "))
+                (plist-get params :jql)))
+         (results (if jql
+                      (jiralib2-jql-search jql)
+                    (user-error "Specify :issues or :jql")))
+         (total (length results))
+         (done 0))
+    (dolist (issue results)
+      (when (member (let-alist issue .fields.status.name) '("Released" "Done"))
+        (setq done (1+ done))))
+    (when (plist-get params :progress?)
+      (insert (format "- Progress :: %s/%s (%s%%)\n\n"
+                      done total (if (&gt; total 0) (/ (* 100 done) total) 0))))
+    (insert "| Assignee | Creator | Points | Status | Sprint | Issue |\n|-\n")
+    (dolist (issue results)
+      (let-alist issue
+        (let* ((sprint (or (car (alist-get im-jira-sprint-field-name .fields)) ""))
+               (sprint-name (when (string-match "name=\\([^,]+\\)," sprint)
+                              (match-string 1 sprint))))
+          (insert
+           (format "| %s | %s | %s | %s | %s | %s - %s |\n"
+                   .fields.assignee.name
+                   .fields.creator.name
+                   (alist-get im-jira-story-points-field-name .fields)
+                   .fields.status.name
+                   (or sprint-name "")
+                   .key .fields.summary)))))
+    (org-table-align)))
+</code></pre>
+</div>
+
+<p>
+Quite simple. We simply construct a JQL, request the result via <code>jiralib2</code> and then print that out in the Org document and let <code>org-table-align</code> align the table instead of manually trying to align the table.
+</p>
+
+<p>
+Here there are two variables that need attention, you can either directly change them in the function to what your Jira instance uses<sup class="fn-ref" aria-describedby="note-4">4</sup><span class="sidenote left" id="note-4"><span class="note-number">4</span>You can also remove the relevant parts if you don’t want this information in your Jira dblocks.</span>, or here I'll introduce two <code>defcustom</code> forms to keep things package-like:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defcustom im-jira-story-points-field-name 'customfield_10002
+  "Field symbol for story points in Jira issue responses."
+  :type 'symbol
+  :group 'im-jira)
+
+(defcustom im-jira-sprint-field-name 'customfield_10004
+  "Field symbol for sprints in Jira issue responses."
+  :type 'symbol
+  :group 'im-jira)
+</code></pre>
+</div>
+
+<p>
+That’s it for the dynamic block itself. Of course, it requires <code>jiralib2</code>, which you can configure as follows:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(use-package jiralib2
+  :custom
+  (jiralib2-url "&lt;your-jira-url&gt;")
+  (jiralib2-user-login-name "&lt;your-jira-login&gt;")
+  (jiralib2-auth 'token) ; or check the variable's documentation to see your other options
+  (jiralib2-token "&lt;your-jira-token&gt;"))
+</code></pre>
+</div>
+
+<p>
+Now you can create dynamic blocks in your Org documents:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><code>#+begin: jira :issues (A-1 B-2 C-3) :progress? t
+#+end:
+</code></pre>
+</div>
+
+<p>
+Then hit <code>C-c C-c</code> to retrieve the issues. If you ever forget which parameters are available, <a href="https://github.com/isamert/corg.el">corg.el</a><sup class="fn-ref" aria-describedby="note-5">5</sup><span class="sidenote right" id="note-5"><span class="note-number">5</span>This is just another small package I wrote. It provides auto-completion for dynamic blocks and source block headers in Org. Check it out.</span> can help with that:
+</p>
+
+
+<figure>
+<img src="/images/org_jira_corg.png" alt="org_jira_corg.png">
+
+</figure>
+</div>
+</div>
+<div id="outline-container-getting-notified-automatically" class="outline-3">
+<h3 id="getting-notified-automatically"><a href="#getting-notified-automatically">Getting notified automatically</a></h3>
+<div class="outline-text-3" id="text-getting-notified-automatically">
+<p>
+Next, I’ll define a function that scans your Org files for <code>jira</code> blocks with a <code>:target</code> parameter. It refreshes each block and sends a notification if the target has been reached:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defun im-jira-check-tracked-issue-groups ()
+  "Refresh Jira blocks with :target in `im-jira-files'."
+  (interactive)
+  (dolist (file im-jira-files)
+    (with-current-buffer (find-file-noselect file)
+      (org-map-dblocks
+       (lambda ()
+         (looking-at org-dblock-start-re)
+         (let* ((name (match-string 1))
+                (params (read (concat "(" (match-string 3) ")")))
+                (target (plist-get params :target)))
+           (when (and (equal name "jira")
+                      target
+                      (not (org-entry-is-done-p)))
+             (let ((id (org-id-get-create))
+                   (heading (org-get-heading t t t t)))
+               (org-dblock-update)
+               (let ((end (save-excursion
+                            (re-search-forward org-dblock-end-re nil t))))
+                 (when (and (re-search-forward
+                             "- Progress :: .*?([ \t]*\\([0-9]+\\)%[ \t]*)"
+                             end t)
+                            (&gt;= (string-to-number (match-string 1)) target))
+                   (im-jira--notify id heading))))))))
+      (save-buffer)))
+  (org-id-locations-save))
+</code></pre>
+</div>
+
+<p>
+There’s one more variable to configure:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defcustom im-jira-files (list (expand-file-name "projects.org" org-directory))
+  "Org files containing Jira dynamic blocks to check for achieved targets."
+  :type '(repeat file)
+  :group 'im-jira)
+</code></pre>
+</div>
+
+<p>
+And here is the <code>im-jira--notify</code> function, which is called whenever a tracked issue group reaches its target:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defun im-jira--notify (id heading)
+  "Add a reminder for ID and HEADING unless one already exists."
+  (let ((already-notified?
+         ;; Check whether this notification is already in the inbox file...
+         (with-current-buffer (find-file-noselect im-jira-inbox-file)
+           (org-with-wide-buffer
+            (goto-char (point-min))
+            (re-search-forward
+             (concat "^\\* .*" (regexp-quote (format "[[id:%s]" id)))
+             nil t)))))
+    ;; ...if not, insert it via org-capture's help (so that we don't
+    ;; manually edit the file and let org-capture handle the editing)
+    (unless already-notified?
+      (let ((org-capture-templates
+             `(("j" "Jira target" entry
+                (file ,im-jira-inbox-file)
+                ,(format
+                  "* TODO [#A] Target achieved: [[id:%s][%s]]\nDEADLINE: %s\n"
+                  id heading (format-time-string "&lt;%Y-%m-%d %a&gt;"))
+                :prepend t
+                :immediate-finish t
+                :empty-lines 1))))
+        (org-capture nil "j")))))
+</code></pre>
+</div>
+
+<p>
+This also needs one customization:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>(defcustom im-jira-inbox-file (expand-file-name "inbox.org" org-directory)
+  "Org file where achieved-target reminders are inserted."
+  :type 'file
+  :group 'im-jira)
+</code></pre>
+</div>
+
+<p>
+Basically when a given <code>jira</code> block reaches its target, it inserts a new TODO item into your <i>inbox</i> file, which contains a link to the heading containing that <code>jira</code> block. Of course you need to run the function <code>im-jira-check-tracked-issue-groups</code> manually from time to time (or automatically with cron or an Emacs timer<sup class="fn-ref" aria-describedby="note-6">6</sup><span class="sidenote left" id="note-6"><span class="note-number">6</span>Check out <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Timers.html#index-run_002dwith_002dtimer">run-with-timer</a> or <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Idle-Timers.html#index-run_002dwith_002didle_002dtimer">run-with-idle-timer</a> if you want to keep this in your Emacs configuration.</span>). The notification function also checks for duplicates so you don't get bombarded with <i>Target achieved</i> entries in your inbox.
+</p>
+
+<p>
+You can also change how the notification function (<code>im-jira--notify</code>) works to adjust it to your workflow. I was already using <code>inbox.org</code> style notes. You can, for example, make it send you a system notification too.
+</p>
+
+
+<figure>
+<img src="/images/org_jira_dblock_completed_block_and_inbox.png" alt="org_jira_dblock_completed_block_and_inbox.png">
+
+</figure>
+
+<p>
+After I run the function, it detects an issue group meeting its target and adds a TODO item to my inbox linking to the enclosing heading of that particular issue group.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-package" class="outline-2">
+<h2 id="package"><a href="#package">Package</a></h2>
+<div class="outline-text-2" id="text-package">
+<p>
+Here is the full code, in a package format. Drop it into your load path and see its commentary section for configuration instructions.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp"><code>;;; im-jira.el --- Simple Org Jira companion  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2026 Isa Mert Gurbuz
+
+;; Author: Isa Mert Gurbuz &lt;isamertgurbuz@gmail.com&gt;
+;; URL: https://github.com/isamert/dotfiles
+;; Version: 0.0.1
+;; Package-Requires: ((emacs "27.1") (jiralib2 "1.0"))
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+;;; Commentary:
+
+;; Configure Jira authentication using jiralib2, then customize the
+;; options below for your Org files and Jira instance.
+;;
+;;   (use-package jiralib2
+;;     :custom
+;;     (jiralib2-url "&lt;your-jira-url&gt;")
+;;     (jiralib2-user-login-name "&lt;your-jira-login&gt;")
+;;     (jiralib2-auth 'token) ; or check the variable's documentation to see your other options
+;;     (jiralib2-token "&lt;your-jira-token&gt;"))
+;;
+;; Example usage:
+;;
+;;   #+begin: jira :issues (AA-1 BB-2) :progress? t :target 100
+;;   #+end:
+;;
+;; Run `im-jira-check-tracked-issue-groups' for reminders.
+
+;;; Code:
+
+(require 'org)
+(require 'org-id)
+(require 'org-table)
+(require 'let-alist)
+(require 'jiralib2)
+
+;;;; Customization
+
+(defgroup im-jira nil
+  "Settings for `im-jira'.")
+
+(defcustom im-jira-story-points-field-name 'customfield_10002
+  "Field symbol for story points in Jira issue responses."
+  :type 'symbol
+  :group 'im-jira)
+
+(defcustom im-jira-sprint-field-name 'customfield_10004
+  "Field symbol for sprints in Jira issue responses."
+  :type 'symbol
+  :group 'im-jira)
+
+(defcustom im-jira-inbox-file (expand-file-name "inbox.org" org-directory)
+  "Org file where achieved-target reminders are inserted."
+  :type 'file
+  :group 'im-jira)
+
+(defcustom im-jira-files (list (expand-file-name "projects.org" org-directory))
+  "Org files containing Jira dynamic blocks to check for achieved targets."
+  :type '(repeat file)
+  :group 'im-jira)
+
+;;;; Main
+
+;;;;; Org dynamic block integration
+
+(defun org-dblock-write:jira (params)
+  "Insert a Jira summary table using :issues or :jql from PARAMS.
+With :progress? t, also show the percentage of Done or Released issues.
+There is also :target parameter, which is not used here but utilized by
+the notification function."
+  (when (and (plist-get params :target) (not (plist-get params :progress?)))
+    (user-error "Jira target tracking requires :progress? t"))
+  (let* ((issues (plist-get params :issues))
+         (jql (if issues
+                  (format "key IN (%s)" (mapconcat #'symbol-name issues ", "))
+                (plist-get params :jql)))
+         (results (if jql
+                      (jiralib2-jql-search jql)
+                    (user-error "Specify :issues or :jql")))
+         (total (length results))
+         (done 0))
+    (dolist (issue results)
+      (when (member (let-alist issue .fields.status.name) '("Released" "Done"))
+        (setq done (1+ done))))
+    (when (plist-get params :progress?)
+      (insert (format "- Progress :: %s/%s (%s%%)\n\n"
+                      done total (if (&gt; total 0) (/ (* 100 done) total) 0))))
+    (insert "| Assignee | Creator | Points | Status | Sprint | Issue |\n|-\n")
+    (dolist (issue results)
+      (let-alist issue
+        (let* ((sprint (or (car (alist-get im-jira-sprint-field-name .fields)) ""))
+               (sprint-name (when (string-match "name=\\([^,]+\\)," sprint)
+                              (match-string 1 sprint))))
+          (insert
+           (format "| %s | %s | %s | %s | %s | %s - %s |\n"
+                   .fields.assignee.name
+                   .fields.creator.name
+                   (alist-get im-jira-story-points-field-name .fields)
+                   .fields.status.name
+                   (or sprint-name "")
+                   .key .fields.summary)))))
+    (org-table-align)))
+
+;;;;; Dynamic block tracking
+
+(defun im-jira-check-tracked-issue-groups ()
+  "Refresh Jira blocks with :target in `im-jira-files'."
+  (interactive)
+  (dolist (file im-jira-files)
+    (with-current-buffer (find-file-noselect file)
+      (org-map-dblocks
+       (lambda ()
+         (looking-at org-dblock-start-re)
+         (let* ((name (match-string 1))
+                (params (read (concat "(" (match-string 3) ")")))
+                (target (plist-get params :target)))
+           (when (and (equal name "jira")
+                      target
+                      (not (org-entry-is-done-p)))
+             (let ((id (org-id-get-create))
+                   (heading (org-get-heading t t t t)))
+               (org-dblock-update)
+               (let ((end (save-excursion
+                            (re-search-forward org-dblock-end-re nil t))))
+                 (when (and (re-search-forward
+                             "- Progress :: .*?([ \t]*\\([0-9]+\\)%[ \t]*)"
+                             end t)
+                            (&gt;= (string-to-number (match-string 1)) target))
+                   (im-jira--notify id heading))))))))
+      (save-buffer)))
+  (org-id-locations-save))
+
+(defun im-jira--notify (id heading)
+  "Add a reminder for ID and HEADING unless one already exists."
+  (let ((already-notified?
+         (with-current-buffer (find-file-noselect im-jira-inbox-file)
+           (org-with-wide-buffer
+            (goto-char (point-min))
+            (re-search-forward
+             (concat "^\\* .*" (regexp-quote (format "[[id:%s]" id)))
+             nil t)))))
+    (unless already-notified?
+      (let ((org-capture-templates
+             `(("j" "Jira target" entry
+                (file ,im-jira-inbox-file)
+                ,(format
+                  "* TODO [#A] Target achieved: [[id:%s][%s]]\nDEADLINE: %s\n"
+                  id heading (format-time-string "&lt;%Y-%m-%d %a&gt;"))
+                :prepend t
+                :immediate-finish t
+                :empty-lines 1))))
+        (org-capture nil "j")))))
+
+;;;; Footer
+
+(provide 'im-jira)
+
+;;; im-jira.el ends here
+</code></pre>
+</div>
+
+
+
+<p>
+This code is a cleaned-up, standalone version of my Emacs Jira extensions that can be found <a href="https://github.com/isamert/dotfiles/blob/master/.emacs.d/packages/im-jira.el">here</a>. You probably can’t use the version from my dotfiles as a drop-in package but it might be worth taking a look for other ideas for similar integrations.
+</p>
+</div>
+</div>
+<div id="outline-container-conclusion" class="outline-2">
+<h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2>
+<div class="outline-text-2" id="text-conclusion">
+<p>
+Org is quite extendible and dynamic blocks are just another way to extend it. I have been using <a href="https://github.com/isamert/dotfiles/blob/419ce39bc3657227b41e3ce5cf1916e7e5e2f74f/.emacs.d/init.el#L2420-L2453">another dynamic block implementation</a> which simply does a regexp search within a given project and tabulates the matches just like these Jira issues. While it's quite easy to do a simple project-wide regexp search in Emacs already, the provided value here is that having them within your notes and it gives you some sort of overview. You can plan, brainstorm or whatever without even opening the project itself, just staying in your notes. Combined with other dynamic blocks, links, source blocks etc. the gained value is immeasurable. It's fun too! You organize your work in your notes around what matters to you, rather than third-party tools restrictions.
+</p>
+
+<p>
+Of course the idea of tracking Jira issues can be extended to other platforms, I also use a <a href="https://github.com/isamert/dotfiles/blob/419ce39bc3657227b41e3ce5cf1916e7e5e2f74f/.emacs.d/packages/im-github.el#L611-L662">similar implementation for GitHub issues</a>.<sup class="fn-ref" aria-describedby="note-7">7</sup><span class="sidenote right" id="note-7"><span class="note-number">7</span>I know it's a monstrosity but that's the point. Just implement one for your own needs and don't look back.</span>
+</p>
+</div>
+</div>
+
+  </article>
+
+  <div id="similar-posts">
+    <h2>Similar stuff</h2>
+    <ul>
+      <li> <a href="2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li><li> <a href="2022/01/04/dealing-with-apis-jsons-and-databases-in-org-mode.html">Dealing with APIs, JSONs and databases in org-mode</a></li><li> <a href="2021/05/09/migrating-my-imdb-ratings-list-and-watch-list-into-org-mode.html">Migrating my IMDb ratings list and watch list into org-mode</a></li><li> <a href="2021/04/21/managing-your-contacts-in-org-mode-and-syncing-them-to-your-phone-android-ios-whatever-.html">Managing your contacts in org-mode and syncing them to your phone (Android, iOS, whatever)</a></li><li> <a href="2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li>
+    </ul>
+  </div>
+
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>
+  <img class="copyleft-icon" src="/assets/Copyleft.svg" alt="Copyleft"> 2016–2026 isamert ·
+  <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
+  <a href="https://github.com/isamert/isamert.github.io">source</a>
+  </footer>
+</body>
+</html>

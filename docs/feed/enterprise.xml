@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>enterprise - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>Tracking issues with Emacs and Org mode dynamic blocks</title>
+      <link>https://isamert.net/2026/11/05/tracking-issues-with-emacs-and-org-mode-dynamic-blocks.html</link>
+      <pubDate>Thu, 05 Nov 2026 17:47:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

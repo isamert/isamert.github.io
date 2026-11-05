@@ -7716,6 +7716,13 @@ Useful when styling or templating has changed."
 (defun isamert/get-current-post-info ()
   (let ((tags (s-split ":" (or (org-entry-get nil "TAGS") "") t)))
     (when (isamert/blog-can-export-current)
+      (unless (org-entry-get nil "PUBLISH_DATE")
+        (if (y-or-n-p (format "Post %S has no PUBLISH_DATE. Insert current date? "
+                             (org-entry-get nil "ITEM")))
+            (org-set-property "PUBLISH_DATE"
+                              (format-time-string "[%Y-%m-%d %a %H:%M] %z"))
+          (user-error "Export cancelled: PUBLISH_DATE is required for %s"
+                      (org-entry-get nil "ITEM"))))
       (let* ((options (org-entry-get nil "OPTIONS"))
              (title (or (org-entry-get nil "TITLE")
                         (org-entry-get nil "ITEM")))

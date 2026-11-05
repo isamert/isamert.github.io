@@ -257,6 +257,11 @@ pre {
   scrollbar-color: var(--rule) transparent;
 }
 
+.org-src-container pre {
+  max-height: min(32rem, 70vh);
+  overflow: auto;
+}
+
 pre code {
   padding: 0;
   color: var(--text);

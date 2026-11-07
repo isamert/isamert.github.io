@@ -1588,7 +1588,7 @@ This is the post template, post pages will be generated based on this.
           (--map
            (let ((post (map-elt isamert/blog-all-posts (car it))))
              `(li ()
-                  (a ((href . ,(plist-get post :path))) ,(plist-get post :title)))))
+                  (a ((href . ,(concat "/" (plist-get post :path)))) ,(plist-get post :title)))))
           (-map #'shr-dom-to-xml)
           (apply #'concat))}
     </ul>

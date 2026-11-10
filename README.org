@@ -1785,7 +1785,7 @@ My memory is a bit weak, so I find it hard to talk about movies I watched but th
 -----
 
 #+begin_center
-*[[https://github.com/isamert.github.io][source of this website]]*
+*[[https://github.com/isamert/isamert.github.io][source of this website]]*
 #+end_center
 
 The interesting part about this website is everything is generated from single [[https://orgmode.org/][org-mode]] file (including all the assets) and the code that generates it is even in the file itself. [fn:: Only exceptions are the image files and my [[/resume.html][resume]]. It is also possible to embed them into the file using some base64 shenanigans but has no practical value, so I kept them separate. Resume itself is not really part of the blog itself, so I also kept it outside.] To list a few properties of it: It has a templating system, makes use of [[https://orgmode.org/worg/org-contrib/babel/][org-babel]] and [[https://orgmode.org/manual/Noweb-Reference-Syntax.html][noweb syntax]] heavily, you can embed arbitrary elisp anywhere and make it output HTML,[fn:: Or you can also use the [[https://github.com/emacs-mirror/emacs/blob/master/lisp/net/shr.el][shr package]] to render HTML using elisp lists, not powerful as [[https://github.com/weavejester/hiccup][Clojure's hiccup]] but it's still very good!] it has tagging system, generates RSS feeds/pages, contains a local server for development...

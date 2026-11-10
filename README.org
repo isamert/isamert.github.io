@@ -8073,6 +8073,407 @@ Org is quite extendible and dynamic blocks are just another way to extend it. I 
 
 Of course the idea of tracking Jira issues can be extended to other platforms, I also use a [[https://github.com/isamert/dotfiles/blob/419ce39bc3657227b41e3ce5cf1916e7e5e2f74f/.emacs.d/packages/im-github.el#L611-L662][similar implementation for GitHub issues]].[fn:: I know it's a monstrosity but that's the point. Just implement one for your own needs and don't look back.]
 
+* yml.el: BLAZINGLY fast YAML parser for Emacs :emacs:rust:
+:PROPERTIES:
+:PUBLISH_DATE: [2026-11-10 Tue 15:51] +0100
+:CUSTOM_ID: yml-el-blazingly-fast-yaml-parser-for-emacs
+:END:
+
+In this post, I’m going to talk about my new package, [[https://github.com/isamert/yml.el][yml.el]]: the fastest YAML parser for Emacs.[fn:: Yes, the title is clickbait-y. I mean it's currently the fastest YAML parser for Emacs and that's a fact, but at the same time I've always wanted to rewrite something in Rust and call it BLAZINGLY fast, irrelevant of the fact that it is or not.]
+
+I'll walk through why I needed another YAML parser for Emacs, how I ended up writing a native module in Rust, and the performance optimizations that made it faster. Along the way, I'll cover building Lisp objects from Rust, avoiding unnecessary intermediate representations, and reducing calls across the Rust/Emacs boundary.
+
+** The YAML situation in Emacs
+:PROPERTIES:
+:CUSTOM_ID: yaml-situation-in-emacs
+:END:
+
+Right now, if you want to parse YAML within Emacs, you basically have two options:
+
+#+begin_center
+[[https://github.com/zkry/yaml.el][zkry/yaml.el]]
+#+end_center
+
+A parser that is written in Emacs Lisp, so it has no external dependencies and a nice interface -- ~json-parse-string~-esque[fn:: Not totally, but it's good. yml.el takes this compatibility even further.]. But it is dreadfully slow. It's nice if you're parsing a simple YAML that contains maybe at most 100 lines or so, but after that the slowness becomes very noticeable. It is still maintained, and it's the package I've been using all this time.
+
+#+begin_center
+[[https://github.com/syohex/emacs-libyaml][syohex/emacs-libyaml]]
+#+end_center
+
+This one is a libyaml wrapper for Emacs. Very fast, compared to ~yaml.el~. Its main weakness is that it only supports deserializing objects into hash-maps and not into alists/plists. This is very inconvenient because if you have no other choice but to use alists/plists then you have to roll your own converter function[fn:: It's very cumbersome to write.] and pay the price for the conversion too. Also plists/alists are faster, both in terms of building them and accessing them. The latter is true for small objects though, after a while hash-tables become more performant.
+
+** The slowness problem and possible solutions
+:PROPERTIES:
+:CUSTOM_ID: the-slowness-problem-and-possible-solutions
+:END:
+
+I have two Emacs Lisp projects that uses YAML heavily, /unfortunately/[fn:: To be honest, I don't hate YAMLs as much as I would like to. The spec and the problems it caused are quite a pain and in theory I don't like how it's structured at all but at work every other compatible format we tried became a mess much faster than YAMLs. I think there is something there that YAMLs got right, maybe the human mind handles visual nesting better than other representations. Of course I still believe if you need a substantially complex configuration format, you just need to use a proper language instead.]: [[https://github.com/isamert/swagg.el][swagg.el]] and [[https://github.com/isamert/ellm.el][ellm.el]].[fn:: Besides these, we use YAMLs quite a lot at work. I have a bunch of ad-hoc Lisp snippets that deal with them. I'm just trying to say I am quite motivated to have a fast YAML parser for Emacs.] Recently, I added a feature to ellm.el where in some cases it needs to parse hundreds of quite small YAML strings and it caused a noticeable lag. I try to structure my packages using async operations to not block Emacs, even if that means a bit slower response but Emacs staying responsive during those operations.
+
+Unfortunately, YAML parsing is a sync operation. In these situations, one thing you can do is use something like [[https://github.com/jwiegley/emacs-async][jwiegley/emacs-async]]. Assume the following is what I need:
+
+#+begin_src emacs-lisp
+(require 'yaml)
+
+(dolist (yaml (bunch-of-yaml-strings))
+  (let ((obj (yaml-parse-string yaml :object-type 'alist :array-type 'list)))
+    (let-alist obj
+      (when .some.yaml.variable
+        (do-my-work .some.other.variable)))))
+#+end_src
+
+What ~emacs-async~ does is that it starts another Emacs process, runs the code you supplied to it, and returns the result to you. Here is how we can write the same code asynchronously:
+
+#+begin_src emacs-lisp
+(async-start
+ `(lambda ()
+    ,(async-inject-variables "^load-path$")
+    (require 'yaml)
+    (let (results)
+      (dolist (yaml (bunch-of-yaml-strings))
+        (let ((obj (yaml-parse-string yaml :object-type 'alist :array-type 'list)))
+          (let-alist obj
+            (when .some.yaml.variable
+              (push .some.other.variable results)))))
+      results))
+ (lambda (results)
+   (dolist (result results)
+     (do-my-work result))))
+#+end_src
+
+Basically, you can think of this code as follows:
+- The first lambda is the one that we pass into the other Emacs, hence it's quoted.
+- Of course the other Emacs process is started with ~-q~, so no user customizations. Thus we at least need to somehow let this /pure/ Emacs know where the libraries are so we can load these libraries. Hence the line: ~,(async-inject-variables "^load-path$")~.
+- That lambda runs and the result is passed back into our Emacs instance.
+
+This is what I do when I've run out of other options because it comes with:
+- Much more complex and uglier code. Even here, we've done the bare minimum (only offloaded YAML parsing to the new Emacs instance, we still do the processing in the running instance)
+- A lot of serialization problems. The result you produced in the other Emacs process needs to be serialized and passed into our running Emacs instance. Depending on what you're trying to pass between the processes, serialization may be impossible or may introduce subtle, input-dependent issues.
+- Quite a bit of overhead. Running a new Emacs instance. Loading libraries you need from scratch. Serializing the result, and then deserializing it back in your running Emacs instance.
+
+So ~emacs-async~ is quite good for long-running operations where you are okay with the overhead and users are not expecting immediate feedback.
+
+Here are the remaining options:
+
+Make ~yaml.el~ itself faster which probably is not an option because first of all it's a big undertaking and theoretically speaking Emacs Lisp has its own limitations. What the JSON example shows us is that native code is the way to go, unfortunately.[fn:: I am referring to [[https://github.com/emacs-mirror/emacs/blob/master/src/json.c][json.c]] which was included in Emacs 27 because everybody was complaining about how parsing JSON was slow. It was one of the best things to happen to Emacs in recent years.]
+
+Use ~emacs-libyaml~. It's native and fast. Two problems though:
+- Only supports hash-tables. I don't like them. I like Lisp, thus lists.
+- No easy way to install it. Not on MELPA/ELPA, and you have to compile it by yourself. Depending on such a library surely makes your packages hard to install which is something I don't really want.
+
+Support for alists and plists could be added and it may be also possible to contribute a way of making it easier to install. The latter requires quite a bit of control over the repository to make build artifacts available, and the former requires some knowledge of C which is a language I used briefly in high school. For me, this was also not an option.
+
+** The Rust re-write
+:PROPERTIES:
+:CUSTOM_ID: the-rust-re-write
+:END:
+
+#+begin_center
+/(Title might be triggering, I know, but it's where we are at.)/
+#+end_center
+
+So I reluctantly searched again, without much hope, to see whether the situation had changed. I found out about [[https://github.com/perfectayush/emacs-yamlmod][perfectayush/emacs-yamlmod]][fn:: And [[https://github.com/ubolonton/emacs-module-rs][ubolonton/emacs-module-rs]] which is actually the bigger piece of the puzzle. It makes it possible to write dynamic modules for Emacs, in Rust. Yay!] Similar to ~emacs-libyaml~ but written in Rust. Also it did not support serialization. But I know Rust, a bit. I could contribute those features.
+
+I started adding support for alists, plists, and serialization. Then I decided we need to have an easy way to install the dynamic module. Then I did some benchmarks, changed how parsing is done from the ground up. Then I wasn't really satisfied with its interface, so I changed that too. It became a different package at this point, and I decided to publish it as such: [[https://github.com/isamert/yml.el][yml.el]] [fn:: It's named yml.el because it's faster than yaml.el. Not a good joke but this was the best I was able to come up with. You'll probably write ~yaml~ instead of ~yml~ while using it and will curse at me every time you make that /typo/. Because I've already done it myself.]
+
+*** Performance optimizations
+:PROPERTIES:
+:CUSTOM_ID: performance-optimizations
+:END:
+
+My initial benchmarks showed that emacs-libyaml was a bit faster. Around 10-15%, for really big files. This was, obviously, unacceptable because that fact makes my future blog post's title invalid. So I looked up what emacs-libyaml is doing differently. It might be due to the performance characteristics of the underlying libraries: [[https://github.com/yaml/libyaml][libyaml]] vs [[https://github.com/Ethiraric/yaml-rust2][yaml-rust2]] but that's kind of hard to compare, due to reasons you'll see.
+
+When you look at the Rust library and the C library, they are quite similar.[fn:: The Rust library already mentions that it's inspired by the /libyaml/ one.] They both have a parser which produces /events/ (it parses the document and emits events to a consumer) and a /loader/ which simply implements the consumer and converts those events into a concrete object tree.
+
+#+begin_src c
+// Create a parser, give it the yaml_str to parse
+yaml_parser_t parser;
+yaml_parser_initialize(&parser);
+yaml_parser_set_input_string(&parser, (unsigned char*)yaml_str, size-1);
+
+// Load it as a document
+yaml_document_t document;
+yaml_parser_load(&parser, &document);
+
+yaml_node_t *root_node = yaml_document_get_root_node(&document);
+#+end_src
+
+The parser produces events for the loader and it converts those events into concrete objects.
+
+Here is the Rust equivalent:
+
+#+begin_src rust
+let mut parser = Parser::new(source);
+let mut loader = YamlLoader::default();
+parser.load(&mut loader, true)?;
+let docs = loader.docs;
+#+end_src
+
+Or you can use ~YamlLoader::{load_from_str,load_from_parser,load_from_iter}~ too which essentially does something like the code above. The parser emits events and the ~YamlLoader~ listens to those events and constructs the YAML tree. Here is what it looks like:
+
+#+begin_src rust
+use yaml_rust2::parser::{Event, MarkedEventReceiver, Parser};
+
+// ...
+
+Parser::new_from_str(source).load(&mut YamlTree::default(), true)?;
+// Where YamlTree is something that implements yaml_rust2::MarkedEventReceiver.
+// See:
+
+impl MarkedEventReceiver for YamlTree {
+  fn on_event_impl(&mut self, ev: Event, mark: Marker) -> Result<(), ScanError> {
+    // Match events and construct your own Tree
+    match ev {
+      Event::DocumentStart | Event::Nothing | Event::StreamStart | Event::StreamEnd => {}
+      Event::DocumentEnd => {}
+      Event::SequenceStart(aid, _) => {}
+      Event::SequenceEnd => {}
+      Event::MappingStart(aid, _) => {}
+      Event::MappingEnd => {}
+      Event::Scalar(v, style, aid, tag) => {}
+      Event::Alias(id) => {}
+    }
+  }
+}
+#+end_src
+
+If you check the [[https://github.com/Ethiraric/yaml-rust2/blob/e12069447073e0c8dd9ceab415159c4c92927534/src/yaml.rs#L120][default implementation]] that the yaml-rust2 library gives you, you'll see that:
+- It constructs a complete nested tree for the YAML.
+- It uses ~LinkedHashMap~ for objects/mappings.
+- It copies full Yaml subtrees for anchors/aliases.
+
+These are all useful properties if you want to use the resulting object in your program. It makes things easier to reason about (the nested tree), and using a real hash map instead of something like a list of key/value pairs makes sense in terms of usability. But when you look at emacs-libyaml, it does not do any of this, at least at the C level. Our objective is to have a usable Lisp representation of the YAML, we don't need an ergonomic object that we can use at C/Rust level. Besides, we need to construct that usable tree for Lisp anyway. For example given that we have a Rust ~LinkedHashMap~, I need to convert it to a Lisp hash table, like:
+
+#+begin_src rust
+// ...
+// `hash_map` here is the constructed LinkedHashMap from YamlLoader.
+Yaml::Hash(hash_map) => {
+    // Reach into the Lisp world (env) and create a hash table object.
+    let hash = env.call(
+        "make-hash-table",
+        &[env.intern(":test")?, env.intern("equal")?],
+    )?;
+    for (key, value) in hash_map.into_iter() {
+        // Reach into the Lisp world again for each key/value pair and
+        // add them into the hash-map object we've just created
+        let _ = env.call(
+            "puthash",
+            &[
+                key.into_lisp(env)?,
+                value.into_lisp(env)?,
+                hash,
+            ],
+        );
+    }
+    Ok(hash)
+}
+#+end_src
+
+The Rust code just iterates over the key/value pairs and inserts them into the Lisp hash table. So, if we get rid of the ~LinkedHashMap~ and use something like ~Vec<(Key, Value)>~ we are not only gaining performance (due to getting rid of all the hashing overhead in Rust), we are also simplifying (just a little bit) the access pattern too.
+
+~YamlLoader~ gives me almost what I want but there is no way to replace ~LinkedHashMap~ usage with something simpler. Thus, I had to implement ~MarkedEventReceiver~ from above and construct my YAML tree. Fortunately the [[https://github.com/Ethiraric/yaml-rust2/blob/e12069447073e0c8dd9ceab415159c4c92927534/src/yaml.rs#L120][implementation]] given by the ~YamlLoader~ is quite elegant and easy to understand. We can simply copy it over and build our own ~YamlTree~.
+
+Now that we are implementing our own tree construction, we can also use a simpler method to store them. We simply need a tree that goes out of scope when we finish the conversion; we don't need a nested tree that may cause a recursive destruction of the nested objects. If we are done with the YAML, it can simply be dropped as a whole. This is why I opted to use a ~Vec<Node>~ containing all the nodes. Containers reference children using integer indices. This gives compact references and /potentially/ better memory locality. Eventually this is what our tree looks like:
+
+#+begin_src rust
+pub type NodeId = usize;
+
+pub enum Node {
+    Scalar(Yaml),
+    Sequence(Vec<NodeId>),
+    Mapping(Vec<(NodeId, NodeId)>),
+}
+
+#[derive(Default)]
+pub struct YamlTree {
+    pub nodes: Vec<Node>,
+    pub roots: Vec<NodeId>,
+    stack: Vec<Frame>,
+    anchors: HashMap<usize, NodeId>,
+    root: Option<NodeId>,
+    error: Option<ScanError>,
+}
+
+struct Frame {
+    node: NodeId,
+    anchor: usize,
+    key: Option<NodeId>,
+}
+#+end_src
+
+And now the same hash-table construction becomes this:
+
+#+begin_src rust
+// ...
+// `pairs` is just Vec<(NodeId, NodeId)>
+Node::Mapping(pairs) => match options.object_type {
+    ObjectType::HashTable => {
+        let hash = env.call(
+            "make-hash-table",
+            &[
+                env.intern(":test")?,
+                env.intern("equal")?,
+            ],
+        )?;
+        for &(key, value) in pairs {
+            env.call(
+                "puthash",
+                &[
+                    yaml_key_to_lisp(env, documents, key, options)?,
+                    yaml_to_lisp(env, documents, value, options)?,
+                    hash,
+                ],
+            )?;
+        }
+        Ok(hash)
+    }
+}
+#+end_src
+
+-----
+
+Another useful optimization is to size Emacs hash tables and preallocate Rust vectors based on the known number of elements, rather than letting them grow incrementally. We've already processed the whole YAML document, so we know how big the objects are. The same hash-table construction code now becomes:
+
+#+begin_src rust
+Node::Mapping(pairs) => match options.object_type {
+    ObjectType::HashTable => {
+        let hash = env.call(
+            "make-hash-table",
+            &[
+                env.intern(":test")?,
+                env.intern("equal")?,
+                // HERE:
+                // Simply pass the known size to the make-hash-table-call:
+                env.intern(":size")?,
+                pairs.len().into_lisp(env)?,
+            ],
+        )?;
+        for &(key, value) in pairs {
+            env.call(
+                "puthash",
+                &[
+                    yaml_key_to_lisp(env, documents, key, options)?,
+                    yaml_to_lisp(env, documents, value, options)?,
+                    hash,
+                ],
+            )?;
+        }
+        Ok(hash)
+    }
+}
+#+end_src
+
+-----
+
+While we are at it, we can continue doing some more small optimizations. [[https://github.com/ubolonton/emacs-module-rs][emacs-module-rs]] also gives us two useful macros: ~use_symbols!~ and ~use_functions!~. Given that we are accessing functions like ~make-hash-table~, ~puthash~ and a bunch of different symbols all the time, it's better to cache them instead of reaching into the Lisp world all the time. These Rust macros do exactly that and get rid of a bunch of symbol and function lookups. Again, for the hash-map construction code now we end up with:
+
+#+begin_src rust
+// *** Cache the symbols and functions ***
+
+emacs::use_symbols! {
+    SYM_ARRAY => "array"
+    SYM_LIST => "list"
+    SYM_HASH_TABLE => "hash-table"
+    SYM_PLIST => "plist"
+    SYM_ALIST => "alist"
+    SYM_EQUAL => "equal"
+    SYM_PARAM_TEST => ":test"
+    SYM_PARAM_SIZE => ":size"
+    // ... other symbols ...
+}
+
+emacs::use_functions! {
+    FN_CONSP => "consp"
+    FN_SYMBOL_NAME => "symbol-name"
+    FN_PUTHASH => "puthash"
+    FN_MAKE_HASH_TABLE => "make-hash-table"
+}
+
+// ...
+
+// *** Construct the hash-table ***
+
+Node::Mapping(pairs) => match options.object_type {
+    ObjectType::HashTable => {
+        let hash = FN_MAKE_HASH_TABLE.bind(env).call([
+            SYM_PARAM_TEST.bind(env),
+            SYM_EQUAL.bind(env),
+            SYM_PARAM_SIZE.bind(env),
+            pairs.len().into_lisp(env)?,
+        ])?;
+        for &(key, value) in pairs {
+            FN_PUTHASH.bind(env).call([
+                yaml_key_to_lisp(env, documents, key, options)?,
+                yaml_to_lisp(env, documents, value, options)?,
+                hash,
+            ])?;
+        }
+        Ok(hash)
+    }
+}
+#+end_src
+
+Plus the syntax is a bit nicer now! The only drawback is that if the cached functions are redefined or [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][advised]] after yml.el has been loaded, we would still be using the older unchanged version. This, I believe, is something that we can accept and may even be better for our use case because who would in their right mind want to redefine and/or advise the ~make-hash-table~ function, right?
+
+** Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
+
+Now with these optimizations in place, re-running the benchmarks gives me the following results (all timings are in ms):
+
+| Input       | Size    | yml.el hash-table | yml.el alist | yml.el plist | emacs-libyaml (only hash-table) |
+|-------------+---------+-------------------+--------------+--------------+---------------------------------|
+| [[https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.yaml][github.yaml]] | 9.90 MB |            291.87 |       265.09 | **245.84**     |                          312.36 |
+| [[https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml][gitlab.yaml]] | 2.45 MB |             94.56 |        88.56 | **79.85**      |                           98.21 |
+| [[https://docs.docker.com/reference/api/engine/version/v1.54.yaml][docker.yaml]] | 470 KB  |             14.85 |        13.39 | **11.42**      |                           14.91 |
+
+When producing hash tables, emacs-libyaml and yml.el perform almost identically, with yml.el a few milliseconds faster on average. In these benchmarks, the absolute difference grows with the input size.
+
+For the alist and plist variants (which emacs-libyaml does not support right now), the difference is much more significant. This is of course due to the fact that with the hash-table implementation, we are creating hash-maps repeatedly and paying the price for hashing. When you look at /alist/ vs /plist/ variations, you see that the plist variant is a bit faster too. This is also apparent from the code itself, see this:
+
+#+begin_src rust
+ObjectType::AssociationList => {
+    let values = pairs
+        .iter()
+        .map(|&(key, value)| {
+            let lisp_key = yaml_key_to_lisp(env, documents, key, options)?;
+            let lisp_val = yaml_to_lisp(env, documents, value, options)?;
+            env.cons(lisp_key, lisp_val)
+        })
+        .collect::<Result<Vec<_>>>()?;
+    env.list(&values)
+}
+ObjectType::PropertyList => {
+    let mut plist = Vec::with_capacity(pairs.len() * 2);
+    for &(key, value) in pairs {
+        plist.push(yaml_key_to_lisp(env, documents, key, options)?);
+        plist.push(yaml_to_lisp(env, documents, value, options)?);
+    }
+    env.list(&plist)
+}
+#+end_src
+
+For alists, we loop through the pairs, call ~cons~ to create a pair for each of them and then push these into a list object, by calling the ~list~ function. For plists, we simply reach into the Lisp world only once by calling ~list~. No intermediate ~cons~ calls are required, as a plist is a flat list, while an alist is a list of cons cells. This is also why [[https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization][lsp-mode suggests using plists instead of hash-tables for deserialization]]. These few milliseconds add up when you are parsing a lot of input, especially in high-frequency workloads such as an LSP client.
+
+-----
+
+I really enjoyed using [[https://github.com/ubolonton/emacs-module-rs][ubolonton/emacs-module-rs]]. It's pretty simple, easy to use. I am not even going to include any samples here because it's so easy to pick up if you know a little bit of Rust. Take a look at [[https://github.com/isamert/yml.el/blob/main/src/lib.rs#L105][src/lib.rs]] and you'll get the gist. One thing I wasn't able to accomplish was having a function defined in the native module like ~(defun something (&rest args) ...)~. It only supports a fixed number of arguments, you can't have ~&rest args~ in the natively defined functions. This unfortunately made me adopt a pattern of defining native functions as private and exposing them with Emacs Lisp wrappers, using ~cl-defun~. I think in the end, it might have made things clearer in terms of usage.
+
+** Next steps
+:PROPERTIES:
+:CUSTOM_ID: next-steps
+:END:
+
+I haven't really talked about serialization because it's not really that interesting but I, again, opted for a ~json-serialize~-like interface and behavior. One thing I would like to have on top of that is to support serializing lists (as opposed to arrays) as YAML arrays. Like ~json-serialize~, yml.el doesn't currently support this, and I can see why: supporting alists, plists, and ordinary lists as arrays at the same time makes interpretation ambiguous. Still, it's something I often want. I plan to experiment with the interface and add optional support if I can find a good way to expose it.
+
+-----
+
+Another thing I haven't really talked about is the native module installation process, which probably deserves its own post. The problem is that every other package that utilizes native modules also rolls its own way of managing the installation of that native module and that's a lot of code where you can get things wrong.[fn:: My approach for this package probably has some fatal flaws too. If you experience them or have a better idea, please let me know via the [[https://github.com/isamert/yml.el/issues][issue tracker]]/[[/about.html][email]]/comments.]
+
+I think there should be an already established way of providing native modules and handling their updates.[fn:: Both in the form of downloading them or manually building them.] This would free maintainers from having to roll their own broken implementations. More importantly, it would lower the barrier to building packages with native modules. One of my main motivations for building this package was to provide an easy way to install it.
+
+The popularity of yaml.el as opposed to emacs-libyaml comes from the fact that it's stupidly easy to install yaml.el whereas you need to manually download, build and manage the load-path for emacs-libyaml.[fn:: Well of course yaml.el is also more featureful but I think my point still stands.] I'll look into what can be done here and, if time permits, may put together a package to handle it.
+
 * Publish Code :noexport:
 #+NAME: startup
 #+begin_src elisp :lexical t

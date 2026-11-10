@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>yml.el: BLAZINGLY fast YAML parser for Emacs | ((isamert))</title>
+  <link rel="stylesheet" href="/assets/fonts.css">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="alternate" type="application/rss+xml"
+        href="https://isamert.net/feed.xml"
+        title="isamert.net RSS feed">
+  <script defer src="/assets/hljs/highlight.pack.js"></script>
+  <script defer src="/assets/index.js"></script>
+  <meta property="og:type" content="article">
+<meta property="og:title" content="yml.el: BLAZINGLY fast YAML parser for Emacs">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://isamert.net/2026/11/10/yml-el-blazingly-fast-yaml-parser-for-emacs.html">
+<meta property="og:site_name" content="((isamert))">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="/" aria-label="((isamert)) home">((isamert))</a>
+    <nav class="home-links">
+      <a href="/about.html">about</a>
+      <a href="/fun.html">fun</a>
+      <a href="/feeds.html">rss</a>
+    </nav>
+  </header>
+  <main>
+  <article>
+    <header class="post-header">
+      <h1>yml.el: BLAZINGLY fast YAML parser for Emacs</h1>
+
+      <div class="meta">
+        <time datetime="2026-11-10" class="publish-time"
+              aria-label="Published Nov 10, 2026">
+          <span class="date-day">10</span>
+          <span class="date-month">Nov</span>
+          <span class="date-year">2026</span>
+        </time>
+        <div class="updated hidden">
+          <span class="updated--label">Updated</span>
+          <time class="updated--time" datetime="">
+            
+          </time>
+        </div>
+        <span class="tags">
+          <a href="/tags/emacs.html">emacs</a><a href="/tags/rust.html">rust</a>
+        </span>
+      </div>
+
+    </header>
+
+    <nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#yaml-situation-in-emacs">The YAML situation in Emacs</a></li>
+<li><a href="#the-slowness-problem-and-possible-solutions">The slowness problem and possible solutions</a></li>
+<li><a href="#the-rust-re-write">The Rust re-write</a>
+<ul>
+<li><a href="#performance-optimizations">Performance optimizations</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#next-steps">Next steps</a></li>
+</ul>
+</div>
+</nav>
+<p>
+In this post, I’m going to talk about my new package, <a href="https://github.com/isamert/yml.el">yml.el</a>: the fastest YAML parser for Emacs.<sup class="fn-ref" aria-describedby="note-1">1</sup><span class="sidenote right" id="note-1"><span class="note-number">1</span>Yes, the title is clickbait-y. I mean it's currently the fastest YAML parser for Emacs and that's a fact, but at the same time I've always wanted to rewrite something in Rust and call it BLAZINGLY fast, irrelevant of the fact that it is or not.</span>
+</p>
+
+<p>
+I'll walk through why I needed another YAML parser for Emacs, how I ended up writing a native module in Rust, and the performance optimizations that made it faster. Along the way, I'll cover building Lisp objects from Rust, avoiding unnecessary intermediate representations, and reducing calls across the Rust/Emacs boundary.
+</p>
+<div id="outline-container-yaml-situation-in-emacs" class="outline-2">
+<h2 id="yaml-situation-in-emacs"><a href="#yaml-situation-in-emacs">The YAML situation in Emacs</a></h2>
+<div class="outline-text-2" id="text-yaml-situation-in-emacs">
+<p>
+Right now, if you want to parse YAML within Emacs, you basically have two options:
+</p>
+
+<div class="org-center">
+<p>
+<a href="https://github.com/zkry/yaml.el">zkry/yaml.el</a>
+</p>
+</div>
+
+<p>
+A parser that is written in Emacs Lisp, so it has no external dependencies and a nice interface &ndash; <code>json-parse-string</code>-esque<sup class="fn-ref" aria-describedby="note-2">2</sup><span class="sidenote left" id="note-2"><span class="note-number">2</span>Not totally, but it's good. yml.el takes this compatibility even further.</span>. But it is dreadfully slow. It's nice if you're parsing a simple YAML that contains maybe at most 100 lines or so, but after that the slowness becomes very noticeable. It is still maintained, and it's the package I've been using all this time.
+</p>
+
+<div class="org-center">
+<p>
+<a href="https://github.com/syohex/emacs-libyaml">syohex/emacs-libyaml</a>
+</p>
+</div>
+
+<p>
+This one is a libyaml wrapper for Emacs. Very fast, compared to <code>yaml.el</code>. Its main weakness is that it only supports deserializing objects into hash-maps and not into alists/plists. This is very inconvenient because if you have no other choice but to use alists/plists then you have to roll your own converter function<sup class="fn-ref" aria-describedby="note-3">3</sup><span class="sidenote right" id="note-3"><span class="note-number">3</span>It's very cumbersome to write.</span> and pay the price for the conversion too. Also plists/alists are faster, both in terms of building them and accessing them. The latter is true for small objects though, after a while hash-tables become more performant.
+</p>
+</div>
+</div>
+<div id="outline-container-the-slowness-problem-and-possible-solutions" class="outline-2">
+<h2 id="the-slowness-problem-and-possible-solutions"><a href="#the-slowness-problem-and-possible-solutions">The slowness problem and possible solutions</a></h2>
+<div class="outline-text-2" id="text-the-slowness-problem-and-possible-solutions">
+<p>
+I have two Emacs Lisp projects that uses YAML heavily, <i>unfortunately</i><sup class="fn-ref" aria-describedby="note-4">4</sup><span class="sidenote left" id="note-4"><span class="note-number">4</span>To be honest, I don't hate YAMLs as much as I would like to. The spec and the problems it caused are quite a pain and in theory I don't like how it's structured at all but at work every other compatible format we tried became a mess much faster than YAMLs. I think there is something there that YAMLs got right, maybe the human mind handles visual nesting better than other representations. Of course I still believe if you need a substantially complex configuration format, you just need to use a proper language instead.</span>: <a href="https://github.com/isamert/swagg.el">swagg.el</a> and <a href="https://github.com/isamert/ellm.el">ellm.el</a>.<sup class="fn-ref" aria-describedby="note-5">5</sup><span class="sidenote right" id="note-5"><span class="note-number">5</span>Besides these, we use YAMLs quite a lot at work. I have a bunch of ad-hoc Lisp snippets that deal with them. I'm just trying to say I am quite motivated to have a fast YAML parser for Emacs.</span> Recently, I added a feature to ellm.el where in some cases it needs to parse hundreds of quite small YAML strings and it caused a noticeable lag. I try to structure my packages using async operations to not block Emacs, even if that means a bit slower response but Emacs staying responsive during those operations.
+</p>
+
+<p>
+Unfortunately, YAML parsing is a sync operation. In these situations, one thing you can do is use something like <a href="https://github.com/jwiegley/emacs-async">jwiegley/emacs-async</a>. Assume the following is what I need:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><code>(require 'yaml)
+
+(dolist (yaml (bunch-of-yaml-strings))
+  (let ((obj (yaml-parse-string yaml :object-type 'alist :array-type 'list)))
+    (let-alist obj
+      (when .some.yaml.variable
+        (do-my-work .some.other.variable)))))
+</code></pre>
+</div>
+
+<p>
+What <code>emacs-async</code> does is that it starts another Emacs process, runs the code you supplied to it, and returns the result to you. Here is how we can write the same code asynchronously:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><code>(async-start
+ `(lambda ()
+    ,(async-inject-variables "^load-path$")
+    (require 'yaml)
+    (let (results)
+      (dolist (yaml (bunch-of-yaml-strings))
+        (let ((obj (yaml-parse-string yaml :object-type 'alist :array-type 'list)))
+          (let-alist obj
+            (when .some.yaml.variable
+              (push .some.other.variable results)))))
+      results))
+ (lambda (results)
+   (dolist (result results)
+     (do-my-work result))))
+</code></pre>
+</div>
+
+<p>
+Basically, you can think of this code as follows:
+</p>
+<ul class="org-ul">
+<li>The first lambda is the one that we pass into the other Emacs, hence it's quoted.</li>
+<li>Of course the other Emacs process is started with <code>-q</code>, so no user customizations. Thus we at least need to somehow let this <i>pure</i> Emacs know where the libraries are so we can load these libraries. Hence the line: <code>,(async-inject-variables "^load-path$")</code>.</li>
+<li>That lambda runs and the result is passed back into our Emacs instance.</li>
+</ul>
+
+<p>
+This is what I do when I've run out of other options because it comes with:
+</p>
+<ul class="org-ul">
+<li>Much more complex and uglier code. Even here, we've done the bare minimum (only offloaded YAML parsing to the new Emacs instance, we still do the processing in the running instance)</li>
+<li>A lot of serialization problems. The result you produced in the other Emacs process needs to be serialized and passed into our running Emacs instance. Depending on what you're trying to pass between the processes, serialization may be impossible or may introduce subtle, input-dependent issues.</li>
+<li>Quite a bit of overhead. Running a new Emacs instance. Loading libraries you need from scratch. Serializing the result, and then deserializing it back in your running Emacs instance.</li>
+</ul>
+
+<p>
+So <code>emacs-async</code> is quite good for long-running operations where you are okay with the overhead and users are not expecting immediate feedback.
+</p>
+
+<p>
+Here are the remaining options:
+</p>
+
+<p>
+Make <code>yaml.el</code> itself faster which probably is not an option because first of all it's a big undertaking and theoretically speaking Emacs Lisp has its own limitations. What the JSON example shows us is that native code is the way to go, unfortunately.<sup class="fn-ref" aria-describedby="note-6">6</sup><span class="sidenote left" id="note-6"><span class="note-number">6</span>I am referring to <a href="https://github.com/emacs-mirror/emacs/blob/master/src/json.c">json.c</a> which was included in Emacs 27 because everybody was complaining about how parsing JSON was slow. It was one of the best things to happen to Emacs in recent years.</span>
+</p>
+
+<p>
+Use <code>emacs-libyaml</code>. It's native and fast. Two problems though:
+</p>
+<ul class="org-ul">
+<li>Only supports hash-tables. I don't like them. I like Lisp, thus lists.</li>
+<li>No easy way to install it. Not on MELPA/ELPA, and you have to compile it by yourself. Depending on such a library surely makes your packages hard to install which is something I don't really want.</li>
+</ul>
+
+<p>
+Support for alists and plists could be added and it may be also possible to contribute a way of making it easier to install. The latter requires quite a bit of control over the repository to make build artifacts available, and the former requires some knowledge of C which is a language I used briefly in high school. For me, this was also not an option.
+</p>
+</div>
+</div>
+<div id="outline-container-the-rust-re-write" class="outline-2">
+<h2 id="the-rust-re-write"><a href="#the-rust-re-write">The Rust re-write</a></h2>
+<div class="outline-text-2" id="text-the-rust-re-write">
+<div class="org-center">
+<p>
+<i>(Title might be triggering, I know, but it's where we are at.)</i>
+</p>
+</div>
+
+<p>
+So I reluctantly searched again, without much hope, to see whether the situation had changed. I found out about <a href="https://github.com/perfectayush/emacs-yamlmod">perfectayush/emacs-yamlmod</a><sup class="fn-ref" aria-describedby="note-7">7</sup><span class="sidenote right" id="note-7"><span class="note-number">7</span>And <a href="https://github.com/ubolonton/emacs-module-rs">ubolonton/emacs-module-rs</a> which is actually the bigger piece of the puzzle. It makes it possible to write dynamic modules for Emacs, in Rust. Yay!</span> Similar to <code>emacs-libyaml</code> but written in Rust. Also it did not support serialization. But I know Rust, a bit. I could contribute those features.
+</p>
+
+<p>
+I started adding support for alists, plists, and serialization. Then I decided we need to have an easy way to install the dynamic module. Then I did some benchmarks, changed how parsing is done from the ground up. Then I wasn't really satisfied with its interface, so I changed that too. It became a different package at this point, and I decided to publish it as such: <a href="https://github.com/isamert/yml.el">yml.el</a> <sup class="fn-ref" aria-describedby="note-8">8</sup><span class="sidenote left" id="note-8"><span class="note-number">8</span>It's named yml.el because it's faster than yaml.el. Not a good joke but this was the best I was able to come up with. You'll probably write <code>yaml</code> instead of <code>yml</code> while using it and will curse at me every time you make that <i>typo</i>. Because I've already done it myself.</span>
+</p>
+</div>
+<div id="outline-container-performance-optimizations" class="outline-3">
+<h3 id="performance-optimizations"><a href="#performance-optimizations">Performance optimizations</a></h3>
+<div class="outline-text-3" id="text-performance-optimizations">
+<p>
+My initial benchmarks showed that emacs-libyaml was a bit faster. Around 10-15%, for really big files. This was, obviously, unacceptable because that fact makes my future blog post's title invalid. So I looked up what emacs-libyaml is doing differently. It might be due to the performance characteristics of the underlying libraries: <a href="https://github.com/yaml/libyaml">libyaml</a> vs <a href="https://github.com/Ethiraric/yaml-rust2">yaml-rust2</a> but that's kind of hard to compare, due to reasons you'll see.
+</p>
+
+<p>
+When you look at the Rust library and the C library, they are quite similar.<sup class="fn-ref" aria-describedby="note-9">9</sup><span class="sidenote right" id="note-9"><span class="note-number">9</span>The Rust library already mentions that it's inspired by the <i>libyaml</i> one.</span> They both have a parser which produces <i>events</i> (it parses the document and emits events to a consumer) and a <i>loader</i> which simply implements the consumer and converts those events into a concrete object tree.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><code>// Create a parser, give it the yaml_str to parse
+yaml_parser_t parser;
+yaml_parser_initialize(&amp;parser);
+yaml_parser_set_input_string(&amp;parser, (unsigned char*)yaml_str, size-1);
+
+// Load it as a document
+yaml_document_t document;
+yaml_parser_load(&amp;parser, &amp;document);
+
+yaml_node_t *root_node = yaml_document_get_root_node(&amp;document);
+</code></pre>
+</div>
+
+<p>
+The parser produces events for the loader and it converts those events into concrete objects.
+</p>
+
+<p>
+Here is the Rust equivalent:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>let mut parser = Parser::new(source);
+let mut loader = YamlLoader::default();
+parser.load(&amp;mut loader, true)?;
+let docs = loader.docs;
+</code></pre>
+</div>
+
+<p>
+Or you can use <code>YamlLoader::{load_from_str,load_from_parser,load_from_iter}</code> too which essentially does something like the code above. The parser emits events and the <code>YamlLoader</code> listens to those events and constructs the YAML tree. Here is what it looks like:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>use yaml_rust2::parser::{Event, MarkedEventReceiver, Parser};
+
+// ...
+
+Parser::new_from_str(source).load(&amp;mut YamlTree::default(), true)?;
+// Where YamlTree is something that implements yaml_rust2::MarkedEventReceiver.
+// See:
+
+impl MarkedEventReceiver for YamlTree {
+  fn on_event_impl(&amp;mut self, ev: Event, mark: Marker) -&gt; Result&lt;(), ScanError&gt; {
+    // Match events and construct your own Tree
+    match ev {
+      Event::DocumentStart | Event::Nothing | Event::StreamStart | Event::StreamEnd =&gt; {}
+      Event::DocumentEnd =&gt; {}
+      Event::SequenceStart(aid, _) =&gt; {}
+      Event::SequenceEnd =&gt; {}
+      Event::MappingStart(aid, _) =&gt; {}
+      Event::MappingEnd =&gt; {}
+      Event::Scalar(v, style, aid, tag) =&gt; {}
+      Event::Alias(id) =&gt; {}
+    }
+  }
+}
+</code></pre>
+</div>
+
+<p>
+If you check the <a href="https://github.com/Ethiraric/yaml-rust2/blob/e12069447073e0c8dd9ceab415159c4c92927534/src/yaml.rs#L120">default implementation</a> that the yaml-rust2 library gives you, you'll see that:
+</p>
+<ul class="org-ul">
+<li>It constructs a complete nested tree for the YAML.</li>
+<li>It uses <code>LinkedHashMap</code> for objects/mappings.</li>
+<li>It copies full Yaml subtrees for anchors/aliases.</li>
+</ul>
+
+<p>
+These are all useful properties if you want to use the resulting object in your program. It makes things easier to reason about (the nested tree), and using a real hash map instead of something like a list of key/value pairs makes sense in terms of usability. But when you look at emacs-libyaml, it does not do any of this, at least at the C level. Our objective is to have a usable Lisp representation of the YAML, we don't need an ergonomic object that we can use at C/Rust level. Besides, we need to construct that usable tree for Lisp anyway. For example given that we have a Rust <code>LinkedHashMap</code>, I need to convert it to a Lisp hash table, like:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>// ...
+// `hash_map` here is the constructed LinkedHashMap from YamlLoader.
+Yaml::Hash(hash_map) =&gt; {
+    // Reach into the Lisp world (env) and create a hash table object.
+    let hash = env.call(
+        "make-hash-table",
+        &amp;[env.intern(":test")?, env.intern("equal")?],
+    )?;
+    for (key, value) in hash_map.into_iter() {
+        // Reach into the Lisp world again for each key/value pair and
+        // add them into the hash-map object we've just created
+        let _ = env.call(
+            "puthash",
+            &amp;[
+                key.into_lisp(env)?,
+                value.into_lisp(env)?,
+                hash,
+            ],
+        );
+    }
+    Ok(hash)
+}
+</code></pre>
+</div>
+
+<p>
+The Rust code just iterates over the key/value pairs and inserts them into the Lisp hash table. So, if we get rid of the <code>LinkedHashMap</code> and use something like <code>Vec&lt;(Key, Value)&gt;</code> we are not only gaining performance (due to getting rid of all the hashing overhead in Rust), we are also simplifying (just a little bit) the access pattern too.
+</p>
+
+<p>
+<code>YamlLoader</code> gives me almost what I want but there is no way to replace <code>LinkedHashMap</code> usage with something simpler. Thus, I had to implement <code>MarkedEventReceiver</code> from above and construct my YAML tree. Fortunately the <a href="https://github.com/Ethiraric/yaml-rust2/blob/e12069447073e0c8dd9ceab415159c4c92927534/src/yaml.rs#L120">implementation</a> given by the <code>YamlLoader</code> is quite elegant and easy to understand. We can simply copy it over and build our own <code>YamlTree</code>.
+</p>
+
+<p>
+Now that we are implementing our own tree construction, we can also use a simpler method to store them. We simply need a tree that goes out of scope when we finish the conversion; we don't need a nested tree that may cause a recursive destruction of the nested objects. If we are done with the YAML, it can simply be dropped as a whole. This is why I opted to use a <code>Vec&lt;Node&gt;</code> containing all the nodes. Containers reference children using integer indices. This gives compact references and <i>potentially</i> better memory locality. Eventually this is what our tree looks like:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>pub type NodeId = usize;
+
+pub enum Node {
+    Scalar(Yaml),
+    Sequence(Vec&lt;NodeId&gt;),
+    Mapping(Vec&lt;(NodeId, NodeId)&gt;),
+}
+
+#[derive(Default)]
+pub struct YamlTree {
+    pub nodes: Vec&lt;Node&gt;,
+    pub roots: Vec&lt;NodeId&gt;,
+    stack: Vec&lt;Frame&gt;,
+    anchors: HashMap&lt;usize, NodeId&gt;,
+    root: Option&lt;NodeId&gt;,
+    error: Option&lt;ScanError&gt;,
+}
+
+struct Frame {
+    node: NodeId,
+    anchor: usize,
+    key: Option&lt;NodeId&gt;,
+}
+</code></pre>
+</div>
+
+<p>
+And now the same hash-table construction becomes this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>// ...
+// `pairs` is just Vec&lt;(NodeId, NodeId)&gt;
+Node::Mapping(pairs) =&gt; match options.object_type {
+    ObjectType::HashTable =&gt; {
+        let hash = env.call(
+            "make-hash-table",
+            &amp;[
+                env.intern(":test")?,
+                env.intern("equal")?,
+            ],
+        )?;
+        for &amp;(key, value) in pairs {
+            env.call(
+                "puthash",
+                &amp;[
+                    yaml_key_to_lisp(env, documents, key, options)?,
+                    yaml_to_lisp(env, documents, value, options)?,
+                    hash,
+                ],
+            )?;
+        }
+        Ok(hash)
+    }
+}
+</code></pre>
+</div>
+
+<hr>
+
+<p>
+Another useful optimization is to size Emacs hash tables and preallocate Rust vectors based on the known number of elements, rather than letting them grow incrementally. We've already processed the whole YAML document, so we know how big the objects are. The same hash-table construction code now becomes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>Node::Mapping(pairs) =&gt; match options.object_type {
+    ObjectType::HashTable =&gt; {
+        let hash = env.call(
+            "make-hash-table",
+            &amp;[
+                env.intern(":test")?,
+                env.intern("equal")?,
+                // HERE:
+                // Simply pass the known size to the make-hash-table-call:
+                env.intern(":size")?,
+                pairs.len().into_lisp(env)?,
+            ],
+        )?;
+        for &amp;(key, value) in pairs {
+            env.call(
+                "puthash",
+                &amp;[
+                    yaml_key_to_lisp(env, documents, key, options)?,
+                    yaml_to_lisp(env, documents, value, options)?,
+                    hash,
+                ],
+            )?;
+        }
+        Ok(hash)
+    }
+}
+</code></pre>
+</div>
+
+<hr>
+
+<p>
+While we are at it, we can continue doing some more small optimizations. <a href="https://github.com/ubolonton/emacs-module-rs">emacs-module-rs</a> also gives us two useful macros: <code>use_symbols!</code> and <code>use_functions!</code>. Given that we are accessing functions like <code>make-hash-table</code>, <code>puthash</code> and a bunch of different symbols all the time, it's better to cache them instead of reaching into the Lisp world all the time. These Rust macros do exactly that and get rid of a bunch of symbol and function lookups. Again, for the hash-map construction code now we end up with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>// *** Cache the symbols and functions ***
+
+emacs::use_symbols! {
+    SYM_ARRAY =&gt; "array"
+    SYM_LIST =&gt; "list"
+    SYM_HASH_TABLE =&gt; "hash-table"
+    SYM_PLIST =&gt; "plist"
+    SYM_ALIST =&gt; "alist"
+    SYM_EQUAL =&gt; "equal"
+    SYM_PARAM_TEST =&gt; ":test"
+    SYM_PARAM_SIZE =&gt; ":size"
+    // ... other symbols ...
+}
+
+emacs::use_functions! {
+    FN_CONSP =&gt; "consp"
+    FN_SYMBOL_NAME =&gt; "symbol-name"
+    FN_PUTHASH =&gt; "puthash"
+    FN_MAKE_HASH_TABLE =&gt; "make-hash-table"
+}
+
+// ...
+
+// *** Construct the hash-table ***
+
+Node::Mapping(pairs) =&gt; match options.object_type {
+    ObjectType::HashTable =&gt; {
+        let hash = FN_MAKE_HASH_TABLE.bind(env).call([
+            SYM_PARAM_TEST.bind(env),
+            SYM_EQUAL.bind(env),
+            SYM_PARAM_SIZE.bind(env),
+            pairs.len().into_lisp(env)?,
+        ])?;
+        for &amp;(key, value) in pairs {
+            FN_PUTHASH.bind(env).call([
+                yaml_key_to_lisp(env, documents, key, options)?,
+                yaml_to_lisp(env, documents, value, options)?,
+                hash,
+            ])?;
+        }
+        Ok(hash)
+    }
+}
+</code></pre>
+</div>
+
+<p>
+Plus the syntax is a bit nicer now! The only drawback is that if the cached functions are redefined or <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html">advised</a> after yml.el has been loaded, we would still be using the older unchanged version. This, I believe, is something that we can accept and may even be better for our use case because who would in their right mind want to redefine and/or advise the <code>make-hash-table</code> function, right?
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-conclusion" class="outline-2">
+<h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2>
+<div class="outline-text-2" id="text-conclusion">
+<p>
+Now with these optimizations in place, re-running the benchmarks gives me the following results (all timings are in ms):
+</p>
+
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+
+<col  class="org-right">
+
+<col  class="org-right">
+
+<col  class="org-left">
+
+<col  class="org-right">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Input</th>
+<th scope="col" class="org-left">Size</th>
+<th scope="col" class="org-right">yml.el hash-table</th>
+<th scope="col" class="org-right">yml.el alist</th>
+<th scope="col" class="org-left">yml.el plist</th>
+<th scope="col" class="org-right">emacs-libyaml (only hash-table)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><a href="https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.yaml">github.yaml</a></td>
+<td class="org-left">9.90 MB</td>
+<td class="org-right">291.87</td>
+<td class="org-right">265.09</td>
+<td class="org-left"><b><b>245.84</b></b></td>
+<td class="org-right">312.36</td>
+</tr>
+
+<tr>
+<td class="org-left"><a href="https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml">gitlab.yaml</a></td>
+<td class="org-left">2.45 MB</td>
+<td class="org-right">94.56</td>
+<td class="org-right">88.56</td>
+<td class="org-left"><b><b>79.85</b></b></td>
+<td class="org-right">98.21</td>
+</tr>
+
+<tr>
+<td class="org-left"><a href="https://docs.docker.com/reference/api/engine/version/v1.54.yaml">docker.yaml</a></td>
+<td class="org-left">470 KB</td>
+<td class="org-right">14.85</td>
+<td class="org-right">13.39</td>
+<td class="org-left"><b><b>11.42</b></b></td>
+<td class="org-right">14.91</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+When producing hash tables, emacs-libyaml and yml.el perform almost identically, with yml.el a few milliseconds faster on average. In these benchmarks, the absolute difference grows with the input size.
+</p>
+
+<p>
+For the alist and plist variants (which emacs-libyaml does not support right now), the difference is much more significant. This is of course due to the fact that with the hash-table implementation, we are creating hash-maps repeatedly and paying the price for hashing. When you look at <i>alist</i> vs <i>plist</i> variations, you see that the plist variant is a bit faster too. This is also apparent from the code itself, see this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><code>ObjectType::AssociationList =&gt; {
+    let values = pairs
+        .iter()
+        .map(|&amp;(key, value)| {
+            let lisp_key = yaml_key_to_lisp(env, documents, key, options)?;
+            let lisp_val = yaml_to_lisp(env, documents, value, options)?;
+            env.cons(lisp_key, lisp_val)
+        })
+        .collect::&lt;Result&lt;Vec&lt;_&gt;&gt;&gt;()?;
+    env.list(&amp;values)
+}
+ObjectType::PropertyList =&gt; {
+    let mut plist = Vec::with_capacity(pairs.len() * 2);
+    for &amp;(key, value) in pairs {
+        plist.push(yaml_key_to_lisp(env, documents, key, options)?);
+        plist.push(yaml_to_lisp(env, documents, value, options)?);
+    }
+    env.list(&amp;plist)
+}
+</code></pre>
+</div>
+
+<p>
+For alists, we loop through the pairs, call <code>cons</code> to create a pair for each of them and then push these into a list object, by calling the <code>list</code> function. For plists, we simply reach into the Lisp world only once by calling <code>list</code>. No intermediate <code>cons</code> calls are required, as a plist is a flat list, while an alist is a list of cons cells. This is also why <a href="https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization">lsp-mode suggests using plists instead of hash-tables for deserialization</a>. These few milliseconds add up when you are parsing a lot of input, especially in high-frequency workloads such as an LSP client.
+</p>
+
+<hr>
+
+<p>
+I really enjoyed using <a href="https://github.com/ubolonton/emacs-module-rs">ubolonton/emacs-module-rs</a>. It's pretty simple, easy to use. I am not even going to include any samples here because it's so easy to pick up if you know a little bit of Rust. Take a look at <a href="https://github.com/isamert/yml.el/blob/main/src/lib.rs#L105">src/lib.rs</a> and you'll get the gist. One thing I wasn't able to accomplish was having a function defined in the native module like <code>(defun something (&amp;rest args) ...)</code>. It only supports a fixed number of arguments, you can't have <code>&amp;rest args</code> in the natively defined functions. This unfortunately made me adopt a pattern of defining native functions as private and exposing them with Emacs Lisp wrappers, using <code>cl-defun</code>. I think in the end, it might have made things clearer in terms of usage.
+</p>
+</div>
+</div>
+<div id="outline-container-next-steps" class="outline-2">
+<h2 id="next-steps"><a href="#next-steps">Next steps</a></h2>
+<div class="outline-text-2" id="text-next-steps">
+<p>
+I haven't really talked about serialization because it's not really that interesting but I, again, opted for a <code>json-serialize</code>-like interface and behavior. One thing I would like to have on top of that is to support serializing lists (as opposed to arrays) as YAML arrays. Like <code>json-serialize</code>, yml.el doesn't currently support this, and I can see why: supporting alists, plists, and ordinary lists as arrays at the same time makes interpretation ambiguous. Still, it's something I often want. I plan to experiment with the interface and add optional support if I can find a good way to expose it.
+</p>
+
+<hr>
+
+<p>
+Another thing I haven't really talked about is the native module installation process, which probably deserves its own post. The problem is that every other package that utilizes native modules also rolls its own way of managing the installation of that native module and that's a lot of code where you can get things wrong.<sup class="fn-ref" aria-describedby="note-10">10</sup><span class="sidenote left" id="note-10"><span class="note-number">10</span>My approach for this package probably has some fatal flaws too. If you experience them or have a better idea, please let me know via the <a href="https://github.com/isamert/yml.el/issues">issue tracker</a>/<a href="file:///about.html">email</a>/comments.</span>
+</p>
+
+<p>
+I think there should be an already established way of providing native modules and handling their updates.<sup class="fn-ref" aria-describedby="note-11">11</sup><span class="sidenote right" id="note-11"><span class="note-number">11</span>Both in the form of downloading them or manually building them.</span> This would free maintainers from having to roll their own broken implementations. More importantly, it would lower the barrier to building packages with native modules. One of my main motivations for building this package was to provide an easy way to install it.
+</p>
+
+<p>
+The popularity of yaml.el as opposed to emacs-libyaml comes from the fact that it's stupidly easy to install yaml.el whereas you need to manually download, build and manage the load-path for emacs-libyaml.<sup class="fn-ref" aria-describedby="note-12">12</sup><span class="sidenote left" id="note-12"><span class="note-number">12</span>Well of course yaml.el is also more featureful but I think my point still stands.</span> I'll look into what can be done here and, if time permits, may put together a package to handle it.
+</p>
+</div>
+</div>
+
+  </article>
+
+  <div id="similar-posts">
+    <h2>Similar stuff</h2>
+    <ul>
+      <li> <a href="2026/11/05/tracking-issues-with-emacs-and-org-mode-dynamic-blocks.html">Tracking issues with Emacs and Org mode dynamic blocks</a></li><li> <a href="2024/08/20/corg-el-announcement.html">Announcement: corg.el -- Seamless auto completion for org-mode block headers</a></li><li> <a href="2023/09/04/announcement-swagg-el-swagger-ui-inside-emacs.html">Announcement: swagg.el -- Swagger UI, inside Emacs</a></li><li> <a href="2022/03/16/global-interactive-emacs-functions.html">Global interactive Emacs functions</a></li><li> <a href="2021/01/25/how-i-do-keep-my-days-organized-with-org-mode-and-emacs.html">How do I keep my days organized with org-mode and Emacs</a></li>
+    </ul>
+  </div>
+
+  <div id="comments">
+    <script src="https://utteranc.es/client.js"
+            repo="isamert/isamert.github.io"
+            issue-term="pathname"
+            label="> 💬"
+            theme="github-dark"
+            crossorigin="anonymous"
+            defer>
+    </script>
+  </div>
+  </main>
+  <footer>
+  <img class="copyleft-icon" src="/assets/Copyleft.svg" alt="Copyleft"> 2016–2026 isamert ·
+  <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
+  <a href="https://github.com/isamert/isamert.github.io">source</a>
+  </footer>
+</body>
+</html>

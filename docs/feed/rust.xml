@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>rust - isamert.net</title>
+    <link>https://isamert.net</link>
+    <description>My notes and ideas.</description>
+    
+    <item>
+      <title>yml.el: BLAZINGLY fast YAML parser for Emacs</title>
+      <link>https://isamert.net/2026/11/10/yml-el-blazingly-fast-yaml-parser-for-emacs.html</link>
+      <pubDate>Tue, 10 Nov 2026 15:51:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
+  </channel>
+</rss>

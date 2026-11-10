@@ -89,5 +89,11 @@
       <pubDate>Thu, 05 Nov 2026 17:47:00 +0100</pubDate>
       <description><![CDATA[  ]]></description>
     </item>
+    <item>
+      <title>yml.el: BLAZINGLY fast YAML parser for Emacs</title>
+      <link>https://isamert.net/2026/11/10/yml-el-blazingly-fast-yaml-parser-for-emacs.html</link>
+      <pubDate>Tue, 10 Nov 2026 15:51:00 +0100</pubDate>
+      <description><![CDATA[  ]]></description>
+    </item>
   </channel>
 </rss>

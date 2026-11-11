@@ -8462,11 +8462,11 @@ Plus the syntax is a bit nicer now! The only drawback is that if the cached func
 
 Now with these optimizations in place, re-running the benchmarks gives me the following results (all timings are in ms):
 
-| Input       | Size    | yml.el hash-table | yml.el alist | yml.el plist | emacs-libyaml (only hash-table) |
-|-------------+---------+-------------------+--------------+--------------+---------------------------------|
-| [[https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.yaml][github.yaml]] | 9.90 MB |            291.87 |       265.09 | **245.84**     |                          312.36 |
-| [[https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml][gitlab.yaml]] | 2.45 MB |             94.56 |        88.56 | **79.85**      |                           98.21 |
-| [[https://docs.docker.com/reference/api/engine/version/v1.54.yaml][docker.yaml]] | 470 KB  |             14.85 |        13.39 | **11.42**      |                           14.91 |
+| Input       | Size    | *emacs-libyaml* (/hash-table/) | *yml.el* (/hash-table/) | *yml.el* (/alist/) | *yml.el* (/plist/) |
+|-------------+---------+----------------------------+---------------------+----------------+----------------|
+| [[https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.yaml][github.yaml]] | 9.90 MB |                     312.36 |              291.87 |         265.09 | *245.84*         |
+| [[https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml][gitlab.yaml]] | 2.45 MB |                      98.21 |               94.56 |          88.56 | *79.85*          |
+| [[https://docs.docker.com/reference/api/engine/version/v1.54.yaml][docker.yaml]] | 470 KB  |                      14.91 |               14.85 |          13.39 | *11.42*          |
 
 When producing hash tables, emacs-libyaml and yml.el perform almost identically, with yml.el a few milliseconds faster on average. In these benchmarks, the absolute difference grows with the input size.
 

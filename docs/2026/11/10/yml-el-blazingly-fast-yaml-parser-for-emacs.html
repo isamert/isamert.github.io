@@ -502,46 +502,46 @@ Now with these optimizations in place, re-running the benchmarks gives me the fo
 
 <col  class="org-right">
 
-<col  class="org-left">
-
 <col  class="org-right">
+
+<col  class="org-left">
 </colgroup>
 <thead>
 <tr>
 <th scope="col" class="org-left">Input</th>
 <th scope="col" class="org-left">Size</th>
-<th scope="col" class="org-right">yml.el hash-table</th>
-<th scope="col" class="org-right">yml.el alist</th>
-<th scope="col" class="org-left">yml.el plist</th>
-<th scope="col" class="org-right">emacs-libyaml (only hash-table)</th>
+<th scope="col" class="org-right"><b>emacs-libyaml</b> (<i>hash-table</i>)</th>
+<th scope="col" class="org-right"><b>yml.el</b> (<i>hash-table</i>)</th>
+<th scope="col" class="org-right"><b>yml.el</b> (<i>alist</i>)</th>
+<th scope="col" class="org-left"><b>yml.el</b> (<i>plist</i>)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="org-left"><a href="https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.yaml">github.yaml</a></td>
 <td class="org-left">9.90 MB</td>
+<td class="org-right">312.36</td>
 <td class="org-right">291.87</td>
 <td class="org-right">265.09</td>
-<td class="org-left"><b><b>245.84</b></b></td>
-<td class="org-right">312.36</td>
+<td class="org-left"><b>245.84</b></td>
 </tr>
 
 <tr>
 <td class="org-left"><a href="https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml">gitlab.yaml</a></td>
 <td class="org-left">2.45 MB</td>
+<td class="org-right">98.21</td>
 <td class="org-right">94.56</td>
 <td class="org-right">88.56</td>
-<td class="org-left"><b><b>79.85</b></b></td>
-<td class="org-right">98.21</td>
+<td class="org-left"><b>79.85</b></td>
 </tr>
 
 <tr>
 <td class="org-left"><a href="https://docs.docker.com/reference/api/engine/version/v1.54.yaml">docker.yaml</a></td>
 <td class="org-left">470 KB</td>
+<td class="org-right">14.91</td>
 <td class="org-right">14.85</td>
 <td class="org-right">13.39</td>
-<td class="org-left"><b><b>11.42</b></b></td>
-<td class="org-right">14.91</td>
+<td class="org-left"><b>11.42</b></td>
 </tr>
 </tbody>
 </table>

@@ -717,6 +717,51 @@ article li > ol {
   margin-block: 0.4rem;
 }
 
+/* * Tables */
+
+article table {
+  display: block;
+  width: 100%;
+  margin: 1.7rem 0 2rem;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  scrollbar-color: var(--rule) transparent;
+}
+
+article th,
+article td {
+  padding: 0.7em 0.85em;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+article th {
+  color: var(--coral);
+  background: rgb(var(--accent-rgb) / 0.055);
+  border-bottom-color: rgb(var(--accent-rgb) / 0.4);
+  font: 500 0.8em / 1.5 var(--mono);
+}
+
+article table .org-right {
+  text-align: right;
+}
+
+article table .org-center {
+  display: table-cell;
+  text-align: center;
+}
+
+article caption {
+  margin-bottom: 0.65rem;
+  color: var(--subtle);
+  font-size: 0.9em;
+  text-align: left;
+}
+
 article figure {
   margin: 2rem 0;
   text-align: center;

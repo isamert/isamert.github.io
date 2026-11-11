@@ -8718,10 +8718,12 @@ Useful when styling or templating has changed."
 (defun isamert/blog-export-current (&optional extras)
   "Export/render the current header."
   (interactive)
+  (when (or (called-interactively-p 'interactive)
+            (not extras)
+            (not isamert/blog-templates))
+    (isamert/blog-refresh-templates))
   (unless extras
     (setq extras (isamert/blog-prepare-post-extras)))
-  (when (not isamert/blog-templates)
-    (isamert/blog-refresh-templates))
   (save-window-excursion
     (save-current-buffer
       (when (isamert/blog-can-export-current)

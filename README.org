@@ -775,10 +775,15 @@ pre code {
 
 #text-table-of-contents li {
   margin: 0.5rem 0;
+  padding-inline-start: 0;
 }
 
 #text-table-of-contents li::before {
   content: "";
+}
+
+#text-table-of-contents li::marker {
+  content: normal;
 }
 
 /* Nested levels */
@@ -1111,31 +1116,31 @@ article h2::before {
   text-shadow: 0 0 0.7rem rgb(var(--logo-rgb) / 0.48);
 }
 
-article ul {
-  margin: 0.45rem 0;
-  padding-inline-start: 0;
-  list-style: none;
-}
-
-article ul ul {
-  padding-inline-start: 1.4rem;
+article ul,
+article ol {
+  margin: 0.75rem 0;
+  padding-inline-start: 1.6em;
+  list-style-position: outside;
 }
 
 article li {
-  position: relative;
   margin: 0.45rem 0;
+  padding-inline-start: 0.2em;
 }
 
-article li::before {
-  content: "✱";
-  position: absolute;
-  inset-inline-start: -1rem;
-  top: 0.45rem;
+article li::marker {
   color: var(--accent);
+}
+
+article ul > li::marker {
+  content: "✱  ";
   font-size: 0.7em;
   font-weight: 500;
-  line-height: 1.3;
-  text-shadow: 0 0 0.45rem rgb(var(--accent-rgb) / 0.3);
+}
+
+article li > ul,
+article li > ol {
+  margin-block: 0.4rem;
 }
 
 article figure {
@@ -1241,15 +1246,6 @@ article img {
 @media (max-width: «constant("TABLET_WIDTH")») {
   article h2::before {
     content: none;
-  }
-
-  article ul {
-    padding-inline-start: 1rem;
-  }
-
-  article li::before {
-    content: "*";
-    top: 0.5rem;
   }
 }
 

@@ -1760,7 +1760,7 @@ Every category has it's own RSS feed, you can subscribe them separately or you c
 :PUBLISH_DATE: [2021-04-07 Wed 00:00] +0300
 :TEMPLATE: content-template
 :END:
-I am a software developer, living in Amsterdam. I write and publish all of my work as free/libre software. See [[./resume.html][my resume]] if you are interested in that kind of thing. Also, here is my [[https://github.com/isamert][my Github profile]].
+I am a software developer, living in Amsterdam. I write and publish all of my work as free/libre software. See [[./resume.html][my resume]] if you are interested in that kind of thing. Also, here is [[https://github.com/isamert][my Github profile]].
 
 I suppose it's absolutely important to point out these days that everything in this website is written by me, not by an LLM.[fn:: Well, to be honest I used it for one specific post and the results were downright dogshit. I am not saying that I am a great writer and I can write much better than LLM's but the tone of the LLM generated sentences now disgust me. I removed those generated sentences from that post now.]
 

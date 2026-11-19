@@ -102,7 +102,7 @@ function addCopyButtons() {
  * splitting the paragraph in half.
  */
 function positionSidenotes() {
-  const desktop = window.matchMedia('(min-width: 1180px)');
+  const desktop = window.matchMedia('(min-width: 1400px)');
 
   const notes = [...document.querySelectorAll('.sidenote')]
     .map(note => {
